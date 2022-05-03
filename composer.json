@@ -1,0 +1,41 @@
+{
+  "name": "dezero/dezero",
+  "version": "0.1.0",
+  "description": "Dezero Framework.",
+  "type": "project",
+  "keywords": ["yii2", "dezero", "Framework", "dz2"],
+  "homepage": "https://github.com/dezero-code/dezero",
+  "authors": [
+    {
+      "name": "Dezero",
+      "homepage": "http://www.dezero.es",
+      "email": "code@dezero.es"
+    }
+  ],
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "require": {
+    "php": ">=7.3",
+    "yiisoft/yii2": "~2.0.5"
+  },
+  "repositories":[
+    {
+      "type": "composer",
+      "url": "https://asset-packagist.org"
+    }
+  ],
+  "config": {
+    "optimize-autoloader": true,
+    "allow-plugins": {
+      "yiisoft/yii2-composer" : true
+    },
+    "process-timeout": 1800,
+    "fxp-asset": {
+      "enabled": false
+    }
+  },
+  "scripts": {
+    "coder": "php-cs-fixer fix -vvv --dry-run --show-progress=dots",
+    "coder-fix": "php-cs-fixer fix -vvv --show-progress=dots"
+  }
+}

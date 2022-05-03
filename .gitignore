@@ -1,0 +1,59 @@
+# Composer
+/vendor
+composer.lock
+composer.phar
+
+# Code style checker
+/.php-cs-fixer.cache
+
+# Javascript files
+/node_modules
+node_modules/
+/**/node_modules
+
+# PHPUnit itself is not needed
+phpunit.phar
+phpunit.xml
+
+# OS generated files
+.DS_Store
+.DS_Store?
+/*.DS_Store
+ehthumbs.db
+.Spotlight-V100
+.Trashes
+Icon?
+Thumbs.db
+._*
+*.swp
+*.svn
+.svn
+.phpintel
+
+# Vim generated files
+*.un~
+
+# SASS
+.sass-cache
+*.css.map
+
+# Compressed files
+/*.rar
+/*.zip
+
+# Logs
+/*.log
+*.log
+
+# Applications
+*.app
+*.exe
+*.war
+
+# Large media files
+*.mp4
+*.tiff
+*.avi
+*.flv
+*.mov
+*.wmv
