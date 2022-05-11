@@ -18,12 +18,21 @@
     "php": ">=7.3",
     "yiisoft/yii2": "~2.0.5"
   },
+  "require-dev": {
+    "kint-php/kint": "~3.3",
+    "vlucas/phpdotenv": "^5.4.1"
+  },
   "repositories":[
     {
       "type": "composer",
       "url": "https://asset-packagist.org"
     }
   ],
+  "autoload": {
+    "psr-4": {
+      "dezero\\": "src/",
+    }
+  },
   "config": {
     "optimize-autoloader": true,
     "allow-plugins": {
