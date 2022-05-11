@@ -6,11 +6,38 @@
 class Dz extends Yii
 {
     /**
+     * @inheritdoc
+     */
+    public static function createObject($type, array $params = [])
+    {
+        return parent::createObject($type, $params);
+    }
+
+
+    /**
+     * Returns an environment variable, checking for it in `$_SERVER` and calling `getenv()` as a fallback.
+     */
+    public static function env($name) : ?string
+    {
+        return isset($_SERVER[$name]) ? getenv($name) : null;
+    }
+
+
+    /**
+     * Returns an environment variable, checking for it in `$_SERVER` and calling `getenv()` as a fallback.
+     */
+    public static function getEnvironment() : string
+    {
+        return static::env('ENVIRONMENT');
+    }
+
+
+    /**
      * Check the environment is currently running in
      */
     public static function checkEnvironment(string $environment_name) : bool
     {
-        return self::env('ENVIRONMENT') === $environment_name;
+        return static::env('ENVIRONMENT') === $environment_name;
     }
 
 
@@ -19,7 +46,7 @@ class Dz extends Yii
      */
     public static function isProduction() : bool
     {
-        return self::checkEnvironment('prod');
+        return static::checkEnvironment('prod');
     }
 
 
@@ -30,7 +57,7 @@ class Dz extends Yii
      */
     public static function isLive() : bool
     {
-        return self::checkEnvironment('prod');
+        return static::checkEnvironment('prod');
     }
 
 
@@ -39,7 +66,7 @@ class Dz extends Yii
      */
     public static function isDev() : bool
     {
-        return self::checkEnvironment('dev');
+        return static::checkEnvironment('dev');
     }
 
 
@@ -48,6 +75,6 @@ class Dz extends Yii
      */
     public static function isTest() : bool
     {
-        return self::checkEnvironment('test');
+        return static::checkEnvironment('test');
     }
 }
