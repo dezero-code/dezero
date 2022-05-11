@@ -17,7 +17,7 @@
   "require": {
     "php": ">=7.3",
     "kint-php/kint": "~3.3",
-    "vlucas/phpdotenv": "^5.4.1",
+    "vlucas/phpdotenv": "^2.4.0",
     "yiisoft/yii2": "~2.0.5"
   },
   "repositories":[
