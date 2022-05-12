@@ -3,6 +3,10 @@
 |--------------------------------------------------------------------------
 | HTML <head> layout
 |--------------------------------------------------------------------------
+|
+| Available variables:
+|  - $this: dezero\web\View component
+|
 */
 
   use yii\helpers\Html;
@@ -42,7 +46,19 @@
     */
   ?>
   <meta name="theme-color" content="#ffffff">
-  <title><?= Html::encode(Yii::$app->name); ?></title>
+  <?php if ( Yii::$app->user->isGuest ) : ?>
+    <?php
+      // Check if current action is login page (front page)
+      if ( $current_action == 'login' || empty($this->title) ) :
+    ?>
+      <title><?= Yii::$app->name; ?></title>
+    <?php else: ?>
+      <title><?= $this->title; ?> | <?= Yii::$app->name; ?></title>
+    <?php endif; ?>
+  <?php else: ?>
+    <title><?= $this->title; ?> | <?= Yii::$app->name; ?></title>
+  <?php endif; ?>
+
   <?php /*<?php $this->registerCsrfMetaTags(); ?>*/ ?>
   <?php $this->head(); ?>
 

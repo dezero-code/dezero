@@ -5,7 +5,8 @@
 |--------------------------------------------------------------------------
 |
 | Available variables:
-|   $vec_items: Array with menu items structure
+|  - $this: dezero\web\View component
+|  - $vec_items: Array with menu items structure
 |
 */
 
@@ -14,7 +15,6 @@
   use yii\widgets\Spaceless;
 
 ?>
-
 <?php if ( !empty($vec_items) ) : ?>
   <?php Spaceless::begin(); ?>
     <ul class="site-menu">

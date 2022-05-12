@@ -4,6 +4,9 @@
 | HEADER partial
 |--------------------------------------------------------------------------
 |
+| Available variables:
+|  - $this: dezero\web\View component
+|
 */
 
   use dezero\helpers\Url;
