@@ -1,0 +1,112 @@
+//----------------------------------------------------------
+// DASHBOARD page
+//----------------------------------------------------------
+.chart-panel {
+	.chart-filter {
+		padding-top: 10px;
+		padding-bottom: 40px;
+
+		.btn {
+			text-transform: none;
+		}
+
+		.input-daterange {
+			.input-group {
+				width: 150px;
+			}
+		}
+
+		#chart-to-date,
+		#compare-to-date {
+			border-radius: 0;
+		}
+
+		#chart-filter-btn,
+		#compare-filter-btn {
+			padding: .56rem .858rem;
+			border-radius: 0 .143rem .143rem 0;
+		}
+	}
+
+	.chart-wrapper {
+		max-width: 100%;
+    	overflow-x: auto;
+	}
+
+	svg {
+		max-width: 100%;
+		background: transparent;
+	}
+
+	.loader-wrapper {
+		width: 100%;
+		height: 225px;
+		margin: 0 auto;
+		text-align: center;
+
+		.loader {
+			margin-top: 92px;
+		}
+	}
+
+	.compare-chart-wrapper {
+		width: 100%;
+
+		hr {
+			margin-top: 2rem;
+			margin-bottom: 2rem;
+			border-width: 3px;
+		}
+
+	}
+
+
+	// ---------------------------------------------
+	// CHARTIST-JS
+	// ---------------------------------------------
+	
+	// Bar width
+	.ct-chart .ct-series.ct-series-a .ct-bar {
+		stroke-width: 22px;
+	}
+
+	.ct-chart .ct-series.ct-series-a .ct-point,
+	.ct-chart .ct-series.ct-series-a .ct-line,
+	.ct-chart .ct-series.ct-series-a .ct-bar,
+	.ct-chart .ct-series.ct-series-a .ct-slice-donut {
+		stroke: #46BE8A;
+	}
+
+	// Labels
+	.ct-chart .ct-label {
+		font-size: 13px; // 11px;
+	}
+
+	// Labels over bars
+	.ct-barlabel {
+		font-size: 12px;
+		line-height: 1;
+    	color: #76838f;
+    	fill: #76838f;
+	}
+}
+
+// BREAKPOINT: 1200px
+// ----------------------------------------
+@include breakpoint("max-width: 1200px") {
+	.chart-panel {
+		.ct-chart .ct-series.ct-series-a .ct-bar {
+			stroke-width: 18px;
+		}
+	}
+}
+
+// BREAKPOINT: 800px
+// ----------------------------------------
+@include breakpoint("max-width: 800px") {
+	.chart-panel {
+		.ct-chart .ct-series.ct-series-a .ct-bar {
+			stroke-width: 13px;
+		}
+	}
+}

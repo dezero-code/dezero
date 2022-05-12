@@ -1,0 +1,32 @@
+//----------------------------------------------------------
+// FILE STATUS TABLE component
+//----------------------------------------------------------
+
+.file-status-table {
+    .files-column {
+        a {
+            display: block;
+            line-height: 1.5rem;
+        }
+
+        span {
+            margin-bottom: .6rem;
+            display: inline-block;
+        }
+    }
+
+    .actions-column {
+        text-align: center;
+    }
+}
+
+#select2-AssetFileStatus_status_type-results li,
+#select2-AssetFileStatus_status_type-container {
+    > span {
+        font-size: 16px;
+
+        > i {
+            padding-right: 5px;
+        }
+    }
+}

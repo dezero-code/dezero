@@ -1,0 +1,29 @@
+//----------------------------------------------------------
+// CATEGORY MODULE
+//----------------------------------------------------------
+
+// Vars, mixins & helpers
+@import "../config/colors";
+@import "../config/variables";
+@import "../config/mixins";
+
+.index-page .category-tree-wrapper .dd3-content {
+    padding-left: 40px;
+    padding-right: 0;
+}
+
+.index-page .panel-category-summary {
+	.summary {
+    	top: -45px;
+    }
+
+    .grid-view {
+    	margin-top: 0;
+    }
+}
+
+.category-form {
+	code {
+		border: 0;
+	}
+}

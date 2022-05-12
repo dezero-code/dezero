@@ -1,0 +1,40 @@
+//----------------------------------------------------------
+// SIMPLEMDE CUSTOM CSS
+//----------------------------------------------------------
+.editor-toolbar {
+    background: #EFEFEF;
+    padding-left: .3rem;
+    padding-right: .3rem;
+    opacity: .7;
+
+    border-top-color: $color-blue-grey-200;
+    border-left-color: $color-blue-grey-200;
+    border-right-color: $color-blue-grey-200;
+    border-radius: .215rem .215rem 0 0;
+
+
+    &:before,
+    &:after {
+        margin: 0;
+    }
+}
+
+.CodeMirror {
+    border-radius: 0 0 .215rem .215rem;
+    border-color: $color-blue-grey-200;
+    color: $color-blue-grey-500; // #76838F;
+    line-height: 1.571429;
+
+    -webkit-transition: -webkit-box-shadow .25s linear,border .25s linear,color .25s linear,background-color .25s linear;
+    -o-transition: box-shadow .25s linear,border .25s linear,color .25s linear,background-color .25s linear;
+    transition: box-shadow .25s linear,border .25s linear,color .25s linear,background-color .25s linear;
+}
+
+.CodeMirror,
+.CodeMirror-scroll {
+    min-height: 5rem;
+}
+
+.editor-statusbar {
+    color: #bcc2c8;
+}

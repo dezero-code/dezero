@@ -1,0 +1,71 @@
+//----------------------------------------------------------
+// BOOTSTRAP ALERT component
+//----------------------------------------------------------
+.flash-messages-wrapper {
+    .alert {
+        margin: 30px 15px 0;
+    }
+}
+
+.alert {
+    &,
+    > p {
+        font-size: 15px;
+    }
+
+    a {
+        &, &:hover {
+            color: #FFF;
+            text-decoration: underline;
+        }
+    }
+
+    // Summary errors
+    ul > li {
+        line-height: 1.5rem;
+        margin-bottom: .75rem;
+
+        > ul {
+            margin-top: .75rem;
+        }
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    // Alias of ".alert-danger"
+    &.dark.alert-error {
+        color: #FFF;
+        border-color: $color-red-600 ;
+        background-color: $color-red-600;
+
+        .close {
+            color: #FFF;
+        }
+    }
+}
+
+// Alerts with PNotify
+.ui-pnotify {
+    font-size: 1rem;
+    line-height: 1.5rem;
+    
+    .alert-success,
+    .alert-danger,
+    .alert-warning {
+        color: #FFF;
+        border-color: $color-green-600 ;
+        background-color: $color-green-600;
+    }
+
+    .alert-danger {
+        border-color: $color-red-600 ;
+        background-color: $color-red-600;
+    }
+
+    .alert-warning {
+        border-color: $color-orange-600 ;
+        background-color: $color-orange-600;
+    }
+}

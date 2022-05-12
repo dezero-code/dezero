@@ -1,0 +1,523 @@
+// Handy Sass Mixins selection
+// ------------------------------
+
+// Box-sizing
+@mixin box-sizing($box-model) {
+  -webkit-box-sizing: $box-model; // Safari <= 5
+   -moz-box-sizing: $box-model; // Firefox <= 19
+        box-sizing: $box-model;
+}
+
+// Border Radius
+@mixin border-radius($radius) {
+  -webkit-border-radius: $radius;
+     -moz-border-radius: $radius;
+          border-radius: $radius;
+  background-clip: padding-box;     // stops bg color from leaking outside the border:
+}
+
+// Overflow
+@mixin opacity($opacity) {
+  opacity: $opacity;
+  $opacity-ie: $opacity * 100;
+  filter: alpha(opacity=$opacity-ie); //IE8
+}
+
+// Text Truncate
+@mixin text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// Font size. This mixin sets the font size in rem's with a px fallback.
+@mixin font-size($sizeValue: 12 ) {
+  font-size: $sizeValue + px; //fallback for old browsers
+  font-size: (0.125 * $sizeValue) + rem;
+}
+
+// Line height. This mixin sets the line height in rem's with a px fallback.
+@mixin line-height($heightValue: 12 ) {
+  line-height: $heightValue + px; //fallback for old browsers
+  line-height: (0.125 * $heightValue) + rem;
+}
+
+// Responsive Breakpoints
+// @reference http://sass-lang.com/styleguide/layout/
+@mixin breakpoint($point) {
+
+  // Screen large (1280px)
+  @if $point == screen-large {
+    @media (min-width: 80.01em)  { @content; }
+  }
+
+  // Screen small (1024px)
+  @else if $point == screen-small {
+    @media (min-width: 64.01em) and (max-width: 80em)  { @content; }
+  }
+
+  // Screen-small and mobile (< 1280px)
+  @else if $point == screen-small-and-mobile {
+    @media (max-width: 80em) { @content; }
+  }
+
+  // Tablet large (768px)
+  @else if $point == tablet-large {
+    @media (min-width: 48.01em) and (max-width: 64em)  { @content; }
+  }
+
+  // Tablet small (480px)
+  @else if $point == tablet-small {
+    @media (min-width: 30.01em) and (max-width: 48em)  { @content; }
+  }
+
+  // Mobile large (320px)
+  @else if $point == mobile-large {
+    @media (min-width: 20.01em) and (max-width: 30em)  { @content; }
+  }
+
+  // Mobile small (240px)
+  @else if $point == mobile-small {
+    // @media (min-width: 15em)  { @content; }
+    @media (max-width: 20em)  { @content; }
+  }
+
+  // Tablet and mobile (< 768px)
+  @else if $point == tablet-and-mobile {
+    @media (max-width: 64em) { @content; }
+  }
+
+  // Tablet-small and mobile (< 768px)
+  @else if $point == tablet-small-and-mobile {
+    @media (max-width: 48em) { @content; }
+  }
+
+  // Tablet (480px < 768px)
+  @else if $point == tablet {
+    @media (min-width: 30.01em) and (max-width: 64em)  { @content; }
+  }
+
+  // Mobile (< 480px)
+  @else if $point == mobile {
+    @media (max-width: 30em)  { @content; }
+  }
+
+  // All screens
+  @else if $point == all {
+    @media (max-width: 200em)  { @content; }
+  }
+
+  // Custom
+  @else {
+    @media ($point) { @content; }
+  }
+}
+
+
+// Bourbon.io selection
+// -----------------------------
+
+// Variable settings for /addons/prefixer.scss
+$prefix-for-webkit:    true !default;
+$prefix-for-mozilla:   true !default;
+$prefix-for-microsoft: true !default;
+$prefix-for-opera:     true !default;
+$prefix-for-spec:      true !default; // required for keyframe mixin
+$em-base: 16px !default;
+
+// Legacy support for inline-block in IE7 (maybe IE6)
+@mixin inline-block {
+  display: inline-block;
+  vertical-align: baseline;
+  zoom: 1;
+  *display: inline;
+  *vertical-align: auto;
+}
+
+// Hide text
+@mixin hide-text {
+  overflow: hidden;
+
+  &:before {
+    content: "";
+    display: block;
+    width: 0;
+    height: 100%;
+  }
+}
+
+// Order of the includes matters, and it is: normal, bold, italic, bold+italic.
+@mixin font-face($font-family, $file-path, $weight: normal, $style: normal, $asset-pipeline: false ) {
+  @font-face {
+    font-family: $font-family;
+
+    @if $asset-pipeline == true {
+      src: font-url('#{$file-path}.eot');
+      src: font-url('#{$file-path}.eot?#iefix')          format('embedded-opentype'),
+           font-url('#{$file-path}.woff')                format('woff'),
+           font-url('#{$file-path}.ttf')                 format('truetype'),
+           font-url('#{$file-path}.svg##{$font-family}') format('svg');
+    } @else {
+      src: url('#{$file-path}.eot');
+      src: url('#{$file-path}.eot?#iefix')               format('embedded-opentype'),
+           url('#{$file-path}.woff')                     format('woff'),
+           url('#{$file-path}.ttf')                      format('truetype'),
+           url('#{$file-path}.svg##{$font-family}')      format('svg');
+    }
+    // src: url('#{$file-path}.ttf') format('truetype');
+
+    @if $weight == "bold" {
+      font-weight: $weight;
+    }
+    @if $style == "italic" {
+      font-style: $style;
+    }
+  }
+}
+
+// Convert pixels to ems
+// eg. for a relational value of 12px write em(12) when the parent is 16px
+// if the parent is another value say 24px write em(12, 24)
+$em-base: 16px !default;
+@function em($pxval, $base: $em-base) {
+  @if not unitless($pxval) {
+    $pxval: strip-units($pxval);
+  }
+  @if not unitless($base) {
+    $base: strip-units($base);
+  }
+  @return ($pxval / $base) * 1em;
+}
+
+// Linear Gradient
+@mixin linear-gradient($pos, $G1, $G2: null,
+                       $G3: null, $G4: null,
+                       $G5: null, $G6: null,
+                       $G7: null, $G8: null,
+                       $G9: null, $G10: null,
+                       $fallback: null) {
+  // Detect what type of value exists in $pos
+  $pos-type: type-of(nth($pos, 1));
+  $pos-spec: null;
+  $pos-degree: null;
+
+  // If $pos is missing from mixin, reassign vars and add default position
+  @if ($pos-type == color) or (nth($pos, 1) == "transparent")  {
+    $G10: $G9; $G9: $G8; $G8: $G7; $G7: $G6; $G6: $G5;
+     $G5: $G4; $G4: $G3; $G3: $G2; $G2: $G1; $G1: $pos;
+     $pos: null;
+  }
+
+  @if $pos {
+    $positions: _linear-positions-parser($pos);
+    $pos-degree: nth($positions, 1);
+    $pos-spec:   nth($positions, 2);
+  }
+
+  $full: $G1, $G2, $G3, $G4, $G5, $G6, $G7, $G8, $G9, $G10;
+
+  // Set $G1 as the default fallback color
+  $fallback-color: nth($G1, 1);
+
+  // If $fallback is a color use that color as the fallback color
+  @if (type-of($fallback) == color) or ($fallback == "transparent") {
+    $fallback-color: $fallback;
+  }
+
+  background-color: $fallback-color;
+  background-image: -webkit-linear-gradient($pos-degree $full); // Safari 5.1+, Chrome
+  background-image: unquote("linear-gradient(#{$pos-spec}#{$full})");
+}
+
+@function _linear-positions-parser($pos) {
+  $type: type-of(nth($pos, 1));
+  $spec: null;
+  $degree: null;
+  $side: null;
+  $corner: null;
+  $length: length($pos);
+  // Parse Side and corner positions
+  @if ($length > 1) {
+    @if nth($pos, 1) == "to" { // Newer syntax
+      $side: nth($pos, 2);
+
+      @if $length == 2 { // eg. to top
+        // Swap for backwards compatability
+        $degree: _position-flipper(nth($pos, 2));
+      }
+      @else if $length == 3 { // eg. to top left
+        $corner: nth($pos, 3);
+      }
+    }
+    @else if $length == 2 { // Older syntax ("top left")
+      $side: _position-flipper(nth($pos, 1));
+      $corner: _position-flipper(nth($pos, 2));
+    }
+
+    @if ("#{$side} #{$corner}" == "left top") or ("#{$side} #{$corner}" == "top left") {
+      $degree: _position-flipper(#{$side}) _position-flipper(#{$corner});
+    }
+    @else if ("#{$side} #{$corner}" == "right top") or ("#{$side} #{$corner}" == "top right") {
+      $degree: _position-flipper(#{$side}) _position-flipper(#{$corner});
+    }
+    @else if ("#{$side} #{$corner}" == "right bottom") or ("#{$side} #{$corner}" == "bottom right") {
+      $degree: _position-flipper(#{$side}) _position-flipper(#{$corner});
+    }
+    @else if ("#{$side} #{$corner}" == "left bottom") or ("#{$side} #{$corner}" == "bottom left") {
+      $degree: _position-flipper(#{$side}) _position-flipper(#{$corner});
+    }
+    $spec: to $side $corner;
+  }
+  @else if $length == 1 {
+    // Swap for backwards compatability
+    @if $type == string {
+      $degree: $pos;
+      $spec: to _position-flipper($pos);
+    }
+    @else {
+      $degree: -270 - $pos; //rotate the gradient opposite from spec
+      $spec: $pos;
+    }
+  }
+  $degree: unquote($degree + ",");
+  $spec:   unquote($spec + ",");
+  @return $degree $spec;
+}
+
+@function _position-flipper($pos) {
+ @return if($pos == left, right, null)
+         if($pos == right, left, null)
+         if($pos == top, bottom, null)
+         if($pos == bottom, top, null);
+}
+
+
+// Shorthand mixin. Supports multiple parentheses-deliminated values for each variable.
+// Example: @include transition (all 2s ease-in-out);
+//          @include transition (opacity 1s ease-in 2s, width 2s ease-out);
+//          @include transition-property (transform, opacity);
+
+@mixin transition ($properties...) {
+  @if length($properties) >= 1 {
+    @include prefixer(transition, $properties, webkit moz spec);
+  }
+
+  @else {
+    $properties: all 0.15s ease-out 0s;
+    @include prefixer(transition, $properties, webkit moz spec);
+  }
+}
+
+@mixin transition-property ($properties...) {
+   -webkit-transition-property: transition-property-names($properties, 'webkit');
+      -moz-transition-property: transition-property-names($properties, 'moz');
+           transition-property: transition-property-names($properties, false);
+}
+
+@mixin transition-duration ($times...) {
+  @include prefixer(transition-duration, $times, webkit moz spec);
+}
+
+@mixin transition-timing-function ($motions...) {
+// ease | linear | ease-in | ease-out | ease-in-out | cubic-bezier()
+  @include prefixer(transition-timing-function, $motions, webkit moz spec);
+}
+
+@mixin transition-delay ($times...) {
+  @include prefixer(transition-delay, $times, webkit moz spec);
+}
+
+//************************************************************************//
+// Example: @include prefixer(border-radius, $radii, webkit ms spec);
+//************************************************************************//
+// Variables located in /settings/_prefixer.scss
+
+@mixin prefixer ($property, $value, $prefixes) {
+  @each $prefix in $prefixes {
+    @if $prefix == webkit {
+      @if $prefix-for-webkit {
+        -webkit-#{$property}: $value;
+      }
+    }
+    @else if $prefix == moz {
+      @if $prefix-for-mozilla {
+        -moz-#{$property}: $value;
+      }
+    }
+    @else if $prefix == ms {
+      @if $prefix-for-microsoft {
+        -ms-#{$property}: $value;
+      }
+    }
+    @else if $prefix == o {
+      @if $prefix-for-opera {
+        -o-#{$property}: $value;
+      }
+    }
+    @else if $prefix == spec {
+      @if $prefix-for-spec {
+        #{$property}: $value;
+      }
+    }
+    @else  {
+      @warn "Unrecognized prefix: #{$prefix}";
+    }
+  }
+}
+
+@mixin disable-prefix-for-all() {
+  $prefix-for-webkit:    false;
+  $prefix-for-mozilla:   false;
+  $prefix-for-microsoft: false;
+  $prefix-for-opera:     false;
+  $prefix-for-spec:      false;
+}
+
+
+// Gradients
+
+// Horizontal gradient, from left to right
+//
+// Creates two color stops, start and end, by specifying a color and position for each color stop.
+@mixin gradient-x($start-color: #555, $end-color: #333, $start-percent: 0%, $end-percent: 100%) {
+  background-image: linear-gradient(to right, $start-color $start-percent, $end-color $end-percent);
+  background-repeat: repeat-x;
+}
+
+// Vertical gradient, from top to bottom
+//
+// Creates two color stops, start and end, by specifying a color and position for each color stop.
+@mixin gradient-y($start-color: #555, $end-color: #333, $start-percent: 0%, $end-percent: 100%) {
+  background-image: linear-gradient(to bottom, $start-color $start-percent, $end-color $end-percent);
+  background-repeat: repeat-x;
+}
+
+@mixin gradient-directional($start-color: #555, $end-color: #333, $deg: 45deg) {
+  background-image: linear-gradient($deg, $start-color, $end-color);
+  background-repeat: repeat-x;
+}
+@mixin gradient-x-three-colors($start-color: #00b3ee, $mid-color: #7a43b6, $color-stop: 50%, $end-color: #c3325f) {
+  background-image: linear-gradient(to right, $start-color, $mid-color $color-stop, $end-color);
+  background-repeat: no-repeat;
+}
+@mixin gradient-y-three-colors($start-color: #00b3ee, $mid-color: #7a43b6, $color-stop: 50%, $end-color: #c3325f) {
+  background-image: linear-gradient($start-color, $mid-color $color-stop, $end-color);
+  background-repeat: no-repeat;
+}
+@mixin gradient-radial($inner-color: #555, $outer-color: #333) {
+  background-image: radial-gradient(circle, $inner-color, $outer-color);
+  background-repeat: no-repeat;
+}
+@mixin gradient-striped($color: rgba(255,255,255,.15), $angle: 45deg) {
+  background-image: linear-gradient($angle, $color 25%, transparent 25%, transparent 50%, $color 50%, $color 75%, transparent 75%, transparent);
+}
+
+//-------------------------------------------------------------------------------------------------------------------
+
+// Breakpoint viewport sizes and media queries.
+//
+// Breakpoints are defined as a map of (name: minimum width), order from small to large:
+//
+//    (xs: 0, sm: 576px, md: 768px, lg: 992px, xl: 1200px)
+//
+// The map defined in the `$grid-breakpoints` global variable is used as the `$breakpoints` argument by default.
+
+// Name of the next breakpoint, or null for the last breakpoint.
+//
+//    >> breakpoint-next(sm)
+//    md
+//    >> breakpoint-next(sm, (xs: 0, sm: 576px, md: 768px, lg: 992px, xl: 1200px))
+//    md
+//    >> breakpoint-next(sm, $breakpoint-names: (xs sm md lg xl))
+//    md
+@function breakpoint-next($name, $breakpoints: $grid-breakpoints, $breakpoint-names: map-keys($breakpoints)) {
+  $n: index($breakpoint-names, $name);
+  @return if($n < length($breakpoint-names), nth($breakpoint-names, $n + 1), null);
+}
+
+// Minimum breakpoint width. Null for the smallest (first) breakpoint.
+//
+//    >> breakpoint-min(sm, (xs: 0, sm: 576px, md: 768px, lg: 992px, xl: 1200px))
+//    576px
+@function breakpoint-min($name, $breakpoints: $grid-breakpoints) {
+  $min: map-get($breakpoints, $name);
+  @return if($min != 0, $min, null);
+}
+
+// Maximum breakpoint width. Null for the largest (last) breakpoint.
+// The maximum value is calculated as the minimum of the next one less 0.1.
+//
+//    >> breakpoint-max(sm, (xs: 0, sm: 576px, md: 768px, lg: 992px, xl: 1200px))
+//    767px
+@function breakpoint-max($name, $breakpoints: $grid-breakpoints) {
+  $next: breakpoint-next($name, $breakpoints);
+  @return if($next, breakpoint-min($next, $breakpoints) - 1px, null);
+}
+
+// Returns a blank string if smallest breakpoint, otherwise returns the name with a dash infront.
+// Useful for making responsive utilities.
+//
+//    >> breakpoint-infix(xs, (xs: 0, sm: 576px, md: 768px, lg: 992px, xl: 1200px))
+//    ""  (Returns a blank string)
+//    >> breakpoint-infix(sm, (xs: 0, sm: 576px, md: 768px, lg: 992px, xl: 1200px))
+//    "-sm"
+@function breakpoint-infix($name, $breakpoints: $grid-breakpoints) {
+  @return if(breakpoint-min($name, $breakpoints) == null, "", "-#{$name}");
+}
+
+// Media of at least the minimum breakpoint width. No query for the smallest breakpoint.
+// Makes the @content apply to the given breakpoint and wider.
+@mixin media-breakpoint-up($name, $breakpoints: $grid-breakpoints) {
+  $min: breakpoint-min($name, $breakpoints);
+  @if $min {
+    @media (min-width: $min) {
+      @content;
+    }
+  } @else {
+    @content;
+  }
+}
+
+// Media of at most the maximum breakpoint width. No query for the largest breakpoint.
+// Makes the @content apply to the given breakpoint and narrower.
+@mixin media-breakpoint-down($name, $breakpoints: $grid-breakpoints) {
+  $max: breakpoint-max($name, $breakpoints);
+  @if $max {
+    @media (max-width: $max) {
+      @content;
+    }
+  } @else {
+    @content;
+  }
+}
+
+// Media that spans multiple breakpoint widths.
+// Makes the @content apply between the min and max breakpoints
+@mixin media-breakpoint-between($lower, $upper, $breakpoints: $grid-breakpoints) {
+  $min: breakpoint-max($lower, $breakpoints);
+  $max: breakpoint-max($upper, $breakpoints);
+
+  @media (min-width: $min) and (max-width: $max) {
+    @content;
+  }
+}
+
+// Media between the breakpoint's minimum and maximum widths.
+// No minimum for the smallest breakpoint, and no maximum for the largest one.
+// Makes the @content apply only to the given breakpoint, not viewports any wider or narrower.
+@mixin media-breakpoint-only($name, $breakpoints: $grid-breakpoints) {
+  $min: breakpoint-min($name, $breakpoints);
+  $max: breakpoint-max($name, $breakpoints);
+
+  @if $min != null and $max != null {
+    @media (min-width: $min) and (max-width: $max) {
+      @content;
+    }
+  } @else if $max == null {
+    @include media-breakpoint-up($name)
+  } @else if $min == null {
+    @include media-breakpoint-down($name)
+  }
+}
+
+

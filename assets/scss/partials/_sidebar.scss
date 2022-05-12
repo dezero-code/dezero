@@ -1,0 +1,25 @@
+//----------------------------------------------------------
+// SIDEBAR page
+//----------------------------------------------------------
+.site-menu-sub {
+    .site-menu-item.indent-item > a {
+        padding-left: 1.5rem;
+    }
+}
+
+.page-aside-section {
+    &:after {
+        margin: 0 22px 22px;
+    }
+
+    .list-group-item {
+        font-size: 15px;
+
+        // Icon
+        i {
+            font-size: 18px;
+            padding-right: 6px;
+            line-height: 1rem;
+        }
+    }
+}

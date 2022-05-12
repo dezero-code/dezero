@@ -1,0 +1,124 @@
+//----------------------------------------------------------
+// CUSTOM HELPER CLASSES
+//----------------------------------------------------------
+.hide { display: none!important; }
+.inline { @include inline-block; }
+.block { display:block !important; }
+.center { text-align: center; margin: 0 auto; }
+.clear { clear: both !important;}
+// .bold {  font-weight: 600; }
+
+// Non helpers
+.no-padding { padding:0 !important; }
+.no-margin { margin:0 !important; }
+.no-border { border:none; }
+.no-radius { @include border-radius(0); }
+.no-underline { text-decoration:none !important; }
+
+// List inline
+ul.list-inline {
+	list-style: none;
+
+	> li {
+		float: left;
+		position: relative;
+		display: block;
+		overflow:hidden;
+	}
+}
+
+// List unstyled
+ul.list-unstyled {
+	margin-left: 0;
+	
+	> li > [class*="icon-"]:first-child {
+		width: 18px;
+		text-align: center;
+	}
+}
+
+// List with no-bullets
+ul.no-bullets {
+	list-style: none;
+	padding-left: 0 !important;
+}
+
+// Fluid Widths
+.w25 { width: 25%; }
+.w30 { width: 30%; }
+.w40 { width: 40%; }
+.w45 { width: 45%; }
+.w50 { width: 50%; }
+.w60 { width: 60%; }
+.w65 { width: 65%; }
+.w70 { width: 70%; }
+.w75 { width: 75%; }
+.w100 { width: 100%; }
+
+// Fluid margins
+.mleft-5 { margin-left: 5%; }
+.mleft-10 { margin-left: 10%; }
+.mright-5 { margin-right: 5%; }
+.mright-10 { margin-right: 10%; }
+
+.mt10 { margin-top: 10px; }
+.mt15 { margin-top: 15px; }
+.mt20 { margin-top: 20px; }
+.mt25 { margin-top: 25px; }
+.mt30 { margin-top: 30px; }
+
+.mb10 { margin-bottom: 10px; }
+.mb15 { margin-bottom: 15px; }
+.mb20 { margin-bottom: 20px; }
+.mb25 { margin-bottom: 25px; }
+.mb30 { margin-bottom: 30px; }
+
+.pt10 { padding-top: 10px; }
+.pt15 { padding-top: 15px; }
+.pt20 { padding-top: 20px; }
+.pt25 { padding-top: 25px; }
+.pt30 { padding-top: 30px; }
+
+.pb10 { padding-bottom: 10px; }
+.pb15 { padding-bottom: 15px; }
+.pb20 { padding-bottom: 20px; }
+.pb25 { padding-bottom: 25px; }
+.pb30 { padding-bottom: 30px; }
+
+.font-size-10 { font-size: 10px; }
+.font-size-12 { font-size: 12px; }
+.font-size-14 { font-size: 14px; }
+.font-size-16 { font-size: 16px; }
+.font-size-18 { font-size: 18px; }
+.font-size-20 { font-size: 20px; }
+.font-size-24 { font-size: 24px; }
+.font-size-26 { font-size: 26px; }
+.font-size-30 { font-size: 30px; }
+.font-size-32 { font-size: 32px; }
+.font-size-36 { font-size: 36px; }
+.font-size-40 { font-size: 40px; }
+.font-size-48 { font-size: 48px; }
+.font-size-50 { font-size: 50px; }
+.font-size-60 { font-size: 60px; }
+.font-size-70 { font-size: 70px; }
+.font-size-80 { font-size: 80px; }
+
+.font-weight-bold { font-weight: 600 !important; }
+
+// Tables
+table {
+    
+    .right {
+        text-align: right;
+    }
+
+    .center {
+        text-align: center;
+    }
+
+    &.head-uppercase {
+        thead > tr > th {
+            text-transform: uppercase;
+        }
+    }
+}

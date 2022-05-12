@@ -1,0 +1,104 @@
+//----------------------------------------------------------
+// CUSTOM CSS FOR UPLOAD WIDGET (JASNY)
+//----------------------------------------------------------
+
+// Input file upload
+.dz-fileinput {
+    padding-left: 0;
+    max-width: 300px;
+
+    .input-append {
+        display: none;
+    }
+
+    &.fileinput-exists .input-append {
+        display: block;
+    }
+
+    .uneditable-input{
+        &.col-sm-12 {
+            padding-left: 0 !important;
+            margin: .5rem 0;
+        }
+
+        .file-icon-append {
+            font-size: 17px;
+            padding-right: 7px;
+        }
+
+        .fileinput-preview {
+            display: inline-block;
+            position: relative;
+            top: -2px;
+            vertical-align: middle;
+            width: 255px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    }
+
+    .fileinput-button-wrapper {
+        position: relative;
+
+        .btn {
+            margin-top: 7px;
+            margin-right: 7px;
+
+            &, .icon, span {
+                cursor: pointer;
+                // color: $default-color;
+            }
+        }
+    }
+
+    .thumbnail > img {
+        max-width: 100%;
+    }
+}
+
+
+//----------------------------------------------------------
+// KRAJEE FILEINPUT
+//----------------------------------------------------------
+.kv-wrapper {
+    .btn {
+        .wb,
+        span {
+            font-size: 18px;
+            color: #FFF;
+            line-height: 1.5em;
+        }
+    }
+
+    // Hide remove and zoom icons
+    .kv-file-remove,
+    .kv-file-zoom {
+        display: none;
+    }
+
+    .file-preview {
+        margin-bottom: 20px;
+    }
+
+    .file-drop-zone-title {
+        line-height: 1em;
+        padding: 50px 10px;
+    }
+
+    .kv-upload-progress {
+        .progress-bar {
+            color: #FFF;
+            line-height: 1.5rem;
+        }
+    }
+
+    .file-drop-zone {
+        display: inline-block;
+        width: calc(100% - 24px);
+    }
+}
+
+.kv-hidden {
+    display: none;
+}

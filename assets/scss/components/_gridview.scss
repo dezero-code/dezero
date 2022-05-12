@@ -1,0 +1,200 @@
+//----------------------------------------------------------
+// YII GRIDVIEW component
+//----------------------------------------------------------
+.grid-view-loading {
+    background: none;
+
+    &.loading {
+        background: url(../images/grid-loading.gif) no-repeat;
+    }
+}
+
+.dz-grid-container {
+    .grid-view-loading {
+        background: none;
+
+        position: relative;
+        overflow: hidden;
+        max-height: 100%;
+
+        .table {
+            background: transparent;
+            opacity: 0.6;
+        }
+
+        .dz-loader-overlay {
+            display: block;
+        }
+    }
+}
+
+.dz-grid-container {
+    .dz-loader-overlay {
+        background: transparent;
+        position: absolute;
+        opacity: 0.6;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: none;
+    }
+
+    .dz-loader {
+        position: absolute;
+        // background: #fff url('../images/grid-loading.gif') center center no-repeat !important;
+        width: 80px;
+        height: 80px;
+        // top: 50%;
+        top: 100px;
+        left: calc(50% - 40px);
+    }
+}
+
+.grid-view {
+    .table {
+        th {
+            font-weight: 400;
+            text-transform: uppercase;
+
+            &.sortable {
+                position: relative;
+                cursor: pointer;
+
+                .sort-link {
+                    display: block;
+
+                    &:after,
+                    &:before {
+                        font-family: 'Web Icons';
+                        font-size: 16px;
+                        font-weight: 400;
+                        font-style: normal;
+                        position: absolute;
+                        top: 50%;
+                        right: .8rem;
+                        opacity: .3;
+                        text-rendering: auto;
+                    }
+
+                    &:before {
+                        margin-top: -5px;
+                        content: "\f190";
+                        -webkit-transform: translateY(-50%);
+                        -ms-transform: translateY(-50%);
+                        -o-transform: translateY(-50%);
+                        transform: translateY(-50%);
+                    }
+
+                    &:after {
+                        margin-top: 5px;
+                        content: "\f18f";
+                        -webkit-transform: translateY(-50%);
+                        -ms-transform: translateY(-50%);
+                        -o-transform: translateY(-50%);
+                        transform: translateY(-50%);
+                    }
+
+                    &.asc {
+                        &:before {
+                            opacity: 1;
+                        }
+                    }
+
+                    &.desc {
+                        &:after {
+                            opacity: 1;
+                        }
+                    }
+                }
+            }
+
+            a {
+                color: $color-blue-grey-600;
+                font-weight: 400;
+                text-decoration: none;
+
+                &:hover {
+                    color: $color-blue;
+                }
+            }
+        }
+
+        td {
+            p {
+                margin-bottom: 0;
+            }
+
+            ul {
+                padding-left: 1rem;
+            }
+        }
+
+        .filters {
+            .form-control,
+            .input-group-addon {
+                padding: .429rem
+            }
+
+            td {
+                padding: .572rem .25rem;
+            }
+
+            .select2-container--default .select2-selection--single {
+                padding: .429rem 1.858rem .429rem .429rem;
+            }
+
+            .input-daterange {
+                input.form-control {
+                    width: 90px;
+                }
+            }
+        }
+    }
+
+    .button-column {
+        text-align: center;
+        min-width: 80px;
+
+        .dropdown-item i {
+            min-width: 15px;
+            margin-right: 8px;
+        }
+    }
+
+    .badget-wrapper {
+        display: inline;
+        margin-left: 10px;
+
+        a {
+            text-decoration: none;
+        }
+    }
+
+    .dropdown-actions {
+        display: inline-block;
+
+        > button.btn {
+            padding: .572rem;
+            border: 0;
+
+            > .icon {
+                margin: -1px 0 0;
+            }       
+        }
+
+        .dropdown-menu {
+            margin-top: 0;
+        }
+    }
+
+    a.dropdown-item {
+        text-decoration: none;
+        padding: .215rem .572rem;
+    }
+
+    .pagination {
+        float: right;
+        margin-top: 1rem;
+    }
+}

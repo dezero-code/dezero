@@ -1,0 +1,111 @@
+//----------------------------------------------------------
+// SLIDEPANEL widget
+//----------------------------------------------------------
+.slidePanel-header {
+    background-color: $color-blue-grey;
+    padding: 20px;
+
+    .slidePanel-close {
+        line-height: 23px;
+        padding: 0;
+        font-weight: bold;
+    }
+
+    h1 {
+        font-size: 16px;
+        line-height: 23px;
+    }
+}
+
+.slidePanel-inner-section {
+    padding-top: 0;     // 25px;
+    padding-bottom: 0;  // 25px;
+    border: 0;
+
+    &.border-bottom {
+        padding-bottom: 20px;
+        margin-bottom: 20px;
+        border-bottom: 1px solid $gray-lighter;
+    }
+
+    &.border-top {
+        padding-top: 20px;
+        margin-top: 20px;
+        border-top: 1px solid $gray-lighter;
+    }
+}
+
+.slidePanel-inner {
+    padding: 20px 20px 0;
+
+    p {
+        font-size: 15px;
+    }
+
+    .table {
+        margin-bottom: 0;
+    }
+
+    .row {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-radio-group {
+        padding-left: 1.429rem;
+        margin-bottom: 0;
+    }
+
+    .radio-custom.radio-inline {
+        padding-right: 20px;
+    }
+
+    .form-control-label {
+        font-weight: 400;
+        color: $color-blue-grey-600;
+        text-align: right;
+    }
+
+    .comment-wrapper {
+        .comment-header {
+            padding-bottom: 10px;
+
+            .icon {
+                color: $color-app-pri;
+                font-size: 24px;
+            }
+
+            .name,
+            .date {
+                display: inline-block;
+                vertical-align: top;
+            }
+
+            .name {
+                padding-left: 5px;
+                color: $color-app-pri;
+                font-size: 16px;
+            }
+
+            .date {
+                padding-left: 7px;
+                padding-top: 1px;
+                color: $gray;
+                font-size: 14px;
+            }
+        }
+
+        p {
+            font-size: 14px;
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+        }
+    }
+}
+
+.slidePanel-comment {
+    border: 0;
+    margin-top: 0;
+    margin-bottom: 25px;
+}

@@ -51,6 +51,39 @@ class Dz extends Yii
 
 
     /**
+     * Get current language
+     */
+    public static function currentLanguage()
+    {
+        return self::$app->language;
+    }
+
+
+    /**
+     * Get default language
+     *
+     * @see I18N::get_default_language()
+     */
+    public static function defaultLanguage()
+    {
+        return self::currentLanguage();
+        // return self::$app->i18n->get_default_language();
+    }
+
+
+    /**
+     * App is multilanguage
+     *
+     * @see I18N::is_multilanguage()
+     */
+    public static function isMultilanguage()
+    {
+        return false;
+        // return self::$app->i18n->is_multilanguage();
+    }
+
+
+    /**
      * Returns an environment variable, checking for it in `$_SERVER` and calling `getenv()` as a fallback.
      */
     public static function env($name) : ?string

@@ -1,0 +1,86 @@
+//----------------------------------------------------------
+// HEADER partial zone
+//----------------------------------------------------------
+.site-navbar-small .site-navbar .navbar-toolbar {
+    > li {
+        > a {
+            &.profile-nav-link {
+                line-height: 1.5rem;
+
+                .icon {
+                    font-size: 16px;
+                }
+
+                span {
+                    display: inline-block;
+                    margin-left: 4px;
+                    vertical-align: top;
+                    padding-top: 1px;
+                }
+            }
+        }
+    }
+}
+
+// Nav header menu with icons (used as TABS on form pages)
+.page-content > .nav-quick-header {
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+
+    // Nav item
+    .nav-link {
+        > .icon {
+            display: inline-block;
+            font-size: 1.5rem;
+            margin-bottom: 0;
+        }
+
+        > span {
+            display: inline-block;
+            vertical-align: top;
+            margin: 0 0 0 5px;
+            font-size: 1.1rem;
+        }
+
+        &:hover {
+            background-color: #FFF;
+            color: $color-blue-grey-800;
+        }
+    }
+
+    // Active nav item
+    .nav-item.active {
+        // border-color: $color-blue-grey-600;
+
+        .nav-link {
+            background-color: $color-blue-grey-600;
+            border-color: $color-blue-grey-600;
+            color: #FFF; // rgba(255,255,255,0.9);
+
+            &:hover {
+                color: #FFF;
+            }
+        }
+    }
+}
+
+// Header top
+.site-navbar > .navbar-container {
+    background-color: $color-app-sec;
+
+    padding-right: 1.0715rem;
+    padding-left: 0; // 1.0715rem;
+
+    .nav-link {
+        padding: .715rem 1.572rem;
+        // padding: .715rem 2.145rem;
+        color: #FFF;
+    }
+}
+
+.navbar-default .hamburger .hamburger-bar,
+.navbar-default .hamburger:after,
+.navbar-default .hamburger:before {
+    background: #FFF;
+}

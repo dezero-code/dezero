@@ -1,0 +1,101 @@
+//----------------------------------------------------------
+// VARIABLES
+//----------------------------------------------------------
+
+// Colors
+$color-app-pri:       #222222; // #006E44;
+$color-app-sec:       #11C26D; // #9EC700;
+$color-app-acc:       #F1F4F5; // #F1531A;
+$color-app-back:	  #CCCCCC; // #F1531A;
+$color-app-light:	  #AAAAAA;
+$default-color:       $color-app-pri;
+$color-grey-form:	  #E0E0E0;
+$color-app-body:      #F1F4F5;
+// $color-app-green-light:	#F1F7EA;
+
+// Colors from REMARK theme
+// -------------------------
+$transparent:       rgba(0, 0, 0, 0);
+
+$color-black:       #000000;
+$color-white:       #ffffff;
+
+$color-red:         $color-red-700 !default;
+$color-pink:        $color-pink-700 !default;
+$color-purple:      $color-purple-700 !default;
+$color-indigo:      $color-indigo-700 !default;
+$color-blue:        $color-blue-700 !default;
+$color-cyan:        $color-cyan-700 !default;
+$color-teal:        $color-teal-700 !default;
+$color-green:       $color-green-700 !default;
+$color-light-green: $color-light-green-700 !default;
+$color-yellow:      $color-yellow-700 !default;
+$color-orange:      $color-orange-700 !default;
+$color-brown:       $color-brown-700 !default;
+$color-grey:        $color-grey-700 !default;
+$color-blue-grey:   $color-blue-grey-700 !default;
+
+// Primary color
+$color-primary: 'green' !default;
+
+$color-primary-list: map-get($color-lists, $color-primary) !default;
+
+$color-primary-100: map-get($color-primary-list, "100") !default;
+$color-primary-200: map-get($color-primary-list, "200") !default;
+$color-primary-300: map-get($color-primary-list, "300") !default;
+$color-primary-400: map-get($color-primary-list, "400") !default;
+$color-primary-500: map-get($color-primary-list, "500") !default;
+$color-primary-600: map-get($color-primary-list, "600") !default;
+$color-primary-700: map-get($color-primary-list, "700") !default;
+$color-primary-800: map-get($color-primary-list, "800") !default;
+
+// Start with assigning color names to specific hex values.
+$white:  $color-white;
+$black:  $color-black;
+$red:    $color-red;
+$orange: $color-orange;
+$yellow: $color-yellow;
+$green:  $color-green;
+$blue:   $color-blue;
+$teal:   $color-teal;
+$pink:   $color-pink;
+$purple: $color-purple;
+
+// Gray color
+$gray-default:  $color-blue-grey-500;
+$gray-base:     $color-blue-grey-800;
+$gray-darkest:  $color-blue-grey-700;
+$gray-darker:   $color-blue-grey-600;
+$gray-dark:     $color-blue-grey-500;
+$gray:          $color-blue-grey-400;
+$gray-light:    $color-blue-grey-300;
+$gray-lighter:  $color-blue-grey-200;
+$gray-lightest: $color-blue-grey-100;
+
+// Font weight
+// -------------------------
+$font-weight-override:       false;
+$font-weight-light:          300;
+$font-weight-normal:         400;
+$font-weight-medium:         500;
+$font-weight-bold:           700;
+
+$font-weight-base:           $font-weight-normal;
+
+// Unit-less `line-height` for use in components like buttons.
+$line-height:                1.57142857;
+$line-height-base:           $line-height; // 22/14 cumstom
+
+
+// Grid breakpoints
+// -------------------------
+// Define the minimum dimensions at which your layout will change,
+// adapting to different screen sizes, for use in media queries.
+
+$grid-breakpoints: (
+  xs: 0,
+  sm: 544px,
+  md: 768px,
+  lg: 992px,
+  xl: 1200px
+) !default;

@@ -1,0 +1,140 @@
+//----------------------------------------------------------
+// FORM component
+//----------------------------------------------------------
+.form-control-lg,
+.input-group-lg>.form-control,
+.input-group-lg>.input-group-addon,
+.input-group-lg>.input-group-btn>.btn {
+    border-color: $color-app-light
+}
+
+form {
+    .form-actions {
+        .btn {
+            margin-right: 15px;
+            margin-bottom: 0;
+
+            &.right {
+                float: right;
+            }
+        }
+    }
+
+    .view-field {
+        opacity: 1;
+        background-color: $color-blue-grey-100;
+        min-height: 2.573rem;
+        height: auto;
+
+        &.clean {
+            background-color: transparent;
+            border: 0;
+        }
+    }
+
+    textarea.form-control {
+        min-height: 4rem;
+        resize: none;
+        box-sizing: border-box;
+
+        &.short-text {
+            min-height: 2.6rem;
+        }
+    }
+
+    .form-group.form-radio-group {
+        margin-bottom: 0;
+    }
+
+    // Currency fields
+    .form-currency-group {
+        .bootstrap-touchspin {
+            max-width: 220px;
+        }
+
+        .form-control {
+            text-align: right;
+        }
+    }
+
+    // Datepicker fields
+    .date-group {
+        .form-control {
+            max-width: 110px;
+        }
+    }
+
+    .input-daterange {
+        display: inline-block;
+        max-width: 330px;
+    }
+
+    .input-group-btn .btn {
+        padding: .429rem 1rem;
+    }
+}
+
+.has-danger {
+    .bootstrap-touchspin-down,
+    .bootstrap-touchspin-up {
+        border-color: $color-red;
+        color: $color-red;
+    }
+}
+
+textarea.form-control {
+    // min-height: 4rem;
+    resize: none;
+    box-sizing: border-box;
+
+    // &.short-text {
+    //  min-height: 2.6rem;
+    // }
+}
+
+// Datepicker
+.datepicker-dropdown {
+    z-index: 1501 !important;
+}
+
+// Free tags - Bootstrap Tokenfield
+.tokenfield {
+    &.form-control {
+        height: auto;
+        padding-top: .4rem;
+    }
+
+    &.view {
+        padding-top: .5rem;
+
+        .token-label {
+            padding-right: 4px;
+        }
+
+        .token:hover {
+            border-color: $color-blue-grey-200;
+        }
+
+        > i {
+            position:  relative;
+            top: -0.5rem;
+        }
+    }
+
+    .token {
+        height: 24px;
+    }
+}
+
+@media (max-width: 768px) {
+    .form-group .radio-inline {
+        width: 100%;
+        display: block;
+        margin-left: 0;
+        margin-bottom: .7rem;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+}

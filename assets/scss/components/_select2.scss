@@ -1,0 +1,40 @@
+//----------------------------------------------------------
+// SELECT2 component
+//----------------------------------------------------------
+
+.select2-container--default .select2-selection {
+    font-size: 1rem;
+    line-height: 1.571429;
+    font-weight: normal;
+}
+
+.select2-container .select2-search--inline .select2-search__field {
+    margin-left: 0.75rem;
+}
+
+// Fixed width for SELECT2
+.select2-100 .select2-container { width: 100px; }
+.select2-150 .select2-container { width: 150px; }
+.select2-200 .select2-container { width: 200px; }
+.select2-250 .select2-container { width: 250px; }
+.select2-300 .select2-container { width: 300px; }
+.select2-350 .select2-container { width: 350px; }
+.select2-400 .select2-container { width: 400px; }
+.select2-450 .select2-container { width: 450px; }
+.select2-500 .select2-container { width: 500px; }
+
+.select2-results {
+    .select2-results__option {
+
+        // Coloured DOT point icon on SELECT2
+        .wb-medium-point {
+            padding-right: 6px;
+        }
+    }
+}
+
+// Add more "z-index" value int a SELECT2 instance
+// @see https://github.com/select2/select2/issues/4533
+.select2-dropdown.modal-dropdown {
+    z-index: 9000;
+}

@@ -1,0 +1,20 @@
+//----------------------------------------------------------
+// CUSTOM BUTTONS
+//----------------------------------------------------------
+
+// Special style for DELETE button
+.btn-delete {
+    color: $color-red-800;
+    border-color: $color-red-800;
+    background-color: #FFF;
+
+    &:hover {
+        color: #FFF;
+        background-color: $color-red-800;
+    }
+}
+
+// Full width
+.btn-full {
+    width: 100%;
+}

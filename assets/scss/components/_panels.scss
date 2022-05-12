@@ -1,0 +1,180 @@
+//----------------------------------------------------------
+// PANELS
+//----------------------------------------------------------
+
+// View content page
+.panel-view-content {
+    .row {
+        margin-top: 1.5rem;
+        margin-bottom: 1.5rem;
+
+        &:first-child {
+            margin-top: 0;
+        }
+    }
+
+    hr {
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    h4 {
+        margin-top: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    h5 {
+        margin-bottom: 3px;
+    }
+
+    ul {
+        padding-left: 1.5rem;
+        margin-bottom: 0;
+
+        &.nav-tabs {
+            padding-left: 0;
+        }
+    }
+
+    .badge {
+        font-size: 100%;
+    }
+
+    .view-field {
+        opacity: 1;
+        background-color: $color-blue-grey-100;
+        min-height: 2.573rem;
+        height: auto;
+
+        &.clean {
+            background-color: transparent;
+            border: 0;
+        }
+    }
+}
+
+// Gridview
+.panel-top-summary {
+    position: relative;
+
+    .grid-view {
+        margin-top: 1.5rem;
+    }
+
+    .summary {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        text-align: right;
+        font-size: 12px;
+    }
+}
+
+.panel {
+    .panel-title {
+        .btn {
+            color: #FFF;
+            margin-left: 10px;
+            margin-top: -2px;
+        }
+    }
+
+    .panel-body {
+        > .page-content-actions {
+            padding: 0;
+            margin-bottom: 1rem;
+
+            .grid-action-col {
+                display: inline-block;
+                vertical-align: top;
+            }
+
+            .grid-search-wrapper {
+                .form-control-search {
+                    font-size: 1.2rem;
+                    width: 300px;
+                }
+            }
+
+        }
+    }
+
+    &.panel-top-summary {
+        .panel-body {
+            > .page-content-actions {
+                margin-top: -6px;
+                margin-bottom: 0;
+            }
+        }
+
+        &.panel-content-summary {
+            .grid-view {
+                margin-top: 0;
+            }
+
+            .summary {
+                position: absolute;
+                top: -45px; // 15px;
+                right: 15px;
+                text-align: right;
+                font-size: 12px;
+            }
+        }
+    }
+}
+
+.status-panel {
+    .panel-body {
+        padding: 4px 0;
+    }
+
+    hr {
+        margin: 0 0 4px;
+    }
+
+    .list-group-item {
+        font-size: 14px;
+        padding: 12px 18px;
+        margin-bottom: 1px;
+        border: none;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        i {
+            font-size: 18px;
+            padding-right: 6px;
+            line-height: 1rem;
+        }
+
+        &.active {
+            background-color: transparent;
+            color: $color-app-pri;
+        }
+
+        &:hover,
+        &.active:hover {
+            background-color: $color-blue-grey-100;
+            border: none;
+            color: $color-app-pri;
+        }
+    }
+
+    .item-right {
+        float: right;
+    }
+}
+
+// STATUS PANEL
+@media (min-width: 992px) {
+    .panel-sidebar-wrapper {
+        .col-lg-3 {
+            width: 290px;
+        }
+
+        .col-lg-9 {
+            width: calc(100% - 290px);
+            padding-left: .5rem;
+        }
+    }
+}

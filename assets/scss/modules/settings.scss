@@ -1,0 +1,28 @@
+//----------------------------------------------------------
+// SETTINGS MODULE
+//----------------------------------------------------------
+
+// Vars, mixins & helpers
+@import "../config/colors";
+@import "../config/variables";
+@import "../config/mixins";
+
+#country-grid .country_code_column {
+    width: 145px;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+#translation-page-header .page-header-actions {
+    label {
+        padding-right: 5px;
+        color: $color-blue-grey-700;
+    }
+
+    label, select {
+        display: inline-block;
+        width: auto;
+        font-size: 1.1rem;
+    }
+}
+
