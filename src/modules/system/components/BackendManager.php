@@ -80,7 +80,7 @@ class BackendManager extends Component
             'current_controller'    => Dz::currentController(true),
             'current_action'        => Dz::currentAction(true),
             'language_id'           => Yii::$app->language,
-            'is_logged_in'          => false, // ! Yii::$app->user->isGuest,
+            'is_logged_in'          => ! Yii::$app->user->isGuest,
             'path_info'             => Yii::$app->request->getPathInfo(),
         ];
     }
@@ -103,8 +103,7 @@ class BackendManager extends Component
         ];
 
         // Login & password page (different layout)
-        // if ( Yii::app()->user->isGuest || ($this->current_module == 'user' && $this->current_controller == 'password') )
-        if ( ($this->current_module == 'user' && $this->current_controller == 'password') )
+        if ( Yii::$app->user->isGuest || ($this->current_module == 'user' && $this->current_controller == 'password') )
         {
             $vec_classes[] = 'page-login';
             $vec_classes[] = 'layout-full';

@@ -26,19 +26,32 @@
   <body class="animsition <?= $body_classes; ?>">
   <?php $this->beginBody(); ?>
 
-    <?php /*<h1>BACKEND FROM CORE</h1>*/ ?>
+    <?php
+      // Full layout - Login or change password page
+      if ( Yii::$app->user->isGuest || ($current_module == 'user' && $current_controller == 'password') ) :
+    ?>
+      <div class="page vertical-align text-center">
+        <div class="page-content vertical-align-middle <?= $current_controller .'-'. $current_action; ?>-content">
+          <?= $content ?>
+        </div>
+      </div>
+    <?php
+      // Registered users
+      else :
+    ?>
+      <?=
+        // HEADER
+        $this->render('//layouts/_header', $vec_params);
+      ?>
+      <?=
+        // SIDEBAR
+        $this->render('//layouts/_sidebar', $vec_params);
+      ?>
 
-    <?=
-      // HEADER
-      $this->render('//layouts/_header', $vec_params);
-    ?>
-    <?=
-      // SIDEBAR
-      $this->render('//layouts/_sidebar', $vec_params);
-    ?>
-    <div class="page">
-      <?= $content; ?>
-    </div>
+      <div class="page">
+        <?= $content; ?>
+      </div>
+    <?php endif; ?>
 
   <?php $this->endBody(); ?>
   </body>
