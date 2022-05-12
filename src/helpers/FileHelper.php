@@ -14,7 +14,7 @@ class FileHelper extends \yii\helpers\FileHelper
     /**
      * @inheritdoc
      */
-    public static function normalizePath($path, $ds = DIRECTORY_SEPARATOR): string
+    public static function normalizePath($path, $ds = DIRECTORY_SEPARATOR) : string
     {
         // dd($path);
         // Normalize the path
@@ -23,4 +23,3 @@ class FileHelper extends \yii\helpers\FileHelper
         return $path;
     }
 }
-

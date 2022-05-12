@@ -15,6 +15,42 @@ class Dz extends Yii
 
 
     /**
+     * Get current controller name
+     */
+    public static function currentController(bool $is_lowercase = false) : ?string
+    {
+        return self::$app->controller->id;
+    }
+
+
+    /**
+     * Get current action name
+     */
+    public static function currentAction(bool $is_lowercase = false) : ?string
+    {
+        return self::$app->controller->action->id;
+    }
+
+
+    /**
+     * Get current module name
+     */
+    public static function currentModule(bool $is_lowercase = false) : ?string
+    {
+        return self::$app->controller->module->id;
+    }
+
+
+    /**
+     * Get current theme name
+     */
+    public static function currentTheme(bool $is_lowercase = false) : ?string
+    {
+        return self::$app->view->theme ? self::$app->view->theme->name : null;
+    }
+
+
+    /**
      * Returns an environment variable, checking for it in `$_SERVER` and calling `getenv()` as a fallback.
      */
     public static function env($name) : ?string

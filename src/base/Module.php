@@ -31,13 +31,7 @@ class Module extends \yii\base\Module
             Yii::setAlias('@' . $this->id, $module_path);
         }
 
-        // Allow override views:
-        //  - First option is "'@app/themes/backend/<module_id>'
-        //  - Second option is "@module/views"
-        $module_theme_path = Yii::$app->view->theme->basePath .'/'. $this->id;
-        Yii::$app->view->theme->pathMap[$module_theme_path] = [
-            $module_theme_path,         // '@app/themes/backend/<module_id>'
-            "@{$this->id}/views",       // '@module/views'
-        ];
+        // Add module into theme to allow their views to be overrided
+        Yii::$app->view->theme->addBackendModule($this->id);
     }
 }
