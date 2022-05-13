@@ -26,7 +26,7 @@ class View extends \yii\web\View
     protected function findViewFile($view, $context = null)
     {
         // Exclude gii module
-        if ( preg_match("/^yii\\\gii\\\/", get_class($context) ) )
+        if ( $context !== null && preg_match("/^yii\\\gii\\\/", get_class($context) ) )
         {
             return parent::findViewFile($view, $context);
         }
