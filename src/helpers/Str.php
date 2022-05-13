@@ -5,12 +5,581 @@
 
 namespace dezero\helpers;
 
+use Dz;
 use Yii;
 use yii\helpers\ArrayHelper;
+use yii\helpers\HtmlPurifier;
 
 /**
  * Helper class for working with strings
  */
 class Str extends \yii\helpers\StringHelper
 {
+    const UUID_PATTERN = '[A-Za-z0-9]{8}-[A-Za-z0-9]{4}-4[A-Za-z0-9]{3}-[89abAB][A-Za-z0-9]{3}-[A-Za-z0-9]{12}';
+
+
+    /**
+     * Create machine readable name
+     */
+    public static function readableName(string $text) : string
+    {
+        $text = strtr($text, [
+            'á' => 'a',
+            'Á' => 'a',
+            'é' => 'e',
+            'É' => 'e',
+            'í' => 'i',
+            'Í' => 'i',
+            'ó' => 'o',
+            'Ó' => 'o',
+            'ú' => 'u',
+            'Ú' => 'u',
+            'ñ' => 'n',
+            'Ñ' => 'n',
+        ]);
+        $text = self::strtolower($text);
+        return preg_replace('@[^a-z0-9_]+@', '-', $text);
+    }
+
+
+    /**
+     * Convert a string to UPPERCASE but having SPANISH special characters into account
+     */
+    public static function strtoupper(string $text, bool $is_use_mbstring = false) : string
+    {
+        if ( $is_use_mbstring )
+        {
+            $text = mb_strtoupper($text);
+        }
+        else
+        {
+            // Use C-locale for ASCII-only uppercase.
+            $text = strtoupper($text);
+
+            // Case flip Latin-1 accented letters
+            $text = preg_replace_callback('/\\xC3[\\xA0-\\xB6\\xB8-\\xBE]/', '\dezero\helpers\Str::unicodeCaseflip', $text);
+        }
+
+        return $text;
+    }
+
+
+    /**
+     * Convert a string to LOWERCASE but having SPANISH special characters into account
+     */
+    public static function strtolower(string $text, bool $is_use_mbstring = false) : string
+    {
+        if ( $is_use_mbstring )
+        {
+            $text = mb_strtolower($text);
+        }
+        else
+        {
+            // Use C-locale for ASCII-only lowercase.
+            $text = strtolower($text);
+
+            // Case flip Latin-1 accented letters.
+            $text = preg_replace_callback('/\\xC3[\\x80-\\x96\\x98-\\x9E]/', '\dezero\helpers\Str::unicodeCaseflip', $text);
+        }
+        return $text;
+    }
+
+
+    /**
+     * Alias of StringHelper::strtoupper() method
+     *
+     * Convert a string to UPPERCASE but having SPANISH special characters into account
+     */
+    public static function uppercase(string $text, bool $is_use_mbstring = false) : string
+    {
+        return self::strtoupper($text, $is_use_mbstring);
+    }
+
+
+    /**
+     * Alias of StringHelper::strtolower() method
+     *
+     * Convert a string to LOWERCASE but having SPANISH special characters into account
+     */
+    public static function lowercase(string $text, bool $is_use_mbstring = false) : string
+    {
+        return self::strtolower($text, $is_use_mbstring);
+    }
+
+
+    /**
+     * Compares UTF-8-encoded strings in a binary safe case-insensitive manner.
+     *
+     * @return int Returns < 0 if $str1 is less than $str2; > 0 if $str1 is greater than $str2, and 0 if they are equal.
+     */
+    public static function strcasecmp(string $str1, string $str2) : int
+    {
+        return strcmp(self::strtoupper($str1), self::strtoupper($str2));
+    }
+
+
+    /**
+     * Alias of StringHelper::strcasecmp() method
+     *
+     * Compares UTF-8-encoded strings in a binary safe case-insensitive manner.
+     */
+    public static function compare(string $str1, string $str2) : int
+    {
+        return self::strcasecmp($str1, $str2);
+    }
+
+
+    /**
+     * Remove white spaces
+     *
+     * Second version in https://pageconfig.com/post/remove-undesired-characters-with-trim_all-php
+     */
+    public static function trimAll(string $text) : string
+    {
+        return preg_replace('~\s*(<([^>]*)>[^<]*</\2>|<[^>]*>)\s*~', '$1', $text);
+    }
+
+
+    /**
+     * Special trim with UTF-8 characters
+     *
+     * @see https://stackoverflow.com/questions/12837682/non-breaking-utf-8-0xc2a0-space-and-preg-replace-strange-behaviour
+     */
+    public static function trim(string $text) : string
+    {
+        $text = str_replace("\xc2\xa0", " ", $text);
+        return trim($text);
+    }
+
+
+    /**
+     * Clean all HTML tags of a string
+     */
+    public static function cleanHtml(string $text, ?array $vec_allowed_tags = [])
+    {
+        return HtmlPurifier::process($text, ['HTML.AllowedElements' => $vec_allowed_tags]);
+    }
+
+
+    /**
+     * Clean text
+     *
+     * WARNING: It removes characteres like ¿ or accents(á,é,í,...)
+     *
+     * @see https://alvinalexander.com/php/how-to-remove-non-printable-characters-in-string-regex
+     */
+    public static function cleanText(string $text) : string
+    {
+        $text = self::removeInvisibleCharacters($text);
+
+        // Remove all CONTROL characters
+        if ( ! Dz::isConsole() )
+        {
+            // return preg_replace('/[[:cntrl:]]/', '', $text);
+            return preg_replace('/[[:^print:]]/', '', $text);
+        }
+
+        // return preg_replace('/[[:cntrl:]]/u', '', $text);
+        return preg_replace('/[[:^print:]]/u', '', $text);
+    }
+
+
+    /**
+     * Remove non printable characters from a string
+     *
+     * @see https://github.com/bcit-ci/CodeIgniter/blob/b862664f2ce2d20382b9af5bfa4dd036f5755409/system/core/Common.php
+     */
+    public static function removeInvisibleCharacters(string $str, bool $is_url_encoded = true) : string
+    {
+        $non_displayables = [];
+
+        // every control character except newline (dec 10),
+        // carriage return (dec 13) and horizontal tab (dec 09)
+        if ( $is_url_encoded )
+        {
+            $non_displayables[] = '/%0[0-8bcef]/i'; // url encoded 00-08, 11, 12, 14, 15
+            $non_displayables[] = '/%1[0-9a-f]/i';  // url encoded 16-31
+            $non_displayables[] = '/%7f/i'; // url encoded 127
+        }
+
+        $non_displayables[] = '/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]+/S';   // 00-08, 11, 12, 14-31, 127
+
+        do
+        {
+            $str = preg_replace($non_displayables, '', $str, -1, $count);
+        }
+        while ( $count );
+
+        return $str;
+    }
+
+
+    /**
+     * Counts the number of characters in an UTF-8 string.
+     */
+    public static function strlen(string $text, bool $is_use_mbstring = true, bool $is_html = false) : int
+    {
+        if ( $is_html )
+        {
+            $text = self::cleanHtml($text);
+        }
+
+        if ( $is_use_mbstring )
+        {
+            return mb_strlen($text);
+        }
+
+        // Do not count UTF-8 continuation bytes.
+        return strlen(preg_replace("", '', $text));
+    }
+
+
+    /**
+     * Get part of an UTF-8 string.
+     */
+    public static function substr(string $text, bool $start, ?int $length = null, bool $is_use_mbstring = true, bool $is_html = false) : string
+    {
+        if ( $is_html )
+        {
+            $text = self::cleanHtml($text);
+        }
+
+        if ( $is_use_mbstring )
+        {
+            return mb_substr($text, $start, $length);
+        }
+
+        // Do not count UTF-8 continuation bytes.
+        return substr(preg_replace("", '', $text), $start, $length);
+    }
+
+
+    /**
+     * Parse a URL query string encoded to an array
+     *
+     * @see https://www.php.net/manual/es/function.parse-str.php
+     */
+    public static function parse_str(string $text, bool $is_use_mb_parse_str = true) : array
+    {
+        $vec_params = [];
+        if ( $is_use_mb_parse_str )
+        {
+            mb_parse_str($text, $vec_params);
+        }
+        else
+        {
+            parse_str($text, $vec_params);
+        }
+
+        return $vec_params;
+    }
+
+
+    /**
+     * Checks whether a string is valid UTF-8.
+     *
+     * All functions designed to filter input should use drupal_validate_utf8 to ensure they operate on valid UTF-8 strings to prevent bypass of the filter.
+     *
+     * When text containing an invalid UTF-8 lead byte (0xC0 - 0xFF) is presented as UTF-8 to Internet Explorer 6, the program may misinterpret subsequent bytes. When these subsequent bytes are HTML control characters such as quotes or angle brackets, parts of the text that were deemed safe by filters end up in locations that are potentially unsafe; An onerror attribute that is outside of a tag, and thus deemed safe by a filter, can be interpreted by the browser as if it were inside the tag.
+     *
+     * The function does not return false for strings containing character codes above U+10FFFF, even though these are prohibited by RFC 3629.
+     *
+     * @see https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Component%21Utility%21Unicode.php/function/Unicode%3A%3AvalidateUtf8/8.2.x
+     */
+    public static function validateUtf8(string $text) : bool
+    {
+        if ( strlen($text) == 0 )
+        {
+            return true;
+        }
+
+        // With the PCRE_UTF8 modifier 'u', preg_match() fails silently on strings
+        // containing invalid UTF-8 byte sequences. It does not reject character
+        // codes above U+10FFFF (represented by 4 or more octets), though.
+        return preg_match('/^./us', $text) == 1;
+    }
+
+
+    /**
+     * Flip U+C0-U+DE to U+E0-U+FD and back. Can be used as preg_replace callback.
+     *
+     * @see https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Component%21Utility%21Unicode.php/function/Unicode%3A%3AcaseFlip/8.2.x
+     */
+    public static function unicodeCaseflip(string $matches) : string
+    {
+        return $matches[0][0] . chr(ord($matches[0][1]) ^ 32);
+    }
+
+
+    /**
+     * Splits a string into chunks on a given delimiter.
+     *
+     * @param string $string The string
+     * @param string $delimiter The delimiter to split the string on (defaults to a comma)
+     * @return string[] The segments of the string
+     *
+     * @see craft\helpers\StringHelper
+     */
+    public static function split(string $string, string $delimiter = ',')
+    {
+        return preg_split('/\s*' . preg_quote($delimiter, '/') . '\s*/', $string, -1, PREG_SPLIT_NO_EMPTY);
+    }
+
+
+    /**
+     * Generates a random string of latin alphanumeric characters that defaults to a $length of 36.
+     * If $is_extended_chars set to true, additional symbols can be included in the string.
+     *
+     * @see https://github.com/craftcms/cms/blob/9a7b018de6e003c3d3d129dc0391671b74d71635/src/helpers/StringHelper.php
+     */
+    public static function randomString(int $length = 36, bool $is_extended_chars = false) : string
+    {
+        if ( $is_extended_chars )
+        {
+            $valid_chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890`~!@#$%^&*()-_=+[]\{}|;:\'",./<>?"';
+        }
+        else
+        {
+            $valid_chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+        }
+
+        return self::randomStringWithChars($valid_chars, $length);
+    }
+
+
+    /**
+     * Generates a random string of character
+     *
+     * @see https://github.com/craftcms/cms/blob/9a7b018de6e003c3d3d129dc0391671b74d71635/src/helpers/StringHelper.php
+     */
+    public static function randomStringWithChars(string $valid_chars, int $length) : string
+    {
+        $output = '';
+
+        // Count the number of chars in the valid chars string so we know how many choices we have
+        $num_valid_chars = self::strlen($valid_chars);
+
+        // PHP5.x Polyfill for random_int() function. Available from PHP 7.0 version
+        // require_once Yii::getAlias("@lib.random_compat.lib") . DIRECTORY_SEPARATOR . "random.php";
+
+        // Repeat the steps until we've created a string of the right length
+        for ( $i = 0; $i < $length; $i++ )
+        {
+            // Pick a random number from 1 up to the number of valid chars
+            $random_pick = random_int(1, $num_valid_chars);
+
+            // Take the random character out of the string of valid chars
+            $random_char = $valid_chars[$random_pick - 1];
+
+            // add the randomly-chosen char onto the end of our string
+            $output .= $random_char;
+        }
+
+        return $output;
+    }
+
+
+    /**
+     * Generate a timestamp (YmdHi) with a random string prefix/suffix
+     *
+     * Example: 201909181556_f4R2EY96sD
+     */
+    public static function randomTimestamp(string $position = 'suffix', int $length = 10, string $separator = '_') : string
+    {
+        if ( $position === 'suffix' )
+        {
+            return date('YmdHi') . $separator . strtolower(self::randomString($length));
+        }
+
+        return strtolower(self::randomString($length)) . $separator . date('YmdHi');
+    }
+
+
+    /**
+     * Encrypts a string value
+     */
+    public static function encrypt(string $string = '', string $hash_method = '') : string
+    {
+        // If user module is enabled, get default value from it
+        if ( empty($hash_method) && ! Dz::is_console() )
+        {
+            $hash_method = Yii::$app->user->hash_method;
+        }
+
+        // Unless, MD5 will be the default method
+        else
+        {
+            $hash_method = 'md5';
+        }
+
+
+        switch ( $hash_method )
+        {
+            case 'md5':
+                return \md5($string);
+                break;
+
+            case 'sha1':
+                return \sha1($string);
+                break;
+
+            default:
+                return \hash($hash_method, $string);
+                break;
+        }
+    }
+
+
+    /**
+     * Check if a strnig is a valid JSON
+     */
+    public static function isJson($string)
+    {
+        $result = json_decode($string);
+        return (json_last_error() == JSON_ERROR_NONE);
+    }
+
+
+    /**
+     * Returns is the given string matches a v4 UUID pattern.
+     *
+     * Version 4 UUIDs have the form xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx where x
+     * is any hexadecimal digit and y is one of 8, 9, A, or B.
+     *
+     * @param string $uuid The string to check.
+     * @return bool Whether the string matches a v4 UUID pattern.
+     */
+    public static function isUUID($uuid) : bool
+    {
+        return ! empty($uuid) && preg_match('/^' . self::UUID_PATTERN . '$/', $uuid);
+    }
+
+
+    /**
+     * Generates a valid v4 UUID string. See [http://stackoverflow.com/a/2040279/684]
+     *
+     * @return string The UUID
+     */
+    public static function UUID() : string
+    {
+        // PHP 7 or greater
+        if ( PHP_MAJOR_VERSION >= 7 )
+        {
+            return sprintf(
+                '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+                // 32 bits for "time_low"
+                random_int(0, 0xffff),
+                random_int(0, 0xffff),
+                // 16 bits for "time_mid"
+                random_int(0, 0xffff),
+                // 16 bits for "time_hi_and_version", four most significant bits holds version number 4
+                random_int(0, 0x0fff) | 0x4000,
+                // 16 bits, 8 bits for "clk_seq_hi_res", 8 bits for "clk_seq_low", two most significant bits holds zero and
+                // one for variant DCE1.1
+                random_int(0, 0x3fff) | 0x8000,
+                // 48 bits for "node"
+                random_int(0, 0xffff),
+                random_int(0, 0xffff),
+                random_int(0, 0xffff)
+            );
+        }
+
+        // PHP 5.6 or lower
+        else
+        {
+            return sprintf(
+                '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+                // 32 bits for "time_low"
+                mt_rand( 0, 0xffff ),
+                mt_rand( 0, 0xffff ),
+
+                // 16 bits for "time_mid"
+                mt_rand( 0, 0xffff ),
+
+                // 16 bits for "time_hi_and_version",
+                // four most significant bits holds version number 4
+                mt_rand( 0, 0x0fff ) | 0x4000,
+
+                // 16 bits, 8 bits for "clk_seq_hi_res",
+                // 8 bits for "clk_seq_low",
+                // two most significant bits holds zero and one for variant DCE1.1
+                mt_rand( 0, 0x3fff ) | 0x8000,
+
+                // 48 bits for "node"
+                mt_rand( 0, 0xffff ),
+                mt_rand( 0, 0xffff ),
+                mt_rand( 0, 0xffff )
+            );
+        }
+    }
+
+
+    /**
+     * Turn all URLs in clickable links.
+     *
+     * @param string $value
+     * @param array  $protocols  http/https, ftp, mail, twitter
+     * @param array  $attributes
+     * @return string
+     *
+     * @see https://gist.github.com/jasny/2000705
+     */
+    public static function linkify($value, $protocols = ['http', 'mail'], array $attributes = [])
+    {
+        // Link attributes
+        $attr = '';
+        foreach ( $attributes as $key => $val )
+        {
+            $attr .= ' ' . $key . '="' . htmlentities($val) . '"';
+        }
+
+        $links = [];
+
+        // Extract existing links and tags
+        $value = preg_replace_callback('~(<a .*?>.*?</a>|<.*?>)~i', function ($match) use (&$links) {
+            return '<' . array_push($links, $match[1]) . '>';
+        }, $value);
+
+        // Extract text links for each protocol
+        foreach ( (array) $protocols as $protocol )
+        {
+            switch ( $protocol )
+            {
+                case 'http':
+                case 'https':
+                    $value = preg_replace_callback('~(?:(https?)://([^\s<]+)|(www\.[^\s<]+?\.[^\s<]+))(?<![\.,:])~i', function ($match) use ($protocol, &$links, $attr) {
+                        if ( $match[1] )
+                        {
+                            $protocol = $match[1];
+                        }
+                        $link = $match[2] ?: $match[3];
+                        return '<' . array_push($links, "<a $attr href=\"$protocol://$link\">$link</a>") . '>';
+                    }, $value);
+                break;
+
+                case 'mail':
+                    $value = preg_replace_callback('~([^\s<]+?@[^\s<]+?\.[^\s<]+)(?<![\.,:])~', function ($match) use (&$links, $attr) {
+                        return '<' . array_push($links, "<a $attr href=\"mailto:{$match[1]}\">{$match[1]}</a>") . '>';
+                    }, $value);
+                break;
+
+                case 'twitter':
+                    $value = preg_replace_callback('~(?<!\w)[@#](\w++)~', function ($match) use (&$links, $attr) {
+                        return '<' . array_push($links, "<a $attr href=\"https://twitter.com/" . ($match[0][0] == '@' ? '' : 'search/%23') . $match[1] . "\">{$match[0]}</a>") . '>';
+                    }, $value);
+                break;
+
+                default:
+                    $value = preg_replace_callback('~' . preg_quote($protocol, '~') . '://([^\s<]+?)(?<![\.,:])~i', function ($match) use ($protocol, &$links, $attr) {
+                        return '<' . array_push($links, "<a $attr href=\"$protocol://{$match[1]}\">{$match[1]}</a>") . '>';
+                    }, $value);
+                break;
+            }
+        }
+
+        // Insert all link
+        return preg_replace_callback('/<(\d+)>/', function ($match) use (&$links) {
+            return $links[$match[1] - 1];
+        }, $value);
+    }
 }
