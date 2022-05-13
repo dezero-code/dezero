@@ -84,6 +84,25 @@ class Dz extends Yii
 
 
     /**
+     * Check if application is running on CONSOLE mode
+     */
+    public static function isConsole()
+    {
+        // return Yii::$app->request->isConsoleRequest;
+        return Yii::$app instanceof \yii\console\Application;
+    }
+
+
+    /**
+     * Check if application is running on WEB mode
+     */
+    public static function isWeb()
+    {
+        return Yii::$app instanceof \yii\web\Application;
+    }
+
+
+    /**
      * Returns an environment variable, checking for it in `$_SERVER` and calling `getenv()` as a fallback.
      */
     public static function env($name) : ?string
