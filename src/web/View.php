@@ -25,6 +25,12 @@ class View extends \yii\web\View
      */
     protected function findViewFile($view, $context = null)
     {
+        // Exclude gii module
+        if ( preg_match("/^yii\\\gii\\\/", get_class($context) ) )
+        {
+            return parent::findViewFile($view, $context);
+        }
+
         if ( strncmp($view, '@', 1) === 0 )
         {
             // e.g. "@app/views/main"
@@ -66,8 +72,9 @@ class View extends \yii\web\View
         }
         $path = $file . '.' . $this->defaultExtension;
 
-        // 11/05/2022 --> Remove these lines to allow to use ".tpl.php" extension and override
-        // if ($this->defaultExtension !== 'php' && !is_file($path)) {
+        // 11/05/2022 - Remove these lines to allow to use ".tpl.php" extension and override
+        // if ( $this->defaultExtension !== 'php' && ! is_file($path) )
+        // {
         //     $path = $file . '.php';
         // }
 

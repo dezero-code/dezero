@@ -9,7 +9,7 @@
  * @copyright Copyright &copy; 2022 Fabián Ruiz
  */
 
-use Yii;
+// use Yii;
 use yii\helpers\ArrayHelper;
 use yii\helpers\StringHelper;
 

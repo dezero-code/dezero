@@ -9,6 +9,7 @@
 
 namespace dezero\base;
 
+use Dz;
 use Yii;
 
 /**
@@ -32,6 +33,9 @@ class Module extends \yii\base\Module
         }
 
         // Add module into theme to allow their views to be overrided
-        Yii::$app->view->theme->addBackendModule($this->id);
+        if ( Dz::isWeb() )
+        {
+            Yii::$app->view->theme->addBackendModule($this->id);
+        }
     }
 }
