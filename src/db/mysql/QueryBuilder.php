@@ -52,7 +52,7 @@ class QueryBuilder extends \yii\db\mysql\QueryBuilder
 
         if ( $this->db->collation !== null && ! preg_match('/\bCOLLATE\b/i', $options) )
         {
-            $options .= " DEFAULT COLLATE = $this->db->collation";
+            $options .= " DEFAULT COLLATE = {$this->db->collation}";
         }
 
         return parent::createTable($table, $columns, $options);

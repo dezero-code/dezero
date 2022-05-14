@@ -57,6 +57,9 @@ class Schema extends \yii\db\mysql\Schema
         $this->typeMap['mediumtext'] = self::TYPE_MEDIUMTEXT;
         $this->typeMap['longtext'] = self::TYPE_LONGTEXT;
         $this->typeMap['enum'] = self::TYPE_ENUM;
+
+        // Change DATE to INTEGER data
+        $this->typeMap['date'] = self::TYPE_INTEGER;
     }
 
 

@@ -143,6 +143,18 @@ class Migration extends \yii\db\Migration
 
 
     /**
+     * @inheritdoc
+     *
+     * Changed from DATE type to INTEGER UNSIGNED
+     */
+    public function date()
+    {
+        // return $this->db->getSchema()->createColumnSchemaBuilder(Schema::TYPE_DATE);
+        return $this->db->getSchema()->createColumnSchemaBuilder(MysqlSchema::TYPE_INTEGER)->unsigned();
+    }
+
+
+    /**
      * Shortcut for creating an UUID column
      *
      * @return ColumnSchemaBuilder the column instance which can be further customized.
@@ -160,6 +172,6 @@ class Migration extends \yii\db\Migration
      */
     public function language()
     {
-        return $this->string(12);
+        return $this->string(4);
     }
 }
