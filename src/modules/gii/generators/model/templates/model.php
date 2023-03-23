@@ -86,9 +86,23 @@ class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') . 
      * -------------------------------------------------------------------------
 <?php if (!empty($relations)): ?>
      *
-<?php foreach ($relations as $name => $relation): ?>     * @property <?= $relation[1] . ($relation[2] ? '[]' : '') . ' $' . lcfirst($name) . "\n" ?><?php endforeach; ?>
+<?php foreach ($relations as $name => $relation): ?>
+<?php if ( isset($relationsOne[$name]) ) : ?>     * @property <?= $relation[1] . ($relation[2] ? '[]' : '') . ' $' . lcfirst($name) . "\n" ?><?php endif; ?>
+<?php endforeach; ?>
+<?php foreach ($relations as $name => $relation): ?>
+<?php if ( isset($relationsMany[$name]) ) : ?>     * @property <?= $relation[1] . ($relation[2] ? '[]' : '') . ' $' . lcfirst($name) . "\n" ?><?php endif; ?>
+<?php endforeach; ?>
 <?php endif; ?>
      */
+
+    /**
+     * This function helps \mootensai\relation\RelationTrait runs faster
+     * @return array relation names of this model
+     */
+    public function relationNames() : array
+    {
+        return [<?= "\n            '" . implode("',\n            '", array_keys($relations)) . "'\n        " ?>];
+    }
 
     /**
      * @return \yii\db\ActiveQuery

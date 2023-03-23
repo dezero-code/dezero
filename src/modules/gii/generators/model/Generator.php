@@ -48,6 +48,8 @@ class Generator extends \yii\gii\Generator
     public $queryBaseClass = 'dezero\db\ActiveQuery';
 
     public $modelTitle = [];
+    public $relationsOne = [];
+    public $relationsMany = [];
 
 
     /**
@@ -234,8 +236,14 @@ class Generator extends \yii\gii\Generator
                 'relations' => isset($relations[$tableName]) ? $relations[$tableName] : [],
 
                 // Model title
-                'modelTitle' => $this->modelTitle
+                'modelTitle' => $this->modelTitle,
+
+                // Relations
+                'relationsOne' => $this->relationsOne,
+                'relationsMany' => $this->relationsMany,
             ];
+            \DzLog::dev($this->relationsOne);
+            \DzLog::dev($this->relationsMany);
             $files[] = new CodeFile(
                 Yii::getAlias('@' . str_replace('\\', '/', $this->ns)) . '/' . $modelClassName . '.php',
                 $this->render('model.php', $params)
@@ -455,22 +463,28 @@ class Generator extends \yii\gii\Generator
             $link = $this->generateRelationLink(array_flip($secondKey));
             $viaLink = $this->generateRelationLink($firstKey);
             $relationName = $this->generateRelationName($relations, $table0Schema, key($secondKey), true);
-            $relations[$table0Schema->fullName][$relationName] = [
-                "return \$this->hasMany($className1::className(), $link)->viaTable('"
-                . $this->generateTableName($table->name) . "', $viaLink);",
-                $className1,
-                true,
-            ];
+            if ( !isset($relations[$table0Schema->fullName][$relationName]) )
+            {
+                $relations[$table0Schema->fullName][$relationName] = [
+                    "return \$this->hasMany($className1::className(), $link)->viaTable('"
+                    . $this->generateTableName($table->name) . "', $viaLink);",
+                    $className1,
+                    true,
+                ];
+            }
 
             $link = $this->generateRelationLink(array_flip($firstKey));
             $viaLink = $this->generateRelationLink($secondKey);
             $relationName = $this->generateRelationName($relations, $table1Schema, key($firstKey), true);
-            $relations[$table1Schema->fullName][$relationName] = [
-                "return \$this->hasMany($className0::className(), $link)->viaTable('"
-                . $this->generateTableName($table->name) . "', $viaLink);",
-                $className0,
-                true,
-            ];
+            if ( !isset($relations[$table1Schema->fullName][$relationName]) )
+            {
+                $relations[$table1Schema->fullName][$relationName] = [
+                    "return \$this->hasMany($className0::className(), $link)->viaTable('"
+                    . $this->generateTableName($table->name) . "', $viaLink);",
+                    $className0,
+                    true,
+                ];
+            }
         }
 
         return $relations;
@@ -539,33 +553,57 @@ class Generator extends \yii\gii\Generator
                     // Add relation for this table
                     $link = $this->generateRelationLink(array_flip($refs));
                     $relationName = $this->generateRelationName($relations, $table, $fks[0], false);
-                    $relations[$table->fullName][$relationName] = [
-                        "return \$this->hasOne($refClassName::className(), $link);",
-                        $refClassName,
-                        false,
-                    ];
+                    if ( ! isset($relations[$table->fullName][$relationName]) )
+                    {
+                        $relations[$table->fullName][$relationName] = [
+                            "return \$this->hasOne($refClassName::className(), $link);",
+                            $refClassName,
+                            false,
+                        ];
+                    }
+
+                    // 23/03/2023 - Add special relationOne
+                    $this->relationsOne[$relationName] = ["$refClassName::className()", $refClassName];
 
                     // Add relation for the referenced table
                     $hasMany = $this->isHasManyRelation($table, $fks);
                     $link = $this->generateRelationLink($refs);
                     $relationName = $this->generateRelationName($relations, $refTableSchema, $className, $hasMany);
-                    $relations[$refTableSchema->fullName][$relationName] = [
-                        "return \$this->" . ($hasMany ? 'hasMany' : 'hasOne') . "($className::className(), $link);",
-                        $className,
-                        $hasMany,
-                    ];
+                    if ( ! isset($relations[$refTableSchema->fullName][$relationName]) )
+                    {
+                        $relations[$refTableSchema->fullName][$relationName] = [
+                            "return \$this->" . ($hasMany ? 'hasMany' : 'hasOne') . "($className::className(), $link);",
+                            $className,
+                            $hasMany,
+                        ];
+
+                        // 23/03/2023 - Add special relationOne
+                        if ( $hasMany )
+                        {
+                            $this->relationsMany[$relationName] = ["$className::className()", $className];
+                        }
+                        else
+                        {
+                            $this->relationsOne[$relationName] = ["$className::className()", $className];
+                        }
+                    }
                 }
 
                 if (($junctionFks = $this->checkJunctionTable($table)) === false) {
                     continue;
                 }
 
-                $relations = $this->generateManyManyRelations($table, $junctionFks, $relations);
+                // $relations = $this->generateManyManyRelations($table, $junctionFks, $relations);
             }
         }
 
         if ($this->generateRelations === self::RELATIONS_ALL_INVERSE) {
             return $this->addInverseRelations($relations);
+        }
+
+        if ( !empty($relations) )
+        {
+            ksort($relations);
         }
 
         return $relations;
@@ -744,6 +782,7 @@ class Generator extends \yii\gii\Generator
             $key = Inflector::pluralize($key);
         }
         $name = $rawName = Inflector::id2camel($key, '_');
+        /*
         $i = 0;
         while ($baseModel->hasProperty(lcfirst($name))) {
             $name = $rawName . ($i++);
@@ -754,6 +793,7 @@ class Generator extends \yii\gii\Generator
         while (isset($relations[$table->fullName][$name])) {
             $name = $rawName . ($i++);
         }
+        */
 
         return $name;
     }
