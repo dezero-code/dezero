@@ -23,10 +23,10 @@ class Migration extends \yii\db\Migration
      *
      * @param string $table The table to be dropped. The name will be properly quoted by the method.
      */
-    public function dropTableIfExists(string $table, bool $disableCheckIntegrity = false) : void
+    public function dropTableIfExists(string $table, bool $isDisableCheckIntegrity = false) : void
     {
-        // Disable "checkIntegrity" temporally
-        if ( $disableCheckIntegrity )
+        // Disable integrity check (Foreign Keys) temporally
+        if ( $isDisableCheckIntegrity )
         {
             $this->db->disableCheckIntegrity();
         }
@@ -37,8 +37,8 @@ class Migration extends \yii\db\Migration
             ->execute();
         $this->endCommand($time);
 
-        // Enable "checkIntegrity" again
-        if ( $disableCheckIntegrity )
+        // Enable integrity check (Foreign Keys) again
+        if ( $isDisableCheckIntegrity )
         {
             $this->db->enableCheckIntegrity();
         }
@@ -91,9 +91,42 @@ class Migration extends \yii\db\Migration
     }
 
 
+    /**
+     * Creates and executes an INSERT SQL statement with multiple data.
+     * The method will properly escape the column names, and bind the values to be inserted.
+     * @param string $table the table that new rows will be inserted into.
+     * @param array $data an array of various column data (name=>value) to be inserted into the table.
+     *
+     * @source Port from Yii1 CDbMigration::insertMultple
+     */
+    public function insertMultiple(string $table, array $data) : void
+    {
+        if ( !empty($data) )
+        {
+            foreach ( $data as $columns )
+            {
+                $this->insert($table, $columns);
+            }
+        }
+    }
+
+
     // -------------------------------------------------------------------------
     // Schema Builder Methods
     // -------------------------------------------------------------------------
+
+    /**
+     * @inheritdoc
+     *
+     * @param int|null $length column size or precision definition.
+     * This parameter will be ignored if not supported by the DBMS.
+     * @return ColumnSchemaBuilder the column instance which can be further customized.
+     * @since 2.0.6
+     */
+    public function primaryKey($length = null) : ColumnSchemaBuilder
+    {
+        return $this->db->getSchema()->createColumnSchemaBuilder(MysqlSchema::TYPE_PK, $length)->unsigned();
+    }
 
 
     /**
@@ -172,6 +205,6 @@ class Migration extends \yii\db\Migration
      */
     public function language()
     {
-        return $this->string(4);
+        return $this->string(6);
     }
 }

@@ -99,6 +99,7 @@ class Connection extends \yii\db\Connection
         return $this->trimObjectName($name);
     }
 
+
     /**
      * Returns a foreign key name based on the table and column names.
      *
@@ -159,6 +160,24 @@ class Connection extends \yii\db\Connection
         }
 
         return $vec_tables;
+    }
+
+
+    /**
+     * Disable integrity check (Foreign Keys)
+     */
+    public function disableCheckIntegrity() : void
+    {
+        $this->createCommand()->checkIntegrity(false)->execute();
+    }
+
+
+    /**
+     * Enable integrity check (Foreign Keys)
+     */
+    public function enableCheckIntegrity() : void
+    {
+        $this->createCommand()->checkIntegrity(true)->execute();
     }
 
 

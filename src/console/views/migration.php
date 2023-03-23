@@ -41,27 +41,28 @@ class <?= $className ?> extends Migration
             'name' => $this->string(128),
             'description' => $this->text(),
             'reference_id' => $this->integer()->unsigned()->notNull(),
-            'is_important' => $this->tinyInteger(1)->unsigned()->notNull()->defaultValue(0),
+            'is_default' => $this->tinyInteger(1)->unsigned()->notNull()->defaultValue(0),
             'content_type' => $this->enum('content_type', ['page', 'block', 'text']),
-            'disable_date' => $this->date(),
-            'disable_uid' => $this->integer()->unsigned(),
+            'weight' => $this->tinyInteger()->unsigned()->notNull()->defaultValue(1),
+            'disabled_date' => $this->date(),
+            'disabled_user_id' => $this->integer()->unsigned(),
             'created_date' => $this->date()->notNull(),
-            'created_uid' => $this->integer()->unsigned()->notNull(),
+            'created_user_id' => $this->integer()->unsigned()->notNull(),
             'updated_date' => $this->date()->notNull(),
-            'updated_uid' => $this->integer()->unsigned()->notNull(),
-            'uuid' => $this->uuid(),
+            'updated_user_id' => $this->integer()->unsigned()->notNull(),
+            'entity_uuid' => $this->uuid(),
         ]);
 
         // Primary key (alternative method)
         $this->addPrimaryKey(null, 'my_table', 'id');
 
         // Create indexes
-        $this->createIndex(null, 'my_table', ['name'], false);
+        $this->createIndex(null, 'my_table', ['entity_uuid'], false);
 
         // Create FOREIGN KEYS
-        $this->addForeignKey(null, 'my_table', ['disable_uid'], 'user_users', ['id'], 'SET NULL', null);
-        $this->addForeignKey(null, 'my_table', ['created_uid'], 'user_users', ['id'], 'CASCADE', null);
-        $this->addForeignKey(null, 'my_table', ['updated_uid'], 'user_users', ['id'], 'CASCADE', null);
+        $this->addForeignKey(null, 'my_table', ['disabled_user_id'], 'user_user', ['user_id'], 'SET NULL', null);
+        $this->addForeignKey(null, 'my_table', ['created_user_id'], 'user_user', ['user_id'], 'CASCADE', null);
+        $this->addForeignKey(null, 'my_table', ['updated_user_id'], 'user_user', ['user_id'], 'CASCADE', null);
 
 
         /*
@@ -92,6 +93,43 @@ class <?= $className ?> extends Migration
 
         // Enable again FOREIGH KEY check integrity
         $this->db->enableCheckIntegrity();
+
+        // Insert default values
+        // Add namespace above ---> use dezero\helpers\Str;
+        $this->insert('my_table', [
+            'name'              => 'name',
+            'is_default'        => 1,
+            'weight'            => 1,
+            'created_date'      => time(),
+            'created_user_id'   => 1,
+            'updated_date'      => time(),
+            'updated_user_id'   => 1,
+            'entity_uuid'       => Str::UUID()
+        ]);
+
+        // Insert multiples values
+        $this->insertMultiple('my_table', [
+            [
+                'name'              => 'name',
+                'is_default'        => 1,
+                'weight'            => 1,
+                'created_date'      => time(),
+                'created_user_id'   => 1,
+                'updated_date'      => time(),
+                'updated_user_id'   => 1,
+                'entity_uuid'       => Str::UUID()
+            ],
+            [
+                'name'              => 'name 2',
+                'is_default'        => 0,
+                'weight'            => 2,
+                'created_date'      => time(),
+                'created_user_id'   => 1,
+                'updated_date'      => time(),
+                'updated_user_id'   => 1,
+                'entity_uuid'       => Str::UUID()
+            ],
+        ]);
         */
     }
 

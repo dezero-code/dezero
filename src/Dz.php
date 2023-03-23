@@ -3,6 +3,8 @@
  * Dz is a helper class serving common Dz and Yii framework functionality.
  */
 
+use yii\base\Module;
+
 class Dz extends Yii
 {
     /**
@@ -165,4 +167,87 @@ class Dz extends Yii
     {
         return static::checkEnvironment('test');
     }
+
+
+    /**
+     * Return all the modules list
+     */
+    public static function getModules() : array
+    {
+        $vec_modules = [];
+
+        foreach ( self::$app->getModules() as $id => $module )
+        {
+            if ( $module instanceof Module )
+            {
+                $vec_modules[$id] = get_class($module);
+            }
+            elseif ( is_string($module) )
+            {
+                $vec_modules[$id] = $module;
+            }
+            elseif ( is_array($module) && isset($module['class']) )
+            {
+                $vec_modules[$id] = $module['class'];
+            }
+            else
+            {
+                $vec_modules[$id] = Yii::t('app', 'Unknown type');
+            }
+        }
+
+        return $vec_modules;
+    }
+
+
+
+    /**
+     * Get CORE modules for Dezero Framework
+     *
+     * @todo Read subdirectories from @dezero/modules
+     */
+    public static function getCoreModules() : array
+    {
+        return [
+            'settings'  => '\dezero\modules\settings\Module',
+            'system'    => '\dezero\modules\system\Module',
+            'user'      => '\dezero\modules\user\Module',
+        ];
+    }
+
+
+    /**
+     * Get CONTRIG (dzlab) modules for Dezero Framework
+     *
+     * @todo Read subdirectories from @vendor/dezero
+     */
+    public static function getContribModules() : array
+    {
+        $vec_contrib_modules = [];
+
+        /*
+        // Get all contrib modules from "/app/vendor/dezero" direcotyr
+        $contrib_path = DZ_BASE_PATH . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'dezero';
+        $contrib_dir = Yii::app()->file->set($contrib_path);
+
+        if ( $contrib_dir->getExists() && $contrib_dir->getIsDir() )
+        {
+            $vec_contrib_directories = $contrib_dir->getContents();
+            foreach ( $vec_contrib_directories as $directory_path )
+            {
+                $vec_directory_path = explode("/", $directory_path);
+                $module_id = $vec_directory_path[count($vec_directory_path) - 1];
+                if ( Yii::app()->hasModule($module_id) )
+                {
+                    $vec_contrib_modules[$module_id] = [
+                        'class' => "\dzlab\{$module_id}\Module"
+                    ];
+                }
+            }
+        }
+        */
+
+        return $vec_contrib_modules;
+    }
+
 }
