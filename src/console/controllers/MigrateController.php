@@ -199,8 +199,9 @@ class MigrateController extends BaseMigrateController
     protected function addMigrationHistory($name)
     {
         $this->db->createCommand()->insert($this->migrationTable, [
-            'name' => $name,
-            'apply_date' => time(),
+            'name'          => $name,
+            'apply_date'    => time(),
+            'module'        => $this->module_id
         ])->execute();
     }
 
