@@ -27,21 +27,38 @@ echo "<?php\n";
 namespace <?= $generator->ns ?>;
 
 use <?= $generator->queryNs; ?>\<?= $queryClassName; ?>;
+use dezero\db\ActiveQuery;
+use yii\db\ActiveQueryInterface;
 use Yii;
 
 /**
- * This is the model class for table "<?= $generator->generateTableName($tableName) ?>".
+ * <?= $className ?> model class for table "<?= $generator->generateTableName($tableName) ?>".
  *
+ * -------------------------------------------------------------------------
+ * COLUMN ATTRIBUTES
+ * -------------------------------------------------------------------------
 <?php foreach ($properties as $property => $data): ?>
  * @property <?= "{$data['type']} \${$property}"  . ($data['comment'] ? ' ' . strtr($data['comment'], ["\n" => ' ']) : '') . "\n" ?>
 <?php endforeach; ?>
+<?php if (!empty($relations)): ?>
+ *
+ * -------------------------------------------------------------------------
+ * RELATIONS
+ * -------------------------------------------------------------------------
+<?php foreach ($relations as $name => $relation): ?>
+<?php if ( isset($relationsOne[$name]) ) : ?> * @property <?= $relation[1] . ($relation[2] ? '[]' : '') . ' $' . lcfirst($name) . "\n" ?><?php endif; ?>
+<?php endforeach; ?>
+<?php foreach ($relations as $name => $relation): ?>
+<?php if ( isset($relationsMany[$name]) ) : ?> * @property <?= $relation[1] . ($relation[2] ? '[]' : '') . ' $' . lcfirst($name) . "\n" ?><?php endif; ?>
+<?php endforeach; ?>
+<?php endif; ?>
  */
 class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') . "\n" ?>
 {
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName() : string
     {
         return '<?= $generator->generateTableName($tableName) ?>';
     }
@@ -51,7 +68,7 @@ class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') . 
     /**
      * @return \yii\db\Connection the database connection used by this AR class.
      */
-    public static function getDb()
+    public static function getDb() : \yii\db\Connection
     {
         return Yii::$app->get('<?= $generator->db ?>');
     }
@@ -61,7 +78,7 @@ class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') . 
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules() : array
     {
         return [<?= empty($rules) ? '' : ("\n            " . implode(",\n            ", $rules) . ",\n        ") ?>];
     }
@@ -70,7 +87,7 @@ class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') . 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels() : array
     {
         return [
 <?php foreach ($labels as $name => $label): ?>
@@ -79,68 +96,49 @@ class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') . 
         ];
     }
 
-
-    /**
-     * -------------------------------------------------------------------------
-     * RELATIONS
-     * -------------------------------------------------------------------------
 <?php if (!empty($relations)): ?>
-     *
-<?php foreach ($relations as $name => $relation): ?>
-<?php if ( isset($relationsOne[$name]) ) : ?>     * @property <?= $relation[1] . ($relation[2] ? '[]' : '') . ' $' . lcfirst($name) . "\n" ?><?php endif; ?>
-<?php endforeach; ?>
-<?php foreach ($relations as $name => $relation): ?>
-<?php if ( isset($relationsMany[$name]) ) : ?>     * @property <?= $relation[1] . ($relation[2] ? '[]' : '') . ' $' . lcfirst($name) . "\n" ?><?php endif; ?>
-<?php endforeach; ?>
-<?php endif; ?>
-     */
 
-    /**
-     * This function helps \mootensai\relation\RelationTrait runs faster
-     * @return array relation names of this model
-     */
-    public function relationNames() : array
-    {
-        return [<?= "\n            '" . implode("',\n            '", array_keys($relations)) . "'\n        " ?>];
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     *
-    public function getAuthor()
-    {
-        return $this->hasOne(User::class, ['user_id' => 'author_id']);
-    }
-
-
-    /**
-     * @return \yii\db\ActiveQuery
-     *
-    public function getFiles()
-    {
-        return $this->hasMany(AssetFile::class, ['created_user_id' => 'user_id']);
-    }
+   /*
+    |--------------------------------------------------------------------------
+    | RELATIONS
+    |--------------------------------------------------------------------------
     */
-<?php /* foreach ($relations as $name => $relation): ?>
-
+<?php foreach ($relations as $name => $relation): ?>
+<?php if ( isset($relationsOne[$name]) ) : ?>
 
     /**
-     * @return \yii\db\ActiveQuery
-     *
-    public function get<?= $name ?>()
+     * @return ActiveQueryInterface The relational query object.
+     */
+    public function get<?= $name ?>() : ActiveQueryInterface
     {
         <?= $relation[0] . "\n" ?>
     }
-<?php endforeach; */ ?>
+
+<?php endif; ?>
+<?php endforeach; ?>
+<?php foreach ($relations as $name => $relation): ?>
+<?php if ( isset($relationsMany[$name]) ) : ?>
+
+    /**
+     * @return ActiveQueryInterface The relational query object.
+     */
+    public function get<?= $name ?>() : ActiveQueryInterface
+    {
+        <?= $relation[0] . "\n" ?>
+    }
+
+<?php endif; ?>
+<?php endforeach; ?>
+<?php endif; ?>
 <?php if ($queryClassName): ?>
 <?php
     $queryClassFullName = ($generator->ns === $generator->queryNs) ? $queryClassName : '\\' . $generator->queryNs . '\\' . $queryClassName;
-    echo "\n\n";
+    echo "\n";
 ?>
     /**
-     * @return <?= $queryClassName ."\n" ?>
+     * @return <?= $queryClassName ?> The ActiveQuery class for this model
      */
-    public static function find()
+    public static function find() : <?= $queryClassName ."\n" ?>
     {
         return new <?= $queryClassName ?>(static::class);
     }
@@ -149,10 +147,8 @@ class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') . 
 
     /**
      * Title used for this model
-     *
-     * @return string
      */
-    public function title()
+    public function title() : string
     {
         return <?= !empty($modelTitle) ? implode(' - ', $modelTitle) : '""'; ?>;
     }
