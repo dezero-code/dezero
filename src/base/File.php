@@ -20,6 +20,12 @@ use Yii;
 class File extends \yii\base\BaseObject
 {
     /**
+     * @var Default permissions
+     */
+    const DEFAULT_PERMISSION  = 775;
+
+
+    /**
      * @var string File path given as input
      */
     private $file_path;
@@ -43,14 +49,7 @@ class File extends \yii\base\BaseObject
     public function __construct(string $file_path)
     {
         $this->file_path = $file_path;
-        if ( preg_match("/^\@/", $file_path) )
-        {
-            $this->real_path = Yii::getAlias($file_path);
-        }
-        else
-        {
-            $this->real_path = FileHelper::normalizePath($file_path);
-        }
+        $this->real_path = FileHelper::realPath($file_path);
 
         // Clear PHP's internal stat cache
         clearstatcache();
@@ -125,7 +124,7 @@ class File extends \yii\base\BaseObject
 
 
     /**
-     * Alias of realPath() method
+     * Alias for realPath() method
      */
     public function pwd() : ?string
     {
@@ -191,7 +190,7 @@ class File extends \yii\base\BaseObject
 
 
     /**
-     * Alias of isDirectory method
+     * Alias for isDirectory() method
      */
     public function isDir() : bool
     {
@@ -365,20 +364,159 @@ class File extends \yii\base\BaseObject
      */
     public function read(array $vec_options = []) : string|array|null
     {
-        if ( $this->isReadable() )
+        if ( ! $this->exists() || ! $this->isReadable() )
         {
-            // Get contents from a file object
-            if ( $this->isFile() )
+            return null;
+        }
+
+        // Get contents from a FILE
+        if ( $this->isFile() )
+        {
+            $contents = file_get_contents($this->real_path);
+            if ( $contents )
             {
-                $contents = file_get_contents($this->real_path);
-                if ( $contents )
-                {
-                    return $contents;
-                }
+                return $contents;
+            }
+        }
+
+        // Get contents from a DIRECTORY
+        return $this->readDirectory($vec_options);
+    }
+
+
+    /**
+     * Deletes the current filesystem object
+     *
+     * @see FileHelper::unlink
+     */
+    public function delete() : bool
+    {
+        if ( ! $this->exists() || ! $this->isWritable() )
+        {
+            return false;
+        }
+
+        // Delete a FILE
+        if ( $this->isFile() )
+        {
+            return FileHelper::unlink($this->real_path);
+        }
+
+        // Removes a directory
+        return $this->removeDirectory();
+    }
+
+
+
+    /**
+     * Copy the current filesystem object to specified destination
+     */
+    public function copy($destination_path, $is_overwrite = true) : ?static
+    {
+        if ( ! $this->exists() || ! $this->isReadable() )
+        {
+            return null;
+        }
+
+        $destination_path = $this->resolveDestinationPath($destination_path);
+        $destination_file = self::load($destination_path);
+        if ( $destination_file->exists() && ! $is_overwrite )
+        {
+            return null;
+        }
+
+        // Copy a FILE
+        if ( $this->isFile() )
+        {
+            if ( ! @copy($this->real_path, $destination_path) )
+            {
+                return null;
             }
 
-            // Get contents from a directory object
-            return $this->readDirectory($vec_options);
+            // Replace information with new copied file
+            return self::load($destination_path);
+        }
+
+        // Copies a directory
+        return $this->copyDirectory($destination_path);
+    }
+
+
+    /**
+     * Renames/moves the current filesystem object to specified destination
+     */
+    public function move($destination_path, $is_overwrite = true) : ?self
+    {
+        if ( ! $this->exists() || ! $this->isReadable() )
+        {
+            return null;
+        }
+
+        $destination_path = $this->resolveDestinationPath($destination_path);
+        $destination_file = self::load($destination_path);
+        if ( $destination_file->exists() && ! $is_overwrite )
+        {
+            return null;
+        }
+
+        // Rename a FILE or DIRECTORY
+        if ( ! @rename($this->real_path, $destination_path) )
+        {
+            return null;
+        }
+
+        // Replace information with new copied file
+        $moved_file = self::load($destination_path);
+        $this->file_path = $moved_file->file_path;
+        $this->real_path = $moved_file->real_path;
+        $this->vec_info = $moved_file->vec_info;
+
+        return $this;
+    }
+
+
+    /**
+     * Alias for move() method
+     */
+    public function rename($destination_path, $is_overwrite = true) : ?self
+    {
+        return $this->move($destination_path, $is_overwrite);
+    }
+
+
+    /**
+     * Download current file
+     *
+     * @todo
+     */
+    public function download(string $file_name = null)
+    {
+        if ( $this->isDirectory() || ! $this->exists() || ! $this->isReadable() )
+        {
+            return null;
+        }
+
+        $file_name = $file_name === null ? $this->filename() : $file_name;
+
+        return Yii::$app->response->sendFile($this->real_path, $file_name);
+    }
+
+
+    /**
+     * Return a value from the file information array
+     */
+    private function getInfo($name)
+    {
+        // Load information array
+        if ( $this->vec_info === null )
+        {
+            $this->info();
+        }
+
+
+        if ( array_key_exists($name, $this->vec_info) )
+        {
+            return $this->vec_info[$name];
         }
 
         return null;
@@ -386,9 +524,72 @@ class File extends \yii\base\BaseObject
 
 
     /**
-     *  List of the contents of the current directory
+     * Resolves destination path for the current filesystem object.
+     * This method enables short calls for {@link copy} & {@link rename} methods
+     * (i.e. copy('document.pdf') makes a copy of the current filesystem object
+     * in the same directory, named 'document.pdf')
+     */
+    private function resolveDestinationPath(string $destination_path) : string
+    {
+        // Check if it's the current directory
+        if ( strpos($destination_path, DIRECTORY_SEPARATOR) === false)
+        {
+            return $this->dirname() . DIRECTORY_SEPARATOR . $destination_path;
+        }
+
+        return FileHelper::realPath($destination_path);
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | DIRECTORY METHODS
+    |--------------------------------------------------------------------------
+    */
+
+
+    /**
+     * Ensures directory exists and has specific permissions.
      *
-     * @see \yii\helpers\BaseFileHelper
+     * If directory does not exists, create it!
+     */
+    public static function ensureDirectory(string $path, int $permissions = 775) : ?static
+    {
+        $directory = static::load($path);
+
+        // Directory exists
+        if ( $directory->exists() && $directory->isDir() )
+        {
+            return $directory;
+        }
+
+        return static::createDirectory($path, $permissions);
+    }
+
+
+    /**
+     * Creates a new directory
+     *
+     * @see FileHelper::createDirectory
+     */
+    public static function createDirectory(string $path, int $permissions = 775) : ?static
+    {
+        // <DEZERO> - '755' normalize to octal '0755'
+        $permissions = octdec(str_pad($permissions, 4, "0", STR_PAD_LEFT));
+
+        if ( FileHelper::createDirectory($path, $permissions) )
+        {
+            return static::load($path);
+        }
+
+        return null;
+    }
+
+
+    /**
+     * List of the contents of the current directory
+     *
+     * @see \yii\helpers\BaseFileHelper::findFiles()
      */
     private function readDirectory(array $vec_options = []) : ?array
     {
@@ -398,6 +599,43 @@ class File extends \yii\base\BaseObject
         }
 
         return FileHelper::findFiles($this->real_path, $vec_options);
+    }
+
+
+    /**
+     * Removes a directory (and all its content) recursively.
+     *
+     * @see \yii\helpers\BaseFileHelper::removeDirectory()
+     */
+    private function removeDirectory() : bool
+    {
+        if ( ! $this->isDirectory() )
+        {
+            return false;
+        }
+
+        FileHelper::removeDirectory($this->real_path);
+
+        return ! $this->exists();
+    }
+
+
+    /**
+     * Copies a whole directory as another one
+     *
+     * @see \yii\helpers\BaseFileHelper::copyDirectory()
+     */
+    private function copyDirectory(string $destination_path) : ?static
+    {
+        if ( ! $this->isDirectory() )
+        {
+            return null;
+        }
+
+        FileHelper::copyDirectory($this->real_path, $destination_path);
+
+        // Replace information with new copied directory
+        return self::load($destination_path);
     }
 
 
@@ -425,26 +663,5 @@ class File extends \yii\base\BaseObject
         }
 
         return $directory_size;
-    }
-
-
-    /**
-     * Return a value from the file information array
-     */
-    private function getInfo($name)
-    {
-        // Load information array
-        if ( $this->vec_info === null )
-        {
-            $this->info();
-        }
-
-
-        if ( array_key_exists($name, $this->vec_info) )
-        {
-            return $this->vec_info[$name];
-        }
-
-        return null;
     }
 }
