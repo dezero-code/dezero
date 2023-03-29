@@ -1,6 +1,6 @@
 <?php
 /**
- * Config class file based on crisu83.yii-consoletools.helpers package
+ * Config class file helper
  *
  * Helper class for working with several config files
  */
