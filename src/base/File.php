@@ -46,6 +46,12 @@ class File extends \yii\base\BaseObject
 
 
     /**
+     * @var resource|null holds the file handler resource if the file is opened
+     */
+    private $handle;
+
+
+    /**
      * File constructor
      */
     public function __construct(string $file_path)
@@ -65,7 +71,16 @@ class File extends \yii\base\BaseObject
 
 
     /**
-     * Load (open) a filesystem object given a path
+     * Closes the current file if it is opened
+     */
+    public function __destruct()
+    {
+        $this->close();
+    }
+
+
+    /**
+     * Load a filesystem object given a path
      */
     public static function load(string $file_path) : static
     {
@@ -362,7 +377,35 @@ class File extends \yii\base\BaseObject
 
 
     /**
-     * Returns the current filesystem object contents
+     * Creates empty file if the current file doesn't exist
+     */
+    public function createEmptyFile() : bool
+    {
+        // File cannot exist
+        if ( $this->exists() )
+        {
+            return false;
+        }
+
+        if ( ! $this->open('w') )
+        {
+            return false;
+        }
+
+        touch($this->real_path);
+        $this->close();
+
+        $empty_file = self::load($this->real_path);
+        $this->file_path = $empty_file->file_path;
+        $this->real_path = $empty_file->real_path;
+        $this->vec_info = $empty_file->vec_info;
+
+        return true;
+    }
+
+
+    /**
+     * Returns the data of the current filesystem object
      */
     public function read(array $vec_options = []) : string|array|null
     {
@@ -374,15 +417,48 @@ class File extends \yii\base\BaseObject
         // Get contents from a FILE
         if ( $this->isFile() )
         {
-            $contents = file_get_contents($this->real_path);
-            if ( $contents )
+            $data = file_get_contents($this->real_path);
+            if ( $data )
             {
-                return $contents;
+                return $data;
             }
         }
 
         // Get contents from a DIRECTORY
         return $this->readDirectory($vec_options);
+    }
+
+
+    /**
+     * Write data to the current filesystem object
+     */
+    public function write(string $data, bool $is_auto_create = true, int $flags = 0) : bool
+    {
+        if ( ! $this->exists() && $is_auto_create )
+        {
+            $this->createEmptyFile();
+        }
+
+        if ( ! $this->exists() || ! $this->isFile() || ! $this->isWritable() )
+        {
+            return false;
+        }
+
+        if ( ! file_put_contents($this->real_path, $data, $flags) )
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+
+    /**
+     * Append data to the current filesystem object
+     */
+    public function append(string $data) : bool
+    {
+        return $this->write($data, false, FILE_APPEND);
     }
 
 
@@ -546,6 +622,39 @@ class File extends \yii\base\BaseObject
         }
 
         return self::load($zip_destination_path);
+    }
+
+
+     /**
+     * Opens (if not already opened) the current file using certain mode
+     *
+     * Used only internally
+     */
+    private function open(string $mode = 'r')
+    {
+        if ( is_resource($this->handle) )
+        {
+            return true;
+        }
+
+        $this->handle = fopen($this->real_path, $mode);
+
+        return is_resource($this->handle);
+    }
+
+    /**
+     * Closes (if opened) the current file pointer
+     *
+     * Used only internally
+     */
+    private function close() : bool
+    {
+        if ( ! is_resource($this->handle) )
+        {
+            return true;
+        }
+
+        return fclose($this->handle);
     }
 
 
