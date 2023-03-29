@@ -11,6 +11,8 @@ namespace dezero\base;
 
 use dezero\helpers\FileHelper;
 use dezero\helpers\Number;
+use dezero\errors\ShellCommandException;
+use mikehaertl\shellcommand\Command as ShellCommand;
 use Dz;
 use Yii;
 
@@ -485,9 +487,7 @@ class File extends \yii\base\BaseObject
 
 
     /**
-     * Download current file
-     *
-     * @todo
+     * Download the current file
      */
     public function download(string $file_name = null)
     {
@@ -496,9 +496,56 @@ class File extends \yii\base\BaseObject
             return null;
         }
 
-        $file_name = $file_name === null ? $this->filename() : $file_name;
+        $file_name = $file_name === null ? $this->basename() : $file_name;
 
         return Yii::$app->response->sendFile($this->real_path, $file_name);
+    }
+
+
+    /**
+     * ZIP current file via SHELL command
+     */
+    public function zip(bool $is_after_delete = false) : ?static
+    {
+        if ( ! $this->isFile() )
+        {
+            return null;
+        }
+
+        // Zip command
+        $zip_command = 'zip';
+        if ( isset(Yii::$app->params['zip_command']) )
+        {
+            $zip_command = Yii::$app->params['zip_command'];
+        }
+
+        // ZIP file destination path
+        $zip_destination_path = $this->realPath() .'.zip';
+
+        $shellCommand = new ShellCommand();
+        $shellCommand->setCommand($zip_command .' -j '.  $zip_destination_path .' '. $this->realPath());
+
+        // If we don't have proc_open, maybe we've got exec
+        if ( ! function_exists('proc_open') && function_exists('exec') )
+        {
+            $shellCommand->useExec = true;
+        }
+
+        // Execute command
+        $is_success = $shellCommand->execute();
+
+        if ( ! $is_success )
+        {
+            $execCommand = $shellCommand->getExecCommand();
+            throw new ShellCommandException($execCommand, $shellCommand->getExitCode(), $shellCommand->getStdErr());
+        }
+        else if ( $is_after_delete )
+        {
+            // Delete current file
+            $this->delete();
+        }
+
+        return self::load($zip_destination_path);
     }
 
 
