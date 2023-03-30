@@ -89,15 +89,6 @@ class File extends \yii\base\BaseObject
 
 
     /**
-     * Check if current filesystem object exists
-     */
-    public function exists() : bool
-    {
-        return file_exists($this->real_path);
-    }
-
-
-    /**
      * Return an array with the file information
      */
     public function info() : array
@@ -128,6 +119,22 @@ class File extends \yii\base\BaseObject
         }
 
         return $this->vec_info;
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | GETTER METHODS
+    |--------------------------------------------------------------------------
+    */
+
+
+    /**
+     * Check if current filesystem object exists
+     */
+    public function exists() : bool
+    {
+        return file_exists($this->real_path);
     }
 
 
@@ -276,7 +283,7 @@ class File extends \yii\base\BaseObject
     /**
      * Returns the MIME type of the current file
      *
-     * @see \yii\helpers\BaseFileHelper
+     * @see yii\helpers\BaseFileHelper::getMimeType()
      */
     public function mime() : ?string
     {
@@ -287,7 +294,7 @@ class File extends \yii\base\BaseObject
     /**
      * Returns permissions of current filesystem object (UNIX systems)
      */
-    public function permissions() : ?string
+    public function permissions() : string|int|null
     {
         if ( ! $this->exists() || ! $this->isReadable() )
         {
@@ -377,6 +384,165 @@ class File extends \yii\base\BaseObject
 
 
     /**
+     * Returns the data of the current filesystem object
+     */
+    public function read(array $vec_options = []) : string|array|null
+    {
+        if ( ! $this->exists() || ! $this->isReadable() )
+        {
+            return null;
+        }
+
+        // Get contents from a FILE
+        if ( $this->isFile() )
+        {
+            $data = file_get_contents($this->real_path);
+            if ( $data === false )
+            {
+                return null;
+            }
+
+            return $data;
+        }
+
+        // Get contents from a DIRECTORY
+        return $this->readDirectory($vec_options);
+    }
+
+
+    /**
+     * Check if current filesystem object is empty
+     *
+     * @see dezero\helpers\FileHelper::isEmptyDirectory()
+     */
+    public function isEmpty() : bool
+    {
+        if ( ! $this->exists() || ! $this->isReadable() )
+        {
+            return null;
+        }
+
+        // Check if a FILE is empty
+        if ( $this->isFile() )
+        {
+            $data = file_get_contents($this->real_path);
+            return $data === '';
+        }
+
+        // Check if a DIRECTORY is empty
+        return FileHelper::isEmptyDirectory($this->real_path);
+    }
+
+
+    /**
+     * Check if a file is an image
+     *
+     * @see dezero\helpers\FileHelper::isImage()
+     */
+    public static function isImage() : bool
+    {
+        if ( ! $this->exists() || ! $this->isReadable() || ! $this->isFile() )
+        {
+            return false;
+        }
+
+        return FileHelper::isImage($this->real_path);
+    }
+
+
+    /**
+     * Get MD5 Checksum of file with previous check of `filesize`
+     *
+     * @see https://www.php.net/manual/en/function.md5-file.php
+     */
+    public function md5(int|bool $max_size = 5) : string|false
+    {
+        if ( ! $this->exists() || ! $this->isReadable() || ! $this->isFile() )
+        {
+            return false;
+        }
+
+        if ( $max_size === true )
+        {
+            return md5_file($this->real_path);
+        }
+
+        $size = $this->size();
+        if ( $size && $size < ($max_size * 1024) * 1024 )
+        {
+            return md5_file($this->real_path);
+        }
+
+        return false;
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | SETTER METHODS
+    |--------------------------------------------------------------------------
+    */
+
+
+    /**
+     * Sets the current filesystem object owner for UNIX systems.
+     */
+    public function setOwner(string $owner) : bool
+    {
+        if ( ! $this->exists() || ! chown($this->real_path, $owner) )
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+
+    /**
+     * Sets the current filesystem object group for UNIX systems.
+     */
+    public function setGroup(string $group) : bool
+    {
+        if ( ! $this->exists() || ! chgrp($this->real_path, $group))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+
+    /**
+     * Sets the current filesystem object permissions for UNIX systems.
+     */
+    public function setPermissions(int $permissions) : bool
+    {
+        if ( ! $this->exists() || ! is_numeric($permissions) )
+        {
+            return false;
+        }
+        // '755' normalize to octal '0755'
+        $permissions = octdec(str_pad($permissions, 4, "0", STR_PAD_LEFT));
+
+        if ( ! @chmod($this->real_path, $permissions) )
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+
+    /**
+     * Alias for setPermissions() method
+     */
+    public function chmod(int $permissions) : bool
+    {
+        return $this->setPermissions($permissions);
+    }
+
+
+    /**
      * Creates empty file if the current file doesn't exist
      */
     public function createEmptyFile() : bool
@@ -405,31 +571,6 @@ class File extends \yii\base\BaseObject
 
 
     /**
-     * Returns the data of the current filesystem object
-     */
-    public function read(array $vec_options = []) : string|array|null
-    {
-        if ( ! $this->exists() || ! $this->isReadable() )
-        {
-            return null;
-        }
-
-        // Get contents from a FILE
-        if ( $this->isFile() )
-        {
-            $data = file_get_contents($this->real_path);
-            if ( $data )
-            {
-                return $data;
-            }
-        }
-
-        // Get contents from a DIRECTORY
-        return $this->readDirectory($vec_options);
-    }
-
-
-    /**
      * Write data to the current filesystem object
      */
     public function write(string $data, bool $is_auto_create = true, int $flags = 0) : bool
@@ -446,7 +587,7 @@ class File extends \yii\base\BaseObject
 
         if ( ! file_put_contents($this->real_path, $data, $flags) )
         {
-            return false;
+            return ( $data === '' );
         }
 
         return true;
@@ -463,9 +604,18 @@ class File extends \yii\base\BaseObject
 
 
     /**
+     * Alias for append() method
+     */
+    public function save(string $data, bool $is_auto_create = true, int $flags = 0) : bool
+    {
+        return $this->append($data, $is_auto_create, $flags);
+    }
+
+
+    /**
      * Deletes the current filesystem object
      *
-     * @see FileHelper::unlink
+     * @see FileHelper::unlink()
      */
     public function delete() : bool
     {
@@ -563,6 +713,29 @@ class File extends \yii\base\BaseObject
 
 
     /**
+     * Clear the data of a filesystem object
+     *
+     * @see dezero\helpers\FileHelper::clearDirectory()
+     */
+    public function clear() : bool
+    {
+        if ( ! $this->exists() || ! $this->isWritable() )
+        {
+            return false;
+        }
+
+        // Delete a FILE
+        if ( $this->isFile() )
+        {
+            return $this->write('');
+        }
+
+        // Removes all of a directory’s contents recursively.
+        return $this->clearDirectory();
+    }
+
+
+    /**
      * Download the current file
      */
     public function download(string $file_name = null)
@@ -625,7 +798,7 @@ class File extends \yii\base\BaseObject
     }
 
 
-     /**
+    /**
      * Opens (if not already opened) the current file using certain mode
      *
      * Used only internally
@@ -641,6 +814,7 @@ class File extends \yii\base\BaseObject
 
         return is_resource($this->handle);
     }
+
 
     /**
      * Closes (if opened) the current file pointer
@@ -726,7 +900,7 @@ class File extends \yii\base\BaseObject
     /**
      * Creates a new directory
      *
-     * @see FileHelper::createDirectory
+     * @see dezero\helpers\FileHelper::createDirectory
      */
     public static function createDirectory(string $path, int $permissions = 775) : ?static
     {
@@ -745,7 +919,7 @@ class File extends \yii\base\BaseObject
     /**
      * List of the contents of the current directory
      *
-     * @see \yii\helpers\BaseFileHelper::findFiles()
+     * @see yii\helpers\BaseFileHelper::findFiles()
      */
     private function readDirectory(array $vec_options = []) : ?array
     {
@@ -761,7 +935,7 @@ class File extends \yii\base\BaseObject
     /**
      * Removes a directory (and all its content) recursively.
      *
-     * @see \yii\helpers\BaseFileHelper::removeDirectory()
+     * @see yii\helpers\BaseFileHelper::removeDirectory()
      */
     private function removeDirectory() : bool
     {
@@ -779,7 +953,7 @@ class File extends \yii\base\BaseObject
     /**
      * Copies a whole directory as another one
      *
-     * @see \yii\helpers\BaseFileHelper::copyDirectory()
+     * @see yii\helpers\BaseFileHelper::copyDirectory()
      */
     private function copyDirectory(string $destination_path) : ?static
     {
@@ -792,6 +966,24 @@ class File extends \yii\base\BaseObject
 
         // Replace information with new copied directory
         return self::load($destination_path);
+    }
+
+
+    /**
+     * Removes all of a directory’s contents recursively.
+     *
+     * @see dezero\helpers\FileHelper::clearDirectory()
+     */
+    private function clearDirectory() : bool
+    {
+        if ( ! $this->isDirectory() )
+        {
+            return false;
+        }
+
+        FileHelper::clearDirectory($this->real_path);
+
+        return true;
     }
 
 
@@ -819,5 +1011,38 @@ class File extends \yii\base\BaseObject
         }
 
         return $directory_size;
+    }
+
+
+     /**
+     * Encodes the file content with MIME base64
+     *
+     * @see base64_encode()
+     */
+    public function base64_encode() : ?string
+    {
+        if ( ! $this->isFile() )
+        {
+            return null;
+        }
+
+        return base64_encode($this->read());
+    }
+
+
+    /**
+     * Writes contents encoded with MIME base64 into the current file
+     *
+     * @see write()
+     * @see base64_decode()
+     */
+    public function base64_save(string $encoded_data, bool $is_auto_create = true, int $flags = 0) : bool
+    {
+        if ( ! $this->isFile() )
+        {
+            return false;
+        }
+
+        return $this->write(base64_decode($encoded_data, $is_auto_create, $flags));
     }
 }
