@@ -17,6 +17,7 @@
     "php": ">=7.3",
     "kint-php/kint": "~3.3",
     "mikehaertl/php-shellcommand": "^1.6.0",
+    "spatie/image": "^2.2.0",
     "vlucas/phpdotenv": "^2.4.0",
     "yiisoft/yii2": "~2.0.5",
     "yiisoft/yii2-gii": "~2.0.0"

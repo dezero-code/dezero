@@ -439,7 +439,7 @@ class File extends \yii\base\BaseObject
      *
      * @see dezero\helpers\FileHelper::isImage()
      */
-    public static function isImage() : bool
+    public function isImage() : bool
     {
         if ( ! $this->exists() || ! $this->isReadable() || ! $this->isFile() )
         {
