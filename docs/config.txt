@@ -1,0 +1,24 @@
+================================
+-- CONFIG COMPONENT EXAMPLES --
+================================
+
+/**
+ * Use it via Yii::$app->config
+ *
+ * @see src/components/Config.php
+ */
+
+// Return configuration values from a component (app/config/components/routes.php)
+Yii::$app->config->get('routes');
+
+// Return configuration values from common directory (app/config/common/aliases.php)
+Yii::$app->config->get('common/aliases');
+
+// Return a specified configuration value from common directory (app/config/common/aliases.php)
+Yii::$app->config->get('common/aliases', '@vendor');
+
+// Load config files for CORE project (app/core/src/config/routes.php)
+Yii::$app->config->get('@core/config/pathes');
+
+// Load database configuration: username, password, host, port, dbname, driver, charset
+Yii::$app->config->getDb();

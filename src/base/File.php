@@ -13,7 +13,6 @@ use dezero\helpers\FileHelper;
 use dezero\helpers\Number;
 use dezero\errors\ShellCommandException;
 use mikehaertl\shellcommand\Command as ShellCommand;
-use Dz;
 use Yii;
 
 /**
@@ -799,6 +798,24 @@ class File extends \yii\base\BaseObject
 
 
     /**
+     * Resolves destination path for the current filesystem object.
+     * This method enables short calls for {@link copy} & {@link rename} methods
+     * (i.e. copy('document.pdf') makes a copy of the current filesystem object
+     * in the same directory, named 'document.pdf')
+     */
+    public function resolveDestinationPath(string $destination_path) : string
+    {
+        // Check if it's the current directory
+        if ( strpos($destination_path, DIRECTORY_SEPARATOR) === false)
+        {
+            return $this->dirname() . DIRECTORY_SEPARATOR . $destination_path;
+        }
+
+        return FileHelper::realPath($destination_path);
+    }
+
+
+    /**
      * Opens (if not already opened) the current file using certain mode
      *
      * Used only internally
@@ -852,23 +869,6 @@ class File extends \yii\base\BaseObject
         return null;
     }
 
-
-    /**
-     * Resolves destination path for the current filesystem object.
-     * This method enables short calls for {@link copy} & {@link rename} methods
-     * (i.e. copy('document.pdf') makes a copy of the current filesystem object
-     * in the same directory, named 'document.pdf')
-     */
-    private function resolveDestinationPath(string $destination_path) : string
-    {
-        // Check if it's the current directory
-        if ( strpos($destination_path, DIRECTORY_SEPARATOR) === false)
-        {
-            return $this->dirname() . DIRECTORY_SEPARATOR . $destination_path;
-        }
-
-        return FileHelper::realPath($destination_path);
-    }
 
 
     /*

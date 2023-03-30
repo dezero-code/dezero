@@ -4,5 +4,5 @@
  **/
 
 return [
-    'coreVersion'   => '0.1.0'
+    'coreVersion'   => '0.1.5'
 ];
