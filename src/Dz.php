@@ -192,7 +192,7 @@ class Dz extends Yii
             }
             else
             {
-                $vec_modules[$id] = Yii::t('app', 'Unknown type');
+                $vec_modules[$id] = Yii::t('backend', 'Unknown type');
             }
         }
 

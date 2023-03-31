@@ -2,6 +2,9 @@
 
 All notable changes to `Dezero Framework` will be documented in this file
 
+## 0.1.6 - 2023-03-31
+- Use custom DbSession class to store session data in the database table "user_session"
+
 ## 0.1.5 - 2023-03-30
 
 - Created special class File to work with files and directories similar to old CFile component

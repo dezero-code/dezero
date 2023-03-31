@@ -38,6 +38,9 @@ class FileTarget extends \yii\log\FileTarget
         // Remove LogVars by default
         $this->logVars = [];
 
+        // To make each log message appear immediately in the log targets
+        $this->exportInterval = 1;
+
         parent::init();
     }
 }

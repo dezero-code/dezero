@@ -34,9 +34,9 @@ class <?= $className ?> extends Migration
         /*
         // Create "my_table" table
         // -------------------------------------------------------------------------
-        $this->dropTableIfExists('{{%my_table}}', true);
+        $this->dropTableIfExists('my_table', true);
 
-        $this->createTable('{{%my_table}}', [
+        $this->createTable('my_table', [
             'id' => $this->primaryKey(),
             'name' => $this->string(128),
             'description' => $this->text(),
@@ -54,49 +54,49 @@ class <?= $className ?> extends Migration
         ]);
 
         // Primary key (alternative method)
-        $this->addPrimaryKey(null, '{{%my_table}}', 'id');
+        $this->addPrimaryKey(null, 'my_table', 'id');
 
         // Create indexes
-        $this->createIndex(null, '{{%my_table}}', ['entity_uuid'], false);
+        $this->createIndex(null, 'my_table', ['entity_uuid'], false);
 
         // Create FOREIGN KEYS
-        $this->addForeignKey(null, '{{%my_table}}', ['disabled_user_id'], 'user_user', ['user_id'], 'SET NULL', null);
-        $this->addForeignKey(null, '{{%my_table}}', ['created_user_id'], 'user_user', ['user_id'], 'CASCADE', null);
-        $this->addForeignKey(null, '{{%my_table}}', ['updated_user_id'], 'user_user', ['user_id'], 'CASCADE', null);
+        $this->addForeignKey(null, 'my_table', ['disabled_user_id'], 'user_user', ['user_id'], 'SET NULL', null);
+        $this->addForeignKey(null, 'my_table', ['created_user_id'], 'user_user', ['user_id'], 'CASCADE', null);
+        $this->addForeignKey(null, 'my_table', ['updated_user_id'], 'user_user', ['user_id'], 'CASCADE', null);
 
 
         /*
         // Add new column via $this->addColumn
-        $this->addColumn('{{%my_table}}', 'description', $this->string(255)->after('name'));
+        $this->addColumn('my_table', 'description', $this->string(255)->after('name'));
         */
 
         /*
         // Alter column via $this->alterColumn
-        $this->alterColumn('{{%my_table}}', 'name', $this->string(128)->notNull());
+        $this->alterColumn('my_table', 'name', $this->string(128)->notNull());
         */
 
         /*
         // Rename column via $this->renameColumn
-        $this->renameColumn('{{%my_table}}', 'name', 'new_name');
+        $this->renameColumn('my_table', 'name', 'new_name');
         */
 
         /*
         // Rename table via $this->renameTable
-        $this->renameTable('{{%my_table}}', 'new_name');
+        $this->renameTable('my_table', 'new_name');
         */
 
         /*
         // Disable FOREIGH KEY check integrity
         $this->db->disableCheckIntegrity();
 
-        $this->dropTableIfExists('{{%my_table}}');
+        $this->dropTableIfExists('my_table');
 
         // Enable again FOREIGH KEY check integrity
         $this->db->enableCheckIntegrity();
 
         // Insert default values
         // Add namespace above ---> use dezero\helpers\Str;
-        $this->insert('{{%my_table}}', [
+        $this->insert('my_table', [
             'name'              => 'name',
             'is_default'        => 1,
             'weight'            => 1,
@@ -108,7 +108,7 @@ class <?= $className ?> extends Migration
         ]);
 
         // Insert multiples values
-        $this->insertMultiple('{{%my_table}}', [
+        $this->insertMultiple('my_table', [
             [
                 'name'              => 'name',
                 'is_default'        => 1,
@@ -133,6 +133,7 @@ class <?= $className ?> extends Migration
         */
     }
 
+
     /**
      * {@inheritdoc}
      */
@@ -143,12 +144,14 @@ class <?= $className ?> extends Migration
         return false;
     }
 
+
     /*
     // Use up()/down() to run migration code without a transaction.
     public function up()
     {
 
     }
+
 
     public function down()
     {
