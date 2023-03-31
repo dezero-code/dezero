@@ -239,6 +239,11 @@ class Generator extends \yii\gii\Generator
                 'rules' => $this->generateRules($tableSchema),
                 'relations' => isset($relations[$tableName]) ? $relations[$tableName] : [],
 
+                // Custom parameters from Dezeor Framework
+                'ns' => $this->ns,
+                'queryNs' => $this->queryNs,
+                'enum' => $this->getEnum($tableSchema->columns),
+
                 // Model title
                 'modelTitle' => $this->modelTitle,
 
@@ -377,6 +382,7 @@ class Generator extends \yii\gii\Generator
                     }
             }
         }
+
         $rules = [];
         $driverName = $this->getDbDriverName();
         foreach ($types as $type => $columns) {
@@ -432,6 +438,20 @@ class Generator extends \yii\gii\Generator
             $rules[] = "[['$attributes'], 'exist', 'skipOnError' => true, 'targetClass' => $refClassName::className(), 'targetAttribute' => [$targetAttributes]]";
         }
         */
+
+        // ENUM
+        // For enum fields create rules "in range" for all enum values
+        $enum = $this->getEnum($table->columns);
+        foreach ($enum as $field_name => $field_details) {
+            $ea = [];
+            foreach ($field_details['values'] as $field_enum_values) {
+                $ea[] = 'self::'.$field_enum_values['const_name'];
+            }
+            $rules[] = "['".$field_name."', 'in', 'range' => [\n                    ".implode(
+                    ",\n                    ",
+                    $ea
+                ).",\n                ]\n            ]";
+        }
 
         return $rules;
     }
@@ -1022,5 +1042,61 @@ class Generator extends \yii\gii\Generator
         }
 
         return false;
+    }
+
+
+    /**
+     * prepare ENUM field values.
+     *
+     * @param array $columns
+     *
+     * @return array
+     */
+    public function getEnum($columns)
+    {
+        $enum = [];
+        foreach ($columns as $column) {
+            if (!$this->isEnum($column)) {
+                continue;
+            }
+
+            $column_camel_name = str_replace(' ', '', ucwords(implode(' ', explode('_', $column->name))));
+            $enum[$column->name]['func_opts_name'] = 'opts'.$column_camel_name;
+            $enum[$column->name]['func_get_label_name'] = 'get'.$column_camel_name.'ValueLabel';
+            $enum[$column->name]['values'] = [];
+
+            $enum_values = explode(',', substr($column->dbType, 4, strlen($column->dbType) - 1));
+
+            foreach ($enum_values as $value) {
+                $value = trim($value, "()'");
+
+                $const_name = strtoupper($column->name.'_'.$value);
+                $const_name = preg_replace('/\s+/', '_', $const_name);
+                $const_name = str_replace(['-', '_', ' '], '_', $const_name);
+                $const_name = preg_replace('/[^A-Z0-9_]/', '', $const_name);
+
+                $label = Inflector::camel2words($value);
+
+                $enum[$column->name]['values'][] = [
+                    'value' => $value,
+                    'const_name' => $const_name,
+                    'label' => $label,
+                ];
+            }
+        }
+
+        return $enum;
+    }
+
+    /**
+     * validate is ENUM.
+     *
+     * @param  $column table column
+     *
+     * @return type
+     */
+    public function isEnum($column)
+    {
+        return substr(strtoupper($column->dbType), 0, 4) == 'ENUM';
     }
 }

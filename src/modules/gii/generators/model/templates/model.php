@@ -55,6 +55,22 @@ use Yii;
  */
 class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') . "\n" ?>
 {
+<?php
+if(!empty($enum)){
+?>
+    /**
+    * ENUM field values
+    */
+<?php
+    foreach($enum as $column_name => $column_data){
+        foreach ($column_data['values'] as $enum_value){
+            echo '    public const ' . $enum_value['const_name'] . ' = \'' . $enum_value['value'] . '\';' . PHP_EOL;
+        }
+    }
+}
+?>
+
+
     /**
      * {@inheritdoc}
      */
@@ -140,11 +156,44 @@ class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass, '\\') . 
      */
     public static function find() : <?= $queryClassName ."\n" ?>
     {
-        return new <?= $queryClassName ?>(static::class);
+        return new <?= $queryClassName; ?>(static::class);
     }
 <?php endif; ?>
 
 
+<?php
+    // Custom ENUM "labels" methods
+    foreach ($enum as $column_name => $column_data) :
+?>
+    /**
+     * Get "<?= $column_name?>" labels
+     */
+    public function <?= $column_name; ?>_labels() : array
+    {
+        return [
+<?php
+        foreach($column_data['values'] as $k => $value)
+        {
+            echo "            "."self::" . $value['const_name'] . " => Yii::t('". $generator->messageCategory ."', " . $generator->generateString($value['label']) . "),\n";
+        }
+?>
+        ];
+    }
+
+
+    /**
+     * Get "<?= $column_name?>" specific label
+     */
+    public function <?= $column_name; ?>_label(?string $<?= $column_name; ?> = null) : string
+    {
+        $<?= $column_name; ?> = ( $<?= $column_name; ?> === null ) ? $this-><?= $column_name; ?> : $<?= $column_name; ?>;
+        $vec_labels = $this-><?= $column_name; ?>_labels();
+
+        return isset($vec_labels[$<?= $column_name; ?>]) ? $vec_labels[$<?= $column_name; ?>] : '';
+    }
+
+
+<?php endforeach; ?>
     /**
      * Title used for this model
      */
