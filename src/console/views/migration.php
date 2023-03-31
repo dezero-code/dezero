@@ -131,6 +131,8 @@ class <?= $className ?> extends Migration
             ],
         ]);
         */
+
+        return true;
     }
 
 

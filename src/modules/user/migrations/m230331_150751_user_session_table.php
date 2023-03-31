@@ -36,6 +36,8 @@ class m230331_150751_user_session_table extends Migration
 
         // Create FOREIGN KEYS
         $this->addForeignKey(null, 'user_session', ['user_id'], 'user_user', ['user_id'], 'SET NULL', null);
+
+        return true;
     }
 
 

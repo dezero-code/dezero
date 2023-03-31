@@ -24,6 +24,12 @@ class MigrateController extends BaseMigrateController
 
 
     /**
+     * Array with migrations information
+     */
+    public $vec_migrations_info = [];
+
+
+    /**
      * {@inheritdoc}
      */
     private $_migrationNameLimit;
@@ -72,6 +78,7 @@ class MigrateController extends BaseMigrateController
     {
         // Add the migrations path for all the modules
         $vec_modules = $this->getModulesList();
+        $vec_modules_path = [];
         if ( !empty($vec_modules) )
         {
             foreach ( $vec_modules as $module_id => $module_namespace )
@@ -79,12 +86,81 @@ class MigrateController extends BaseMigrateController
                 if ( $module_id !== 'core' && $module_id !== 'gii' )
                 {
                     // echo $module_id .' - '. $this->getMigrationPathByModule($module_id) ."\n";
-                    $this->migrationPath[] = Yii::getAlias($this->getMigrationPathByModule($module_id));
+                    $module_migration_path = Yii::getAlias($this->getMigrationPathByModule($module_id));
+                    $this->migrationPath[] = $module_migration_path;
+
+                    // Save "module_migration_path" and "module_id" relation
+                    $vec_modules_path[$module_migration_path] = $module_id;
                 }
             }
         }
 
-        return parent::getNewMigrations();
+        // return parent::getNewMigrations();
+
+        $vec_applied = [];
+        foreach ( $this->getMigrationHistory(null) as $class => $time )
+        {
+            $vec_applied[trim($class, '\\')] = true;
+        }
+
+        $migrationPaths = [];
+        if ( is_array($this->migrationPath) )
+        {
+            foreach ( $this->migrationPath as $path )
+            {
+                $migrationPaths[] = [$path, ''];
+            }
+        }
+        elseif ( !empty($this->migrationPath) )
+        {
+            $migrationPaths[] = [$this->migrationPath, ''];
+        }
+
+        foreach ( $this->migrationNamespaces as $namespace )
+        {
+            $migrationPaths[] = [$this->getNamespacePath($namespace), $namespace];
+        }
+
+        $vec_migrations = [];
+        foreach ( $migrationPaths as $item )
+        {
+            list($migrationPath, $namespace) = $item;
+            if ( !file_exists($migrationPath) )
+            {
+                continue;
+            }
+            $handle = opendir($migrationPath);
+            while ( ( $file = readdir($handle) ) !== false )
+            {
+                if ( $file === '.' || $file === '..' )
+                {
+                    continue;
+                }
+                $path = $migrationPath . DIRECTORY_SEPARATOR . $file;
+                if ( preg_match('/^(m(\d{6}_?\d{6})\D.*?)\.php$/is', $file, $matches) && is_file($path) )
+                {
+                    $class = $matches[1];
+                    if ( !empty($namespace) )
+                    {
+                        $class = $namespace . '\\' . $class;
+                    }
+                    $time = str_replace('_', '', $matches[2]);
+                    if ( !isset($vec_applied[$class]) )
+                    {
+                        $vec_migrations[$time . '\\' . $class] = $class;
+
+                        // Save module
+                        $module_id = isset($vec_modules_path[$migrationPath]) ? $vec_modules_path[$migrationPath] : 'core';
+                        $this->vec_migrations_info[$class] = $module_id;
+                    }
+                }
+            }
+            closedir($handle);
+        }
+
+        ksort($vec_migrations);
+
+        return array_values($vec_migrations);
     }
 
 
@@ -198,10 +274,12 @@ class MigrateController extends BaseMigrateController
      */
     protected function addMigrationHistory($name)
     {
+        $module_id = isset($this->vec_migrations_info[$name]) ? $this->vec_migrations_info[$name] : null;
         $this->db->createCommand()->insert($this->migrationTable, [
             'name'          => $name,
             'apply_date'    => time(),
-            'module'        => $this->module_id
+            'module'        => $module_id,
+            'uuid'          => Str::UUID()
         ])->execute();
     }
 
