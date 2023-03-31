@@ -7,6 +7,7 @@
 
 namespace dezero\modules\gii\generators\model;
 
+use Dz;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\ActiveQuery;
@@ -32,7 +33,7 @@ class Generator extends \yii\gii\Generator
     const RELATIONS_ALL_INVERSE = 'all-inverse';
 
     public $db = 'db';
-    public $ns = 'app\models';
+    public $ns = 'frontend\models';
     public $tableName;
     public $modelClass;
     public $baseClass = 'dezero\db\ActiveRecord';
@@ -43,9 +44,10 @@ class Generator extends \yii\gii\Generator
     public $standardizeCapitals = false;
     public $useSchemaName = true;
     public $generateQuery = false;
-    public $queryNs = 'app\queries';
+    public $queryNs = 'frontend\models\queries';
     public $queryClass;
     public $queryBaseClass = 'dezero\db\ActiveQuery';
+    public $moduleName;
 
     public $modelTitle = [];
     public $relationsOne = [];
@@ -74,11 +76,11 @@ class Generator extends \yii\gii\Generator
     public function rules()
     {
         return array_merge(parent::rules(), [
-            [['db', 'ns', 'tableName', 'modelClass', 'baseClass', 'queryNs', 'queryClass', 'queryBaseClass'], 'filter', 'filter' => 'trim'],
+            [['db', 'ns', 'tableName', 'modelClass', 'moduleName', 'baseClass', 'queryNs', 'queryClass', 'queryBaseClass'], 'filter', 'filter' => 'trim'],
             [['ns', 'queryNs'], 'filter', 'filter' => function ($value) { return trim($value, '\\'); }],
 
-            [['db', 'ns', 'tableName', 'baseClass', 'queryNs', 'queryBaseClass'], 'required'],
-            [['db', 'modelClass', 'queryClass'], 'match', 'pattern' => '/^\w+$/', 'message' => 'Only word characters are allowed.'],
+            [['db', 'ns', 'tableName', 'moduleName', 'baseClass', 'queryNs', 'queryBaseClass'], 'required'],
+            [['db', 'moduleName', 'modelClass', 'queryClass'], 'match', 'pattern' => '/^\w+$/', 'message' => 'Only word characters are allowed.'],
             [['ns', 'baseClass', 'queryNs', 'queryBaseClass'], 'match', 'pattern' => '/^[\w\\\\]+$/', 'message' => 'Only word characters and backslashes are allowed.'],
             [['tableName'], 'match', 'pattern' => '/^([\w ]+\.)?([\w\* ]+)$/', 'message' => 'Only word characters, and optionally spaces, an asterisk and/or a dot are allowed.'],
             [['db'], 'validateDb'],
@@ -103,6 +105,7 @@ class Generator extends \yii\gii\Generator
             'ns' => 'Namespace',
             'db' => 'Database Connection ID',
             'tableName' => 'Table Name',
+            'moduleName' => 'Module Name',
             'standardizeCapitals' => 'Standardize Capitals',
             'modelClass' => 'Model Class Name',
             'baseClass' => 'Base Class',
@@ -132,6 +135,7 @@ class Generator extends \yii\gii\Generator
                 will be generated, one for each matching table name; and the class names will be generated from
                 the matching characters. For example, table <code>tbl_post</code> will generate <code>Post</code>
                 class.',
+            'moduleName' => 'This is the name of the Module where the models will be stored',
             'modelClass' => 'This is the name of the ActiveRecord class to be generated. The class name should not contain
                 the namespace part as it is specified in "Namespace". You do not need to specify the class name
                 if "Table Name" ends with asterisk, in which case multiple ActiveRecord classes will be generated.',
@@ -242,8 +246,6 @@ class Generator extends \yii\gii\Generator
                 'relationsOne' => $this->relationsOne,
                 'relationsMany' => $this->relationsMany,
             ];
-            \DzLog::dev($this->relationsOne);
-            \DzLog::dev($this->relationsMany);
             $files[] = new CodeFile(
                 Yii::getAlias('@' . str_replace('\\', '/', $this->ns)) . '/' . $modelClassName . '.php',
                 $this->render('model.php', $params)

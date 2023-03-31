@@ -196,6 +196,8 @@ class Dz extends Yii
             }
         }
 
+        ksort($vec_modules);
+
         return $vec_modules;
     }
 
