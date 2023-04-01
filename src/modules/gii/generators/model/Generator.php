@@ -251,12 +251,20 @@ class Generator extends \yii\gii\Generator
                 'relationsOne' => $this->relationsOne,
                 'relationsMany' => $this->relationsMany,
             ];
+
+            // Base model class
+            $files[] = new CodeFile(
+                Yii::getAlias('@' . str_replace('\\', '/', $this->ns)) . '/base/' . $modelClassName . '.php',
+                $this->render('base.php', $params)
+            );
+
+            // Main model class
             $files[] = new CodeFile(
                 Yii::getAlias('@' . str_replace('\\', '/', $this->ns)) . '/' . $modelClassName . '.php',
                 $this->render('model.php', $params)
             );
 
-            // query :
+            // Query class
             if ($queryClassName) {
                 $params['className'] = $queryClassName;
                 $params['modelClassName'] = $modelClassName;
