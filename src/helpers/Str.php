@@ -407,7 +407,7 @@ class Str extends \yii\helpers\StringHelper
         }
 
         // Unless, MD5 will be the default method
-        else
+        if ( empty($hash_method) )
         {
             $hash_method = 'md5';
         }
