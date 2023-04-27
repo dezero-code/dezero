@@ -4,9 +4,13 @@
  */
 
 // Load dotenv configuration
-if ( file_exists(DZ_BASE_PATH . '/.env') )
+if ( file_exists(DZ_BASE_PATH . '/.env') && class_exists(Dotenv\Dotenv::class) )
 {
-    (new Dotenv\Dotenv(DZ_BASE_PATH))->load();
+    // (new Dotenv\Dotenv(DZ_BASE_PATH))->load();
+
+    // By default, this will allow .env file values to override environment variables
+    // with matching names. Use `createUnsafeImmutable` to disable this.
+    Dotenv\Dotenv::createUnsafeMutable(DZ_BASE_PATH)->safeLoad();
 }
 
 // Set constant
