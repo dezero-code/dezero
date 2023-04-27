@@ -191,6 +191,6 @@ class <?= $className ?> extends Base<?= $className . "\n" ?>
      */
     public function title() : string
     {
-        return <?= !empty($modelTitle) ? implode(' - ', $modelTitle) : '""'; ?>;
+        return <?= !empty($modelTitle) ? '$this->'. implode(' ." - ". $this->', $modelTitle) : '""'; ?>;
     }
 }

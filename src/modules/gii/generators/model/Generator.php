@@ -239,13 +239,16 @@ class Generator extends \yii\gii\Generator
                 'rules' => $this->generateRules($tableSchema),
                 'relations' => isset($relations[$tableName]) ? $relations[$tableName] : [],
 
-                // Custom parameters from Dezeor Framework
+                // Custom parameters from Dezero Framework
                 'ns' => $this->ns,
                 'queryNs' => $this->queryNs,
                 'enum' => $this->getEnum($tableSchema->columns),
 
                 // Model title
                 'modelTitle' => $this->modelTitle,
+
+                // Primary key (array)
+                'primaryKey' => $tableSchema->primaryKey,
 
                 // Relations
                 'relationsOne' => $this->relationsOne,
@@ -305,7 +308,7 @@ class Generator extends \yii\gii\Generator
             // 23/03/2023 - Model title. Use first STRING value detected
             if ( empty($this->modelTitle) && $type === 'string' )
             {
-                $this->modelTitle = ['$this->'. $column->name];
+                $this->modelTitle = [$column->name];
             }
         }
 

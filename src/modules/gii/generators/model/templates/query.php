@@ -21,36 +21,50 @@ if ($generator->ns !== $generator->queryNs) {
 
 echo "<?php\n";
 ?>
+/**
+ * <?= $className ?> query class file
+ *
+ * @author Fabián Ruiz <fabian@dezero.es>
+ * @link http://www.dezero.es
+ * @copyright Copyright &copy; <?= date('Y'); ?> Fabián Ruiz
+ */
 
 namespace <?= $generator->queryNs ?>;
 
 /**
- * This is the ActiveQuery class for [[<?= $modelFullClassName ?>]].
+ * ActiveQuery class for <?= $modelFullClassName ?>.
  *
  * @see <?= $modelFullClassName . "\n" ?>
  */
 class <?= $className ?> extends <?= '\\' . ltrim($generator->queryBaseClass, '\\') . "\n" ?>
 {
-    /*public function active()
-    {
-        return $this->andWhere('[[status]]=1');
-    }*/
-
+<?php
+    // Filter by PRIMARY KEY
+    $primaryKeyAttribute = null;
+    if ( !empty($primaryKey) && is_array($primaryKey) && count($primaryKey) === 1 ) :
+?>
+<?php $primaryKeyAttribute = $primaryKey[0]; ?>
     /**
-     * {@inheritdoc}
-     * @return <?= $modelFullClassName ?>[]|array
+     * Filter the query by "<?= $primaryKeyAttribute; ?>" attribute value
      */
-    public function all($db = null)
+    public function <?= $primaryKeyAttribute; ?>(int $<?= $primaryKeyAttribute; ?>) : self
     {
-        return parent::all($db);
+        return $this->andWhere(['<?= $primaryKeyAttribute; ?>' => $<?= $primaryKeyAttribute; ?>]);
     }
 
+<?php endif; ?>
+<?php
+    // Filter by MODEL TITLE
+    if ( !empty($modelTitle) && is_array($modelTitle) && count($modelTitle) === 1 && ( $primaryKeyAttribute === null || $primaryKeyAttribute !== $modelTitle[0]) ) :
+?>
+<?php $modelTitleAttribute = $modelTitle[0]; ?>
+
     /**
-     * {@inheritdoc}
-     * @return <?= $modelFullClassName ?>|array|null
+     * Filter the query by "<?= $modelTitleAttribute; ?>" attribute value
      */
-    public function one($db = null)
+    public function <?= $modelTitleAttribute; ?>(string $<?= $modelTitleAttribute; ?>) : self
     {
-        return parent::one($db);
+        return $this->andWhere(['<?= $modelTitleAttribute; ?>' => $<?= $modelTitleAttribute; ?>]);
     }
+<?php endif; ?>
 }

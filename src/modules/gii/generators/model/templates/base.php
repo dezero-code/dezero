@@ -192,6 +192,6 @@ abstract class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass,
      */
     public function title() : string
     {
-        return <?= !empty($modelTitle) ? implode(' - ', $modelTitle) : '""'; ?>;
+        return <?= !empty($modelTitle) ? '$this->'. implode(' ." - ". $this->', $modelTitle) : '""'; ?>;
     }
 }
