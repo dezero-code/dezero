@@ -8,6 +8,7 @@
 namespace dezero\modules\gii\generators\model;
 
 use Dz;
+use dezero\helpers\Str;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\ActiveQuery;
@@ -457,63 +458,113 @@ class Generator extends \yii\gii\Generator
 
         $vec_rules = [];
 
-        // Add all rules excepting NULL and SAFE (it will be the last ones)
+        // Add all rules excepting NULL (it will be the last ones)
+        $is_prefix_rule = false;
         foreach ( $vec_types as $type => $vec_columns )
         {
             if ( !empty($vec_columns) )
             {
-                if ( $type !== 'null' && $type !== 'safe' )
+                if ( $type !== 'null' )
                 {
-                    $vec_rules[] = "'{$type}Fields' => [['" . implode("', '", $vec_columns) . "'], '$type']";
+                    $prefix_rule = '';
+                    if ( $is_prefix_rule === false )
+                    {
+                        $is_prefix_rule = true;
+                        $prefix_rule = "// Typed rules\n            ";
+                    }
+                    $vec_rules[] = $prefix_rule ."'{$type}Fields' => [['" . implode("', '", $vec_columns) . "'], '$type']";
                 }
             }
         }
 
         // Add "max length" attributes
-        foreach ( $vec_lengths as $length => $vec_columns )
+        if ( !empty($vec_lengths) )
         {
-            if ( !empty($vec_columns) )
+            $is_prefix_rule = false;
+            ksort($vec_lengths);
+            foreach ( $vec_lengths as $length => $vec_columns )
             {
-                $vec_rules[] = "'max{$length}' => [['" . implode("', '", $vec_columns) . "'], 'string', 'max' => $length]";
+                if ( !empty($vec_columns) )
+                {
+                    $prefix_rule = '';
+                    if ( $is_prefix_rule === false )
+                    {
+                        $is_prefix_rule = true;
+                        $prefix_rule = "\n            // Max length rules\n            ";
+                    }
+                    $vec_rules[] = $prefix_rule ."'max{$length}' => [['" . implode("', '", $vec_columns) . "'], 'string', 'max' => $length]";
+                }
             }
         }
 
         // Add ENUM attributes
         // For enum fields create rules "in range" for all enum values
-        $enum = $this->getEnum($table->columns);
-        foreach ($enum as $field_name => $field_details) {
-            $ea = [];
-            foreach ($field_details['values'] as $field_enum_values) {
-                $ea[] = 'self::'.$field_enum_values['const_name'];
+        $vec_enums = $this->getEnum($table->columns);
+        if ( !empty($vec_enums) )
+        {
+            $is_prefix_rule = false;
+            foreach ( $vec_enums as $field_name => $field_details )
+            {
+                $ea = [];
+                foreach ($field_details['values'] as $field_enum_values)
+                {
+                    $ea[] = 'self::'.$field_enum_values['const_name'];
+                }
+
+                $prefix_rule = '';
+                if ( $is_prefix_rule === false )
+                {
+                    $is_prefix_rule = true;
+                    $prefix_rule = "\n            // ENUM rules\n            ";
+                }
+                $vec_rules[] = $prefix_rule ."'". Str::camelCase($field_name) ."List' => ['".$field_name."', 'in', 'range' => [\n                    ".implode(
+                        ",\n                    ",
+                        $ea
+                    ).",\n                ]\n            ]";
             }
-            $vec_rules[] = "'{$field_name}List' => ['".$field_name."', 'in', 'range' => [\n                    ".implode(
-                    ",\n                    ",
-                    $ea
-                ).",\n                ]\n            ]";
         }
 
-        $db = $this->getDbConnection();
+        // Default NULL values
+        if ( !empty($vec_types['null']) )
+        {
+            $vec_columns = $vec_types['null'];
+            $prefix_rule = "\n            // Default NULL\n            ";
+            $vec_rules[] = $prefix_rule ."'defaultNull' => [['" . implode("', '", $vec_columns) . "'], 'default', 'value' => null]";
+        }
+
 
         // Add UNIQUE rules
+        $db = $this->getDbConnection();
         try
         {
             $uniqueIndexes = array_merge($db->getSchema()->findUniqueIndexes($table), [$table->primaryKey]);
             $uniqueIndexes = array_unique($uniqueIndexes, SORT_REGULAR);
-            foreach ( $uniqueIndexes as $uniqueColumns )
+            if ( !empty($uniqueIndexes) )
             {
-                // Avoid validating auto incremental columns
-                if ( ! $this->isColumnAutoIncremental($table, $uniqueColumns) )
+                $is_prefix_rule = false;
+                foreach ( $uniqueIndexes as $uniqueColumns )
                 {
-                    $attributesCount = count($uniqueColumns);
+                    // Avoid validating auto incremental columns
+                    if ( ! $this->isColumnAutoIncremental($table, $uniqueColumns) )
+                    {
+                        $attributesCount = count($uniqueColumns);
 
-                    if ( $attributesCount === 1 )
-                    {
-                        $vec_rules[] = "'{$uniqueColumns[0]}Unique' => [['" . $uniqueColumns[0] . "'], 'unique']";
-                    }
-                    else if ( $attributesCount > 1 )
-                    {
-                        $columnsList = implode("', '", $uniqueColumns);
-                        $vec_rules[] = "'{$field_name}List' => [['$columnsList'], 'unique', 'targetAttribute' => ['$columnsList']]";
+                        $prefix_rule = '';
+                        if ( $is_prefix_rule === false )
+                        {
+                            $is_prefix_rule = true;
+                            $prefix_rule = "\n            // UNIQUE rules\n            ";
+                        }
+
+                        if ( $attributesCount === 1 )
+                        {
+                            $vec_rules[] = $prefix_rule ."'". Str::camelCase($uniqueColumns[0]) ."Unique' => [['" . $uniqueColumns[0] . "'], 'unique']";
+                        }
+                        else if ( $attributesCount > 1 )
+                        {
+                            $columnsList = implode("', '", $uniqueColumns);
+                            $vec_rules[] = $prefix_rule ."'{$field_name}List' => [['$columnsList'], 'unique', 'targetAttribute' => ['$columnsList']]";
+                        }
                     }
                 }
             }
@@ -543,22 +594,6 @@ class Generator extends \yii\gii\Generator
             $vec_rules[] = "[['$attributes'], 'exist', 'skipOnError' => true, 'targetClass' => $refClassName::className(), 'targetAttribute' => [$targetAttributes]]";
         }
         */
-
-        // Add all rules excepting NULL and SAFE (it will be the last ones)
-        foreach ( $vec_types as $type => $vec_columns )
-        {
-            if ( !empty($vec_columns) )
-            {
-                if ( $type === 'null' )
-                {
-                    $vec_rules[] = "'defaultNull' => [['" . implode("', '", $vec_columns) . "'], 'default', 'value' => null]";
-                }
-                else if ( $type === 'safe' )
-                {
-                    $vec_rules[] = "'{$type}Attributes' => [['" . implode("', '", $vec_columns) . "'], '$type']";
-                }
-            }
-        }
 
         return $vec_rules;
     }
@@ -1276,7 +1311,7 @@ class Generator extends \yii\gii\Generator
                 }
                 else
                 {
-                    $vec_rules[] = "'{$type}Attributes' => [['" . implode("', '", $vec_columns) . "'], '$type']";
+                    $vec_rules[] = "'{$type}Fields' => [['" . implode("', '", $vec_columns) . "'], '$type']";
                 }
             }
         }
