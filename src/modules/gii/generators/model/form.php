@@ -32,15 +32,31 @@ echo $form->field($generator, 'generateRelations')->dropDownList([
 ]);
 // echo $form->field($generator, 'generateRelationsFromCurrentSchema')->checkbox();
 // echo $form->field($generator, 'generateLabelsFromComments')->checkbox();
+
+// ActiveQuery
+echo '<br><hr><h3>ActiveQuery</h3><br>';
 echo $form->field($generator, 'generateQuery')->checkbox();
 echo $form->field($generator, 'queryNs');
 echo '<ul>';
-echo '<li>Namespace for app modules: <code>my_module\models\queries</code></li>';
-echo '<li>Namespace for core modules: <code>dezero\modules\my_module\models\queries</code></li>';
+echo '<li>Namespace for app modules: <code>my_module\models\query</code></li>';
+echo '<li>Namespace for core modules: <code>dezero\modules\my_module\models\query</code></li>';
 echo '</ul>';
-
 echo $form->field($generator, 'queryClass');
 echo $form->field($generator, 'queryBaseClass');
+
+// Search subclass
+echo '<br><hr><h3>Search subclass</h3><br>';
+echo $form->field($generator, 'generateSearch')->checkbox();
+echo $form->field($generator, 'searchNs');
+echo '<ul>';
+echo '<li>Namespace for app modules: <code>my_module\models\search</code></li>';
+echo '<li>Namespace for core modules: <code>dezero\modules\my_module\models\search</code></li>';
+echo '</ul>';
+echo $form->field($generator, 'searchClass');
+
+
+// ActiveQuery
+echo '<br><hr><h3>More Options</h3><br>';
 // echo $form->field($generator, 'enableI18N')->checkbox();
 echo $form->field($generator, 'messageCategory');
 echo $form->field($generator, 'useSchemaName')->checkbox();
@@ -52,8 +68,11 @@ $script = <<< JS
         $('.field-generator-ns').find('.sticky-value').html(module_id +"\\\models");
         $('#generator-ns').val(module_id +"\\\models");
 
-        $('.field-generator-queryns').find('.sticky-value').html(module_id +"\\\models\\\queries");
-        $('#generator-queryns').val(module_id +"\\\models\\\queries");
+        $('.field-generator-queryns').find('.sticky-value').html(module_id +"\\\models\\\query");
+        $('#generator-queryns').val(module_id +"\\\models\\\query");
+
+        $('.field-generator-searchns').find('.sticky-value').html(module_id +"\\\models\\\search");
+        $('#generator-searchns').val(module_id +"\\\models\\\search");
 
         $('.field-generator-messagecategory').find('.sticky-value').html(module_id);
         $('#generator-messagecategory').val(module_id);

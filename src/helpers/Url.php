@@ -7,8 +7,8 @@
 
 namespace dezero\helpers;
 
+use dezero\helpers\ArrayHelper;
 use Yii;
-use yii\helpers\ArrayHelper;
 
 /**
  * Helper for creating application configurations.

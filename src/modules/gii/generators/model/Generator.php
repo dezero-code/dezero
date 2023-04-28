@@ -43,11 +43,19 @@ class Generator extends \yii\gii\Generator
     public $useTablePrefix = false;
     public $standardizeCapitals = false;
     public $useSchemaName = true;
-    public $generateQuery = false;
-    public $queryNs = 'frontend\models\queries';
+    public $moduleName;
+
+    // ActiveQuery
+    public $generateQuery = true;
+    public $queryNs = 'frontend\models\query';
     public $queryClass;
     public $queryBaseClass = 'dezero\db\ActiveQuery';
-    public $moduleName;
+
+    // Search sub class
+    public $generateSearch = true;
+    public $searchNs = 'frontend\models\search';
+    public $searchClass;
+
 
     public $modelTitle = [];
     public $relationsOne = [];
@@ -76,21 +84,21 @@ class Generator extends \yii\gii\Generator
     public function rules()
     {
         return array_merge(parent::rules(), [
-            [['db', 'ns', 'tableName', 'modelClass', 'moduleName', 'baseClass', 'queryNs', 'queryClass', 'queryBaseClass'], 'filter', 'filter' => 'trim'],
-            [['ns', 'queryNs'], 'filter', 'filter' => function ($value) { return trim($value, '\\'); }],
+            [['db', 'ns', 'tableName', 'modelClass', 'moduleName', 'baseClass', 'queryNs', 'queryClass', 'queryBaseClass', 'searchNs', 'searchClass'], 'filter', 'filter' => 'trim'],
+            [['ns', 'queryNs', 'searchNs'], 'filter', 'filter' => function ($value) { return trim($value, '\\'); }],
 
-            [['db', 'ns', 'tableName', 'moduleName', 'baseClass', 'queryNs', 'queryBaseClass'], 'required'],
-            [['db', 'moduleName', 'modelClass', 'queryClass'], 'match', 'pattern' => '/^\w+$/', 'message' => 'Only word characters are allowed.'],
-            [['ns', 'baseClass', 'queryNs', 'queryBaseClass'], 'match', 'pattern' => '/^[\w\\\\]+$/', 'message' => 'Only word characters and backslashes are allowed.'],
+            [['db', 'ns', 'tableName', 'moduleName', 'baseClass', 'queryNs', 'queryBaseClass', 'searchNs'], 'required'],
+            [['db', 'moduleName', 'modelClass', 'queryClass', 'searchClass'], 'match', 'pattern' => '/^\w+$/', 'message' => 'Only word characters are allowed.'],
+            [['ns', 'baseClass', 'queryNs', 'queryBaseClass', 'searchNs'], 'match', 'pattern' => '/^[\w\\\\]+$/', 'message' => 'Only word characters and backslashes are allowed.'],
             [['tableName'], 'match', 'pattern' => '/^([\w ]+\.)?([\w\* ]+)$/', 'message' => 'Only word characters, and optionally spaces, an asterisk and/or a dot are allowed.'],
             [['db'], 'validateDb'],
-            [['ns', 'queryNs'], 'validateNamespace'],
+            [['ns', 'queryNs', 'searchNs'], 'validateNamespace'],
             [['tableName'], 'validateTableName'],
             [['modelClass'], 'validateModelClass', 'skipOnEmpty' => false],
             [['baseClass'], 'validateClass', 'params' => ['extends' => ActiveRecord::className()]],
             [['queryBaseClass'], 'validateClass', 'params' => ['extends' => ActiveQuery::className()]],
             [['generateRelations'], 'in', 'range' => [self::RELATIONS_NONE, self::RELATIONS_ALL, self::RELATIONS_ALL_INVERSE]],
-            [['generateLabelsFromComments', 'useTablePrefix', 'useSchemaName', 'generateQuery', 'generateRelationsFromCurrentSchema'], 'boolean'],
+            [['generateLabelsFromComments', 'useTablePrefix', 'useSchemaName', 'generateQuery', 'generateSearch', 'generateRelationsFromCurrentSchema'], 'boolean'],
             [['enableI18N', 'standardizeCapitals'], 'boolean'],
             [['messageCategory'], 'validateMessageCategory', 'skipOnEmpty' => false],
         ]);
@@ -112,11 +120,19 @@ class Generator extends \yii\gii\Generator
             'generateRelations' => 'Generate Relations',
             'generateRelationsFromCurrentSchema' => 'Generate Relations from Current Schema',
             'generateLabelsFromComments' => 'Generate Labels from DB Comments',
+            'useSchemaName' => 'Use Schema Name',
+
+            // ActiveQueru
             'generateQuery' => 'Generate ActiveQuery',
             'queryNs' => 'ActiveQuery Namespace',
             'queryClass' => 'ActiveQuery Class',
             'queryBaseClass' => 'ActiveQuery Base Class',
-            'useSchemaName' => 'Use Schema Name',
+
+            // Search subclass
+            'generateSearch' => 'Generate Search Subclass',
+            'searchNs' => 'Search Subclass Namespace',
+            'searchClass' => 'Search Class',
+
         ]);
     }
 
@@ -157,11 +173,13 @@ class Generator extends \yii\gii\Generator
             'useSchemaName' => 'This indicates whether to include the schema name in the ActiveRecord class
                 when it\'s auto generated. Only non default schema would be used.',
             'generateQuery' => 'This indicates whether to generate ActiveQuery for the ActiveRecord class.',
-            'queryNs' => 'This is the namespace of the ActiveQuery class to be generated, e.g., <code>app\models</code>',
+            'queryNs' => 'This is the namespace of the ActiveQuery class to be generated, e.g., <code>app\models\query</code>',
             'queryClass' => 'This is the name of the ActiveQuery class to be generated. The class name should not contain
                 the namespace part as it is specified in "ActiveQuery Namespace". You do not need to specify the class name
                 if "Table Name" ends with asterisk, in which case multiple ActiveQuery classes will be generated.',
             'queryBaseClass' => 'This is the base class of the new ActiveQuery class. It should be a fully qualified namespaced class name.',
+            'searchNs' => 'This is the namespace of the Search subclass to be generated, e.g., <code>app\models\search</code>',
+            'searchClass' => 'This is the name of the Search subclass to be generated.'
         ]);
     }
 
@@ -196,7 +214,7 @@ class Generator extends \yii\gii\Generator
      */
     public function stickyAttributes()
     {
-        return array_merge(parent::stickyAttributes(), ['ns', 'db', 'baseClass', 'generateRelations', 'generateLabelsFromComments', 'queryNs', 'queryBaseClass', 'useTablePrefix', 'generateQuery']);
+        return array_merge(parent::stickyAttributes(), ['ns', 'db', 'baseClass', 'generateRelations', 'generateLabelsFromComments', 'queryNs', 'queryBaseClass', 'useTablePrefix', 'generateQuery', 'generateSearch', 'searchNs']);
     }
 
     /**
@@ -228,11 +246,13 @@ class Generator extends \yii\gii\Generator
             // model :
             $modelClassName = $this->generateClassName($tableName);
             $queryClassName = ($this->generateQuery) ? $this->generateQueryClassName($modelClassName) : false;
+            $searchClassName = ($this->generateSearch) ? $this->generateSearchClassName($modelClassName) : false;
             $tableSchema = $db->getTableSchema($tableName);
             $params = [
                 'tableName' => $tableName,
                 'className' => $modelClassName,
                 'queryClassName' => $queryClassName,
+                'searchClassName' => $searchClassName,
                 'tableSchema' => $tableSchema,
                 'properties' => $this->generateProperties($tableSchema),
                 'labels' => $this->generateLabels($tableSchema),
@@ -243,6 +263,9 @@ class Generator extends \yii\gii\Generator
                 'ns' => $this->ns,
                 'queryNs' => $this->queryNs,
                 'enum' => $this->getEnum($tableSchema->columns),
+                'searchNs' => $this->searchNs,
+                'searchRules' => $this->generateSearchRules($tableSchema),
+                'searchFilters' => $this->generateSearchFilters($tableSchema),
 
                 // Model title
                 'modelTitle' => $this->modelTitle,
@@ -274,6 +297,16 @@ class Generator extends \yii\gii\Generator
                 $files[] = new CodeFile(
                     Yii::getAlias('@' . str_replace('\\', '/', $this->queryNs)) . '/' . $queryClassName . '.php',
                     $this->render('query.php', $params)
+                );
+            }
+
+            // Search subclass
+            if ($searchClassName) {
+                $params['className'] = $searchClassName;
+                $params['modelClassName'] = $modelClassName;
+                $files[] = new CodeFile(
+                    Yii::getAlias('@' . str_replace('\\', '/', $this->searchNs)) . '/' . $searchClassName . '.php',
+                    $this->render('search.php', $params)
                 );
             }
         }
@@ -353,79 +386,140 @@ class Generator extends \yii\gii\Generator
      */
     public function generateRules($table)
     {
-        $types = [];
-        $lengths = [];
-        foreach ($table->columns as $column) {
-            if ($column->autoIncrement) {
+        $vec_types = [
+            'required'  => [],
+            'integer'   => [],
+            'number'    => [],
+            'boolean'   => [],
+            'string'    => [],
+            'safe'      => [],
+            'null'      => [],
+        ];
+        $vec_lengths = [];
+
+        foreach ( $table->columns as $column )
+        {
+            if ( $column->autoIncrement )
+            {
                 continue;
             }
-            if (!$column->allowNull && $column->defaultValue === null) {
-                $types['required'][] = $column->name;
+
+            if ( ! $column->allowNull && $column->defaultValue === null )
+            {
+                $vec_types['required'][] = $column->name;
             }
-            switch ($column->type) {
+            else if ( $column->allowNull )
+            {
+                $vec_types['null'][] = $column->name;
+            }
+
+            switch ( $column->type )
+            {
                 case Schema::TYPE_SMALLINT:
                 case Schema::TYPE_INTEGER:
                 case Schema::TYPE_BIGINT:
                 case Schema::TYPE_TINYINT:
-                    $types['integer'][] = $column->name;
-                    break;
+                    $vec_types['integer'][] = $column->name;
+                break;
+
                 case Schema::TYPE_BOOLEAN:
-                    $types['boolean'][] = $column->name;
-                    break;
+                    $vec_types['boolean'][] = $column->name;
+                break;
+
                 case Schema::TYPE_FLOAT:
                 case Schema::TYPE_DOUBLE:
                 case Schema::TYPE_DECIMAL:
                 case Schema::TYPE_MONEY:
-                    $types['number'][] = $column->name;
-                    break;
+                    $vec_types['number'][] = $column->name;
+                break;
+
                 case Schema::TYPE_DATE:
                 case Schema::TYPE_TIME:
                 case Schema::TYPE_DATETIME:
                 case Schema::TYPE_TIMESTAMP:
                 case Schema::TYPE_JSON:
-                    $types['safe'][] = $column->name;
-                    break;
-                default: // strings
-                    if ($column->size > 0) {
-                        $lengths[$column->size][] = $column->name;
-                    } else {
-                        $types['string'][] = $column->name;
+                    $vec_types['safe'][] = $column->name;
+                break;
+
+                default:
+                    // strings
+                    if ( $column->size > 0 )
+                    {
+                        $vec_lengths[$column->size][] = $column->name;
                     }
+                    else if ( ! $this->isEnum($column) )
+                    {
+                        $vec_types['string'][] = $column->name;
+                    }
+                break;
             }
         }
 
-        $rules = [];
-        $driverName = $this->getDbDriverName();
-        foreach ($types as $type => $columns) {
-            if ($driverName === 'pgsql' && $type === 'integer') {
-                $rules[] = "[['" . implode("', '", $columns) . "'], 'default', 'value' => null]";
+        $vec_rules = [];
+
+        // Add all rules excepting NULL and SAFE (it will be the last ones)
+        foreach ( $vec_types as $type => $vec_columns )
+        {
+            if ( !empty($vec_columns) )
+            {
+                if ( $type !== 'null' && $type !== 'safe' )
+                {
+                    $vec_rules[] = "'{$type}Fields' => [['" . implode("', '", $vec_columns) . "'], '$type']";
+                }
             }
-            $rules[] = "[['" . implode("', '", $columns) . "'], '$type']";
         }
-        foreach ($lengths as $length => $columns) {
-            $rules[] = "[['" . implode("', '", $columns) . "'], 'string', 'max' => $length]";
+
+        // Add "max length" attributes
+        foreach ( $vec_lengths as $length => $vec_columns )
+        {
+            if ( !empty($vec_columns) )
+            {
+                $vec_rules[] = "'max{$length}' => [['" . implode("', '", $vec_columns) . "'], 'string', 'max' => $length]";
+            }
+        }
+
+        // Add ENUM attributes
+        // For enum fields create rules "in range" for all enum values
+        $enum = $this->getEnum($table->columns);
+        foreach ($enum as $field_name => $field_details) {
+            $ea = [];
+            foreach ($field_details['values'] as $field_enum_values) {
+                $ea[] = 'self::'.$field_enum_values['const_name'];
+            }
+            $vec_rules[] = "'{$field_name}List' => ['".$field_name."', 'in', 'range' => [\n                    ".implode(
+                    ",\n                    ",
+                    $ea
+                ).",\n                ]\n            ]";
         }
 
         $db = $this->getDbConnection();
 
-        // Unique indexes rules
-        try {
+        // Add UNIQUE rules
+        try
+        {
             $uniqueIndexes = array_merge($db->getSchema()->findUniqueIndexes($table), [$table->primaryKey]);
             $uniqueIndexes = array_unique($uniqueIndexes, SORT_REGULAR);
-            foreach ($uniqueIndexes as $uniqueColumns) {
+            foreach ( $uniqueIndexes as $uniqueColumns )
+            {
                 // Avoid validating auto incremental columns
-                if (!$this->isColumnAutoIncremental($table, $uniqueColumns)) {
+                if ( ! $this->isColumnAutoIncremental($table, $uniqueColumns) )
+                {
                     $attributesCount = count($uniqueColumns);
 
-                    if ($attributesCount === 1) {
-                        $rules[] = "[['" . $uniqueColumns[0] . "'], 'unique']";
-                    } elseif ($attributesCount > 1) {
+                    if ( $attributesCount === 1 )
+                    {
+                        $vec_rules[] = "'{$uniqueColumns[0]}Unique' => [['" . $uniqueColumns[0] . "'], 'unique']";
+                    }
+                    else if ( $attributesCount > 1 )
+                    {
                         $columnsList = implode("', '", $uniqueColumns);
-                        $rules[] = "[['$columnsList'], 'unique', 'targetAttribute' => ['$columnsList']]";
+                        $vec_rules[] = "'{$field_name}List' => [['$columnsList'], 'unique', 'targetAttribute' => ['$columnsList']]";
                     }
                 }
             }
-        } catch (NotSupportedException $e) {
+        }
+        catch (NotSupportedException $e)
+        {
             // doesn't support unique indexes information...do nothing
         }
 
@@ -446,25 +540,27 @@ class Generator extends \yii\gii\Generator
                 $targetAttributes[] = "'$key' => '$value'";
             }
             $targetAttributes = implode(', ', $targetAttributes);
-            $rules[] = "[['$attributes'], 'exist', 'skipOnError' => true, 'targetClass' => $refClassName::className(), 'targetAttribute' => [$targetAttributes]]";
+            $vec_rules[] = "[['$attributes'], 'exist', 'skipOnError' => true, 'targetClass' => $refClassName::className(), 'targetAttribute' => [$targetAttributes]]";
         }
         */
 
-        // ENUM
-        // For enum fields create rules "in range" for all enum values
-        $enum = $this->getEnum($table->columns);
-        foreach ($enum as $field_name => $field_details) {
-            $ea = [];
-            foreach ($field_details['values'] as $field_enum_values) {
-                $ea[] = 'self::'.$field_enum_values['const_name'];
+        // Add all rules excepting NULL and SAFE (it will be the last ones)
+        foreach ( $vec_types as $type => $vec_columns )
+        {
+            if ( !empty($vec_columns) )
+            {
+                if ( $type === 'null' )
+                {
+                    $vec_rules[] = "'defaultNull' => [['" . implode("', '", $vec_columns) . "'], 'default', 'value' => null]";
+                }
+                else if ( $type === 'safe' )
+                {
+                    $vec_rules[] = "'{$type}Attributes' => [['" . implode("', '", $vec_columns) . "'], '$type']";
+                }
             }
-            $rules[] = "['".$field_name."', 'in', 'range' => [\n                    ".implode(
-                    ",\n                    ",
-                    $ea
-                ).",\n                ]\n            ]";
         }
 
-        return $rules;
+        return $vec_rules;
     }
 
     /**
@@ -1019,6 +1115,20 @@ class Generator extends \yii\gii\Generator
     }
 
     /**
+     * Generates a search class name from the specified model class name.
+     * @param string $modelClassName model class name
+     * @return string generated class name
+     */
+    protected function generateSearchClassName($modelClassName)
+    {
+        $searchClassName = $this->searchClass;
+        if (empty($searchClassName) || strpos($this->tableName, '*') !== false) {
+            $searchClassName = $modelClassName . 'Search';
+        }
+        return $searchClassName;
+    }
+
+    /**
      * @return Connection the DB connection as specified by [[db]].
      */
     protected function getDbConnection()
@@ -1109,5 +1219,100 @@ class Generator extends \yii\gii\Generator
     public function isEnum($column)
     {
         return substr(strtoupper($column->dbType), 0, 4) == 'ENUM';
+    }
+
+
+
+    /**
+     * Generates validation rules for serach class.
+     * @param \yii\db\TableSchema $table the table schema
+     * @return array the generated validation rules
+     */
+    public function generateSearchRules($table)
+    {
+        $vec_rules = [];
+        $vec_types = [
+            'null'      => [],
+            'integer'   => [],
+            'number'    => [],
+            'safe'      => [],
+        ];
+        foreach ( $table->columns as $column )
+        {
+            if ( $column->allowNull )
+            {
+                $vec_types['null'][] = $column->name;
+            }
+
+            switch ( $column->type )
+            {
+                case Schema::TYPE_SMALLINT:
+                case Schema::TYPE_INTEGER:
+                case Schema::TYPE_BIGINT:
+                case Schema::TYPE_TINYINT:
+                    $vec_types['integer'][] = $column->name;
+                break;
+
+                case Schema::TYPE_FLOAT:
+                case Schema::TYPE_DOUBLE:
+                case Schema::TYPE_DECIMAL:
+                case Schema::TYPE_MONEY:
+                    $vec_types['number'][] = $column->name;
+                break;
+
+                default:
+                    $vec_types['safe'][] = $column->name;
+                break;
+            }
+        }
+
+        foreach ( $vec_types as $type => $vec_columns )
+        {
+            if ( !empty($vec_columns) )
+            {
+                if ( $type === 'null' )
+                {
+                    $vec_rules[] = "'defaultNull' => [['" . implode("', '", $vec_columns) . "'], 'default', 'value' => null]";
+                }
+                else
+                {
+                    $vec_rules[] = "'{$type}Attributes' => [['" . implode("', '", $vec_columns) . "'], '$type']";
+                }
+            }
+        }
+
+        return $vec_rules;
+    }
+
+    /**
+     * Generate filter conditions for ActiveDataProvider
+     */
+    public function generateSearchFilters($table)
+    {
+        $vec_search_filters = [
+            'compare'   => [],
+            'like'      => [],
+            'date'      => []
+        ];
+        foreach ($table->columns as $column)
+        {
+            if ( $column->phpType === 'integer' || $column->phpType === 'boolean' || $this->isEnum($column) || preg_match("/\_id$/", $column->name) || preg_match("/\_uuid$/", $column->name) )
+            {
+                if ( preg_match("/\_date$/", $column->name) )
+                {
+                    $vec_search_filters['date'][] = $column->name;
+                }
+                else
+                {
+                    $vec_search_filters['compare'][] = $column->name;
+                }
+            }
+            else
+            {
+                $vec_search_filters['like'][] = $column->name;
+            }
+        }
+
+        return $vec_search_filters;
     }
 }

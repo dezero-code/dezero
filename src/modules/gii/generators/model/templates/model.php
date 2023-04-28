@@ -26,9 +26,9 @@ echo "<?php\n";
 
 namespace <?= $generator->ns ?>;
 
+use dezero\helpers\ArrayHelper;
 use <?= $generator->queryNs; ?>\<?= $queryClassName; ?>;
 use <?= $generator->ns ?>\base\<?= $className ?> as Base<?= $className ?>;
-use yii\helpers\ArrayHelper;
 use yii\db\ActiveQueryInterface;
 use Yii;
 
@@ -147,6 +147,7 @@ class <?= $className ?> extends Base<?= $className . "\n" ?>
 <?php endforeach; ?>
 <?php endif; ?>
 
+<?php if ( !empty($enum) ) : ?>
 <?php
     // Custom ENUM "labels" methods
     foreach ($enum as $column_name => $column_data) :
@@ -185,6 +186,7 @@ class <?= $className ?> extends Base<?= $className . "\n" ?>
     }
 
 <?php endforeach; ?>
+<?php endif; ?>
 
     /**
      * Title used for this model

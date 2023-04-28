@@ -6,11 +6,11 @@
 namespace dezero\console\controllers;
 
 use dezero\db\Migration;
+use dezero\helpers\ArrayHelper;
 use dezero\helpers\Str;
 use yii\base\InvalidParamException;
 use yii\console\controllers\MigrateController as BaseMigrateController;
 use yii\db\Query;
-use yii\helpers\ArrayHelper;
 use yii\helpers\Console;
 use Dz;
 use Yii;

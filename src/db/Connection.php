@@ -11,9 +11,9 @@ namespace dezero\db;
 
 use dezero\db\mysql\QueryBuilder as MysqlQueryBuilder;
 use dezero\db\mysql\Schema as MysqlSchema;
+use dezero\helpers\ArrayHelper;
 use dezero\helpers\Str;
 use Yii;
-use yii\helpers\ArrayHelper;
 
 /**
  * Connection represents a connection to a database via [PDO](https://www.php.net/manual/en/book.pdo.php).

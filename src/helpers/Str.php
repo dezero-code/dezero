@@ -6,8 +6,9 @@
 namespace dezero\helpers;
 
 use Dz;
+use dezero\helpers\ArrayHelper;
+use Stringy\Stringy as BaseStringy;
 use Yii;
-use yii\helpers\ArrayHelper;
 use yii\helpers\HtmlPurifier;
 
 /**
@@ -433,11 +434,13 @@ class Str extends \yii\helpers\StringHelper
     /**
      * Check if a strnig is a valid JSON
      */
+    /*
     public static function isJson($string)
     {
         $result = json_decode($string);
         return (json_last_error() == JSON_ERROR_NONE);
     }
+    */
 
 
     /**
@@ -581,5 +584,296 @@ class Str extends \yii\helpers\StringHelper
         return preg_replace_callback('/<(\d+)>/', function ($match) use (&$links) {
             return $links[$match[1] - 1];
         }, $value);
+    }
+
+
+    /**
+     * Returns a camelCase version of the given string. Trims surrounding spaces, capitalizes letters following digits,
+     * spaces, dashes and underscores, and removes spaces, dashes, as well as underscores.
+     */
+    public static function camelCase(string $str): string
+    {
+        return (string)BaseStringy::create($str)->camelize();
+    }
+
+
+    /**
+     * Converts a string to snake_cases format
+     *
+     * @param string $str The string to snakeize.
+     * @return string The snakeized string.
+     */
+    public static function snakeCase(string $str): string
+    {
+        return (string)BaseStringy::create($str)->snakeize();
+    }
+
+
+    /**
+     * Converts a string to PascalCases format
+     *
+     * @param string $str The string to process.
+     * @return string
+     */
+    public static function pascalCase(string $str): string
+    {
+        $words = self::toWords($str, true, true);
+        return implode('', array_map([
+            static::class,
+            'upperCaseFirst',
+        ], $words));
+    }
+
+
+    /**
+     * Converts the first character of the supplied string to uppercase.
+     *
+     * @param string $str The string to modify.
+     * @return string The string with the first character being uppercase.
+     */
+    public static function upperCaseFirst(string $str): string
+    {
+        return (string)BaseStringy::create($str)->upperCaseFirst();
+    }
+
+
+    /**
+     * Returns whether the given string has any lowercase characters in it.
+     */
+    public static function hasLowerCase(string $str): bool
+    {
+        return BaseStringy::create($str)->hasLowerCase();
+    }
+
+
+    /**
+     * Returns whether the given string has any uppercase characters in it.
+     */
+    public static function hasUpperCase(string $str): bool
+    {
+        return BaseStringy::create($str)->hasUpperCase();
+    }
+
+
+    /**
+     * Convert all HTML entities to their applicable characters.
+     *
+     * @param string $str The string to process.
+     * @param int $flags A bitmask of these flags: https://www.php.net/manual/en/function.html-entity-decode.php
+     * @return string The decoded string.
+     */
+    public static function htmlDecode(string $str, int $flags = ENT_COMPAT): string
+    {
+        return (string)BaseStringy::create($str)->htmlDecode($flags);
+    }
+
+    /**
+     * Convert all applicable characters to HTML entities.
+     *
+     * @param string $str The string to process.
+     * @param int $flags A bitmask of these flags: https://www.php.net/manual/en/function.html-entity-encode.php
+     * @return string The encoded string.
+     */
+    public static function htmlEncode(string $str, int $flags = ENT_COMPAT): string
+    {
+        return (string)BaseStringy::create($str)->htmlEncode($flags);
+    }
+
+
+    /**
+     * Returns true if the string contains only alphabetic chars, false otherwise.
+     *
+     * @param string $str The string to check.
+     * @return bool Whether or not $str contains only alphabetic chars.
+     */
+    public static function isAlpha(string $str): bool
+    {
+        return BaseStringy::create($str)->isAlpha();
+    }
+
+    /**
+     * Returns true if the string contains only alphabetic and numeric chars, false otherwise.
+     *
+     * @param string $str The string to check.
+     * @return bool Whether or not $str contains only alphanumeric chars.
+     */
+    public static function isAlphanumeric(string $str): bool
+    {
+        return BaseStringy::create($str)->isAlphanumeric();
+    }
+
+    /**
+     * Returns true if the string is base64 encoded, false otherwise.
+     *
+     * @param string $str The string to check.
+     * @param bool $emptyStringIsValid Whether or not an empty string is considered valid.
+     * @return bool Whether or not $str is base64 encoded.
+     * @since 3.3.0
+     */
+    public static function isBase64(string $str, bool $emptyStringIsValid = true): bool
+    {
+        return BaseStringy::create($str)->isBase64($emptyStringIsValid);
+    }
+
+    /**
+     * Returns true if the string contains only whitespace chars, false otherwise.
+     *
+     * @param string $str The string to check.
+     * @return bool Whether or not $str contains only whitespace characters.
+     * @since 3.3.0
+     */
+    public static function isBlank(string $str): bool
+    {
+        return BaseStringy::create($str)->isBlank();
+    }
+
+
+    /**
+     * Returns true if the string contains only hexadecimal chars, false otherwise.
+     *
+     * @param string $str The string to check.
+     * @return bool Whether or not $str contains only hexadecimal chars.
+     * @since 3.3.0
+     */
+    public static function isHexadecimal(string $str): bool
+    {
+        return BaseStringy::create($str)->isHexadecimal();
+    }
+
+
+    /**
+     * Returns true if the string contains HTML-Tags, false otherwise.
+     *
+     * @param string $str The string to check.
+     * @return bool Whether or not $str contains HTML tags.
+     */
+    public static function isHtml(string $str): bool
+    {
+        return BaseStringy::create($str)->isHtml();
+    }
+
+
+    /**
+     * Returns true if the string is JSON, false otherwise. Unlike json_decode
+     * in PHP 5.x, this method is consistent with PHP 7 and other JSON parsers,
+     * in that an empty string is not considered valid JSON.
+     *
+     * @param string $str The string to check.
+     * @param bool $onlyArrayOrObjectResultsAreValid
+     * @return bool Whether or not $str is JSON.
+     */
+    public static function isJson(string $str, bool $onlyArrayOrObjectResultsAreValid = false): bool
+    {
+        return BaseStringy::create($str)->isJson($onlyArrayOrObjectResultsAreValid);
+    }
+
+    /**
+     * Returns true if the string contains only lower case chars, false otherwise.
+     *
+     * @param string $str The string to check.
+     * @return bool Whether or not $str is only lower case characters.
+     */
+    public static function isLowerCase(string $str): bool
+    {
+        return BaseStringy::create($str)->isLowerCase();
+    }
+
+
+    /**
+     * Returns true if the string is serialized, false otherwise.
+     *
+     * @param string $str The string to check.
+     * @return bool Whether or not $str is serialized.
+     * @since 3.3.0
+     */
+    public static function isSerialized(string $str): bool
+    {
+        return BaseStringy::create($str)->isSerialized();
+    }
+
+
+    /**
+     * Returns true if the string contains only upper case chars, false
+     * otherwise.
+     *
+     * @param string $str The string to check.
+     * @return bool Whether or not $str contains only lower case characters.
+     */
+    public static function isUpperCase(string $str): bool
+    {
+        return BaseStringy::create($str)->isUpperCase();
+    }
+
+
+    /**
+     * Checks if the given string is UTF-8 encoded.
+     *
+     * @param string $str The string to check.
+     * @return bool Whether the string was UTF encoded or not.
+     */
+    public static function isUtf8(string $str): bool
+    {
+        return static::encoding($str) === 'utf-8';
+    }
+
+
+    /**
+     * Returns true if the string contains only whitespace chars, false otherwise.
+     *
+     * @param string $str The string to check.
+     * @return bool Whether or not $str contains only whitespace characters.
+     */
+    public static function isWhitespace(string $str): bool
+    {
+        return BaseStringy::create($str)->isBlank();
+    }
+
+
+    /**
+     * Returns an array of words extracted from a string
+     *
+     * @param string $str The string
+     * @param bool $lower Whether the returned words should be lowercased
+     * @param bool $removePunctuation Whether punctuation should be removed from the returned words
+     * @return string[] The prepped words in the string
+     */
+    public static function toWords(string $str, bool $lower = false, bool $removePunctuation = false): array
+    {
+        // Convert CamelCase to multiple words
+        // Regex copied from Inflector::camel2words(), but without dropping punctuation
+        $str = preg_replace('/(?<!\p{Lu})(\p{Lu})|(\p{Lu})(?=\p{Ll})/u', ' \0', $str);
+
+        if ( $lower )
+        {
+            // Make it lowercase
+            $str = mb_strtolower($str);
+        }
+
+        if ( $removePunctuation )
+        {
+            $str = str_replace(['.', '_', '-'], ' ', $str);
+        }
+
+        // Remove inner-word punctuation.
+        $str = preg_replace('/[\'"‘’“”\[\]\(\)\{\}:]/u', '', $str);
+
+        // Split on the words and return
+        return static::splitOnWords($str);
+    }
+
+
+    /**
+     * Splits a string into an array of the words in the string.
+     *
+     * @param string $str The string
+     * @return string[] The words in the string
+     */
+    public static function splitOnWords(string $str): array
+    {
+        // Split on anything that is not alphanumeric, or a period, underscore, or hyphen.
+        // Reference: http://www.regular-expressions.info/unicode.html
+        preg_match_all('/[\p{L}\p{N}\p{M}\._-]+/u', $str, $matches);
+
+        return ArrayHelper::filterEmptyStringsFromArray($matches[0]);
     }
 }
