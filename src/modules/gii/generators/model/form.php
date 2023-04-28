@@ -13,7 +13,9 @@ $generator->queryNs = 'app\queries';
 
 echo $form->field($generator, 'tableName')->textInput(['table_prefix' => $generator->getTablePrefix()]);
 echo $form->field($generator, 'modelClass');
-echo $form->field($generator, 'moduleName')->dropDownList(Dz::getModules(), ['onchange' => '$.moduleChanged()']);
+
+// Module list
+echo $form->field($generator, 'moduleName')->dropDownList($generator->getModulesList(), ['onchange' => 'jQuery.moduleChanged()']);
 
 // echo $form->field($generator, 'standardizeCapitals')->checkbox();
 echo $form->field($generator, 'ns');
@@ -63,8 +65,12 @@ echo $form->field($generator, 'useSchemaName')->checkbox();
 
 // Event when MODULE dropdown has changed
 $script = <<< JS
-    $.moduleChanged = function() {
+    jQuery.moduleChanged = function() {
         var module_id = $('#generator-modulename').val();
+        if ( module_id.startsWith('core_') ) {
+            module_id = module_id.replace('core_', 'dezero\\\modules\\\');
+        }
+
         $('.field-generator-ns').find('.sticky-value').html(module_id +"\\\models");
         $('#generator-ns').val(module_id +"\\\models");
 
@@ -82,7 +88,7 @@ $this->registerJs($script, yii\web\View::POS_END);
 
 // Trigger "moduleChanged()" custom event
 $script = <<< JS
-    $.moduleChanged();
+    jQuery.moduleChanged();
 JS;
 $this->registerJs($script, yii\web\View::POS_READY);
 

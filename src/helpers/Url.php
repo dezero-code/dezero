@@ -1,9 +1,12 @@
 <?php
 /**
- * Config class file based on crisu83.yii-consoletools.helpers package
+ * Class UrlHelper
  *
- * Helper class for working with several config files
+ * @author Fabián Ruiz <fabian@dezero.es>
+ * @link http://www.dezero.es
+ * @copyright Copyright &copy; 2023 Fabián Ruiz
  */
+
 
 namespace dezero\helpers;
 

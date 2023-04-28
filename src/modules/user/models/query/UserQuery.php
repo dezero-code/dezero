@@ -1,25 +1,54 @@
 <?php
+/**
+ * UserQuery query class file
+ *
+ * @author Fabián Ruiz <fabian@dezero.es>
+ * @link http://www.dezero.es
+ * @copyright Copyright &copy; 2023 Fabián Ruiz
+ */
 
 namespace dezero\modules\user\models\query;
 
-use dezero\modules\user\models\User;
-use yii\db\ActiveQuery;
-
 /**
- * This is the ActiveQuery class for [[\dezero\modules\user\models\User]].
+ * ActiveQuery class for \dezero\modules\user\models\User.
  *
  * @see \dezero\modules\user\models\User
  */
-class UserQuery extends ActiveQuery
+class UserQuery extends \dezero\db\ActiveQuery
 {
     /**
-     * @return $this
+     * Filter the query by "user_id" attribute value
      */
-    public function active()
+    public function user_id(int $user_id) : self
     {
-        $this->andWhere(['status' => User::STATUS_ACTIVE]);
-        $this->andWhere(['<', '{{%user}}.created_at', time()]);
+        return $this->andWhere(['user_id' => $user_id]);
+    }
 
-        return $this;
+
+    /**
+     * Filter the query by "username" attribute value
+     */
+    public function username(string $username) : self
+    {
+        return $this->andWhere(['username' => $username]);
+    }
+
+    /**
+     * Filter the query by "email" attribute value
+     */
+    public function email($email)
+    {
+        return $this->andWhere(['email' => $email]);
+    }
+
+
+    /**
+     * Filter the query by "username" or "email" attribute value
+     */
+    public function usernameOrEmail($usernameOrEmail)
+    {
+        return filter_var($usernameOrEmail, FILTER_VALIDATE_EMAIL)
+            ? $this->email($usernameOrEmail)
+            : $this->username($usernameOrEmail);
     }
 }

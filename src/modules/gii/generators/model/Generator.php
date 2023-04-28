@@ -7,8 +7,9 @@
 
 namespace dezero\modules\gii\generators\model;
 
-use Dz;
+use dezero\helpers\ArrayHelper;
 use dezero\helpers\StringHelper;
+use Dz;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\ActiveQuery;
@@ -1349,5 +1350,36 @@ class Generator extends \yii\gii\Generator
         }
 
         return $vec_search_filters;
+    }
+
+
+    /**
+     * Return full module list (included CORE)
+     */
+    public function getModulesList()
+    {
+        // First of all, load "core" modules
+        $vec_modules = Dz::getCoreModules();
+        foreach ( $vec_modules as $module_name => $module_namespace )
+        {
+            $vec_modules['core_'. $module_name] = $module_namespace;
+            unset($vec_modules[$module_name]);
+        }
+
+        // Now, process loaded modules in the application
+        $vec_app_modules = Dz::getModules();
+
+        if ( !empty($vec_app_modules) )
+        {
+            foreach ( $vec_app_modules as $module_name => $module_namespace )
+            {
+                if ( $module_name !== 'gii' && ! preg_match("/^\\\dezero\\\modules/", $module_namespace) )
+                {
+                    $vec_modules[$module_name] = $module_namespace;
+                }
+            }
+        }
+
+        return $vec_modules;
     }
 }

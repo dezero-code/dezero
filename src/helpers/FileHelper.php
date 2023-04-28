@@ -12,9 +12,9 @@ namespace dezero\helpers;
 use dezero\helpers\Log;
 use Throwable;
 use UnexpectedValueException;
+use Yii;
 use yii\base\ErrorException;
 use yii\base\InvalidArgumentException;
-use Yii;
 
 class FileHelper extends \yii\helpers\FileHelper
 {
