@@ -95,7 +95,7 @@ class <?= $className ?> extends Migration
         $this->db->enableCheckIntegrity();
 
         // Insert default values
-        // Add namespace above ---> use dezero\helpers\Str;
+        // Add namespace above ---> use dezero\helpers\StringHelper;
         $this->insert('my_table', [
             'name'              => 'name',
             'is_default'        => 1,
@@ -104,7 +104,7 @@ class <?= $className ?> extends Migration
             'created_user_id'   => 1,
             'updated_date'      => time(),
             'updated_user_id'   => 1,
-            'entity_uuid'       => Str::UUID()
+            'entity_uuid'       => StringHelper::UUID()
         ]);
 
         // Insert multiples values
@@ -117,7 +117,7 @@ class <?= $className ?> extends Migration
                 'created_user_id'   => 1,
                 'updated_date'      => time(),
                 'updated_user_id'   => 1,
-                'entity_uuid'       => Str::UUID()
+                'entity_uuid'       => StringHelper::UUID()
             ],
             [
                 'name'              => 'name 2',
@@ -127,7 +127,7 @@ class <?= $className ?> extends Migration
                 'created_user_id'   => 1,
                 'updated_date'      => time(),
                 'updated_user_id'   => 1,
-                'entity_uuid'       => Str::UUID()
+                'entity_uuid'       => StringHelper::UUID()
             ],
         ]);
         */

@@ -7,7 +7,7 @@
 
 namespace dezero\web;
 
-use dezero\helpers\Str;
+use dezero\helpers\StringHelper;
 use Yii;
 use yii\db\Query;
 
@@ -36,7 +36,7 @@ class DbSession extends \yii\web\DbSession
                 [
                     'user_id'       => $user_id,
                     'created_date'  => time(),
-                    'uuid'          => Str::UUID()
+                    'uuid'          => StringHelper::UUID()
                 ],
                 'session_id = :id', [':id' => session_id()]
         );
@@ -124,7 +124,7 @@ class DbSession extends \yii\web\DbSession
             {
                 $row['session_id'] = $new_id;
                 $row['created_date'] = time();
-                $row['entity_uuid'] = Str::UUID();
+                $row['entity_uuid'] = StringHelper::UUID();
                 $this->db->createCommand()
                     ->insert($this->sessionTable, $row)
                     ->execute();
@@ -185,7 +185,7 @@ class DbSession extends \yii\web\DbSession
             else
             {
                 $vec_default_fields['created_date'] = time();
-                $vec_default_fields['entity_uuid'] = Str::UUID();
+                $vec_default_fields['entity_uuid'] = StringHelper::UUID();
             }
 
             $this->fields = array_merge($this->fields, $vec_default_fields);

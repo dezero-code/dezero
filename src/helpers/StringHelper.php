@@ -1,6 +1,6 @@
 <?php
 /**
- * Str class file for Dz Framework
+ * StringHelper class file for Dz Framework
  */
 
 namespace dezero\helpers;
@@ -14,7 +14,7 @@ use yii\helpers\HtmlPurifier;
 /**
  * Helper class for working with strings
  */
-class Str extends \yii\helpers\StringHelper
+class StringHelper extends \yii\helpers\StringHelper
 {
     const UUID_PATTERN = '[A-Za-z0-9]{8}-[A-Za-z0-9]{4}-4[A-Za-z0-9]{3}-[89abAB][A-Za-z0-9]{3}-[A-Za-z0-9]{12}';
 
@@ -58,7 +58,7 @@ class Str extends \yii\helpers\StringHelper
             $text = strtoupper($text);
 
             // Case flip Latin-1 accented letters
-            $text = preg_replace_callback('/\\xC3[\\xA0-\\xB6\\xB8-\\xBE]/', '\dezero\helpers\Str::unicodeCaseflip', $text);
+            $text = preg_replace_callback('/\\xC3[\\xA0-\\xB6\\xB8-\\xBE]/', '\dezero\helpers\StringHelper::unicodeCaseflip', $text);
         }
 
         return $text;
@@ -80,7 +80,7 @@ class Str extends \yii\helpers\StringHelper
             $text = strtolower($text);
 
             // Case flip Latin-1 accented letters.
-            $text = preg_replace_callback('/\\xC3[\\x80-\\x96\\x98-\\x9E]/', '\dezero\helpers\Str::unicodeCaseflip', $text);
+            $text = preg_replace_callback('/\\xC3[\\x80-\\x96\\x98-\\x9E]/', '\dezero\helpers\StringHelper::unicodeCaseflip', $text);
         }
         return $text;
     }

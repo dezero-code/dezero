@@ -7,7 +7,7 @@ namespace dezero\console\controllers;
 
 use dezero\db\Migration;
 use dezero\helpers\ArrayHelper;
-use dezero\helpers\Str;
+use dezero\helpers\StringHelper;
 use yii\base\InvalidParamException;
 use yii\console\controllers\MigrateController as BaseMigrateController;
 use yii\db\Query;
@@ -193,7 +193,7 @@ class MigrateController extends BaseMigrateController
             'name'          => self::BASE_MIGRATION,
             'apply_date'    => time(),
             'module'        => 'core',
-            'uuid'          => Str::UUID()
+            'uuid'          => StringHelper::UUID()
         ])->execute();
 
         $this->stdout("Done.\n", Console::FG_GREEN);
@@ -279,7 +279,7 @@ class MigrateController extends BaseMigrateController
             'name'          => $name,
             'apply_date'    => time(),
             'module'        => $module_id,
-            'uuid'          => Str::UUID()
+            'uuid'          => StringHelper::UUID()
         ])->execute();
     }
 

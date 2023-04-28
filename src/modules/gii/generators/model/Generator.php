@@ -8,7 +8,7 @@
 namespace dezero\modules\gii\generators\model;
 
 use Dz;
-use dezero\helpers\Str;
+use dezero\helpers\StringHelper;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\ActiveQuery;
@@ -517,7 +517,7 @@ class Generator extends \yii\gii\Generator
                     $is_prefix_rule = true;
                     $prefix_rule = "\n            // ENUM rules\n            ";
                 }
-                $vec_rules[] = $prefix_rule ."'". Str::camelCase($field_name) ."List' => ['".$field_name."', 'in', 'range' => [\n                    ".implode(
+                $vec_rules[] = $prefix_rule ."'". StringHelper::camelCase($field_name) ."List' => ['".$field_name."', 'in', 'range' => [\n                    ".implode(
                         ",\n                    ",
                         $ea
                     ).",\n                ]\n            ]";
@@ -558,7 +558,7 @@ class Generator extends \yii\gii\Generator
 
                         if ( $attributesCount === 1 )
                         {
-                            $vec_rules[] = $prefix_rule ."'". Str::camelCase($uniqueColumns[0]) ."Unique' => [['" . $uniqueColumns[0] . "'], 'unique']";
+                            $vec_rules[] = $prefix_rule ."'". StringHelper::camelCase($uniqueColumns[0]) ."Unique' => [['" . $uniqueColumns[0] . "'], 'unique']";
                         }
                         else if ( $attributesCount > 1 )
                         {

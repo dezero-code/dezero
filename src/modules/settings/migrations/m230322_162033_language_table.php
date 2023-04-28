@@ -7,7 +7,7 @@
  */
 
 use dezero\db\Migration;
-use dezero\helpers\Str;
+use dezero\helpers\StringHelper;
 
 class m230322_162033_language_table extends Migration
 {
@@ -62,7 +62,7 @@ class m230322_162033_language_table extends Migration
                 'created_user_id'   => 1,
                 'updated_date'      => time(),
                 'updated_user_id'   => 1,
-                'entity_uuid'       => Str::UUID()
+                'entity_uuid'       => StringHelper::UUID()
             ],
             [
                 'language_id'       => 'en-US',
@@ -76,7 +76,7 @@ class m230322_162033_language_table extends Migration
                 'created_user_id'   => 1,
                 'updated_date'      => time(),
                 'updated_user_id'   => 1,
-                'entity_uuid'       => Str::UUID()
+                'entity_uuid'       => StringHelper::UUID()
             ],
         ]);
 

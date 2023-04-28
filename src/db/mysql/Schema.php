@@ -13,7 +13,7 @@ use dezero\db\mysql\ColumnSchema;
 use dezero\db\mysql\ColumnSchemaBuilder;
 use dezero\db\mysql\QueryBuilder;
 use dezero\helpers\FileHelper;
-use dezero\helpers\Str;
+use dezero\helpers\StringHelper;
 use Yii;
 
 /**
@@ -197,7 +197,7 @@ class Schema extends \yii\db\mysql\Schema
 
         // Create a TEMP config file
         // $file_path = Yii::app()->path->get('temp', true) . DIRECTORY_SEPARATOR . 'my.cnf';
-        // $this->tempMyCnfPath = FileHelper::normalizePath(sys_get_temp_dir()) . DIRECTORY_SEPARATOR . Str::randomString(12) . '.cnf';
+        // $this->tempMyCnfPath = FileHelper::normalizePath(sys_get_temp_dir()) . DIRECTORY_SEPARATOR . StringHelper::randomString(12) . '.cnf';
         $destination_file = Yii::$app->file->set($file_path);
         if ( ! $destination_file->getExists() )
         {

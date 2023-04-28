@@ -12,7 +12,7 @@ namespace dezero\db;
 use dezero\db\mysql\QueryBuilder as MysqlQueryBuilder;
 use dezero\db\mysql\Schema as MysqlSchema;
 use dezero\helpers\ArrayHelper;
-use dezero\helpers\Str;
+use dezero\helpers\StringHelper;
 use Yii;
 
 /**
@@ -48,7 +48,7 @@ class Connection extends \yii\db\Connection
         }
 
         $name = trim($name, '_');
-        $nameLength = Str::strlen($name);
+        $nameLength = StringHelper::strlen($name);
 
         if ( $nameLength > $schema->maxObjectNameLength )
         {
@@ -62,7 +62,7 @@ class Connection extends \yii\db\Connection
             {
                 foreach ( $parts as $i => $part )
                 {
-                    $newLength = round($maxLetters * Str::strlen($part) / $totalLetters);
+                    $newLength = round($maxLetters * StringHelper::strlen($part) / $totalLetters);
                     $parts[$i] = mb_substr($part, 0, $newLength);
                 }
             }
@@ -70,7 +70,7 @@ class Connection extends \yii\db\Connection
             $name = implode('_', $parts);
 
             // Just to be safe
-            if ( Str::strlen($name) > $schema->maxObjectNameLength )
+            if ( StringHelper::strlen($name) > $schema->maxObjectNameLength )
             {
                 $name = mb_substr($name, 0, $schema->maxObjectNameLength);
             }
@@ -92,7 +92,7 @@ class Connection extends \yii\db\Connection
         $table = $this->_getTableNameWithoutPrefix($table);
         if ( is_string($columns) )
         {
-            $columns = Str::split($columns);
+            $columns = StringHelper::split($columns);
         }
         $name = $this->tablePrefix . $table . '_' . implode('_', $columns) . '_pk';
 
@@ -112,7 +112,7 @@ class Connection extends \yii\db\Connection
         $table = $this->_getTableNameWithoutPrefix($table);
         if ( is_string($columns) )
         {
-            $columns = Str::split($columns);
+            $columns = StringHelper::split($columns);
         }
         $name = $this->tablePrefix . $table . '_' . implode('_', $columns) . '_fk';
 
@@ -135,7 +135,7 @@ class Connection extends \yii\db\Connection
         $table = $this->_getTableNameWithoutPrefix($table);
         if ( is_string($columns) )
         {
-            $columns = Str::split($columns);
+            $columns = StringHelper::split($columns);
         }
         $name = $this->tablePrefix . $table . '_' . implode('_', $columns) . ($unique ? '_unq' : '') . ($foreignKey ? '_fk' : '_idx');
 

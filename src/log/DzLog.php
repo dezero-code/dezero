@@ -11,7 +11,7 @@
 
 // use Yii;
 use dezero\helpers\ArrayHelper;
-use dezero\helpers\Str;
+use dezero\helpers\StringHelper;
 
 class DzLog
 {
@@ -280,7 +280,7 @@ class DzLog
         self::$_last_model_errors[$class_name] = $vec_errors;
 
         // Save error without namespace. Example: Customer
-        $base_class_name = Str::basename($class_name);
+        $base_class_name = StringHelper::basename($class_name);
         self::$_last_model_errors[$base_class_name] = $vec_errors;
 
         // Save last error
