@@ -99,7 +99,7 @@ class BackendManager extends Component
             $this->current_controller . '-' . $this->current_action . '-page',
 
             // Logged in?
-            // ( Yii::app()->user->isGuest ? 'not-logged-in' : 'logged-in')
+            // ( Yii::$app->user->isGuest ? 'not-logged-in' : 'logged-in')
         ];
 
         // Login & password page (different layout)

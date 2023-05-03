@@ -17,6 +17,17 @@ class Dz extends Yii
 
 
     /**
+     * Create a new a object instance
+     *
+     * @see ClassMap::make()
+     */
+    public static function makeObject(string $class, array $params = [], array $config = []) : object
+    {
+        return Yii::$app->classMap->make($class, $params, $config);
+    }
+
+
+    /**
      * Get current controller name
      */
     public static function currentController(bool $is_lowercase = false) : ?string
@@ -230,7 +241,7 @@ class Dz extends Yii
         /*
         // Get all contrib modules from "/app/vendor/dezero" direcotyr
         $contrib_path = DZ_BASE_PATH . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'dezero';
-        $contrib_dir = Yii::app()->file->set($contrib_path);
+        $contrib_dir = Yii::$app->file->set($contrib_path);
 
         if ( $contrib_dir->getExists() && $contrib_dir->getIsDir() )
         {
@@ -239,7 +250,7 @@ class Dz extends Yii
             {
                 $vec_directory_path = explode("/", $directory_path);
                 $module_id = $vec_directory_path[count($vec_directory_path) - 1];
-                if ( Yii::app()->hasModule($module_id) )
+                if ( Yii::$app->hasModule($module_id) )
                 {
                     $vec_contrib_modules[$module_id] = [
                         'class' => "\dzlab\{$module_id}\Module"

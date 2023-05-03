@@ -33,10 +33,11 @@ class UserQuery extends \dezero\db\ActiveQuery
         return $this->andWhere(['username' => $username]);
     }
 
+
     /**
      * Filter the query by "email" attribute value
      */
-    public function email($email)
+    public function email(string $email) : self
     {
         return $this->andWhere(['email' => $email]);
     }
@@ -45,7 +46,7 @@ class UserQuery extends \dezero\db\ActiveQuery
     /**
      * Filter the query by "username" or "email" attribute value
      */
-    public function usernameOrEmail($usernameOrEmail)
+    public function usernameOrEmail(string $usernameOrEmail) : self
     {
         return filter_var($usernameOrEmail, FILTER_VALIDATE_EMAIL)
             ? $this->email($usernameOrEmail)

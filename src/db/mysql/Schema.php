@@ -196,7 +196,7 @@ class Schema extends \yii\db\mysql\Schema
         }
 
         // Create a TEMP config file
-        // $file_path = Yii::app()->path->get('temp', true) . DIRECTORY_SEPARATOR . 'my.cnf';
+        // $file_path = Yii::$app->path->get('temp', true) . DIRECTORY_SEPARATOR . 'my.cnf';
         // $this->tempMyCnfPath = FileHelper::normalizePath(sys_get_temp_dir()) . DIRECTORY_SEPARATOR . StringHelper::randomString(12) . '.cnf';
         $destination_file = Yii::$app->file->set($file_path);
         if ( ! $destination_file->getExists() )

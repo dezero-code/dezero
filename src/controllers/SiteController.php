@@ -68,7 +68,7 @@ class SiteController extends Controller
         if ( $error = Yii::$app->errorHandler->error )
         {
             // Errors on REST API?
-            if ( preg_match("/^api\/v/", Yii::app()->request->getPathInfo()) )
+            if ( preg_match("/^api\/v/", Yii::$app->request->getPathInfo()) )
             {
                 Yii::import('@core.components.DzRest.*');
                 $controller = new DzRestController('api');
@@ -76,7 +76,7 @@ class SiteController extends Controller
             }
             else
             {
-                if ( Yii::app()->request->isAjaxRequest )
+                if ( Yii::$app->request->isAjaxRequest )
                 {
                     echo $error['message'];
                 }

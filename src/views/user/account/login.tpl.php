@@ -9,10 +9,12 @@
 |
 */
 
+use dezero\helpers\Html;
 use dezero\helpers\Url;
 use yii\widgets\ActiveForm;
 
-$this->pageTitle = Yii::t('backend', 'Login');
+$this->title = Yii::t('backend', 'Login');
+
 ?>
 <?php if ( isset($loginas_token) && !empty($loginas_token) ) : ?>
   <div class="loginas-message alert dark alert-success alert-dismissible">
@@ -72,12 +74,13 @@ $this->pageTitle = Yii::t('backend', 'Login');
                 'username'
               )
               ->textInput([
+                'placeholder' => $model->getAttributeLabel('username'),
                 'autofocus' => 'autofocus',
                 'class' => 'form-control form-control-lg',
                 'tabindex' => '1'
               ])
               ->label(
-               Yii::t('backend', 'Email'),
+               $model->getAttributeLabel('username'),
                [
                 'class' => 'sr-only'
                ]
@@ -93,13 +96,13 @@ $this->pageTitle = Yii::t('backend', 'Login');
                 $model,
                 'password'
               )
-              ->placeholder([
-                'placeholder' => Yii::t('user', 'Password'),
+              ->passwordInput([
+                'placeholder' => $model->getAttributeLabel('password'),
                 'class' => 'form-control form-control-lg',
                 'tabindex' => '2'
               ])
               ->label(
-               Yii::t('user', 'Password'),
+               $model->getAttributeLabel('password'),
                [
                 'class' => 'sr-only'
                ]
@@ -119,7 +122,7 @@ $this->pageTitle = Yii::t('backend', 'Login');
           Html::submitButton(
             Yii::t('backend', 'Login'),
             [
-              'class' => 'btn btn-block btn-lg mt-40',
+              'class' => 'btn btn-block btn-lg mt-40 btn-primary',
               'tabindex' => '3'
             ]
           );

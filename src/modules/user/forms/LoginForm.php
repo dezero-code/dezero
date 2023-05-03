@@ -100,14 +100,14 @@ class LoginForm extends Model
      */
     public function beforeValidate()
     {
-        if ( parent::beforeValidate() )
+        if ( ! parent::beforeValidate() )
         {
-            $this->user = $this->query->usernameOrEmail(trim($this->username))->one();
-
-            return true;
+            return false;
         }
 
-        return false;
+        $this->user = $this->query->usernameOrEmail(trim($this->username))->one();
+
+        return true;
     }
 
 
@@ -135,7 +135,7 @@ class LoginForm extends Model
      *
      * @return bool whether the user is logged in successfully
      */
-    public function login() : boold
+    public function login() : bool
     {
         if ( $this->validate() )
         {

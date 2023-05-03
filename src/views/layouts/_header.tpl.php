@@ -73,7 +73,7 @@
         <li class="nav-item dropdown">
           <a class="navbar-no-avatar profile-nav-link nav-link" data-toggle="dropdown" href="#" aria-expanded="false" data-animation="scale-up" role="button" title="<?= Yii::t('backend', 'My profile'); ?>">
             <i class="icon wb-user-circle" aria-hidden="true"></i>
-            <?php /*<span><?php echo Yii::app()->user->username; ?></span>*/ ?>
+            <?php /*<span><?php echo Yii::$app->user->username; ?></span>*/ ?>
             <span>Admin</span>
           </a>
           <div class="dropdown-menu" role="menu">
