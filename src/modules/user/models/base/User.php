@@ -198,11 +198,11 @@ abstract class User extends \dezero\db\ActiveRecord
     public function status_type_labels() : array
     {
         return [
-            self::STATUS_TYPE_ACTIVE => Yii::t('dezero\modules\user', 'Active'),
-            self::STATUS_TYPE_DISABLED => Yii::t('dezero\modules\user', 'Disabled'),
-            self::STATUS_TYPE_BANNED => Yii::t('dezero\modules\user', 'Banned'),
-            self::STATUS_TYPE_PENDING => Yii::t('dezero\modules\user', 'Pending'),
-            self::STATUS_TYPE_DELETED => Yii::t('dezero\modules\user', 'Deleted'),
+            self::STATUS_TYPE_ACTIVE => Yii::t('user', 'Active'),
+            self::STATUS_TYPE_DISABLED => Yii::t('user', 'Disabled'),
+            self::STATUS_TYPE_BANNED => Yii::t('user', 'Banned'),
+            self::STATUS_TYPE_PENDING => Yii::t('user', 'Pending'),
+            self::STATUS_TYPE_DELETED => Yii::t('user', 'Deleted'),
         ];
     }
 

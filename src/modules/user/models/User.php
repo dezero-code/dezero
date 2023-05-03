@@ -136,31 +136,31 @@ class User extends BaseUser
     public function attributeLabels() : array
     {
         return [
-            'user_id' => Yii::t('dezero\modules\user', 'User ID'),
-            'username' => Yii::t('dezero\modules\user', 'Username'),
-            'email' => Yii::t('dezero\modules\user', 'Email'),
-            'password' => Yii::t('dezero\modules\user', 'Password'),
-            'first_name' => Yii::t('dezero\modules\user', 'First Name'),
-            'last_name' => Yii::t('dezero\modules\user', 'Last Name'),
-            'status_type' => Yii::t('dezero\modules\user', 'Status Type'),
-            'language_id' => Yii::t('dezero\modules\user', 'Language ID'),
-            'last_login_date' => Yii::t('dezero\modules\user', 'Last Login Date'),
-            'last_login_ip' => Yii::t('dezero\modules\user', 'Last Login Ip'),
-            'is_verified_email' => Yii::t('dezero\modules\user', 'Is Verified Email'),
-            'last_verification_date' => Yii::t('dezero\modules\user', 'Last Verification Date'),
-            'is_force_change_password' => Yii::t('dezero\modules\user', 'Is Force Change Password'),
-            'last_change_password_date' => Yii::t('dezero\modules\user', 'Last Change Password Date'),
-            'default_role' => Yii::t('dezero\modules\user', 'Default Role'),
-            'default_theme' => Yii::t('dezero\modules\user', 'Default Theme'),
-            'is_superadmin' => Yii::t('dezero\modules\user', 'Is Superadmin'),
-            'timezone' => Yii::t('dezero\modules\user', 'Timezone'),
-            'disabled_date' => Yii::t('dezero\modules\user', 'Disabled Date'),
-            'disabled_user_id' => Yii::t('dezero\modules\user', 'Disabled User ID'),
-            'created_date' => Yii::t('dezero\modules\user', 'Created Date'),
-            'created_user_id' => Yii::t('dezero\modules\user', 'Created User ID'),
-            'updated_date' => Yii::t('dezero\modules\user', 'Updated Date'),
-            'updated_user_id' => Yii::t('dezero\modules\user', 'Updated User ID'),
-            'entity_uuid' => Yii::t('dezero\modules\user', 'Entity Uuid'),
+            'user_id' => Yii::t('user', 'User ID'),
+            'username' => Yii::t('user', 'Username'),
+            'email' => Yii::t('user', 'Email'),
+            'password' => Yii::t('user', 'Password'),
+            'first_name' => Yii::t('user', 'First Name'),
+            'last_name' => Yii::t('user', 'Last Name'),
+            'status_type' => Yii::t('user', 'Status Type'),
+            'language_id' => Yii::t('user', 'Language ID'),
+            'last_login_date' => Yii::t('user', 'Last Login Date'),
+            'last_login_ip' => Yii::t('user', 'Last Login Ip'),
+            'is_verified_email' => Yii::t('user', 'Is Verified Email'),
+            'last_verification_date' => Yii::t('user', 'Last Verification Date'),
+            'is_force_change_password' => Yii::t('user', 'Is Force Change Password'),
+            'last_change_password_date' => Yii::t('user', 'Last Change Password Date'),
+            'default_role' => Yii::t('user', 'Default Role'),
+            'default_theme' => Yii::t('user', 'Default Theme'),
+            'is_superadmin' => Yii::t('user', 'Is Superadmin'),
+            'timezone' => Yii::t('user', 'Timezone'),
+            'disabled_date' => Yii::t('user', 'Disabled Date'),
+            'disabled_user_id' => Yii::t('user', 'Disabled User ID'),
+            'created_date' => Yii::t('user', 'Created Date'),
+            'created_user_id' => Yii::t('user', 'Created User ID'),
+            'updated_date' => Yii::t('user', 'Updated Date'),
+            'updated_user_id' => Yii::t('user', 'Updated User ID'),
+            'entity_uuid' => Yii::t('user', 'Entity Uuid'),
         ];
     }
 
@@ -246,11 +246,11 @@ class User extends BaseUser
     public function status_type_labels() : array
     {
         return [
-            self::STATUS_TYPE_ACTIVE => Yii::t('dezero\modules\user', 'Active'),
-            self::STATUS_TYPE_DISABLED => Yii::t('dezero\modules\user', 'Disabled'),
-            self::STATUS_TYPE_BANNED => Yii::t('dezero\modules\user', 'Banned'),
-            self::STATUS_TYPE_PENDING => Yii::t('dezero\modules\user', 'Pending'),
-            self::STATUS_TYPE_DELETED => Yii::t('dezero\modules\user', 'Deleted'),
+            self::STATUS_TYPE_ACTIVE => Yii::t('user', 'Active'),
+            self::STATUS_TYPE_DISABLED => Yii::t('user', 'Disabled'),
+            self::STATUS_TYPE_BANNED => Yii::t('user', 'Banned'),
+            self::STATUS_TYPE_PENDING => Yii::t('user', 'Pending'),
+            self::STATUS_TYPE_DELETED => Yii::t('user', 'Deleted'),
         ];
     }
 

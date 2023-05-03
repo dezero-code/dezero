@@ -1,0 +1,135 @@
+<?php
+/*
+|--------------------------------------------------------------------------
+| Login page
+|--------------------------------------------------------------------------
+|
+| Available variables:
+|  - $model: LoginForm model class
+|
+*/
+
+use dezero\helpers\Url;
+use yii\widgets\ActiveForm;
+
+$this->pageTitle = Yii::t('backend', 'Login');
+?>
+<?php if ( isset($loginas_token) && !empty($loginas_token) ) : ?>
+  <div class="loginas-message alert dark alert-success alert-dismissible">
+    <h4>"LOG IN AS..." ENABLED JUST FOR ADMINISTRATORS</h4>
+    <p>Enter an username and your password to log in as another user.</p>
+  </div>
+<?php endif; ?>
+<?php
+  // Login message
+  /*
+  if ( Yii::$app->user->hasFlash('loginMessage') ) :
+?>
+  <div class="login-message alert dark alert-success alert-dismissible">
+    <?= Yii::$app->user->getFlash('loginMessage'); ?>
+  </div>
+<?php endif; */ ?>
+<div class="panel">
+  <div class="panel-body">
+
+    <div class="brand">
+      <?php /*<img class="brand-img" src="<?= Url::theme(); ?>/images/logo.png" alt="<?= Yii::$app->name; ?>">*/ ?>
+      <h1><?= Yii::$app->name; ?></h1>
+      <h2 class="brand-text font-size-18"><?= Yii::t('backend', 'ADMINISTRATION PANEL'); ?></h2>
+    </div>
+
+    <div class="login-wrapper">
+      <?php
+        $form = ActiveForm::begin(
+          [
+            'id'                      => $model->formName(),
+            'enableAjaxValidation'    => true,
+            'enableClientValidation'  => false,
+            'validateOnBlur'          => false,
+            'validateOnType'          => false,
+            'validateOnChange'        => false,
+            'options'                 => [
+              'autocomplete' => 'off'
+            ]
+          ]
+        );
+      ?>
+        <?php
+          // ADMIN TOKEN (LOGIN AS...)
+          if ( isset($loginas_token) && !empty($loginas_token) ) :
+        ?>
+          <?php
+            $model->loginas_token = $loginas_token;
+            echo $form->hiddenField($model, 'loginas_token');
+          ?>
+        <?php endif; ?>
+
+        <div class="form-group<?php if ( $model->hasErrors('username') ) : ?> has-danger<?php endif; ?>">
+          <?=
+            $form
+              ->field(
+                $model,
+                'username'
+              )
+              ->textInput([
+                'autofocus' => 'autofocus',
+                'class' => 'form-control form-control-lg',
+                'tabindex' => '1'
+              ])
+              ->label(
+               Yii::t('backend', 'Email'),
+               [
+                'class' => 'sr-only'
+               ]
+              );
+          ?>
+          <?php //<?= $form->error($model, 'username'); ?>
+        </div>
+
+        <div class="form-group<?php if ( $model->hasErrors('password') ) : ?> has-danger<?php endif; ?>">
+          <?=
+            $form
+              ->field(
+                $model,
+                'password'
+              )
+              ->placeholder([
+                'placeholder' => Yii::t('user', 'Password'),
+                'class' => 'form-control form-control-lg',
+                'tabindex' => '2'
+              ])
+              ->label(
+               Yii::t('user', 'Password'),
+               [
+                'class' => 'sr-only'
+               ]
+              );
+          ?>
+          <p class="help-block"><a href="<?= Url::to('/user/password'); ?>"><?= Yii::t('backend', 'Forgot password?'); ?></a></p>
+          <?php //<?= $form->error($model, 'password'); ?>
+        </div>
+
+        <?php /*
+        <label class="checkbox">
+          <?= $form->checkBox($model, 'is_remember'); ?> <i><?php echo Yii::t('backend', 'Remember'); ?></i>
+        </label>
+        */ ?>
+
+        <?=
+          Html::submitButton(
+            Yii::t('backend', 'Login'),
+            [
+              'class' => 'btn btn-block btn-lg mt-40',
+              'tabindex' => '3'
+            ]
+          );
+        ?>
+      <?php
+        // End form widget
+        ActiveForm::end();
+      ?>
+    </div>
+
+    <p><a href="<?= Url::to('/'); ?>"><?= Yii::t('backend', 'Go to public website'); ?></a></p>
+  </div>
+</div>
