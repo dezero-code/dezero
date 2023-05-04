@@ -11,7 +11,8 @@
 
 use dezero\helpers\Html;
 use dezero\helpers\Url;
-use yii\widgets\ActiveForm;
+use dezero\widgets\ActiveForm;
+use yii\bootstrap\Alert;
 
 $this->title = Yii::t('backend', 'Login');
 
@@ -22,15 +23,6 @@ $this->title = Yii::t('backend', 'Login');
     <p>Enter an username and your password to log in as another user.</p>
   </div>
 <?php endif; ?>
-<?php
-  // Login message
-  /*
-  if ( Yii::$app->user->hasFlash('loginMessage') ) :
-?>
-  <div class="login-message alert dark alert-success alert-dismissible">
-    <?= Yii::$app->user->getFlash('loginMessage'); ?>
-  </div>
-<?php endif; */ ?>
 <div class="panel">
   <div class="panel-body">
 
@@ -41,20 +33,33 @@ $this->title = Yii::t('backend', 'Login');
     </div>
 
     <div class="login-wrapper">
+      <?php /*
+      <div class="row">
+          <div class="col-xs-12">
+              <?php foreach (Yii::$app->session->getAllFlashes(true) as $type => $message): ?>
+                  <?php if (in_array($type, ['success', 'danger', 'warning', 'info'], true)): ?>
+                      <?= Alert::widget(
+                          [
+                              'options' => ['class' => 'alert-dismissible alert-' . $type],
+                              'body' => $message,
+                          ]
+                      ) ?>
+                  <?php endif ?>
+              <?php endforeach ?>
+          </div>
+      </div> */ ?>
+
       <?php
         $form = ActiveForm::begin(
           [
             'id'                      => $model->formName(),
-            'enableAjaxValidation'    => true,
-            'enableClientValidation'  => false,
-            'validateOnBlur'          => false,
-            'validateOnType'          => false,
-            'validateOnChange'        => false,
-            'options'                 => [
-              'autocomplete' => 'off'
-            ]
+            'enableAjaxValidation'    => false, // true
           ]
         );
+
+        echo $form->errorSummary($model, [
+          'class' => 'mb-30'
+        ]);
       ?>
         <?php
           // ADMIN TOKEN (LOGIN AS...)
@@ -71,7 +76,12 @@ $this->title = Yii::t('backend', 'Login');
             $form
               ->field(
                 $model,
-                'username'
+                'username',
+                [
+                  'errorOptions' => [
+                    'class' => 'help-inline text-help text-danger text-left'
+                  ]
+                ]
               )
               ->textInput([
                 'placeholder' => $model->getAttributeLabel('username'),
@@ -82,7 +92,7 @@ $this->title = Yii::t('backend', 'Login');
               ->label(
                $model->getAttributeLabel('username'),
                [
-                'class' => 'sr-only'
+                'class' => 'sr-only',
                ]
               );
           ?>
@@ -94,7 +104,12 @@ $this->title = Yii::t('backend', 'Login');
             $form
               ->field(
                 $model,
-                'password'
+                'password',
+                [
+                  'errorOptions' => [
+                    'class' => 'help-inline text-help text-danger text-left'
+                  ]
+                ]
               )
               ->passwordInput([
                 'placeholder' => $model->getAttributeLabel('password'),
@@ -104,7 +119,7 @@ $this->title = Yii::t('backend', 'Login');
               ->label(
                $model->getAttributeLabel('password'),
                [
-                'class' => 'sr-only'
+                'class' => 'sr-only',
                ]
               );
           ?>

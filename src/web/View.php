@@ -1,7 +1,5 @@
 <?php
 /**
- * View represents a view object in the MVC pattern.
- *
  * @author Fabián Ruiz <fabian@dezero.es>
  * @link http://www.dezero.es
  * @copyright Copyright &copy; 2022 Fabián Ruiz
