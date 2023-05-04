@@ -11,7 +11,6 @@ namespace dezero\modules\user\forms;
 
 use dezero\helpers\SecurityHelper;
 use dezero\modules\user\models\User;
-use dezero\modules\user\models\query\UserQuery;
 use yii\base\Model;
 use Yii;
 use yii\base\InvalidParamException;
@@ -48,12 +47,6 @@ class LoginForm extends Model
 
 
     /**
-     * @var UserQuery
-     */
-    protected $query;
-
-
-    /**
      * @var SecurityHelper
      */
     protected $securityHelper;
@@ -62,9 +55,8 @@ class LoginForm extends Model
     /**
      * Constructor
      */
-    public function __construct(UserQuery $query, SecurityHelper $securityHelper, array $vec_config = [])
+    public function __construct(SecurityHelper $securityHelper, array $vec_config = [])
     {
-        $this->query = $query;
         $this->securityHelper = $securityHelper;
         parent::__construct($vec_config);
     }
@@ -105,7 +97,7 @@ class LoginForm extends Model
             return false;
         }
 
-        $this->user = $this->query->usernameOrEmail(trim($this->username))->one();
+        $this->user = User::find()->usernameOrEmail(trim($this->username))->one();
 
         return true;
     }

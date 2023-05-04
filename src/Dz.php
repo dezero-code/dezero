@@ -17,7 +17,7 @@ class Dz extends Yii
 
 
     /**
-     * Create a new a object instance
+     * Create a new a object instance using Yii2 Dependency Injection concept
      *
      * @see ClassMap::make()
      */

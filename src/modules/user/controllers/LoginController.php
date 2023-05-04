@@ -9,6 +9,8 @@ use dezero\modules\user\forms\LoginForm;
 use dezero\modules\user\models\User;
 use Dz;
 use yii\web\Controller;
+use yii\web\Response;
+use yii\widgets\ActiveForm;
 use Yii;
 
 class LoginController extends Controller
@@ -23,17 +25,31 @@ class LoginController extends Controller
             return $this->goHome();
         }
 
-        $model = Dz::makeObject(LoginForm::class);
+        $form = Dz::makeObject(LoginForm::class);
 
-        if ( $model->load(Yii::$app->request->post()) && $model->login() )
+        // Form validation via AJAX
+        if ( Yii::$app->request->isAjax && $form->load(Yii::$app->request->post()) )
+        {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+
+            $errors = ActiveForm::validate($form);
+            if ( ! empty($errors) )
+            {
+                // $this->trigger(FormEvent::EVENT_FAILED_LOGIN, $event);
+            }
+
+            return $errors;
+        }
+
+        if ( $form->load(Yii::$app->request->post()) && $form->login() )
         {
             return $this->goBack();
         }
 
-        $model->password = '';
+        $form->password = '';
 
         return $this->render('//user/account/login', [
-            'model' => $model
+            'model' => $form
         ]);
     }
 }
