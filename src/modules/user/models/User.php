@@ -12,7 +12,9 @@ namespace dezero\modules\user\models;
 use dezero\helpers\ArrayHelper;
 use dezero\modules\user\models\query\UserQuery;
 use dezero\modules\user\models\base\User as BaseUser;
+use yii\base\NotSupportedException;
 use yii\db\ActiveQueryInterface;
+use yii\web\IdentityInterface;
 use Yii;
 
 /**
@@ -25,6 +27,7 @@ use Yii;
  * @property string $username
  * @property string $email
  * @property string $password
+ * @property string $auth_token
  * @property string $first_name
  * @property string $last_name
  * @property string $status_type
@@ -58,7 +61,7 @@ use Yii;
  * @property UserSession[] $userSessions
  * @property User[] $users
  */
-class User extends BaseUser
+class User extends BaseUser implements IdentityInterface
 {
     public const STATUS_TYPE_ACTIVE = 'active';
     public const STATUS_TYPE_DISABLED = 'disabled';
@@ -75,12 +78,13 @@ class User extends BaseUser
         /*
         return [
             // Typed rules
-            'requiredFields' => [['username', 'email', 'password', 'created_date', 'created_user_id', 'updated_date', 'updated_user_id'], 'required'],
+            'requiredFields' => [['username', 'email', 'password', 'auth_token', 'created_date', 'created_user_id', 'updated_date', 'updated_user_id'], 'required'],
             'integerFields' => [['last_login_date', 'is_verified_email', 'last_verification_date', 'is_force_change_password', 'last_change_password_date', 'is_superadmin', 'disabled_date', 'disabled_user_id', 'created_date', 'created_user_id', 'updated_date', 'updated_user_id'], 'integer'],
             
             // Max length rules
             'max6' => [['language_id'], 'string', 'max' => 6],
             'max16' => [['default_theme'], 'string', 'max' => 16],
+            'max32' => [['auth_token'], 'string', 'max' => 32],
             'max36' => [['entity_uuid'], 'string', 'max' => 36],
             'max40' => [['timezone'], 'string', 'max' => 40],
             'max60' => [['password'], 'string', 'max' => 60],
@@ -140,6 +144,7 @@ class User extends BaseUser
             'username' => Yii::t('user', 'Username'),
             'email' => Yii::t('user', 'Email'),
             'password' => Yii::t('user', 'Password'),
+            'auth_token' => Yii::t('user', 'Auth Token'),
             'first_name' => Yii::t('user', 'First Name'),
             'last_name' => Yii::t('user', 'Last Name'),
             'status_type' => Yii::t('user', 'Status Type'),
@@ -264,6 +269,59 @@ class User extends BaseUser
         $vec_labels = $this->status_type_labels();
 
         return isset($vec_labels[$status_type]) ? $vec_labels[$status_type] : '';
+    }
+
+
+   /*
+    |--------------------------------------------------------------------------
+    | IdentifyInterface methods
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function findIdentity($id)
+    {
+        return static::findOne($id);
+    }
+
+
+    /**
+     * {@inheritdoc}
+     *
+     * @throws NotSupportedException
+     */
+    public static function findIdentityByAccessToken($token, $type = null)
+    {
+        throw new NotSupportedException('Method "' . __CLASS__ . '::' . __METHOD__ . '" is not implemented.');
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function validateAuthKey($authKey)
+    {
+        return $this->getAttribute('auth_token') === $authKey;
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getId()
+    {
+        return $this->getAttribute('id');
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAuthKey()
+    {
+        return $this->getAttribute('auth_token');
     }
 
 

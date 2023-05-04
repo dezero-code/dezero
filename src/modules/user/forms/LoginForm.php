@@ -114,7 +114,7 @@ class LoginForm extends Model
     {
         if ( ! $this->hasErrors() )
         {
-            if ( $this->user === null || ! $this->securityHelper->validatePassword($this->password, $this->user->password_hash) )
+            if ( $this->user === null || ! $this->securityHelper->validatePassword($this->password, $this->user->password) )
             {
                 $this->addError($attribute, Yii::t('user', 'Invalid login or password'));
             }

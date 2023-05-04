@@ -80,8 +80,9 @@ $script = <<< JS
         $('.field-generator-searchns').find('.sticky-value').html(module_id +"\\\models\\\search");
         $('#generator-searchns').val(module_id +"\\\models\\\search");
 
-        $('.field-generator-messagecategory').find('.sticky-value').html(module_id);
-        $('#generator-messagecategory').val(module_id);
+        var model_class = $('#generator-modelclass').val().toLowerCase();
+        $('.field-generator-messagecategory').find('.sticky-value').html(model_class);
+        $('#generator-messagecategory').val(model_class);
     }
 JS;
 $this->registerJs($script, yii\web\View::POS_END);

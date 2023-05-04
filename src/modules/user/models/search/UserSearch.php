@@ -44,7 +44,7 @@ class UserSearch extends User
         return [
             'defaultNull' => [['first_name', 'last_name', 'last_login_date', 'last_login_ip', 'last_verification_date', 'last_change_password_date', 'default_role', 'default_theme', 'disabled_date', 'disabled_user_id'], 'default', 'value' => null],
             'integerFields' => [['user_id', 'last_login_date', 'is_verified_email', 'last_verification_date', 'is_force_change_password', 'last_change_password_date', 'is_superadmin', 'disabled_date', 'disabled_user_id', 'created_date', 'created_user_id', 'updated_date', 'updated_user_id'], 'integer'],
-            'safeFields' => [['username', 'email', 'password', 'first_name', 'last_name', 'status_type', 'language_id', 'last_login_ip', 'default_role', 'default_theme', 'timezone', 'entity_uuid'], 'safe'],
+            'safeFields' => [['username', 'email', 'password', 'auth_token', 'first_name', 'last_name', 'status_type', 'language_id', 'last_login_ip', 'default_role', 'default_theme', 'timezone', 'entity_uuid'], 'safe'],
         ];
     }
 
@@ -92,6 +92,7 @@ class UserSearch extends User
         $query->andFilterWhere(['like', 'username', $this->username])
             ->andFilterWhere(['like', 'email', $this->email])
             ->andFilterWhere(['like', 'password', $this->password])
+            ->andFilterWhere(['like', 'auth_token', $this->auth_token])
             ->andFilterWhere(['like', 'first_name', $this->first_name])
             ->andFilterWhere(['like', 'last_name', $this->last_name])
             ->andFilterWhere(['like', 'last_login_ip', $this->last_login_ip])
