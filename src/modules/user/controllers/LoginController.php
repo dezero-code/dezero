@@ -1,12 +1,16 @@
 <?php
 /**
- * LoginController class for backend
+ * @author Fabián Ruiz <fabian@dezero.es>
+ * @link http://www.dezero.es
+ * @copyright Copyright &copy; 2023 Fabián Ruiz
  */
 
 namespace dezero\modules\user\controllers;
 
 use dezero\modules\user\forms\LoginForm;
 use dezero\modules\user\models\User;
+use dezero\modules\user\events\FormEvent;
+use dezero\modules\user\events\UserEvent;
 use Dz;
 use yii\web\Controller;
 use yii\web\Response;
@@ -16,7 +20,7 @@ use Yii;
 class LoginController extends Controller
 {
     /**
-     * Main action login
+     * Main action for login
      */
     public function actionIndex()
     {
@@ -25,31 +29,45 @@ class LoginController extends Controller
             return $this->goHome();
         }
 
-        $form = Dz::makeObject(LoginForm::class);
+        $login_form = Dz::makeObject(LoginForm::class);
+        $form_event = Dz::makeObject(FormEvent::class, [$login_form]);
 
         // Form validation via AJAX
-        if ( Yii::$app->request->isAjax && $form->load(Yii::$app->request->post()) )
+        if ( Yii::$app->request->isAjax && $login_form->load(Yii::$app->request->post()) )
         {
             Yii::$app->response->format = Response::FORMAT_JSON;
 
-            $errors = ActiveForm::validate($form);
+            $errors = ActiveForm::validate($login_form);
             if ( ! empty($errors) )
             {
-                // $this->trigger(FormEvent::EVENT_FAILED_LOGIN, $event);
+                // Custom event triggered on "failed login"
+                $this->trigger(FormEvent::EVENT_FAILED_LOGIN, $form_event);
             }
 
             return $errors;
         }
 
-        if ( $form->load(Yii::$app->request->post()) && $form->login() )
+        if ( $login_form->load(Yii::$app->request->post()) )
         {
-            return $this->goBack();
+            // Custom event triggered on "before login"
+            $this->trigger(FormEvent::EVENT_BEFORE_LOGIN, $form_event);
+
+            if ( $login_form->login() )
+            {
+                // Custom event triggered on "after login"
+                $this->trigger(FormEvent::EVENT_AFTER_LOGIN, $form_event);
+
+                return $this->goBack();
+            }
+
+            // Custom event triggered on "failed login"
+            $this->trigger(FormEvent::EVENT_FAILED_LOGIN, $form_event);
         }
 
-        $form->password = '';
+        $login_form->password = '';
 
         return $this->render('//user/account/login', [
-            'model' => $form
+            'model' => $login_form
         ]);
     }
 }

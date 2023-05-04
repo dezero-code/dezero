@@ -1,7 +1,5 @@
 <?php
 /**
- * LoginForm model class file
- *
  * @author Fabián Ruiz <fabian@dezero.es>
  * @link http://www.dezero.es
  * @copyright Copyright &copy; 2023 Fabián Ruiz
@@ -11,8 +9,8 @@ namespace dezero\modules\user\forms;
 
 use dezero\helpers\SecurityHelper;
 use dezero\modules\user\models\User;
-use yii\base\Model;
 use Yii;
+use yii\base\Model;
 use yii\base\InvalidParamException;
 use yii\web\IdentityInterface;
 
