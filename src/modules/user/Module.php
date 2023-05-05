@@ -11,8 +11,9 @@ class Module extends \dezero\base\Module
      * @var array mapping from controller ID to controller configurations.
      */
     public $controllerMap = [
-        'login' => \dezero\modules\user\controllers\LoginController::class,
-        'logout' => \dezero\modules\user\controllers\LogoutController::class,
+        'admin'     => \dezero\modules\user\controllers\AdminController::class,
+        'login'     => \dezero\modules\user\controllers\LoginController::class,
+        'logout'    => \dezero\modules\user\controllers\LogoutController::class,
     ];
 
 

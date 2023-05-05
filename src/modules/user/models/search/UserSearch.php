@@ -9,8 +9,8 @@
 
 namespace dezero\modules\user\models\search;
 
+use dezero\contracts\SearchInterface;
 use dezero\modules\user\models\User;
-use dezero\modules\user\models\query\UserQuery;
 use yii\data\ActiveDataProvider;
 
 /**
@@ -18,24 +18,8 @@ use yii\data\ActiveDataProvider;
  *
  * @see \dezero\modules\user\models\User
  */
-class UserSearch extends User
+class UserSearch extends User implements SearchInterface
 {
-    /**
-     * @var UserQuery
-     */
-    protected $query;
-
-
-    /**
-     * UserSearch constructor
-     */
-    public function __construct(UserQuery $query, array $vec_config = [])
-    {
-        $this->query = $query;
-        parent::__construct($vec_config);
-    }
-
-
     /**
      * {@inheritdoc}
      */
@@ -54,7 +38,7 @@ class UserSearch extends User
      */
     public function search(array $params, ?string $search_id = null) : ActiveDataProvider
     {
-        $query = $this->query;
+        $query = User::find();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

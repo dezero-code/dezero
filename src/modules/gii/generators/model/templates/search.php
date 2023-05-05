@@ -31,8 +31,9 @@ echo "<?php\n";
 
 namespace <?= $generator->searchNs ?>;
 
+use dezero\contracts\SearchInterface;
 use <?= $generator->ns ?>\<?= $modelClassName ?>;
-use <?= $generator->queryNs ?>\<?= $queryClassName; ?>;
+<?php /*use <?= $generator->queryNs ?>\<?= $queryClassName; ?>;*/ ?>
 use yii\data\ActiveDataProvider;
 
 /**
@@ -40,24 +41,8 @@ use yii\data\ActiveDataProvider;
  *
  * @see <?= $modelFullClassName . "\n" ?>
  */
-class <?= $className ?> extends <?= $modelClassName . "\n" ?>
+class <?= $className ?> extends <?= $modelClassName . "\n" ?> implements SearchInterface
 {
-    /**
-     * @var <?= $queryClassName ."\n"; ?>
-     */
-    protected $query;
-
-
-    /**
-     * <?= $className ?> constructor
-     */
-    public function __construct(<?= $queryClassName; ?> $query, array $vec_config = [])
-    {
-        $this->query = $query;
-        parent::__construct($vec_config);
-    }
-
-
     /**
      * {@inheritdoc}
      */
@@ -72,7 +57,7 @@ class <?= $className ?> extends <?= $modelClassName . "\n" ?>
      */
     public function search(array $params, ?string $search_id = null) : ActiveDataProvider
     {
-        $query = $this->query;
+        $query = <?= $modelClassName ?>::find();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
