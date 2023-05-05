@@ -17,6 +17,18 @@ class Module extends \dezero\base\Module
 
 
     /**
+     * @var array redirect URL after login
+     */
+    public $redirectAfterLogin = ['/'];
+
+
+    /**
+     * @var array redirect URL after logout
+     */
+    public $redirectAfterLogout = ['/'];
+
+
+    /**
      * This method is called when the module is being created
      * you may place code here to customize the module or the application
      */

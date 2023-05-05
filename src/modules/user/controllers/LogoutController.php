@@ -20,17 +20,22 @@ class LogoutController extends Controller
      */
     public function actionIndex()
     {
-        $user_event = Dz::makeObject(UserEvent::class, [Yii::$app->getUser()->getIdentity()]);
-
-        // Custom event triggered on "before logout"
-        $this->trigger(UserEvent::EVENT_BEFORE_LOGOUT, $user_event);
-
-        if ( Yii::$app->getUser()->logout() )
+        $user = Yii::$app->getUser()->getIdentity();
+        if ( $user !== null )
         {
-            // Custom event triggered on "after logout"
-            $this->trigger(UserEvent::EVENT_AFTER_LOGOUT, $user_event);
+            $user_event = Dz::makeObject(UserEvent::class, [$user]);
+
+            // Custom event triggered on "before logout"
+            $this->trigger(UserEvent::EVENT_BEFORE_LOGOUT, $user_event);
+
+            if ( Yii::$app->getUser()->logout() )
+            {
+                // Custom event triggered on "after logout"
+                $this->trigger(UserEvent::EVENT_AFTER_LOGOUT, $user_event);
+            }
         }
 
-        return $this->goHome();
+        return $this->redirect($this->module->redirectAfterLogout);
+        // return $this->goHome();
     }
 }

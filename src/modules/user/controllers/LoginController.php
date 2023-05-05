@@ -61,7 +61,8 @@ class LoginController extends Controller
                 // Custom event triggered on "after login"
                 $this->trigger(FormEvent::EVENT_AFTER_LOGIN, $form_event);
 
-                return $this->goBack();
+                $this->redirect($this->module->redirectAfterLogin);
+                // return $this->goBack();
             }
 
             // Custom event triggered on "failed login"

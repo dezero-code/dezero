@@ -312,7 +312,7 @@ class User extends BaseUser implements IdentityInterface
      */
     public function getId()
     {
-        return $this->getAttribute('id');
+        return $this->getAttribute('user_id');
     }
 
 
