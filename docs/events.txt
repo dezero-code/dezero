@@ -1,0 +1,62 @@
+======================
+-- EVENTTS EXAMPLES --
+======================
+
+## 1. CREATE EVENT CLASS
+Create an Event class inside a module in /events folder
+For example, see /user/UserEvent.php
+
+
+##  2. TRIGGER THE EVENT
+In any component (controller, model, manager, ...) you can trigger an event when you need it.
+For example:
+
+    // On LoginController.php
+    ```
+        $this->trigger(FormEvent::EVENT_BEFORE_LOGIN, $form_event);
+    ```
+
+    // Alternative way
+    ```
+        Event::trigger(LoginController::class, FormEvent::EVENT_BEFORE_LOGIN, $form_event);
+    ```
+
+## 3. CREATE A LISTENER CLASS
+Create an EventListener class inside a module in /listeners folder
+For example, see /user/UserListener.php
+
+    ```
+    /**
+     * UserListener class
+     */
+    class UserListener
+    {
+        public static function onFailedLogin(FormEvent $event)
+        {
+            \DzLog::dev("UserListener::onFailedLogin raised!");
+        }
+    }
+    ```
+
+
+## 4. REGISTER THE EVENT LISTENER
+(https://craftcms.com/knowledge-base/custom-module-events)
+
+For register any event listener, you must add it into "events" configuration or property of your module.
+For example, in USER module (Module.php):
+
+    public $events = [
+        // Called from global "Event::trigger(FormEvent::class, ...)"
+        [
+            'class'     => \dezero\modules\user\events\FormEvent::class,                    <---- Source is "FormEvent"
+            'event'     => \dezero\modules\user\events\FormEvent::EVENT_FAILED_LOGIN,
+            'callback'  => [\dezero\modules\user\listeners\UserListener::class, 'onFailedLogin']
+        ],
+
+        // Called from a controller "$this->trigger(...) or Event::trigger(LoginController::class)"
+        [
+            'class'     => \dezero\modules\user\controllers\LoginController::class,         <---- Source is "LoginController"
+            'event'     => \dezero\modules\user\events\FormEvent::EVENT_FAILED_LOGIN,
+            'callback'  => [\dezero\modules\user\listeners\UserListener::class, 'onFailedLogin']
+        ],
+    ];
