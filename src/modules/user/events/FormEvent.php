@@ -7,6 +7,7 @@
 
 namespace dezero\modules\user\events;
 
+use Yii;
 use yii\base\Event;
 use yii\base\Model;
 
@@ -37,5 +38,27 @@ class FormEvent extends Event
     {
         $this->form = $form;
         parent::__construct($config);
+    }
+
+    /**
+     * Custom event when login is failed
+     */
+    /*
+    public static function failedLogin(FormEvent $event)
+    {
+        \dezero\helpers\Log::dev("FormEventListener::onFailedLogin raised!");
+    }
+    */
+
+    /**
+     * Custom AFTER LOGIN event
+     */
+    public static function afterLogin(FormEvent $event)
+    {
+        $login_form = $event->form;
+        $login_form->getUser()->updateAttributes([
+            'last_login_date'   => time(),
+            'last_login_ip'     => Yii::$app->request->getUserIP(),
+        ]);
     }
 }

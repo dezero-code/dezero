@@ -42,10 +42,11 @@ For example, see /user/UserListener.php
 ## 4. REGISTER THE EVENT LISTENER
 (https://craftcms.com/knowledge-base/custom-module-events)
 
-For register any event listener, you must add it into "events" configuration or property of your module.
-For example, in USER module (Module.php):
+For register any event listener, you must add it into "events.php" configuration file of your module.
+For example, inside the USER module you can find "/config/events.php" configuration file:
 
-    public $events = [
+    ```
+    return [
         // Called from global "Event::trigger(FormEvent::class, ...)"
         [
             'class'     => \dezero\modules\user\events\FormEvent::class,                    <---- Source is "FormEvent"
@@ -60,3 +61,4 @@ For example, in USER module (Module.php):
             'callback'  => [\dezero\modules\user\listeners\UserListener::class, 'onFailedLogin']
         ],
     ];
+    ```
