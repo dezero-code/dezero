@@ -15,13 +15,15 @@ $lastError = error_get_last();
 // AppType is required
 $appType = $appType ?? 'web';
 
+// Import DzLog global function
+require DZ_CORE_PATH . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'log' . DIRECTORY_SEPARATOR . 'DzLog.php';
+
 // ALIASES
 // -----------------------------------------------------------------------------
 Yii::setAlias('@app', DZ_BASE_PATH . DIRECTORY_SEPARATOR . 'app');
 Yii::setAlias('@core', DZ_CORE_PATH);
 Yii::setAlias('@dz', DZ_CORE_PATH . DIRECTORY_SEPARATOR . 'src');
 Yii::setAlias('@dezero', DZ_CORE_PATH . DIRECTORY_SEPARATOR . 'src');
-
 
 // CONFIGURATION FILES
 // -----------------------------------------------------------------------------
@@ -41,8 +43,5 @@ if ( $lastError && strpos($lastError['message'], 'max_input_vars') !== false )
 {
     throw new ErrorException($lastError['message']);
 }
-
-// Import DzLog global function
-require DZ_CORE_PATH . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'log' . DIRECTORY_SEPARATOR . 'DzLog.php';
 
 return $app;

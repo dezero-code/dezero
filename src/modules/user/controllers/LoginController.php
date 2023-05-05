@@ -12,6 +12,7 @@ use dezero\modules\user\models\User;
 use dezero\modules\user\events\FormEvent;
 use dezero\modules\user\events\UserEvent;
 use Dz;
+use yii\base\Event;
 use yii\web\Controller;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
@@ -41,7 +42,10 @@ class LoginController extends Controller
             if ( ! empty($errors) )
             {
                 // Custom event triggered on "failed login"
-                $this->trigger(FormEvent::EVENT_FAILED_LOGIN, $form_event);
+                // if ( $this->hasEventHandlers(FormEvent::EVENT_FAILED_LOGIN) )
+                // {
+                    $this->trigger(FormEvent::EVENT_FAILED_LOGIN, $form_event);
+                // }
             }
 
             return $errors;
@@ -62,6 +66,7 @@ class LoginController extends Controller
 
             // Custom event triggered on "failed login"
             $this->trigger(FormEvent::EVENT_FAILED_LOGIN, $form_event);
+            // Event::trigger(FormEvent::class, FormEvent::EVENT_FAILED_LOGIN, $form_event);
         }
 
         $login_form->password = '';
