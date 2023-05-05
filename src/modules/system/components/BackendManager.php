@@ -1,8 +1,8 @@
 <?php
 /**
- * Backend Manager
- *
- * Helper classes collection for backend theme
+ * @author Fabián Ruiz <fabian@dezero.es>
+ * @link http://www.dezero.es
+ * @copyright Copyright &copy; 2023 Fabián Ruiz
  */
 
 namespace dezero\modules\system\components;
