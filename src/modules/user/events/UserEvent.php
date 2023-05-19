@@ -30,8 +30,8 @@ class UserEvent extends Event
     // const EVENT_AFTER_UNBLOCK = 'afterUnblock';
     // const EVENT_BEFORE_BLOCK = 'beforeBlock';
     // const EVENT_AFTER_BLOCK = 'afterBlock';
-    // const EVENT_BEFORE_LOGOUT = 'beforeLogout';
-    // const EVENT_AFTER_LOGOUT = 'afterLogout';
+    const EVENT_BEFORE_LOGOUT = 'beforeLogout';
+    const EVENT_AFTER_LOGOUT = 'afterLogout';
 
 
     /**

@@ -55,12 +55,13 @@ class DbSession extends \yii\web\DbSession
         $fields = $this->writeCallback ? call_user_func($this->writeCallback, $this) : [];
         if ( $id !== null )
         {
-            $fields['session_id'] = $id;
+            $fields['id'] = $id;
         }
         if ( $data !== null )
         {
             $fields['data'] = $data;
         }
+        $fields['user_id'] = Yii::$app->user->id;
 
         return $fields;
     }
@@ -82,20 +83,19 @@ class DbSession extends \yii\web\DbSession
         }
 
         // parent::regenerateID(false);
-         if ( $this->getIsActive() )
-         {
+        if ( $this->getIsActive() )
+        {
             // add @ to inhibit possible warning due to race condition
             // https://github.com/yiisoft/yii2/pull/1812
             if ( YII_DEBUG && !headers_sent() )
             {
-                session_regenerate_id($deleteOldSession);
+                session_regenerate_id(false);
             }
             else
             {
-                @session_regenerate_id($deleteOldSession);
+                @session_regenerate_id(false);
             }
         }
-
         $new_id = session_id();
 
         // if session id regeneration failed, no need to create/update it.
@@ -107,7 +107,7 @@ class DbSession extends \yii\web\DbSession
 
         $row = $this->db->useMaster(function() use ($old_id) {
             return (new Query())->from($this->sessionTable)
-               ->where(['session_id' => $old_id])
+               ->where(['id' => $old_id])
                ->createCommand($this->db)
                ->queryOne();
         });
@@ -117,12 +117,12 @@ class DbSession extends \yii\web\DbSession
             if ( $deleteOldSession )
             {
                 $this->db->createCommand()
-                    ->update($this->sessionTable, ['session_id' => $new_id], ['session_id' => $old_id])
+                    ->update($this->sessionTable, ['id' => $new_id], ['id' => $old_id])
                     ->execute();
             }
             else
             {
-                $row['session_id'] = $new_id;
+                $row['id'] = $new_id;
                 $row['created_date'] = time();
                 $row['entity_uuid'] = StringHelper::UUID();
                 $this->db->createCommand()
@@ -166,14 +166,14 @@ class DbSession extends \yii\web\DbSession
 
             // Ensure 'id' and 'expire' are never affected by [[writeCallback]]
             $vec_default_fields = [
-                'session_id'    => $id,
+                'id'    => $id,
                 'expires_date'  => time() + $this->getTimeout(),
             ];
 
-            // 31/03/2023 - Check if session exists. If not, "created_date" and "enitity_uuid" must be required
+            // 31/03/2023 - Check if session exists. If not, "created_date" and "entity_uuid" must be required
             $row = $this->db->useMaster(function() use ($id) {
                 return (new Query())->from($this->sessionTable)
-                   ->where(['session_id' => $id])
+                   ->where(['id' => $id])
                    ->createCommand($this->db)
                    ->queryOne();
             });
@@ -210,7 +210,7 @@ class DbSession extends \yii\web\DbSession
     public function destroySession($id) : bool
     {
         $this->db->createCommand()
-            ->delete($this->sessionTable, ['session_id' => $id])
+            ->delete($this->sessionTable, ['id' => $id])
             ->execute();
 
         return true;
@@ -237,6 +237,6 @@ class DbSession extends \yii\web\DbSession
     {
         return (new Query())
             ->from($this->sessionTable)
-            ->where('[[expires_date]]>:expire AND [[session_id]]=:id', [':expire' => time(), ':id' => $id]);
+            ->where('[[expires_date]]>:expire AND [[id]]=:id', [':expire' => time(), ':id' => $id]);
     }
 }
