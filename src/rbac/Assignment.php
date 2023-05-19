@@ -11,7 +11,7 @@ use Yii;
 use yii\base\BaseObject;
 
 /**
- * Assignment represents an assignment of a role to a user.
+ * Assignment represents an assignment of a role/permission to a user.
  */
 class Assignment extends BaseObject
 {
@@ -19,10 +19,19 @@ class Assignment extends BaseObject
      * @var string|int user ID (see [[\yii\web\User::id]])
      */
     public $user_id;
+
+
     /**
-     * @var string the role name
+     * @var string the item name
      */
-    public $role_name;
+    public $item_name;
+
+    /**
+     * @var string the internal type of the item. This should be either [[ITEM_TYPE_OPERATION]], [[ITEM_TYPE_PERMISSION]] or [[ITEM_TYPE_ROLE]].
+     */
+    public $item_type;
+
+
     /**
      * @var int UNIX timestamp representing the assignment creation time
      */

@@ -9,14 +9,81 @@ namespace dezero\rbac;
 
 use dezero\helpers\StringHelper;
 use dezero\rbac\Item;
+use dezero\rbac\Permission;
+use dezero\rbac\Role;
+use dezero\rbac\Rule;
 use yii\db\Expression;
 use yii\db\Query;
+use Yii;
 
 /**
  * AuthManager represents an authorization manager that stores authorization information in database.
  */
 class DbManager extends \yii\rbac\DbManager
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function add($object)
+    {
+        if ($object instanceof Item)
+        {
+            if ( $object->rule_name && $this->getRule($object->rule_name) === null )
+            {
+                $rule = Yii::createObject($object->rule_name);
+                $rule->name = $object->rule_name;
+                $this->addRule($rule);
+            }
+
+            return $this->addItem($object);
+        }
+        elseif ($object instanceof Rule)
+        {
+            return $this->addRule($object);
+        }
+
+        throw new InvalidArgumentException('Adding unsupported object type.');
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function remove($object)
+    {
+        if ( $object instanceof Item )
+        {
+            return $this->removeItem($object);
+        }
+        elseif ( $object instanceof Rule )
+        {
+            return $this->removeRule($object);
+        }
+
+        throw new InvalidArgumentException('Removing unsupported object type.');
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getRole($name)
+    {
+        $item = $this->getItem($name);
+        return $item instanceof Item && $item->type == Item::TYPE_ROLE ? $item : null;
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPermission($name)
+    {
+        $item = $this->getItem($name);
+        return $item instanceof Item && $item->type == Item::TYPE_PERMISSION ? $item : null;
+    }
+
+
     /**
      * {@inheritdoc}
      */
@@ -38,7 +105,7 @@ class DbManager extends \yii\rbac\DbManager
                 'type'          => $item->type,
                 'item_type'     => $this->getItemType($item->type, $item->name),
                 'description'   => $item->description,
-                'rule_name'     => $item->ruleName,
+                'rule_name'     => $item->rule_name,
                 'data'          => $item->data === null ? null : serialize($item->data),
                 'created_date'  => $item->created_date,
                 'updated_date'  => $item->updated_date,
@@ -196,18 +263,20 @@ class DbManager extends \yii\rbac\DbManager
     /**
      * {@inheritdoc}
      */
-    public function assign($role, $user_id)
+    public function assign($item, $user_id)
     {
         $assignment = new Assignment([
             'user_id'       => $user_id,
-            'role_name'     => $role->name,
+            'item_name'     => $item->name,
+            'item_type'     => $this->getItemType($item->type, $item->name),
             'created_date'  => time(),
         ]);
 
         $this->db->createCommand()
             ->insert($this->assignmentTable, [
                 'user_id'       => $assignment->user_id,
-                'item_name'     => $assignment->role_name,
+                'item_name'     => $assignment->item_name,
+                'item_type'     => $assignment->item_type,
                 'created_date'  => $assignment->created_date,
             ])->execute();
 
@@ -235,7 +304,8 @@ class DbManager extends \yii\rbac\DbManager
         {
             $vec_assignments[$row['item_name']] = new Assignment([
                 'user_id'       => $row['user_id'],
-                'role_name'     => $row['item_name'],
+                'item_name'     => $row['item_name'],
+                'item_type'     => $row['item_type'],
                 'created_date'  => $row['created_at'],
             ]);
         }
@@ -247,16 +317,16 @@ class DbManager extends \yii\rbac\DbManager
     /**
      * Get "status_type" labels
      */
-    public function getItemType($type, $name) : array
+    private function getItemType(string $type, string $name) : string
     {
         // Role (1)
-        if ( $type === Item::TYPE_ROLE )
+        if ( $type == Item::TYPE_ROLE )
         {
             return Item::ITEM_TYPE_ROLE;
         }
 
         // Permission (2)
-        if ( $type === Item::TYPE_PERMISSION )
+        if ( $type == Item::TYPE_PERMISSION )
         {
             if ( preg_match("/\//", $name) )
             {

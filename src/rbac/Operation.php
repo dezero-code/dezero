@@ -7,7 +7,7 @@
 
 namespace dezero\rbac;
 
-class Permission extends Item
+class Operation extends Item
 {
     /**
      * {@inheritdoc}
@@ -18,5 +18,5 @@ class Permission extends Item
     /**
      * {@inheritdoc}
      */
-    public $item_type = self::ITEM_TYPE_PERMISSION;
+    public $item_type = self::ITEM_TYPE_OPERATION;
 }

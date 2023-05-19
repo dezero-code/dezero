@@ -18,5 +18,5 @@ class Role extends Item
     /**
      * {@inheritdoc}
      */
-    public $itme_type = self::ITEM_TYPE_ROLE;
+    public $item_type = self::ITEM_TYPE_ROLE;
 }
