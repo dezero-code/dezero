@@ -18,4 +18,13 @@ class User extends \yii\web\User
      * @var string|array|null the URL for login when [[loginRequired()]] is called.
      */
     public $loginUrl = ['user/login'];
+
+
+    /**
+     * Alias of getIdentity() method
+     */
+    public function getModel()
+    {
+        return $this->getIdentity();
+    }
 }

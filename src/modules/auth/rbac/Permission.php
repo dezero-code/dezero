@@ -5,7 +5,7 @@
  * @copyright Copyright &copy; 2023 Fabián Ruiz
  */
 
-namespace dezero\rbac;
+namespace dezero\modules\auth\rbac;
 
 class Permission extends Item
 {

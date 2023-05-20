@@ -5,13 +5,13 @@
  * @copyright Copyright &copy; 2023 Fabián Ruiz
  */
 
-namespace dezero\rbac;
+namespace dezero\modules\auth\rbac;
 
 use dezero\helpers\StringHelper;
-use dezero\rbac\Item;
-use dezero\rbac\Permission;
-use dezero\rbac\Role;
-use dezero\rbac\Rule;
+use dezero\modules\auth\rbac\Item;
+use dezero\modules\auth\rbac\Permission;
+use dezero\modules\auth\rbac\Role;
+use dezero\modules\auth\rbac\Rule;
 use yii\db\Expression;
 use yii\db\Query;
 use Yii;
