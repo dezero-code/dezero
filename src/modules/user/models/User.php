@@ -10,6 +10,7 @@
 namespace dezero\modules\user\models;
 
 use dezero\helpers\ArrayHelper;
+use dezero\modules\auth\rbac\AuthTrait;
 use dezero\modules\user\models\query\UserQuery;
 use dezero\modules\user\models\base\User as BaseUser;
 use yii\base\NotSupportedException;
@@ -63,6 +64,8 @@ use Yii;
  */
 class User extends BaseUser implements IdentityInterface
 {
+    use AuthTrait;
+
     public const STATUS_TYPE_ACTIVE = 'active';
     public const STATUS_TYPE_DISABLED = 'disabled';
     public const STATUS_TYPE_BANNED = 'banned';
@@ -322,6 +325,17 @@ class User extends BaseUser implements IdentityInterface
     public function getAuthKey()
     {
         return $this->getAttribute('auth_token');
+    }
+
+
+    /**
+     * Check if this User model can perform the operation as specified by the given permission
+     *
+     * Is similar to Yii::$app->user->can(), but with this method you can check permissions for any user
+     */
+    public function can($permission_name)
+    {
+        return Yii::$app->authManager->checkAccess($this->user_id, $permission_name);
     }
 
 

@@ -21,6 +21,13 @@ use Yii;
  */
 class AuthHelper
 {
+   /*
+    |--------------------------------------------------------------------------
+    | ROLE methods
+    |--------------------------------------------------------------------------
+    */
+
+
     /**
      * Creates a new role into the RBAC system
      */
@@ -66,6 +73,12 @@ class AuthHelper
         return Yii::$app->authManager->remove($role_item);
     }
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | PERMISSION methods
+    |--------------------------------------------------------------------------
+    */
 
 
     /**
@@ -114,6 +127,13 @@ class AuthHelper
     }
 
 
+    /*
+    |--------------------------------------------------------------------------
+    | ROLES & PERMISSIONS methods
+    |--------------------------------------------------------------------------
+    */
+
+
     /**
      * Returns all permissions that the specified role represents
      */
@@ -124,9 +144,9 @@ class AuthHelper
 
 
     /**
-     * Give a permission to a role
+     * Assign a permission to a role
      */
-    public static function givePermissionToRole(string $role_name, string $permission_name) : bool
+    public static function assignPermissionToRole(string $role_name, string $permission_name) : bool
     {
         $role_item = self::getRole($role_name);
         $permission_item = self::getPermission($permission_name);
@@ -154,6 +174,31 @@ class AuthHelper
         }
 
         return Yii::$app->authManager->removeChild($role_item, $permission_item);
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | ROLES & USERS methods
+    |--------------------------------------------------------------------------
+    */
+
+
+    /**
+     * Returns the roles that are assigned to the user
+     */
+    public static function getRolesByUser(int $user_id) : array
+    {
+        return Yii::$app->authManager->getRolesByUser($user_id);
+    }
+
+
+    /**
+     * Check if an user is assigned to a role
+     */
+    public static function hasRole(string $role_name, int $user_id) : Assignment|null
+    {
+        return Yii::$app->authManager->getAssignment($role_name, $user_id);
     }
 
 
@@ -191,12 +236,28 @@ class AuthHelper
     }
 
 
+    /*
+    |--------------------------------------------------------------------------
+    | PERMISSIONS & USERS methods
+    |--------------------------------------------------------------------------
+    */
+
+
     /**
-     * Returns the roles that are assigned to the user
+     * Returns all permissions that the user has
      */
-    public static function getRolesByUser(int $user_id) : array
+    public static function getPermissionsByUser(int $user_id) : array
     {
-        return Yii::$app->authManager->getRolesByUser($user_id);
+        return Yii::$app->authManager->getPermissionsByUser($user_id);
+    }
+
+
+    /**
+     * Check if an user is assigned to a permission
+     */
+    public static function hasPermission(string $permission_name, int $user_id) : Assignment|null
+    {
+        return Yii::$app->authManager->getAssignment($permission_name, $user_id);
     }
 
 
@@ -231,14 +292,5 @@ class AuthHelper
         }
 
         return Yii::$app->authManager->revoke($permission_item, $user_model->user_id);
-    }
-
-
-    /**
-     * Returns all permissions that the user has
-     */
-    public static function getPermissionsByUser(int $user_id) : array
-    {
-        return Yii::$app->authManager->getPermissionsByUser($user_id);
     }
 }

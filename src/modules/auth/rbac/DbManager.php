@@ -306,11 +306,39 @@ class DbManager extends \yii\rbac\DbManager
                 'user_id'       => $row['user_id'],
                 'item_name'     => $row['item_name'],
                 'item_type'     => $row['item_type'],
-                'created_date'  => $row['created_at'],
+                'created_date'  => $row['created_date'],
             ]);
         }
 
         return $vec_assignments;
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAssignment($role_name, $user_id)
+    {
+        if ( $this->isEmptyUserId($user_id) )
+        {
+            return null;
+        }
+
+        $row = (new Query())->from($this->assignmentTable)
+            ->where(['user_id' => (string) $user_id, 'item_name' => $role_name])
+            ->one($this->db);
+
+        if ( $row === false )
+        {
+            return null;
+        }
+
+        return new Assignment([
+            'user_id'       => $row['user_id'],
+            'item_name'     => $row['item_name'],
+            'item_type'     => $row['item_type'],
+            'created_date'  => $row['created_date'],
+        ]);
     }
 
 

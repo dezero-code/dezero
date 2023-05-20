@@ -48,6 +48,7 @@ class Item extends BaseObject
      * @var string name of the rule associated with this item
      */
     public $rule_name;
+    public $ruleName;   // <-- Needed to compatibility with Yii::$app->user->can() method
 
 
     /**

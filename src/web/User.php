@@ -7,6 +7,7 @@
 
 namespace dezero\web;
 
+use dezero\modules\auth\rbac\AuthTrait;
 use Yii;
 
 /**
@@ -14,6 +15,8 @@ use Yii;
  */
 class User extends \yii\web\User
 {
+    use AuthTrait;
+
     /**
      * @var string|array|null the URL for login when [[loginRequired()]] is called.
      */
