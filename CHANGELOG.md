@@ -2,6 +2,12 @@
 
 All notable changes to `Dezero Framework` will be documented in this file
 
+## 0.1.9 - 2023-05-20
+
+- Auth module - Add new module with RBAC system
+- User module - Login & logout process with custom events
+
+
 ## 0.1.8 - 2023-04-28
 
 - Added voku/Stringy PHP library for string manipulation
