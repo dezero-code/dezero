@@ -50,6 +50,18 @@ class Html extends \yii\helpers\Html
     }
 
 
+    /**
+     * Render a button for GridView
+     *
+     * @see Html::a
+     */
+    public static function renderGridButton($text, $url = null, $options = [])
+    {
+        $options['class'] = isset($options['class']) ? ' ' : '';
+        $options['class'] .= 'btn btn-sm btn-icon btn-pure btn-default';
+        return Html::a($text, $url, $options);
+    }
+
 
     /**
      * {@inheritdoc}
