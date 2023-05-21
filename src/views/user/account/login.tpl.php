@@ -90,10 +90,10 @@ $this->title = Yii::t('backend', 'Login');
                 'tabindex' => '1'
               ])
               ->label(
-               $model->getAttributeLabel('username'),
-               [
-                'class' => 'sr-only',
-               ]
+                $model->getAttributeLabel('username'),
+                [
+                  'class' => 'sr-only',
+                ]
               );
           ?>
           <?php //<?= $form->error($model, 'username'); ?>
@@ -118,9 +118,9 @@ $this->title = Yii::t('backend', 'Login');
               ])
               ->label(
                $model->getAttributeLabel('password'),
-               [
-                'class' => 'sr-only',
-               ]
+                [
+                  'class' => 'sr-only',
+                ]
               );
           ?>
           <p class="help-block"><a href="<?= Url::to('/user/password'); ?>"><?= Yii::t('backend', 'Forgot password?'); ?></a></p>

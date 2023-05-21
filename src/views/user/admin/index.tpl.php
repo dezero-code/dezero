@@ -9,8 +9,9 @@
 |  - $user_search_model: UserSearch model class
 |
 */
+  use dezero\helpers\Html;
   use dezero\helpers\Url;
-  use yii\grid\GridView;
+  use dezero\grid\GridView;
   use yii\widgets\Pjax;
 
   // Page title
@@ -49,9 +50,19 @@
                     'format' => 'html',
                   ],
                   [
-                    'class' => 'yii\grid\ActionColumn',
-                    'template' => '{update} {delete}',
-                    // 'buttons' => []
+                    'class' => 'dezero\grid\ActionColumn',
+                    'template' => '{update} {delete} {custom}',
+                    'urlCreator' => function($action, $model, $key, $index) {
+                      return Url::to([$action, 'user_id' => $key]);
+                    },
+                    'buttons' => [
+                      'custom' => function($url, $model, $key) {
+                        return Html::a('<i class="wb-briefcase"></i>', $url, [
+                          'title' => Yii::t('backend', 'Flush'),
+                          'data-confirm' => Yii::t('backend', 'Are you sure you want to flush this cache?'),
+                        ]);
+                      }
+                    ]
                   ]
                 ]
               ]);

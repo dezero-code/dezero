@@ -80,6 +80,15 @@ trait AuthTrait
     }
 
 
+    /**
+     * Check if current user belongs to Admin role
+     */
+    public function isAdmin()
+    {
+        return $this->hasRole('admin');
+    }
+
+
     /*
     |--------------------------------------------------------------------------
     | PERMISSION methods
