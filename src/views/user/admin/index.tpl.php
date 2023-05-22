@@ -50,6 +50,7 @@
                 ],
                 [
                   'attribute' => 'name_filter',
+                  'header' => Yii::t('user', 'Name'),
                   'value' => function($model) {
                     return $this->render('//user/admin/_grid_column', ['column' => 'name_filter', 'model' => $model]);
                   }
