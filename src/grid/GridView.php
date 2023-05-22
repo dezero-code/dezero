@@ -9,6 +9,7 @@ namespace dezero\grid;
 
 use dezero\helpers\Html;
 use dezero\grid\GridViewAsset;
+use Yii;
 
 /**
  * The GridView widget is used to display data in a grid.
@@ -28,6 +29,18 @@ class GridView extends \yii\grid\GridView
      */
     public $dataColumnClass = 'dezero\grid\DataColumn';
 
+    /**
+     * @var string the layout that determines how different sections of the grid view should be organized.
+     * The following tokens will be replaced with the corresponding section contents:
+     *
+     * - `{summary}`: the summary section. See [[renderSummary()]].
+     * - `{errors}`: the filter model error summary. See [[renderErrors()]].
+     * - `{items}`: the list items. See [[renderItems()]].
+     * - `{sorter}`: the sorter. See [[renderSorter()]].
+     * - `{pager}`: the pager. See [[renderPager()]].
+     */
+    public $layout = "{items} {summary} {pager}";
+
 
     /**
      * @inheritdoc
@@ -37,6 +50,22 @@ class GridView extends \yii\grid\GridView
         Html::addCssClass($this->options, 'dz-grid-view');
 
         parent::init();
+
+        // Use Bootstrap4 pager
+        $this->pager = [
+            'class'             => 'yii\bootstrap4\LinkPager',
+            'firstPageLabel'    => "<span aria-hidden=\"true\">&lt;&lt;</span> ". Yii::t('backend', 'First'),
+            'prevPageLabel'     => "<span aria-hidden=\"true\">&lt;</span> ". Yii::t('backend', 'Previous'),
+            'nextPageLabel'     => Yii::t('backend', 'Next') ." <span aria-hidden=\"true\">&gt;</span>",
+            'lastPageLabel'     => Yii::t('backend', 'Last') ." <span aria-hidden=\"true\">&gt;&gt;</span>",
+            'options'           => [
+                'id'    => $this->options['id'] .'-pager',
+                'class' => 'pagination'
+            ]
+        ];
+
+        // Change summary content
+        $this->summary = Yii::t('backend', 'Page {page} of {pageCount}') .'<br>'. Yii::t('yii', 'Showing <b>{begin, number}-{end, number}</b> of <b>{totalCount, number}</b> {totalCount, plural, one{item} other{items}}');
     }
 
 

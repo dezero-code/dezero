@@ -41,7 +41,6 @@
               'id' => 'user-grid',
               'dataProvider' => $data_provider,
               'filterModel' => $user_search_model,
-              'layout' => "{items}\n{pager}",
               'columns' => [
                 [
                   'attribute' => 'user_id',
