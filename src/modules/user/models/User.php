@@ -339,11 +339,92 @@ class User extends BaseUser implements IdentityInterface
     }
 
 
+
+   /*
+    |--------------------------------------------------------------------------
+    | Status type methods
+    |--------------------------------------------------------------------------
+    */
+
+
+    /**
+     * Check if User model is enabled
+     */
+    public function isEnabled()
+    {
+        return $this->status_type === self::STATUS_TYPE_ACTIVE && parent::isEnabled();
+    }
+
+
+    /**
+     * Eanbles User model
+     */
+    public function enable()
+    {
+        $this->status_type = self::STATUS_TYPE_ACTIVE;
+
+        return parent::enable();
+    }
+
+
+    /**
+     * Check if User model is disabled
+     */
+    public function isDisabled()
+    {
+        return $this->status_type === self::STATUS_TYPE_DISABLED && parent::isDisabled();
+    }
+
+
+    /**
+     * Disables User model
+     */
+    public function disable()
+    {
+        $this->status_type = self::STATUS_TYPE_DISABLED;
+
+        return parent::disable();
+    }
+
+
+    /**
+     * Check if User model is banned
+     */
+    public function isBanned()
+    {
+        return $this->status_type === self::STATUS_TYPE_BANNED;
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Title methods
+    |--------------------------------------------------------------------------
+    */
+
+
+    /**
+     * Get full name: first name + last name
+     */
+    public function fullName() : string
+    {
+        $full_name = $this->first_name;
+        if ( $this->last_name )
+        {
+            $full_name .= ' '. $this->last_name;
+        }
+
+        return $full_name;
+    }
+
+
     /**
      * Title used for this model
      */
     public function title() : string
     {
-        return $this->username;
+        $full_name = $this->fullName();
+
+        return !empty($full_name) ? $full_name : $this->username;
     }
 }

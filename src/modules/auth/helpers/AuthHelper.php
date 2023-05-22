@@ -51,11 +51,31 @@ class AuthHelper
 
 
     /**
-     * Return all the roles
+     * Return all the roles items
      */
-    public static function getRoles()
+    public static function getRoles() : array
     {
         return Yii::$app->authManager->getRoles();
+    }
+
+
+    /**
+     * Return all the roles as an array list
+     */
+    public static function getRolesList() : array
+    {
+        $vec_role_items = self::getRoles();
+
+        $vec_roles = [];
+        if ( !empty($vec_role_items) )
+        {
+            foreach ( $vec_role_items as $role_item )
+            {
+                $vec_roles[$role_item->name] = $role_item->description;
+            }
+        }
+
+        return $vec_roles;
     }
 
 

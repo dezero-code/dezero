@@ -7,7 +7,7 @@ use dezero\modules\gii\generators\model\Generator;
 /* @var $generator yii\gii\generators\model\Generator */
 
 // Repeat default values
-$generator->baseClass = 'dezero\db\ActiveRecord';
+$generator->baseClass = 'dezero\entity\ActiveRecord';
 $generator->queryBaseClass = 'dezero\db\ActiveQuery';
 $generator->queryNs = 'app\queries';
 

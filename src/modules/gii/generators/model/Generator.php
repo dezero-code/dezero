@@ -38,7 +38,7 @@ class Generator extends \yii\gii\Generator
     public $ns = 'frontend\models';
     public $tableName;
     public $modelClass;
-    public $baseClass = 'dezero\db\ActiveRecord';
+    public $baseClass = 'dezero\entity\ActiveRecord';
     public $generateRelations = self::RELATIONS_NONE;
     public $generateRelationsFromCurrentSchema = true;
     public $generateLabelsFromComments = false;

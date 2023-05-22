@@ -61,7 +61,7 @@ use Yii;
  * @property UserSession[] $userSessions
  * @property User[] $users
  */
-abstract class User extends \dezero\db\ActiveRecord
+abstract class User extends \dezero\entity\ActiveRecord
 {
     public const STATUS_TYPE_ACTIVE = 'active';
     public const STATUS_TYPE_DISABLED = 'disabled';

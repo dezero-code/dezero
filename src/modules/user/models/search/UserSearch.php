@@ -21,6 +21,11 @@ use yii\data\ActiveDataProvider;
 class UserSearch extends User implements SearchInterface
 {
     /**
+     * @param string
+     */
+    public $name_filter;
+
+    /**
      * {@inheritdoc}
      */
     public function rules() : array
@@ -29,6 +34,9 @@ class UserSearch extends User implements SearchInterface
             'defaultNull' => [['first_name', 'last_name', 'last_login_date', 'last_login_ip', 'last_verification_date', 'last_change_password_date', 'default_role', 'default_theme', 'disabled_date', 'disabled_user_id'], 'default', 'value' => null],
             'integerFields' => [['user_id', 'last_login_date', 'is_verified_email', 'last_verification_date', 'is_force_change_password', 'last_change_password_date', 'is_superadmin', 'disabled_date', 'disabled_user_id', 'created_date', 'created_user_id', 'updated_date', 'updated_user_id'], 'integer'],
             'safeFields' => [['username', 'email', 'password', 'auth_token', 'first_name', 'last_name', 'status_type', 'language_id', 'last_login_ip', 'default_role', 'default_theme', 'timezone', 'entity_uuid'], 'safe'],
+
+            // Custom filters
+            'customFilters' => [['name_filter'], 'safe']
         ];
     }
 
@@ -56,6 +64,16 @@ class UserSearch extends User implements SearchInterface
         {
             $date = strtotime($this->created_date);
             $query->andFilterWhere(['between', 'created_date', $date, $date + 3600 * 24]);
+        }
+
+        // Search filter by firstname and/or lastname
+        if ( $this->name_filter !== null )
+        {
+            $query->andWhere(['OR',
+                ['like', 'first_name', $this->name_filter],
+                ['like', 'last_name', $this->name_filter],
+                ['like', 'CONCAT(first_name, " " , last_name)', $this->name_filter]
+            ]);
         }
 
         // Compare conditions

@@ -9,6 +9,8 @@
 |  - $user_search_model: UserSearch model class
 |
 */
+
+  use dezero\helpers\AuthHelper;
   use dezero\helpers\Html;
   use dezero\helpers\Url;
   use dezero\grid\GridView;
@@ -41,13 +43,37 @@
                 'filterModel' => $user_search_model,
                 'layout' => "{items}\n{pager}",
                 'columns' => [
-                  'username',
+                  [
+                    'attribute' => 'id',
+                    'value' => function($model) {
+                      return $this->render('//user/admin/_grid_column', ['column' => 'id', 'model' => $model]);
+                    }
+                  ],
+                  [
+                    'attribute' => 'name_filter',
+                    'value' => function($model) {
+                      return $this->render('//user/admin/_grid_column', ['column' => 'name_filter', 'model' => $model]);
+                    }
+                  ],
                   [
                     'attribute' => 'email',
                     'value' => function($model) {
                       return $this->render('//user/admin/_grid_column', ['column' => 'email', 'model' => $model]);
-                    },
-                    'format' => 'html',
+                    }
+                  ],
+                  [
+                    'filter' => AuthHelper::getRolesList(),
+                    'attribute' => 'default_role',
+                    'value' => function($model) {
+                      return $this->render('//user/admin/_grid_column', ['column' => 'roles', 'model' => $model]);
+                    }
+                  ],
+                  [
+                    'filter' => false,
+                    'attribute' => 'last_login_date',
+                    'value' => function($model) {
+                      return $this->render('//user/admin/_grid_column', ['column' => 'last_login_date', 'model' => $model]);
+                    }
                   ],
                   [
                     'class' => 'dezero\grid\ActionColumn',

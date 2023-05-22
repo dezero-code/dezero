@@ -9,6 +9,9 @@
 |  - $column: Column name
 |
 */
+
+  use dezero\helpers\DateHelper;
+  use dezero\helpers\Html;
   use dezero\helpers\Url;
 ?>
 <?php switch ( $column ) :
@@ -19,7 +22,7 @@
     */
     case 'id':
   ?>
-    <?= Html::link($model->id, ['update', 'id' => $model->id]); ?>
+    <?= Html::a($model->id, ['update', 'id' => $model->id]); ?>
     <?php
       // Superadmin?
       if ( $model->is_superadmin == 1 ) :
@@ -28,12 +31,12 @@
     <?php endif; ?>
     <?php
       // Disabled user?
-      if ( $model->is_disabled() ) :
+      if ( $model->isDisabled() ) :
     ?>
       <span class="badge badge-danger ml-5 mr-5" data-toggle="tooltip" data-placement="top" data-original-title="<?php if ( !empty($model->disable_date) ) : ?>From <?= $model->disable_date; ?><?php else : ?>Inactivo<?php endif; ?>">DISABLE</span>
     <?php
       // Banned user?
-      elseif ( $model->is_banned() ) :
+      elseif ( $model->isBanned() ) :
     ?>
       <span class="badge badge-danger ml-5 mr-5" data-toggle="tooltip" data-placement="top" data-original-title="Baneado">BANNED</span>
     <?php endif; ?>
@@ -47,10 +50,10 @@
   <?php
     /*
     |--------------------------------------------------------------------------
-    | COLUMN "firstname"
+    | COLUMN "name_filter"
     |--------------------------------------------------------------------------
     */
-    case 'firstname':
+    case 'name_filter':
   ?>
    <?= $model->title(); ?>
   <?php break; ?>
@@ -74,11 +77,11 @@
   ?>
     <?php
       $vec_roles = array();
-      if ( $model->roles() )
+      if ( $model->getRoles() )
       {
-        foreach ( $model->roles() as $que_rol)
+        foreach ( $model->getRoles() as $role_item)
         {
-          $vec_roles[$que_rol->name] = $que_rol->description;
+          $vec_roles[$role_item->name] = $role_item->description;
         }
         echo Html::ul($vec_roles);
       }
@@ -92,7 +95,7 @@
     */
     case 'last_login_date':
   ?>
-    <?= !empty($model->last_login_date) ? $model->last_login_date : Yii::t('app', 'Never'); ?>
+    <?= !empty($model->last_login_date) ? DateHelper::toFormat($model->last_login_date) : Yii::t('user', 'Never'); ?>
   <?php break; ?>
   <?php
     /*

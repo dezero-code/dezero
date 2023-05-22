@@ -15,6 +15,16 @@ use dezero\helpers\ArrayHelper;
 class DataColumn extends \yii\grid\DataColumn
 {
     /**
+     * @var string|array|Closure in which format should the value of each data model be displayed as (e.g. `"raw"`, `"text"`, `"html"`,
+     * `['date', 'php:Y-m-d']`). Supported formats are determined by the [[GridView::formatter|formatter]] used by
+     * the [[GridView]]. Default format is "text" which will format the value as an HTML-encoded plain text when
+     * [[\yii\i18n\Formatter]] is used as the [[GridView::$formatter|formatter]] of the GridView.
+     * @see \yii\i18n\Formatter::format()
+     */
+    public $format = 'html'; // 'text';
+
+
+    /**
      * {@inheritdoc}
      */
     public function renderHeaderCell()
