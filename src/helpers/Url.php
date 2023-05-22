@@ -37,4 +37,17 @@ class Url extends \yii\helpers\Url
         // Force to be ABSOLUTE always
         return parent::to($url, true);
     }
+
+
+    /**
+     * Get current URL using HttpRequest class
+     *
+     * Examples:
+     *  - $is_full_url = true  --> http://mysite.local/en/my-product
+     *  - $is_full_url = false --> /en/my-product
+     */
+    static public function currentRequest($is_full_url = true)
+    {
+        return $is_full_url ? Yii::$app->request->hostInfo . Yii::$app->request->url : Yii::$app->request->url;
+    }
 }

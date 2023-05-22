@@ -53,10 +53,26 @@ class Html extends \yii\helpers\Html
      *
      * @see Html::a
      */
-    public static function renderGridButton($text, $url = null, $options = [])
+    public static function gridButton($title, $url = null, $options = [])
     {
-        $options['class'] = isset($options['class']) ? ' ' : '';
-        $options['class'] .= 'btn btn-sm btn-icon btn-pure btn-default';
+        $text = $title;
+        if ( isset($options['icon']) )
+        {
+            $icon = $options['icon'];
+            $text = "<i class='wb-{$icon}'></i>";
+            unset($options['icon']);
+
+            // Tooltip
+            $options['data-original-title'] = $title;
+            $options['data-toggle'] = 'tooltip';
+
+            // Button classes
+            $options['class'] = isset($options['class']) ? ' ' : '';
+            $options['class'] .= 'btn btn-sm btn-icon btn-pure btn-default';
+        }
+
+
+
         return Html::a($text, $url, $options);
     }
 

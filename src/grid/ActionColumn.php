@@ -7,11 +7,22 @@
 
 namespace dezero\grid;
 
+use dezero\helpers\ArrayHelper;
+use dezero\helpers\Html;
+use dezero\helpers\Url;
+use Yii;
+
 /**
  * ActionColumn is a column for the [[GridView]] widget that displays buttons for viewing and manipulating the items.
  */
 class ActionColumn extends \yii\grid\ActionColumn
 {
+    /**
+     * {@inheritdoc}
+     */
+    public $headerOptions = ['class' => 'button-column'];
+
+
     /**
      * @var array button icons. The array keys are the icon names and the values the corresponding html:
      */
@@ -29,4 +40,68 @@ class ActionColumn extends \yii\grid\ActionColumn
     public $buttonOptions = [
         'class' => 'btn btn-sm btn-icon btn-pure btn-default'
     ];
+
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function renderFilterCellContent()
+    {
+        // $this->filterOptions = ArrayHelper::merge(['class' => $this->filterAttribute .'_filter'], $this->filterOptions);
+        // return parent::renderFilterCell();
+        return '<a class="clear btn btn-default" id="'. $this->grid->options['id'] .'-clear-btn" style="text-align:center;display:block;" data-toggle="tooltip" href="'. Url::canonical() .'" data-original-title="'. Yii::t('app', 'Clear filters') .'"><i class="wb-close"></i></a>';
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function renderDataCell($model, $key, $index)
+    {
+        $this->contentOptions = ArrayHelper::merge(['class' => 'button-column'], $this->contentOptions);
+        return parent::renderDataCell($model, $key, $index);
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function initDefaultButton($name, $iconName, $additionalOptions = [])
+    {
+        if ( !isset($this->buttons[$name]) && strpos($this->template, '{' . $name . '}') !== false )
+        {
+            $this->buttons[$name] = function ($url, $model, $key) use ($name, $iconName, $additionalOptions) {
+                switch ($name) {
+                    case 'view':
+                        $title = Yii::t('yii', 'View');
+                        $icon = 'eye';
+                    break;
+                    case 'update':
+                        $title = Yii::t('yii', 'Update');
+                        $icon = 'edit';
+                    break;
+                    case 'delete':
+                        $title = Yii::t('yii', 'Delete');
+                        $icon = 'trash';
+                    break;
+                    default:
+                        $title = ucfirst($name);
+                        $icon = '';
+                    break;
+                }
+
+                $options = array_merge([
+                    'title' => $title,
+                    'aria-label' => $title,
+                    'data-pjax' => '0',
+                ], $additionalOptions, $this->buttonOptions);
+                if ( !empty($icon) )
+                {
+                    $options['icon'] = $icon;
+                }
+
+                return Html::gridButton($title, $url, $options);
+            };
+        }
+    }
 }

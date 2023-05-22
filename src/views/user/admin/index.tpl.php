@@ -90,7 +90,8 @@
                   },
                   'buttons' => [
                     'custom' => function($url, $model, $key) {
-                      return Html::renderGridButton('<i class="wb-briefcase"></i>', $url, [
+                      return Html::gridButton('Test', $url, [
+                        'icon'  => 'briefcase',
                         'title' => Yii::t('backend', 'Flush'),
                         'data-confirm' => Yii::t('backend', 'Are you sure you want to flush this cache?'),
                       ]);
