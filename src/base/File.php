@@ -80,8 +80,10 @@ class File extends \yii\base\BaseObject
 
     /**
      * Load a filesystem object given a path
+     *
+     * @return static
      */
-    public static function load(string $file_path) : static
+    public static function load(string $file_path) : self
     {
         return new static($file_path);
     }
@@ -292,8 +294,10 @@ class File extends \yii\base\BaseObject
 
     /**
      * Returns permissions of current filesystem object (UNIX systems)
+     *
+     * @return string|int|null
      */
-    public function permissions() : string|int|null
+    public function permissions()
     {
         if ( ! $this->exists() || ! $this->isReadable() )
         {
@@ -306,8 +310,10 @@ class File extends \yii\base\BaseObject
 
     /**
      * Returns owner user of current filesystem object (UNIX systems)
+     *
+     * @return mixed
      */
-    public function owner() : mixed
+    public function owner()
     {
         if ( ! $this->exists() || ! $this->isReadable() )
         {
@@ -331,8 +337,10 @@ class File extends \yii\base\BaseObject
 
     /**
      * Returns owner group of current filesystem object (UNIX systems)
+     *
+     * @return mixed
      */
-    public function group() : mixed
+    public function group()
     {
         if ( ! $this->exists() || ! $this->isReadable() )
         {
@@ -384,8 +392,10 @@ class File extends \yii\base\BaseObject
 
     /**
      * Returns the data of the current filesystem object
+     *
+     * @return string|array|null
      */
-    public function read(array $vec_options = []) : string|array|null
+    public function read(array $vec_options = [])
     {
         if ( ! $this->exists() || ! $this->isReadable() )
         {
@@ -453,8 +463,10 @@ class File extends \yii\base\BaseObject
      * Get MD5 Checksum of file with previous check of `filesize`
      *
      * @see https://www.php.net/manual/en/function.md5-file.php
+     * @param int|bool $max_size
+     * @return string|false
      */
-    public function md5(int|bool $max_size = 5) : string|false
+    public function md5($max_size = 5)
     {
         if ( ! $this->exists() || ! $this->isReadable() || ! $this->isFile() )
         {
@@ -638,7 +650,7 @@ class File extends \yii\base\BaseObject
     /**
      * Copy the current filesystem object to specified destination
      */
-    public function copy($destination_path, $is_overwrite = true) : ?static
+    public function copy($destination_path, $is_overwrite = true) : ?self
     {
         if ( ! $this->exists() || ! $this->isReadable() )
         {
@@ -737,7 +749,7 @@ class File extends \yii\base\BaseObject
     /**
      * Download the current file
      */
-    public function download(string $file_name = null)
+    public function download($file_name = null)
     {
         if ( $this->isDirectory() || ! $this->exists() || ! $this->isReadable() )
         {
@@ -753,7 +765,7 @@ class File extends \yii\base\BaseObject
     /**
      * ZIP current file via SHELL command
      */
-    public function zip(bool $is_after_delete = false) : ?static
+    public function zip(bool $is_after_delete = false) : ?self
     {
         if ( ! $this->isFile() )
         {
@@ -852,7 +864,7 @@ class File extends \yii\base\BaseObject
     /**
      * Return a value from the file information array
      */
-    private function getInfo($name)
+    private function getInfo(string $name)
     {
         // Load information array
         if ( $this->vec_info === null )
@@ -883,7 +895,7 @@ class File extends \yii\base\BaseObject
      *
      * If directory does not exists, create it!
      */
-    public static function ensureDirectory(string $path, int $permissions = 775) : ?static
+    public static function ensureDirectory(string $path, int $permissions = 775) : ?self
     {
         $directory = static::load($path);
 
@@ -902,7 +914,7 @@ class File extends \yii\base\BaseObject
      *
      * @see dezero\helpers\FileHelper::createDirectory
      */
-    public static function createDirectory(string $path, int $permissions = 775) : ?static
+    public static function createDirectory(string $path, int $permissions = 775) : ?self
     {
         // <DEZERO> - '755' normalize to octal '0755'
         $permissions = octdec(str_pad($permissions, 4, "0", STR_PAD_LEFT));
@@ -955,7 +967,7 @@ class File extends \yii\base\BaseObject
      *
      * @see yii\helpers\BaseFileHelper::copyDirectory()
      */
-    private function copyDirectory(string $destination_path) : ?static
+    private function copyDirectory(string $destination_path) : ?self
     {
         if ( ! $this->isDirectory() )
         {

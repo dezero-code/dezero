@@ -196,7 +196,7 @@ class AuthHelper
     /**
      * Check if an user is assigned to a role
      */
-    public static function hasRole(string $role_name, int $user_id) : Assignment|null
+    public static function hasRole(string $role_name, int $user_id) : ?Assignment
     {
         return Yii::$app->authManager->getAssignment($role_name, $user_id);
     }
@@ -205,7 +205,7 @@ class AuthHelper
     /**
      * Assign a Role to an user
      */
-    public static function assignRole(string $role_name, int $user_id) : Assignment|null
+    public static function assignRole(string $role_name, int $user_id) : ?Assignment
     {
         $role_item = self::getRole($role_name);
         $user_model = User::findOne($user_id);
@@ -255,7 +255,7 @@ class AuthHelper
     /**
      * Check if an user is assigned to a permission
      */
-    public static function hasPermission(string $permission_name, int $user_id) : Assignment|null
+    public static function hasPermission(string $permission_name, int $user_id) : ?Assignment
     {
         return Yii::$app->authManager->getAssignment($permission_name, $user_id);
     }
@@ -264,7 +264,7 @@ class AuthHelper
     /**
      * Assign a Permission to an user
      */
-    public static function assignPermission(string $permission_name, int $user_id) : Assignment|null
+    public static function assignPermission(string $permission_name, int $user_id) : ?Assignment
     {
         $permission_item = self::getPermission($permission_name);
         $user_model = User::findOne($user_id);

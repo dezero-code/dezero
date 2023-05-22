@@ -21,8 +21,9 @@ class Config extends Component
      * Find a config file inside @app.config alias path and return the content
      * 
      * @param string Config file name or config file path
+     * @return mixed
      */
-    public function get(string $config_path, ?string $config_key = null) : mixed
+    public function get(string $config_path, ?string $config_key = null)
     {
         if ( preg_match("/^\@/", $config_path) )
         {

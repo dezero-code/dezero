@@ -17,7 +17,7 @@ class ArrayHelper extends \yii\helpers\ArrayHelper
      * @param array $array
      * @return array
      */
-    public static function filterEmptyStringsFromArray(array $array): array
+    public static function filterEmptyStringsFromArray(array $array) : array
     {
         return array_filter($array, function($value): bool {
             return $value !== '';
@@ -31,7 +31,7 @@ class ArrayHelper extends \yii\helpers\ArrayHelper
      * @param array $array
      * @return string|int|null The first key, whether that is a number (if the array is numerically indexed) or a string, or null if $array isn’t an array, or is empty.
      */
-    public static function firstKey(array $array): int|string|null
+    public static function firstKey(array $array)
     {
         /** @noinspection LoopWhichDoesNotLoopInspection */
         foreach ( $array as $key => $value )
@@ -49,7 +49,7 @@ class ArrayHelper extends \yii\helpers\ArrayHelper
      * @param array $array
      * @return mixed The first value, or null if $array isn’t an array, or is empty.
      */
-    public static function firstValue(array $array): mixed
+    public static function firstValue(array $array)
     {
         return !empty($array) ? reset($array) : null;
     }

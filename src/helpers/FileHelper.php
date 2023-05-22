@@ -83,7 +83,7 @@ class FileHelper extends \yii\helpers\FileHelper
         {
             return parent::unlink($path);
         }
-        catch (Throwable)
+        catch (Throwable $t)
         {
             return false;
         }

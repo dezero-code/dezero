@@ -14,10 +14,10 @@
   "minimum-stability": "dev",
   "prefer-stable": true,
   "require": {
-    "php": ">=7.3",
+    "php": ">=8.0",
     "kint-php/kint": "~3.3",
     "mikehaertl/php-shellcommand": "^1.6.0",
-    "spatie/image": "^2.2.0",
+    "spatie/image": "^2.0.0",
     "vlucas/phpdotenv": "^5.4.0",
     "voku/stringy": "^6.4.0",
     "yiisoft/yii2": "~2.0.5",

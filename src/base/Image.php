@@ -52,7 +52,7 @@ class Image extends SpatieImage
     /**
      * {@inheritdoc}
      */
-    public static function load(string $pathToImage): static
+    public static function load(string $pathToImage) : self
     {
         // Return the real file path from a Yii alias or normalize it
         $pathToImage = FileHelper::realPath($pathToImage);
@@ -64,7 +64,7 @@ class Image extends SpatieImage
     /**
      * {@inheritdoc}
      */
-    public function save(string $outputPath = ''): void
+    public function save(string $outputPath = '') : void
     {
         // Accept Yii alias pathes and relative pathes
         if ($outputPath !== '')
@@ -95,7 +95,7 @@ class Image extends SpatieImage
      * @see \Spatie\Image\Manipulations::fit()
      * @see https://spatie.be/docs/image/v1/image-manipulations/resizing-images
      */
-    public function resize(int $width, int $height, string $fitMethod = Manipulations::FIT_CONTAIN) : static
+    public function resize(int $width, int $height, string $fitMethod = Manipulations::FIT_CONTAIN) : self
     {
         $this->fit($fitMethod, $width, $height);
         return $this;
@@ -112,7 +112,7 @@ class Image extends SpatieImage
      * @see \Spatie\Image\Manipulations::fit()
      * @see https://spatie.be/docs/image/v1/image-manipulations/resizing-images
      */
-    public function resizeFill(int $width, int $height) : static
+    public function resizeFill(int $width, int $height) : self
     {
         return $this->resize($width, $height, Manipulations::FIT_FILL);
     }
@@ -128,7 +128,7 @@ class Image extends SpatieImage
      * @see \Spatie\Image\Manipulations::fit()
      * @see https://spatie.be/docs/image/v1/image-manipulations/resizing-images
      */
-    public function resizeMax(int $width, int $height) : static
+    public function resizeMax(int $width, int $height) : self
     {
         return $this->resize($width, $height, Manipulations::FIT_MAX);
     }
@@ -144,7 +144,7 @@ class Image extends SpatieImage
      * @see \Spatie\Image\Manipulations::fit()
      * @see https://spatie.be/docs/image/v1/image-manipulations/resizing-images
      */
-    public function resizeForce(int $width, int $height) : static
+    public function resizeForce(int $width, int $height) : self
     {
         return $this->resize($width, $height, Manipulations::FIT_STRETCH);
     }
@@ -160,7 +160,7 @@ class Image extends SpatieImage
      * @see \Spatie\Image\Manipulations::fit()
      * @see https://spatie.be/docs/image/v1/image-manipulations/resizing-images
      */
-    public function resizeCrop(int $width, int $height) : static
+    public function resizeCrop(int $width, int $height) : self
     {
         return $this->resize($width, $height, Manipulations::FIT_CROP);
     }
@@ -179,7 +179,7 @@ class Image extends SpatieImage
      * @see Spatie\Image\Manipulations::fit()
      * @see https://spatie.be/docs/image/v1/image-manipulations/resizing-images
      */
-    public function resizeFillMax(int $width, int $height) : static
+    public function resizeFillMax(int $width, int $height) : self
     {
         return $this->resize($width, $height, Manipulations::FIT_FILL_MAX);
     }

@@ -32,8 +32,11 @@ class Number
 
     /**
      * Formats the value as a number using PHP number_format() function.
+     *
+     * @param mixed $value
+     * @param array $vec_number_format
      */
-    public static function format(mixed $value, array $vec_number_format = []) : ?string
+    public static function format($value, array $vec_number_format = []) : ?string
     {
         if ( $value === null || $value === '' )
         {
@@ -58,8 +61,10 @@ class Number
 
     /**
      * Turns the given formatted number (string) into a float
+     *
+     * @param $mixed $formatted_number
      */
-    public static function unformat(mixed $formatted_number) : ?float
+    public static function unformat($formatted_number) : ?float
     {
         if ( $formatted_number === null || $formatted_number === '' )
         {
@@ -83,11 +88,11 @@ class Number
     /**
      * Round a number to the nearest nth
      *
-     * @param   int  number to round
+     * @param   int|float  number to round
      * @param   int  number to round to
      * @return  int
      */
-    public function round(int|float $number, int $nearest = 5) : float
+    public function round($number, int $nearest = 5) : float
     {
         return round($number / $nearest) * $nearest;
     }
