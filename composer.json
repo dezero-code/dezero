@@ -20,7 +20,7 @@
     "spatie/image": "^2.0.0",
     "vlucas/phpdotenv": "^5.4.0",
     "voku/stringy": "^6.4.0",
-    "yiisoft/yii2": "~2.0.5",,
+    "yiisoft/yii2": "~2.0.5",
     "yiisoft/yii2-bootstrap4": "~2.0.6",
     "yiisoft/yii2-gii": "~2.0.0"
   },
