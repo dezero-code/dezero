@@ -61,6 +61,8 @@ class GridView extends \yii\grid\GridView
      */
     public function renderItems()
     {
+        $id = $this->options['id'];
+        $this->tableOptions['id'] = $id .'-table';
         return
             '<div class="dz-loader-overlay"><div class="dz-loader loader loader-circle"></div></div>' .
             '<div class="table-responsive">' . parent::renderItems() .'</div>';
