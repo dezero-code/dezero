@@ -14,7 +14,7 @@
   use dezero\helpers\Html;
   use dezero\helpers\Url;
   use dezero\grid\GridView;
-  use yii\widgets\Pjax;
+  use dezero\widgets\GridViewPjax;
 
   // Page title
   $this->title = Yii::t('backend', 'Manage Users');
@@ -30,71 +30,77 @@
     <div class="panel-body container-fluid">
       <div class="row row-lg">
         <div class="col-lg-12">
-          <?php Pjax::begin() ?>
-          <div class="table-responsive">
-            <?=
-              /*
-              |----------------------------------------------------------------------------------------
-              | GridView widget
-              |----------------------------------------------------------------------------------------
-              */
-              GridView::widget([
-                'dataProvider' => $data_provider,
-                'filterModel' => $user_search_model,
-                'layout' => "{items}\n{pager}",
-                'columns' => [
-                  [
-                    'attribute' => 'id',
-                    'value' => function($model) {
-                      return $this->render('//user/admin/_grid_column', ['column' => 'id', 'model' => $model]);
+          <?php GridViewPjax::begin(['gridview' => 'user-grid']) ?>
+          <?=
+            /*
+            |----------------------------------------------------------------------------------------
+            | GridView widget
+            |----------------------------------------------------------------------------------------
+            */
+            GridView::widget([
+              'id' => 'user-grid',
+              'dataProvider' => $data_provider,
+              'filterModel' => $user_search_model,
+              'layout' => "{items}\n{pager}",
+              'columns' => [
+                [
+                  'attribute' => 'user_id',
+                  'value' => function($model) {
+                    return $this->render('//user/admin/_grid_column', ['column' => 'user_id', 'model' => $model]);
+                  }
+                ],
+                [
+                  'attribute' => 'name_filter',
+                  'value' => function($model) {
+                    return $this->render('//user/admin/_grid_column', ['column' => 'name_filter', 'model' => $model]);
+                  }
+                ],
+                [
+                  'attribute' => 'email',
+                  'value' => function($model) {
+                    return $this->render('//user/admin/_grid_column', ['column' => 'email', 'model' => $model]);
+                  }
+                ],
+                [
+                  'attribute' => 'default_role',
+                  'filter' => AuthHelper::getRolesList(),
+                  'value' => function($model) {
+                    return $this->render('//user/admin/_grid_column', ['column' => 'roles', 'model' => $model]);
+                  }
+                ],
+                [
+                  'attribute' => 'last_login_date',
+                  'filter' => false,
+                  'value' => function($model) {
+                    return $this->render('//user/admin/_grid_column', ['column' => 'last_login_date', 'model' => $model]);
+                  }
+                ],
+                [
+                  'attribute' => 'last_change_password_date',
+                  'filter' => false,
+                  'value' => function($model) {
+                    return $this->render('//user/admin/_grid_column', ['column' => 'last_change_password_date', 'model' => $model]);
+                  }
+                ],
+                [
+                  'class' => 'dezero\grid\ActionColumn',
+                  'template' => '{update} {delete} {custom}',
+                  'urlCreator' => function($action, $model, $key, $index) {
+                    return Url::to([$action, 'user_id' => $key]);
+                  },
+                  'buttons' => [
+                    'custom' => function($url, $model, $key) {
+                      return Html::renderGridButton('<i class="wb-briefcase"></i>', $url, [
+                        'title' => Yii::t('backend', 'Flush'),
+                        'data-confirm' => Yii::t('backend', 'Are you sure you want to flush this cache?'),
+                      ]);
                     }
-                  ],
-                  [
-                    'attribute' => 'name_filter',
-                    'value' => function($model) {
-                      return $this->render('//user/admin/_grid_column', ['column' => 'name_filter', 'model' => $model]);
-                    }
-                  ],
-                  [
-                    'attribute' => 'email',
-                    'value' => function($model) {
-                      return $this->render('//user/admin/_grid_column', ['column' => 'email', 'model' => $model]);
-                    }
-                  ],
-                  [
-                    'filter' => AuthHelper::getRolesList(),
-                    'attribute' => 'default_role',
-                    'value' => function($model) {
-                      return $this->render('//user/admin/_grid_column', ['column' => 'roles', 'model' => $model]);
-                    }
-                  ],
-                  [
-                    'filter' => false,
-                    'attribute' => 'last_login_date',
-                    'value' => function($model) {
-                      return $this->render('//user/admin/_grid_column', ['column' => 'last_login_date', 'model' => $model]);
-                    }
-                  ],
-                  [
-                    'class' => 'dezero\grid\ActionColumn',
-                    'template' => '{update} {delete} {custom}',
-                    'urlCreator' => function($action, $model, $key, $index) {
-                      return Url::to([$action, 'user_id' => $key]);
-                    },
-                    'buttons' => [
-                      'custom' => function($url, $model, $key) {
-                        return Html::renderGridButton('<i class="wb-briefcase"></i>', $url, [
-                          'title' => Yii::t('backend', 'Flush'),
-                          'data-confirm' => Yii::t('backend', 'Are you sure you want to flush this cache?'),
-                        ]);
-                      }
-                    ]
                   ]
                 ]
-              ]);
-            ?>
-          </div>
-          <?php Pjax::end() ?>
+              ]
+            ]);
+          ?>
+          <?php GridViewPjax::end() ?>
         </div>
       </div>
     </div>

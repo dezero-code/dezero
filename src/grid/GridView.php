@@ -7,6 +7,9 @@
 
 namespace dezero\grid;
 
+use dezero\helpers\Html;
+use dezero\grid\GridViewAsset;
+
 /**
  * The GridView widget is used to display data in a grid.
  */
@@ -24,4 +27,42 @@ class GridView extends \yii\grid\GridView
      * Defaults to 'yii\grid\DataColumn'.
      */
     public $dataColumnClass = 'dezero\grid\DataColumn';
+
+
+    /**
+     * @inheritdoc
+     */
+    public function init()
+    {
+        Html::addCssClass($this->options, 'dz-grid-view');
+
+        parent::init();
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function run()
+    {
+        $view = $this->getView();
+        GridViewAsset::register($view);
+
+        $id = $this->options['id'];
+        $hash = hash('crc32', $id.'gridview');
+        $view->registerJs(";$.dezeroGridview.init('$id', '$hash');");
+
+        parent::run();
+    }
+
+
+    /**
+     * @inheritdoc
+     */
+    public function renderItems()
+    {
+        return
+            '<div class="dz-loader-overlay"><div class="dz-loader loader loader-circle"></div></div>' .
+            '<div class="table-responsive">' . parent::renderItems() .'</div>';
+    }
 }

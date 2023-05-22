@@ -17,12 +17,12 @@
 <?php switch ( $column ) :
     /*
     |--------------------------------------------------------------------------
-    | COLUMN "id"
+    | COLUMN "user_id"
     |--------------------------------------------------------------------------
     */
-    case 'id':
+    case 'user_id':
   ?>
-    <?= Html::a($model->id, ['update', 'id' => $model->id]); ?>
+    <?= Html::a($model->id, ['update', 'user_id' => $model->id]); ?>
     <?php
       // Superadmin?
       if ( $model->is_superadmin == 1 ) :
@@ -105,6 +105,6 @@
     */
     case 'last_change_password_date':
   ?>
-    <?= ( !empty($model->last_change_password_date) && $model->last_change_password_date !== $model->created_date ) ? $model->last_change_password_date : Yii::t('app', 'Never'); ?>
+    <?= ( !empty($model->last_change_password_date) && $model->last_change_password_date !== $model->created_date ) ? DateHelper::toFormat($model->last_change_password_date) : Yii::t('app', 'Never'); ?>
   <?php break; ?>
 <?php endswitch; ?>

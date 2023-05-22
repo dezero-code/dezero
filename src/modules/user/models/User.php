@@ -143,7 +143,7 @@ class User extends BaseUser implements IdentityInterface
     public function attributeLabels() : array
     {
         return [
-            'user_id' => Yii::t('user', 'User ID'),
+            'user_id' => Yii::t('user', 'ID'),
             'username' => Yii::t('user', 'Username'),
             'email' => Yii::t('user', 'Email'),
             'password' => Yii::t('user', 'Password'),
