@@ -63,8 +63,11 @@ class Image extends SpatieImage
 
     /**
      * {@inheritdoc}
+     *
+     * @param string $outputPath
+     * @return void
      */
-    public function save(string $outputPath = '') : void
+    public function save($outputPath = '')
     {
         // Accept Yii alias pathes and relative pathes
         if ($outputPath !== '')
