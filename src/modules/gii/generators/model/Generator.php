@@ -1317,6 +1317,9 @@ class Generator extends \yii\gii\Generator
             }
         }
 
+        // Custom filter rules (commented)
+        $vec_rules[] = "\n            // Custom search filters\n            // 'customFilters' => [['name_filter'], 'safe']";
+
         return $vec_rules;
     }
 
