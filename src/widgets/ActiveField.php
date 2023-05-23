@@ -36,6 +36,16 @@ class ActiveField extends \yii\bootstrap4\ActiveField
      */
     public $errorOptions = ['class' => 'help-inline text-help text-danger'];    // ['help-block']
 
+    /**
+     * @var null|array CSS grid classes for horizontal layout. This must be an array with these keys:
+     *  - 'offset' the offset grid class to append to the wrapper if no label is rendered
+     *  - 'label' the label grid class
+     *  - 'wrapper' the wrapper grid class
+     *  - 'error' the error grid class
+     *  - 'hint' the hint grid class
+     */
+    public $columns = [];
+
 
     /**
      * {@inheritdoc}
@@ -62,6 +72,11 @@ class ActiveField extends \yii\bootstrap4\ActiveField
 
         $layout = $instanceConfig['form']->layout;
 
+        // Custom option "columns" (alias of horizontalCssClasses)
+        if ( isset($instanceConfig['columns']) && !isset($instanceConfig['horizontalCssClasses']) )
+        {
+            $instanceConfig['horizontalCssClasses'] = $instanceConfig['columns'];
+        }
 
         if ( $layout === ActiveForm::LAYOUT_HORIZONTAL )
         {

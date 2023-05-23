@@ -50,12 +50,11 @@
     <div class="row">
       <div class="col-lg-8">
         <?=
-          $form
-            ->field(
+          $form->field(
               $user_model,
               'email',
               [
-                // 'horizontalCssClasses' => [
+                // 'columns' => [
                 //   'wrapper' => 'col-sm-9',
                 //   'label'   => 'col-sm-3 form-control-label',
                 // ]
