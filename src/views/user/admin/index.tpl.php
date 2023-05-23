@@ -17,7 +17,7 @@
   use dezero\widgets\GridViewPjax;
 
   // Page title
-  $this->title = Yii::t('backend', 'Manage Users');
+  $this->title = Yii::t('backend', 'Manage users');
 ?>
 <div class="page-header">
   <h1 class="page-title"><?= $this->title; ?></h1>

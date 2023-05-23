@@ -3,6 +3,7 @@
  * Dz is a helper class serving common Dz and Yii framework functionality.
  */
 
+use dezero\helpers\StringHelper;
 use yii\base\Module;
 
 class Dz extends Yii
@@ -32,7 +33,7 @@ class Dz extends Yii
      */
     public static function currentController(bool $is_lowercase = false) : ?string
     {
-        return self::$app->controller->id;
+        return $is_lowercase ? StringHelper::strtolower(self::$app->controller->id) : self::$app->controller->id;
     }
 
 
@@ -41,7 +42,7 @@ class Dz extends Yii
      */
     public static function currentAction(bool $is_lowercase = false) : ?string
     {
-        return self::$app->controller->action->id;
+        return $is_lowercase ? StringHelper::strtolower(self::$app->controller->action->id) : self::$app->controller->action->id;
     }
 
 
@@ -50,7 +51,12 @@ class Dz extends Yii
      */
     public static function currentModule(bool $is_lowercase = false) : ?string
     {
-        return self::$app->controller->module->id;
+        if ( ! self::$app->controller->module )
+        {
+            return null;
+        }
+
+        return $is_lowercase ? StringHelper::strtolower(self::$app->controller->module->id) : self::$app->controller->module->id;
     }
 
 
@@ -59,7 +65,12 @@ class Dz extends Yii
      */
     public static function currentTheme(bool $is_lowercase = false) : ?string
     {
-        return self::$app->view->theme ? self::$app->view->theme->name : null;
+        if ( ! self::$app->view->theme )
+        {
+            return null;
+        }
+
+        return $is_lowercase ? StringHelper::strtolower(self::$app->view->theme->name) : self::$app->view->theme->name;
     }
 
 

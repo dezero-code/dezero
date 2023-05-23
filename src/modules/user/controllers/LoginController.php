@@ -11,9 +11,9 @@ use dezero\modules\user\forms\LoginForm;
 use dezero\modules\user\models\User;
 use dezero\modules\user\events\FormEvent;
 use dezero\modules\user\events\UserEvent;
+use dezero\web\Controller;
 use Dz;
 use yii\base\Event;
-use yii\web\Controller;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
 use Yii;
@@ -51,6 +51,7 @@ class LoginController extends Controller
             return $errors;
         }
 
+        // Form submitted
         if ( $login_form->load(Yii::$app->request->post()) )
         {
             // Custom event triggered on "before login"

@@ -8,6 +8,7 @@
 
 namespace dezero\helpers;
 
+use Dz;
 use dezero\helpers\ArrayHelper;
 use Yii;
 
@@ -16,6 +17,125 @@ use Yii;
  */
 class Html extends \yii\helpers\Html
 {
+    /**
+     * Generates a breadcrumb navigation menu
+     */
+    public static function breadcrumbs(array $vec_links)
+    {
+        return self::generateMenuList($vec_links, ['class' => 'breadcrumb'], false, 'ol');
+    }
+
+
+    /**
+     * Generate a menu with an un-ordered list of items.
+     *
+     * @param  array   $links
+     * @param  array   $htmlOptions
+     * @return string
+     */
+    public static function generateMenuList(array $vec_links, array $options = [], bool $show_active_class = false, string $menu_tag = 'ul') : string
+    {
+        // Check visible
+        if ( !empty($vec_links) )
+        {
+            foreach ( $vec_links as $num_link => $que_link )
+            {
+                if ( isset($que_link['visible']) && eval('return '. $que_link['visible']. ';') === false )
+                {
+                    unset($vec_links['num_link']);
+                }
+            }
+        }
+
+        $output = '';
+        if ( !empty($vec_links) )
+        {
+            $output = self::listing($menu_tag, $vec_links, $options, true);
+
+            if ( $show_active_class )
+            {
+                // Get URL from module, controller and action
+                $que_url = '';
+                $current_module = Dz::currentModule(true);
+                if ( $current_module !== null )
+                {
+                    $que_url = $current_module;
+                }
+                $que_url .= '/'. Dz::currentController(true);
+                // $que_url .= Dz::currentAction(true);
+
+                $output = str_replace($que_url .'/"', $que_url .'/" class="active"', $output);
+            }
+        }
+
+        return $output;
+    }
+
+
+    /**
+     * Generate an ordered or un-ordered list.
+     */
+    private static function listing(string $type, array $list, array $options = [], bool $is_menu = false) : string
+    {
+        $content = '';
+
+        $current_module = Dz::currentModule(true);
+        $current_controller =  Dz::currentController(true);
+        $current_action =  Dz::currentAction(true);
+
+        if ( count($list) <= 0 )
+        {
+            return $content;
+        }
+
+        foreach ( $list as $key => $value )
+        {
+            // If the value is an array, we will recurse the function so that we can
+            // produce a nested list within the list being built. Of course, nested
+            // lists may exist within nested lists, etc.
+            if (is_array($value))
+            {
+                // Check access
+                if ( isset($value['visible']) && eval('return '. $que_link['visible']. ';') === true )
+                {
+                    continue;
+                }
+
+                // Menu (check current URL)
+                if ( $is_menu )
+                {
+                    if ( strtolower($value['url'][0]) == '/'. $current_module .'/'. $current_controller .'/'. $current_action || ( $current_action == Yii::$app->controller->defaultAction && (strtolower($value['url'][0]) == '/'. $current_module .'/'. $current_controller) ) )
+                    {
+                        $content .= '<li class="active">';
+                    }
+                    else
+                    {
+                        $content .= '<li>';
+                    }
+                    $content .= self::a($value['label'], $value['url']) .'</li>';
+                }
+                else
+                {
+                    if (is_int($key))
+                    {
+                        $content .= self::listing($type, $value);
+                    }
+                    else
+                    {
+                        $content .= '<li>'. $key . self::listing($type, $value) .'</li>';
+                    }
+                }
+            }
+            else
+            {
+                $content .= '<li>'. $value .'</li>';
+            }
+        }
+
+        return self::tag($type, $content, $options);
+    }
+
+
     /**
      * {@inheritdoc}
      */

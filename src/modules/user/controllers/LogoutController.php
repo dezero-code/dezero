@@ -8,8 +8,8 @@
 namespace dezero\modules\user\controllers;
 
 use dezero\modules\user\events\UserEvent;
+use dezero\web\Controller;
 use Dz;
-use yii\web\Controller;
 use Yii;
 
 

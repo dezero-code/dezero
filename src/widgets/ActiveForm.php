@@ -13,7 +13,7 @@ use Yii;
 /**
  * ActiveForm is a widget that builds an interactive HTML form for one or multiple data models.
  */
-class ActiveForm extends \yii\widgets\ActiveForm
+class ActiveForm extends \yii\bootstrap4\ActiveForm
 {
     /**
      * @var bool whether to enable client-side data validation.
@@ -68,6 +68,20 @@ class ActiveForm extends \yii\widgets\ActiveForm
     public $options = [
       'autocomplete'    => 'off'
     ];
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function init()
+    {
+        if ($this->layout === self::LAYOUT_HORIZONTAL)
+        {
+            Html::addCssClass($this->options, ['widget' => 'form-horizontal']);
+        }
+
+        parent::init();
+    }
 
 
     /**

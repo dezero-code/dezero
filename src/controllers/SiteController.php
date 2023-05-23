@@ -7,8 +7,8 @@
 
 namespace dezero\controllers;
 
+use dezero\web\Controller;
 use yii\filters\AccessControl;
-use yii\web\Controller;
 
 class SiteController extends Controller
 {

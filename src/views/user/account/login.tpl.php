@@ -15,7 +15,6 @@ use dezero\widgets\ActiveForm;
 use yii\bootstrap\Alert;
 
 $this->title = Yii::t('backend', 'Login');
-
 ?>
 <?php if ( isset($loginas_token) && !empty($loginas_token) ) : ?>
   <div class="loginas-message alert dark alert-success alert-dismissible">
@@ -50,12 +49,10 @@ $this->title = Yii::t('backend', 'Login');
       </div> */ ?>
 
       <?php
-        $form = ActiveForm::begin(
-          [
-            'id'                      => $model->formName(),
-            'enableAjaxValidation'    => false, // true
-          ]
-        );
+        $form = ActiveForm::begin([
+            'id'                    => $model->formName(),
+            'enableAjaxValidation'  => false, // true
+        ]);
 
         echo $form->errorSummary($model, [
           'class' => 'mb-30'
