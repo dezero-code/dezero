@@ -62,7 +62,8 @@
                   }
                 ],
                 [
-                  'attribute' => 'default_role',
+                  'attribute' => 'role_filter',
+                  'header' => Yii::t('user', 'Roles'),
                   'filter' => AuthHelper::getRolesList(),
                   'value' => function($model) {
                     return $this->render('//user/admin/_grid_column', ['column' => 'roles', 'model' => $model]);

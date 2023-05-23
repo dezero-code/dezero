@@ -25,6 +25,13 @@ class UserSearch extends User implements SearchInterface
      */
     public $name_filter;
 
+
+    /**
+     * @param string
+     */
+    public $role_filter;
+
+
     /**
      * {@inheritdoc}
      */
@@ -36,7 +43,7 @@ class UserSearch extends User implements SearchInterface
             'safeFields' => [['username', 'email', 'password', 'auth_token', 'first_name', 'last_name', 'status_type', 'language_id', 'last_login_ip', 'default_role', 'default_theme', 'timezone', 'entity_uuid'], 'safe'],
 
             // Custom filters
-            'customFilters' => [['name_filter'], 'safe']
+            'customFilters' => [['name_filter', 'role_filter'], 'safe']
         ];
     }
 
@@ -48,14 +55,18 @@ class UserSearch extends User implements SearchInterface
     {
         $query = User::find();
 
-        $dataProvider = new ActiveDataProvider([
+        $data_provider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => [
+                'pageSize'  => 30
+            ]
         ]);
+
 
         // Uncomment the following line if you do not want to return any records when validation fails
         if ( ! ( $this->load($params) && $this->validate() ) )
         {
-            return $dataProvider;
+            return $data_provider;
         }
 
 
@@ -69,10 +80,20 @@ class UserSearch extends User implements SearchInterface
         // Search filter by firstname and/or lastname
         if ( $this->name_filter !== null )
         {
-            $query->andWhere(['OR',
+            $query->andFilterWhere(['OR',
                 ['like', 'first_name', $this->name_filter],
                 ['like', 'last_name', $this->name_filter],
                 ['like', 'CONCAT(first_name, " " , last_name)', $this->name_filter]
+            ]);
+        }
+
+        // Role filter
+        if ( $this->role_filter !== null )
+        {
+            $query->leftJoin('auth_assignment', 'auth_assignment.user_id = user_user.user_id');
+            $query->andFilterWhere([
+                'auth_assignment.item_name' => $this->role_filter,
+                'auth_assignment.item_type' => 'role'
             ]);
         }
 
@@ -102,6 +123,6 @@ class UserSearch extends User implements SearchInterface
             ->andFilterWhere(['like', 'default_theme', $this->default_theme])
             ->andFilterWhere(['like', 'timezone', $this->timezone]);
 
-        return $dataProvider;
+        return $data_provider;
     }
 }

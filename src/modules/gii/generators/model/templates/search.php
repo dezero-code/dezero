@@ -59,14 +59,17 @@ class <?= $className ?> extends <?= $modelClassName . "\n" ?> implements SearchI
     {
         $query = <?= $modelClassName ?>::find();
 
-        $dataProvider = new ActiveDataProvider([
+        $data_provider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => [
+                'pageSize'  => 30
+            ]
         ]);
 
         // Uncomment the following line if you do not want to return any records when validation fails
         if ( ! ( $this->load($params) && $this->validate() ) )
         {
-            return $dataProvider;
+            return $data_provider;
         }
 
 <?php if ( !empty($searchFilters['date']) ): ?>
@@ -77,6 +80,18 @@ class <?= $className ?> extends <?= $modelClassName . "\n" ?> implements SearchI
             $date = strtotime($this->created_date);
             $query->andFilterWhere(['between', 'created_date', $date, $date + 3600 * 24]);
         }
+
+        /*
+        // Search filter by firstname and/or lastname
+        if ( $this->name_filter !== null )
+        {
+            $query->andFilterWhere(['OR',
+                ['like', 'first_name', $this->name_filter],
+                ['like', 'last_name', $this->name_filter],
+                ['like', 'CONCAT(first_name, " " , last_name)', $this->name_filter]
+            ]);
+        }
+        */
 <?php /*foreach ( $searchFilters['date'] as $column_name ) : ?>
         if ( $this-><?= $column_name; ?> !== null )
         {
@@ -106,6 +121,6 @@ class <?= $className ?> extends <?= $modelClassName . "\n" ?> implements SearchI
 <?php endforeach; ?>
 <?php endif; ?>
 
-        return $dataProvider;
+        return $data_provider;
     }
 }

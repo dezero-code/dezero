@@ -23,7 +23,6 @@ class AdminController extends Controller
         $user_search_model = Dz::makeObject(UserSearch::class);
 
         $data_provider = $user_search_model->search(Yii::$app->request->get());
-        $data_provider->pagination->pageSize=2;
 
         return $this->render('//user/admin/index',[
             'data_provider'     => $data_provider,

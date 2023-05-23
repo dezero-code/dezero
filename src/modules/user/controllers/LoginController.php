@@ -27,7 +27,7 @@ class LoginController extends Controller
     {
         if ( ! Yii::$app->user->isGuest)
         {
-            return $this->goHome();
+            return $this->redirect($this->module->redirectAfterLogin);
         }
 
         $login_form = Dz::makeObject(LoginForm::class);
