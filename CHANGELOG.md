@@ -2,6 +2,11 @@
 
 All notable changes to `Dezero Framework` will be documented in this file
 
+## 0.1.10 - 2023-05-23
+
+- Gridivew - Custom widget adapted to Bootstrap theme
+- User module - Admin index page
+
 ## 0.1.9 - 2023-05-20
 
 - Auth module - Add new module with RBAC system
