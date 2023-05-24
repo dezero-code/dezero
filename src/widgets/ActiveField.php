@@ -36,6 +36,24 @@ class ActiveField extends \yii\bootstrap4\ActiveField
      */
     public $errorOptions = ['class' => 'help-inline text-help text-danger'];    // ['help-block']
 
+
+    /**
+     * @var array the default options for the input radios. The parameter passed to individual
+     * input methods (e.g. [[radio()]]) will be merged with this property when rendering the input tag.
+     */
+    public $radioOptions = [
+         'class' => ['widget' => ''],
+        'labelOptions' => [
+            'class' => ['widget' => '']
+        ]
+    ];
+
+
+    /**
+     * @var string the template for checkboxes and radios in horizontal layout
+     */
+    public $radioHorizontalTemplate = "{beginWrapper}\n<div class=\"radio-custom radio-custom\">\n{input}\n{label}\n{error}\n{hint}\n</div>\n{endWrapper}";
+
     /**
      * @var null|array CSS grid classes for horizontal layout. This must be an array with these keys:
      *  - 'offset' the offset grid class to append to the wrapper if no label is rendered
@@ -50,7 +68,7 @@ class ActiveField extends \yii\bootstrap4\ActiveField
     /**
      * {@inheritdoc}
      */
-    protected function createLayoutConfig($instanceConfig)
+    protected function createLayoutConfig($instance_config)
     {
         // Custom configuration form layouts for Dezero Framework theme
         $config = [
@@ -66,16 +84,16 @@ class ActiveField extends \yii\bootstrap4\ActiveField
                 'class' => 'form-control'
             ],
             'labelOptions' => [
-                'class' => []
+                'class' => 'form-control-label'
             ]
         ];
 
-        $layout = $instanceConfig['form']->layout;
+        $layout = $instance_config['form']->layout;
 
         // Custom option "columns" (alias of horizontalCssClasses)
-        if ( isset($instanceConfig['columns']) && !isset($instanceConfig['horizontalCssClasses']) )
+        if ( isset($instance_config['columns']) && !isset($instance_config['horizontalCssClasses']) )
         {
-            $instanceConfig['horizontalCssClasses'] = $instanceConfig['columns'];
+            $instance_config['horizontalCssClasses'] = $instance_config['columns'];
         }
 
         if ( $layout === ActiveForm::LAYOUT_HORIZONTAL )
@@ -84,25 +102,30 @@ class ActiveField extends \yii\bootstrap4\ActiveField
             $config['wrapperOptions'] = [];
             $config['labelOptions'] = [];
             $config['options'] = [];
-            $cssClasses = [
+            $vec_css_classes = [
                 'offset' => ['col-sm-8', 'offset-sm-4'],
-                'label' => ['col-sm-4', 'form-control-label'],
+                'label' => 'col-sm-4',
                 'wrapper' => 'col-sm-8',
                 'error' => '',
                 'hint' => ['help-block'],
                 'field' => 'form-group row'
             ];
-            if ( isset($instanceConfig['horizontalCssClasses']) )
+            if ( isset($instance_config['horizontalCssClasses']) )
             {
-                $cssClasses = ArrayHelper::merge($cssClasses, $instanceConfig['horizontalCssClasses']);
+                $vec_css_classes = ArrayHelper::merge($vec_css_classes, $instance_config['horizontalCssClasses']);
             }
-            $config['horizontalCssClasses'] = $cssClasses;
+            // Ensure "form-control-label" is added into "label"
+            if ( !preg_match("/form\-control\-label/", $vec_css_classes['label']) )
+            {
+                $vec_css_classes['label'] .= ' form-control-label';
+            }
+            $config['horizontalCssClasses'] = $vec_css_classes;
 
-            Html::addCssClass($config['wrapperOptions'], $cssClasses['wrapper']);
-            Html::addCssClass($config['labelOptions'], $cssClasses['label']);
-            Html::addCssClass($config['errorOptions'], $cssClasses['error']);
-            Html::addCssClass($config['hintOptions'], $cssClasses['hint']);
-            Html::addCssClass($config['options'], $cssClasses['field']);
+            Html::addCssClass($config['wrapperOptions'], $vec_css_classes['wrapper']);
+            Html::addCssClass($config['labelOptions'], $vec_css_classes['label']);
+            Html::addCssClass($config['errorOptions'], $vec_css_classes['error']);
+            Html::addCssClass($config['hintOptions'], $vec_css_classes['hint']);
+            Html::addCssClass($config['options'], $vec_css_classes['field']);
         }
         elseif ( $layout === ActiveForm::LAYOUT_INLINE )
         {
@@ -113,5 +136,63 @@ class ActiveField extends \yii\bootstrap4\ActiveField
         }
 
         return $config;
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function radioList($items, $options = [])
+    {
+        if ( !isset($options['item']) )
+        {
+            Html::addCssClass($options, 'form-group form-radio-group');
+
+            $this->template = str_replace("\n{error}", '', $this->template);
+            $itemOptions = isset($options['itemOptions']) ? $options['itemOptions'] : [];
+            $encode = ArrayHelper::getValue($options, 'encode', true);
+            $itemCount = count($items) - 1;
+            $error = $this->error()->parts['{error}'];
+            $options['item'] = function ($i, $label, $name, $checked, $value) use (
+                $itemOptions,
+                $encode,
+                $itemCount,
+                $error
+            ) {
+                $options = array_merge($this->radioOptions, [
+                    'label' => $encode ? Html::encode($label) : $label,
+                    'value' => $value
+                ], $itemOptions);
+                // $wrapperOptions = ArrayHelper::remove($options, 'wrapperOptions', ['class' => ['custom-control', 'custom-radio']]);
+                $wrapperOptions = ArrayHelper::remove($options, 'wrapperOptions', ['class' => ['radio-custom', 'radio-default']]);
+                if ( $this->inline )
+                {
+                    Html::addCssClass($wrapperOptions, 'radio-inline');
+                }
+
+                $this->addErrorClassIfNeeded($options);
+                $html = Html::beginTag('div', $wrapperOptions) . "\n" .
+                    Html::radio($name, $checked, $options) . "\n";
+                if ( $itemCount === $i )
+                {
+                    $html .= $error . "\n";
+                }
+                $html .= Html::endTag('div') . "\n";
+
+                return $html;
+            };
+        }
+
+        parent::radioList($items, $options);
+        return $this;
+    }
+
+
+    /**
+     * Renders an email input.
+     */
+    public function emailInput(?array $options = []) : self
+    {
+        return $this->input('email', $options);
     }
 }

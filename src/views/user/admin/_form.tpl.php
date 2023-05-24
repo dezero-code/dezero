@@ -54,17 +54,80 @@
               $user_model,
               'email',
               [
-                // 'columns' => [
-                //   'wrapper' => 'col-sm-9',
-                //   'label'   => 'col-sm-3 form-control-label',
-                // ]
+                'columns' => [
+                  'wrapper' => 'col-sm-9',
+                  'label'   => 'col-sm-3',
+                ]
               ]
             )
             ->label($user_model->getAttributeLabel('email'))
-            ->textInput()
-            ->hint('Required. User can use email or username for login');
+            ->emailInput()
+            ->hint(Yii::t('backend', 'Required. User can access via email address or username'));
         ?>
-        <p class="text-help"></p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-8">
+        <?=
+          $form->field(
+              $user_model,
+              'username',
+              [
+                'columns' => [
+                  'wrapper' => 'col-sm-9',
+                  'label'   => 'col-sm-3',
+                ]
+              ]
+            )
+            ->label($user_model->getAttributeLabel('username'))
+            ->textInput()
+            ->hint(Yii::t('backend', 'Only lowercase characteres or numbers is allowed. Do not enter white spaces'));
+        ?>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-8">
+        <?=
+          $form->field(
+              $user_model,
+              'password',
+              [
+                'columns' => [
+                  'wrapper' => 'col-sm-9',
+                  'label'   => 'col-sm-3',
+                ]
+              ]
+            )
+            ->label($user_model->getAttributeLabel('password'))
+            ->passwordInput()
+            ->hint(Yii::t('backend', 'Minimal length 6 characters'));
+        ?>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-8">
+        <?=
+          $form->field(
+              $user_model,
+              'is_force_change_password',
+              [
+                'columns' => [
+                  'wrapper' => 'col-sm-9',
+                  'label'   => 'col-sm-3',
+                ]
+              ]
+            )
+            ->label($user_model->getAttributeLabel('is_force_change_password'))
+            ->inline(true)
+            ->radioList([
+              1 => Yii::t('app', 'Yes'),
+              0 => Yii::t('app', 'No'),
+            ])
+            ->hint(Yii::t('backend', 'If enabled, the user must change the password on the next login'));
+        ?>
       </div>
     </div>
 

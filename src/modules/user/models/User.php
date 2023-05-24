@@ -156,7 +156,7 @@ class User extends BaseUser implements IdentityInterface
             'last_login_ip' => Yii::t('user', 'Last Login Ip'),
             'is_verified_email' => Yii::t('user', 'Is Verified Email'),
             'last_verification_date' => Yii::t('user', 'Last Verification Date'),
-            'is_force_change_password' => Yii::t('user', 'Is Force Change Password'),
+            'is_force_change_password' => Yii::t('user', 'Force Change Password?'),
             'last_change_password_date' => Yii::t('user', 'Last Change Password'),
             'default_role' => Yii::t('user', 'Default Role'),
             'default_theme' => Yii::t('user', 'Default Theme'),
