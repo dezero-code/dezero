@@ -36,6 +36,21 @@ class User extends \yii\web\User
 
 
     /**
+     * Check if current user belongs to Admin role and has been marked as SUPERADMIN
+     */
+    public function isSuperadmin() : bool
+    {
+        $user_model = $this->getModel();
+        if ( ! $user_model )
+        {
+            return false;
+        }
+
+        return $user_model->isSuperadmin();
+    }
+
+
+    /**
      * Redirects the user browser away from a guest page.
      */
     public function guestRequired(?array $default_url = null) : Response

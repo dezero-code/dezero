@@ -339,6 +339,15 @@ class User extends BaseUser implements IdentityInterface
     }
 
 
+    /**
+     * Check if current user belongs to Admin role and has been marked as SUPERADMIN
+     */
+    public function isSuperadmin() : bool
+    {
+        return $this->is_superadmin == 1;
+    }
+
+
 
    /*
     |--------------------------------------------------------------------------

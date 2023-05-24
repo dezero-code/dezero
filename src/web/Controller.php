@@ -80,7 +80,7 @@ class Controller extends \yii\web\Controller
         $this->requireLogin();
 
         // Check if is admin
-        if ( ! Yii::$app()->user->isAdmin() )
+        if ( ! Yii::$app->user->isAdmin() )
         {
             throw new ForbiddenHttpException('You are not allowed to access this page.');
         }
@@ -90,9 +90,9 @@ class Controller extends \yii\web\Controller
     /**
      * Checks if the current user belongs to a specific role. If not, throws a 403 error
      */
-    public function requireRole($role_name) : void
+    public function requireRole(string $role_name, bool $is_skip_superadmin = true) : void
     {
-        if ( ! Yii::$app()->user->hasRole($role_name) )
+        if ( ( ! $is_skip_superadmin || ! Yii::$app->user->isSuperadmin() ) && ! Yii::$app->user->hasRole($role_name) )
         {
             throw new ForbiddenHttpException('You are not allowed to access this page.');
         }
@@ -102,9 +102,9 @@ class Controller extends \yii\web\Controller
     /**
      * Checks if the current user has permission to perform a given action. If not, throws a 403 error
      */
-    public function requirePermission($permission_name) : void
+    public function requirePermission(string $permission_name, bool $is_skip_superadmin = true) : void
     {
-        if ( ! Yii::$app()->user->can($permission_name) )
+        if ( ( ! $is_skip_superadmin || ! Yii::$app->user->isSuperadmin() ) && ! Yii::$app->user->can($permission_name) )
         {
             throw new ForbiddenHttpException('You are not allowed to access this page.');
         }
