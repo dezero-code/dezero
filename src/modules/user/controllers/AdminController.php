@@ -37,6 +37,8 @@ class AdminController extends Controller
      */
     public function actionCreate()
     {
+        $this->requirePermission('user_manage');
+
         $user_model = Dz::makeObject(User::class);
         $user_event = Dz::makeObject(UserEvent::class, [$user_model]);
 

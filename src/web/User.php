@@ -8,6 +8,9 @@
 namespace dezero\web;
 
 use dezero\modules\auth\rbac\AuthTrait;
+use yii\web\IdentityInterface;
+use yii\web\ForbiddenHttpException;
+use yii\web\Response;
 use Yii;
 
 /**
@@ -26,8 +29,22 @@ class User extends \yii\web\User
     /**
      * Alias of getIdentity() method
      */
-    public function getModel()
+    public function getModel() : IdentityInterface
     {
         return $this->getIdentity();
+    }
+
+
+    /**
+     * Redirects the user browser away from a guest page.
+     */
+    public function guestRequired(?array $default_url = null) : Response
+    {
+        if ( !$this->checkRedirectAcceptable() )
+        {
+            throw new ForbiddenHttpException(Yii::t('app', 'Not registered user is allowed'));
+        }
+
+        return Yii::$app->getResponse()->redirect($this->getReturnUrl($default_url));
     }
 }
