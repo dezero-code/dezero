@@ -16,4 +16,14 @@ use Yii;
  */
 class ActiveRecord extends \yii\db\ActiveRecord
 {
+    /**
+     * @inheritdoc
+     */
+    public function init(): void
+    {
+        parent::init();
+
+        // Load default values by default
+        $this->loadDefaultValues();
+    }
 }

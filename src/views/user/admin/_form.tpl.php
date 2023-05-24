@@ -61,7 +61,9 @@
               ]
             )
             ->label($user_model->getAttributeLabel('email'))
-            ->emailInput()
+            ->emailInput([
+              'maxlength' => true
+            ])
             ->hint(Yii::t('backend', 'Required. User can access via email address or username'));
         ?>
       </div>
@@ -81,7 +83,9 @@
               ]
             )
             ->label($user_model->getAttributeLabel('username'))
-            ->textInput()
+            ->textInput([
+              'maxlength' => true
+            ])
             ->hint(Yii::t('backend', 'Only lowercase characteres or numbers is allowed. Do not enter white spaces'));
         ?>
       </div>
@@ -101,7 +105,9 @@
               ]
             )
             ->label($user_model->getAttributeLabel('password'))
-            ->passwordInput()
+            ->passwordInput([
+              'maxlength' => true
+            ])
             ->hint(Yii::t('backend', 'Minimal length 6 characters'));
         ?>
       </div>
@@ -131,68 +137,6 @@
       </div>
     </div>
 
-    <?php /*
-    <div class="row">
-      <div class="col-lg-8">
-        <div class="form-group row<?php if ( $user_model->hasErrors('username') ) : ?> has-danger<?php endif; ?>">
-          <?= $form->label($user_model, 'username', ['class' => 'col-lg-4 col-sm-4 form-control-label']); ?>
-          <div class="col-lg-6">
-            <?php if ( $current_action === 'create' ) : ?>
-              <?=
-                $form->textField($user_model, 'username', [
-                  'maxlength' => 60,
-                  'placeholder' => ''
-                ]);
-              ?>
-              <?= $form->error($user_model, 'username'); ?>
-              <p class="text-help"><u>Optional.</u> If empty, it will be generated automatically from the email</p>
-            <?php else : ?>
-              <div class="form-control view-field"><?= $user_model->username; ?></div>
-              <p class="text-help">Username cannot be changed in Wordpress</p>
-            <?php endif; ?>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="row password-row<?php if ( $current_action === 'update' ) : ?> hide<?php endif; ?>">
-      <div class="col-lg-8">
-        <div class="form-group row<?php if ( $user_model->hasErrors('password') ) : ?> has-danger<?php endif; ?>">
-          <?= $form->label($user_model, 'password', ['class' => 'col-lg-4 col-sm-4 form-control-label']); ?>
-          <div class="col-lg-6">
-            <?=
-              // $form->passwordField($user_model, 'password', [
-              $form->textField($user_model, 'password', [
-                'maxlength' => 128,
-                'placeholder' => ''
-              ]);
-            ?>
-            <?= $form->error($user_model, 'password'); ?>
-            <p class="text-help">Minimal length 6 characters</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="row password-row<?php if ( $current_action === 'update' ) : ?> hide<?php endif; ?>">
-      <div class="col-lg-8">
-        <div class="form-group row<?php if ( $user_model->hasErrors('verify_password') ) : ?> has-danger<?php endif; ?>">
-          <?= $form->label($user_model, 'verify_password', ['class' => 'col-lg-4 col-sm-4 form-control-label']); ?>
-          <div class="col-lg-6">
-            <?=
-              // $form->passwordField($user_model, 'verify_password', [
-              $form->textField($user_model, 'verify_password', [
-                'maxlength' => 128,
-                'placeholder' => ''
-              ]);
-            ?>
-            <?= $form->error($user_model, 'verify_password'); ?>
-            <p class="text-help">Retype password</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <?php
       // Set new password
       if ( $current_action === 'update' ) :
@@ -202,14 +146,13 @@
           <div class="form-group row">
             <div class="col-lg-4 col-sm-4 form-control-label"></div>
             <div class="col-lg-6">
-              <a href="#" id="change-password-btn" class="btn btn-dark btn-outline">Set new password</a>
+              <a href="#" id="change-password-btn" class="btn btn-dark btn-outline"><?= Yii::t('backend', 'Set new password'); ?></a>
               <input type="hidden" id="is-password-changed" name="is-password-changed" value="0">
             </div>
           </div>
         </div>
       </div>
     <?php endif; ?>
-    */ ?>
   </div>
 </div>
 

@@ -117,6 +117,10 @@ class User extends BaseUser implements IdentityInterface
             parent::rules(),
             [
                 // Custom validation rules
+                'default0' => [['is_verified_email', 'is_force_change_password'], 'default', 'value' => 0],
+                'defaultStatus' => [['status_type'], 'default', 'value' => self::STATUS_TYPE_ACTIVE],
+                'defaultLanguage' => [['is_force_change_password'], 'default', 'value' => 'es-ES'],
+                'defaultTimezone' => [['timezone'], 'default', 'value' => 'Europe/Madrid'],
             ]
         );
     }

@@ -17,6 +17,121 @@ use Yii;
  */
 class Html extends \yii\helpers\Html
 {
+    /*
+    |--------------------------------------------------------------------------
+    | OVERRIDED METHODS
+    |--------------------------------------------------------------------------
+    */
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function errorSummary($models, $options = [])
+    {
+        $header = isset($options['header']) ? $options['header'] : '<button type="button" class="close" aria-label="Close" data-dismiss="alert"><span aria-hidden="true">×</span></button>';
+        $footer = ArrayHelper::remove($options, 'footer', '');
+        $encode = ArrayHelper::remove($options, 'encode', true);
+        $showAllErrors = ArrayHelper::remove($options, 'showAllErrors', false);
+        unset($options['header']);
+        $lines = self::collectErrors($models, $encode, $showAllErrors);
+
+        if ( empty($lines) )
+        {
+            // still render the placeholder for client-side validation use
+            $content = '<ul></ul>';
+            $options['style'] = isset($options['style']) ? rtrim($options['style'], ';') . '; display:none' : 'display:none';
+        }
+        else
+        {
+            $content = '<ul><li>' . implode("</li>\n<li>", $lines) . '</li></ul>';
+        }
+
+        if ( !isset($options['id']) )
+        {
+            $options['id'] = 'form-messages';
+        }
+
+        return Html::tag('div', $header . $content . $footer, $options);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    private static function collectErrors($models, $encode, $showAllErrors)
+    {
+        $lines = [];
+        if ( !is_array($models) )
+        {
+            $models = [$models];
+        }
+
+        foreach ( $models as $model )
+        {
+            $lines = array_unique(array_merge($lines, $model->getErrorSummary($showAllErrors)));
+        }
+
+        // If there are the same error messages for different attributes, array_unique will leave gaps
+        // between sequential keys. Applying array_values to reorder array keys.
+        $lines = array_values($lines);
+
+        if ( $encode )
+        {
+            foreach ( $lines as &$line )
+            {
+                $line = Html::encode($line);
+            }
+        }
+
+        return $lines;
+    }
+
+
+    /**
+     * Generate custom radio inline template
+     *
+     *  ```
+     *    <input type="radio" id="is_force_change_password-0" name="User[is_force_change_password]" value="0" checked>
+     *    <label for="is_force_change_password-0">No</label>
+     *  ```
+     */
+    public function radioInline($name, $checked = false, $options = [])
+    {
+        // 'checked' option has priority over $checked argument
+        if ( !isset($options['checked']) )
+        {
+            $options['checked'] = (bool) $checked;
+        }
+        $value = array_key_exists('value', $options) ? $options['value'] : '1';
+
+        if ( isset($options['label']) )
+        {
+            $label = $options['label'];
+            $labelOptions = isset($options['labelOptions']) ? $options['labelOptions'] : [];
+            unset($options['label'], $options['labelOptions']);
+
+            // Do not add "class" attribute. This attribute is added in the wrapper. See ActiveField::radioList()
+            if ( isset($labelOptions['class']) )
+            {
+                unset($labelOptions['class']);
+            }
+
+            $content = static::input('radio', $name, $value, $options);
+            $content .= static::label($label, $options['id'], $labelOptions);
+
+            return $content;
+        }
+
+        return static::input('radio', $name, $value, $options);
+    }
+
+
+   /*
+    |--------------------------------------------------------------------------
+    | CUSTOM METHODS
+    |--------------------------------------------------------------------------
+    */
+
     /**
      * Generates a breadcrumb navigation menu
      */
@@ -28,10 +143,6 @@ class Html extends \yii\helpers\Html
 
     /**
      * Generate a menu with an un-ordered list of items.
-     *
-     * @param  array   $links
-     * @param  array   $htmlOptions
-     * @return string
      */
     public static function generateMenuList(array $vec_links, array $options = [], bool $show_active_class = false, string $menu_tag = 'ul') : string
     {
@@ -137,38 +248,6 @@ class Html extends \yii\helpers\Html
 
 
     /**
-     * {@inheritdoc}
-     */
-    public static function errorSummary($models, $options = [])
-    {
-        $header = isset($options['header']) ? $options['header'] : '<button type="button" class="close" aria-label="Close" data-dismiss="alert"><span aria-hidden="true">×</span></button>';
-        $footer = ArrayHelper::remove($options, 'footer', '');
-        $encode = ArrayHelper::remove($options, 'encode', true);
-        $showAllErrors = ArrayHelper::remove($options, 'showAllErrors', false);
-        unset($options['header']);
-        $lines = self::collectErrors($models, $encode, $showAllErrors);
-
-        if ( empty($lines) )
-        {
-            // still render the placeholder for client-side validation use
-            $content = '<ul></ul>';
-            $options['style'] = isset($options['style']) ? rtrim($options['style'], ';') . '; display:none' : 'display:none';
-        }
-        else
-        {
-            $content = '<ul><li>' . implode("</li>\n<li>", $lines) . '</li></ul>';
-        }
-
-        if ( !isset($options['id']) )
-        {
-            $options['id'] = 'form-messages';
-        }
-
-        return Html::tag('div', $header . $content . $footer, $options);
-    }
-
-
-    /**
      * Render a button for GridView
      *
      * @see Html::a
@@ -194,37 +273,5 @@ class Html extends \yii\helpers\Html
 
 
         return Html::a($text, $url, $options);
-    }
-
-
-    /**
-     * {@inheritdoc}
-     */
-    private static function collectErrors($models, $encode, $showAllErrors)
-    {
-        $lines = [];
-        if ( !is_array($models) )
-        {
-            $models = [$models];
-        }
-
-        foreach ( $models as $model )
-        {
-            $lines = array_unique(array_merge($lines, $model->getErrorSummary($showAllErrors)));
-        }
-
-        // If there are the same error messages for different attributes, array_unique will leave gaps
-        // between sequential keys. Applying array_values to reorder array keys.
-        $lines = array_values($lines);
-
-        if ( $encode )
-        {
-            foreach ( $lines as &$line )
-            {
-                $line = Html::encode($line);
-            }
-        }
-
-        return $lines;
     }
 }

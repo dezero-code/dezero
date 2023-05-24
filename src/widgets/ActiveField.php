@@ -50,11 +50,6 @@ class ActiveField extends \yii\bootstrap4\ActiveField
 
 
     /**
-     * @var string the template for checkboxes and radios in horizontal layout
-     */
-    public $radioHorizontalTemplate = "{beginWrapper}\n<div class=\"radio-custom radio-custom\">\n{input}\n{label}\n{error}\n{hint}\n</div>\n{endWrapper}";
-
-    /**
      * @var null|array CSS grid classes for horizontal layout. This must be an array with these keys:
      *  - 'offset' the offset grid class to append to the wrapper if no label is rendered
      *  - 'label' the label grid class
@@ -63,6 +58,13 @@ class ActiveField extends \yii\bootstrap4\ActiveField
      *  - 'hint' the hint grid class
      */
     public $columns = [];
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | OVERRIDED METHODS
+    |--------------------------------------------------------------------------
+    */
 
 
     /**
@@ -144,7 +146,7 @@ class ActiveField extends \yii\bootstrap4\ActiveField
      */
     public function radioList($items, $options = [])
     {
-        if ( !isset($options['item']) )
+        if ( ! isset($options['item']) )
         {
             Html::addCssClass($options, 'form-group form-radio-group');
 
@@ -153,6 +155,7 @@ class ActiveField extends \yii\bootstrap4\ActiveField
             $encode = ArrayHelper::getValue($options, 'encode', true);
             $itemCount = count($items) - 1;
             $error = $this->error()->parts['{error}'];
+
             $options['item'] = function ($i, $label, $name, $checked, $value) use (
                 $itemOptions,
                 $encode,
@@ -165,14 +168,24 @@ class ActiveField extends \yii\bootstrap4\ActiveField
                 ], $itemOptions);
                 // $wrapperOptions = ArrayHelper::remove($options, 'wrapperOptions', ['class' => ['custom-control', 'custom-radio']]);
                 $wrapperOptions = ArrayHelper::remove($options, 'wrapperOptions', ['class' => ['radio-custom', 'radio-default']]);
+
+                // Custom inline classs
                 if ( $this->inline )
                 {
                     Html::addCssClass($wrapperOptions, 'radio-inline');
                 }
 
+                // Custom "id" attribute for this radio item. For example, "user-is_force_change_password-1"
+                if ( !isset($options['id']) )
+                {
+                    $options['id'] = $this->getInputId() .'-'. Html::getInputIdByName($value);
+                }
+
                 $this->addErrorClassIfNeeded($options);
+
+                // Wrapper output <div class="radio-custom radio-default">{radioInline}</div>
                 $html = Html::beginTag('div', $wrapperOptions) . "\n" .
-                    Html::radio($name, $checked, $options) . "\n";
+                    Html::radioInline($name, $checked, $options) . "\n";
                 if ( $itemCount === $i )
                 {
                     $html .= $error . "\n";
@@ -181,11 +194,20 @@ class ActiveField extends \yii\bootstrap4\ActiveField
 
                 return $html;
             };
+
+            $options['unselect'] = null;
         }
 
         parent::radioList($items, $options);
         return $this;
     }
+
+
+   /*
+    |--------------------------------------------------------------------------
+    | CUSTOM METHODS
+    |--------------------------------------------------------------------------
+    */
 
 
     /**
