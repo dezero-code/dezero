@@ -9,6 +9,9 @@
 |
 */
 
+  // use yii\bootstrap4\Alert;
+  use dezero\widgets\Alert;
+
   // Layout params
   $vec_params = Yii::$app->backendManager->layoutParams();
   $current_action = $vec_params['current_action'];
@@ -53,6 +56,34 @@
       ?>
 
       <div class="page">
+        <?php /*
+        <div id="flash-messages" class="flash-messages-wrapper container-fluid">
+          <div class="row">
+            <div class="col-lg-12">
+              <?php foreach ( Yii::$app->session->getAllFlashes(true) as $type => $message ): ?>
+                <?php if (in_array($type, ['success', 'danger', 'warning', 'info'], true)): ?>
+                  <?=
+                    Alert::widget([
+                      'options' => [
+                        'class' => 'alert in dark alert-dissimible alert-block alert-' . $type
+                      ],
+                      'body' => $message,
+                    ]);
+                  ?>
+                <?php endif ?>
+              <?php endforeach ?>
+            </div>
+          </div>
+        </div>
+        */ ?>
+        <div id="flash-messages" class="flash-messages-wrapper container-fluid">
+          <div class="row">
+            <div class="col-lg-12">
+              <?= Alert::widget(); ?>
+            </div>
+          </div>
+        </div>
+
         <?= $content; ?>
       </div>
     <?php endif; ?>

@@ -56,7 +56,7 @@ class AdminController extends Controller
             if ( $user_create_service->run() )
             {
                 Yii::$app->session->setFlash('success', Yii::t('user', 'User created succesfully'));
-                $this->redirect(['/user/admin/update', 'user_id' => $user_model->id]);
+                return $this->redirect(['/user/admin/update', 'user_id' => $user_model->id]);
             }
         }
 
@@ -111,7 +111,7 @@ class AdminController extends Controller
             if ( $user_update_service->run() )
             {
                 Yii::$app->session->setFlash('success', Yii::t('user', 'User updated succesfully'));
-                $this->redirect(['/user/admin/update', 'user_id' => $user_model->id]);
+                return $this->redirect(['/user/admin/update', 'user_id' => $user_model->id]);
             }
         }
 

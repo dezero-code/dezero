@@ -15,12 +15,13 @@ use dezero\helpers\StringHelper;
 use dezero\modules\user\events\UserEvent;
 use dezero\modules\user\models\User;
 use dezero\traits\ErrorTrait;
+use dezero\traits\FlashMessageTrait;
 use Yii;
 
 class UserUpdateService implements ServiceInterface
 {
     use ErrorTrait;
-
+    use FlashMessageTrait;
 
     /**
      * Password without encryption
@@ -36,7 +37,7 @@ class UserUpdateService implements ServiceInterface
         $this->user_model = $user_model;
         $this->vec_roles = $vec_roles;
         $this->is_password_changed = $is_password_changed;
-        $this->status_change = $status_change;
+        $this->status_change = !empty($status_change) ? $status_change : null;
     }
 
 
@@ -60,9 +61,8 @@ class UserUpdateService implements ServiceInterface
         // Update roles
         $this->updateRoles();
 
-
-        // Send a welcome email
-        // $this->send_welcome_email();
+        // Status change action? Enable, disable or delete
+        $this->applyStatusChange();
 
         return true;
     }
@@ -173,7 +173,7 @@ class UserUpdateService implements ServiceInterface
     /**
      * Get current roles assigned to user before update
      */
-    private function getCurrentRoles()
+    private function getCurrentRoles() : array
     {
         $vec_current_roles = $this->user_model->getRoles();
         if ( empty($vec_current_roles) )
@@ -182,5 +182,78 @@ class UserUpdateService implements ServiceInterface
         }
 
         return array_keys($vec_current_roles);
+    }
+
+
+    /**
+     * Status change action? Enable, disable or delete
+     */
+    private function applyStatusChange() : void
+    {
+        if ( $this->status_change !== null )
+        {
+            switch ( $this->status_change )
+            {
+                case 'disable':
+                    $this->disable();
+                break;
+
+                case 'enable':
+                    $this->enable();
+                break;
+
+                case 'delete':
+                    $this->delete();
+                break;
+            }
+        }
+    }
+
+
+    /**
+     * Disables OrganizerUser model
+     */
+    private function disable()
+    {
+        if ( $this->user_model->disable() )
+        {
+            $this->addFlashMessage('User DISABLED successfully');
+        }
+        else
+        {
+            $this->addError('User could not be DISABLED');
+        }
+    }
+
+
+    /**
+     * Enables OrganizerUser model
+     */
+    private function enable()
+    {
+        if ( $this->user_model->enable() )
+        {
+            $this->addFlashMessage('User ENABLED successfully');
+        }
+        else
+        {
+            $this->addError('User could not be ENABLED');
+        }
+    }
+
+
+    /**
+     * Deletes OrganizerUser model
+     */
+    private function delete()
+    {
+        if ( $this->user_model->delete() )
+        {
+            $this->addFlashMessage('User DELETED successfully');
+        }
+        else
+        {
+            $this->addError('User could not be DELETED');
+        }
     }
 }

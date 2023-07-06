@@ -13,7 +13,6 @@ use dezero\helpers\Log;
 use dezero\helpers\StringHelper;
 use dezero\modules\user\events\UserEvent;
 use dezero\modules\user\models\User;
-use dezero\traits\ErrorTrait;
 use Yii;
 
 class UserCreateService implements ServiceInterface
