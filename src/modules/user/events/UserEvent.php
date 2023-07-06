@@ -22,8 +22,8 @@ class UserEvent extends Event
     // const EVENT_AFTER_DELETE = 'afterDelete';
     // const EVENT_BEFORE_REGISTER = 'beforeRegister';
     // const EVENT_AFTER_REGISTER = 'afterRegister';
-    // const EVENT_BEFORE_ACCOUNT_UPDATE = 'beforeUpdate';
-    // const EVENT_AFTER_ACCOUNT_UPDATE = 'afterUpdate';
+    const EVENT_BEFORE_UPDATE = 'beforeUpdate';
+    const EVENT_AFTER_UPDATE = 'afterUpdate';
     // const EVENT_BEFORE_CONFIRMATION = 'beforeConfirmation';
     // const EVENT_AFTER_CONFIRMATION = 'afterConfirmation';
     // const EVENT_BEFORE_UNBLOCK = 'beforeUnblock';

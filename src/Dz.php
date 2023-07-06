@@ -5,6 +5,7 @@
 
 use dezero\helpers\StringHelper;
 use yii\base\Module;
+use yii\web\NotFoundHttpException;
 
 class Dz extends Yii
 {
@@ -25,6 +26,42 @@ class Dz extends Yii
     public static function makeObject(string $class, array $params = [], array $config = []) : object
     {
         return Yii::$app->classMap->make($class, $params, $config);
+    }
+
+
+    /**
+     * Returns the data model based on the primary key given.
+     * If the data model is not found, a 404 HTTP exception will be raised.
+     * @param string $id the ID of the model to be loaded. If the model has a composite primary key,
+     * the ID must be a string of the primary key values separated by commas.
+     * The order of the primary key values should follow that returned by the `primaryKey()` method
+     * of the model.
+     * @return ActiveRecordInterface the model found
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public static function loadModel($model_class, $id)
+    {
+        /* @var $modelClass ActiveRecordInterface */
+        $keys = $model_class::primaryKey();
+        if ( count($keys) > 1 )
+        {
+            $values = explode(',', $id);
+            if ( count($keys) === count($values) )
+            {
+                $model = $model_class::findOne(array_combine($keys, $values));
+            }
+        }
+        elseif ( $id !== null )
+        {
+            $model = $model_class::findOne($id);
+        }
+
+        if ( isset($model) )
+        {
+            return $model;
+        }
+
+        throw new NotFoundHttpException("Object not found: $id");
     }
 
 

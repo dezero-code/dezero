@@ -38,11 +38,23 @@ class ActiveField extends \yii\bootstrap4\ActiveField
 
 
     /**
+     * @var array the default options for the input checkboxes. The parameter passed to individual
+     * input methods (e.g. [[checkbox()]]) will be merged with this property when rendering the input tag.
+     */
+    public $checkOptions = [
+        'class' => ['widget' => ''],
+        'labelOptions' => [
+            'class' => ['widget' => '']
+        ]
+    ];
+
+
+    /**
      * @var array the default options for the input radios. The parameter passed to individual
      * input methods (e.g. [[radio()]]) will be merged with this property when rendering the input tag.
      */
     public $radioOptions = [
-         'class' => ['widget' => ''],
+        'class' => ['widget' => ''],
         'labelOptions' => [
             'class' => ['widget' => '']
         ]
@@ -144,6 +156,64 @@ class ActiveField extends \yii\bootstrap4\ActiveField
     /**
      * {@inheritdoc}
      */
+    public function checkboxList($items, $options = [])
+    {
+        if ( !isset($options['item']) )
+        {
+            $this->template = str_replace("\n{error}", '', $this->template);
+            $itemOptions = isset($options['itemOptions']) ? $options['itemOptions'] : [];
+            $encode = ArrayHelper::getValue($options, 'encode', true);
+            $itemCount = count($items) - 1;
+            $error = $this->error()->parts['{error}'];
+
+            $options['item'] = function ($i, $label, $name, $checked, $value) use (
+                $itemOptions,
+                $encode,
+                $itemCount,
+                $error
+            ) {
+                $options = array_merge($this->checkOptions, [
+                    'label' => $encode ? Html::encode($label) : $label,
+                    'value' => $value
+                ], $itemOptions);
+                // $wrapperOptions = ArrayHelper::remove($options, 'wrapperOptions', ['class' => ['custom-control', 'custom-checkbox']]);
+                $wrapperOptions = ArrayHelper::remove($options, 'wrapperOptions', ['class' => ['checkbox-custom', 'checkbox-primary']]);
+
+                if ( $this->inline )
+                {
+                    Html::addCssClass($wrapperOptions, 'checkbox-inline');
+                }
+
+                // Custom "id" attribute for this checkbox item. For example, "user-roles-1"
+                if ( !isset($options['id']) )
+                {
+                    $options['id'] = $this->getInputId() .'-'. Html::getInputIdByName($value);
+                }
+
+                $this->addErrorClassIfNeeded($options);
+                $html =
+                    Html::beginTag('div', $wrapperOptions) . "\n" .
+                    Html::checkboxInline($name, $checked, $options) . "\n";
+
+                if ( $itemCount === $i )
+                {
+                    $html .= $error . "\n";
+                }
+
+                $html .= Html::endTag('div') . "\n";
+
+                return $html;
+            };
+        }
+
+        parent::checkboxList($items, $options);
+        return $this;
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
     public function radioList($items, $options = [])
     {
         if ( ! isset($options['item']) )
@@ -184,12 +254,15 @@ class ActiveField extends \yii\bootstrap4\ActiveField
                 $this->addErrorClassIfNeeded($options);
 
                 // Wrapper output <div class="radio-custom radio-default">{radioInline}</div>
-                $html = Html::beginTag('div', $wrapperOptions) . "\n" .
+                $html =
+                    Html::beginTag('div', $wrapperOptions) . "\n" .
                     Html::radioInline($name, $checked, $options) . "\n";
+
                 if ( $itemCount === $i )
                 {
                     $html .= $error . "\n";
                 }
+
                 $html .= Html::endTag('div') . "\n";
 
                 return $html;

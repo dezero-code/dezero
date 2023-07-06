@@ -86,6 +86,94 @@ class Html extends \yii\helpers\Html
         return $lines;
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public static function checkboxList($name, $selection = null, $items = [], $options = [])
+    {
+        if ( ! isset($options['item']) )
+        {
+            $itemOptions = ArrayHelper::remove($options, 'itemOptions', []);
+            $encode = ArrayHelper::getValue($options, 'encode', true);
+            $itemCount = count($items) - 1;
+
+            $options['item'] = function ($index, $label, $name, $checked, $value) use (
+                $itemOptions,
+                $encode,
+                $itemCount
+            ) {
+                $options = array_merge([
+                    // 'class' => ['checkbox-custom', 'checkbox-primary'],
+                    'label' => $encode ? static::encode($label) : $label,
+                    // 'labelOptions' => ['class' => 'form-check-label'],
+                    'value' => $value
+                ], $itemOptions);
+
+                // Custom "id" attribute for this radio item. For example, "user-is_force_change_password-1"
+                if ( !isset($options['id']) )
+                {
+                    $options['id'] = Html::getInputIdByName($name) .'-'. Html::getInputIdByName($value);
+                }
+
+                $wrapperOptions = ArrayHelper::remove($options, 'wrapperOptions', ['class' => ['checkbox-custom', 'checkbox-primary']]);
+
+                $html =
+                    Html::beginTag('div', $wrapperOptions) . "\n" .
+                    Html::checkboxInline($name, $checked, $options) . "\n" .
+                    Html::endTag('div') . "\n";
+
+                return $html;
+            };
+        }
+
+        return parent::checkboxList($name, $selection, $items, $options);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | CUSTOM METHODS
+    |--------------------------------------------------------------------------
+    */
+
+
+    /**
+     * Generate custom checkbox inline template
+     *
+     *  ```
+     *    <input type="checkbox" id="user-roles-admin" name="User[roles][]" value="admin" checked>
+     *    <label for="user-roles-admin">No</label>
+     *  ```
+     */
+    public function checkboxInline($name, $checked = false, $options = [])
+    {
+        // 'checked' option has priority over $checked argument
+        if ( !isset($options['checked']) )
+        {
+            $options['checked'] = (bool) $checked;
+        }
+        $value = array_key_exists('value', $options) ? $options['value'] : '1';
+
+        if ( isset($options['label']) )
+        {
+            $label = $options['label'];
+            $labelOptions = isset($options['labelOptions']) ? $options['labelOptions'] : [];
+            unset($options['label'], $options['labelOptions']);
+
+            // Do not add "class" attribute. This attribute is added in the wrapper. See ActiveField::radioList()
+            if ( isset($labelOptions['class']) )
+            {
+                unset($labelOptions['class']);
+            }
+
+            $content = static::input('checkbox', $name, $value, $options);
+            $content .= static::label($label, $options['id'], $labelOptions);
+
+            return $content;
+        }
+
+        return static::input('checkbox', $name, $value, $options);
+    }
+
 
     /**
      * Generate custom radio inline template
@@ -125,12 +213,6 @@ class Html extends \yii\helpers\Html
         return static::input('radio', $name, $value, $options);
     }
 
-
-   /*
-    |--------------------------------------------------------------------------
-    | CUSTOM METHODS
-    |--------------------------------------------------------------------------
-    */
 
     /**
      * Generates a breadcrumb navigation menu

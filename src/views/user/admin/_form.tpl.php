@@ -6,6 +6,8 @@
 |
 | Available variables:
 |  - $user_model: User model
+|  - $vec_roles: Array with all the roles
+|  - $vec_assigned_roles: Array with assigned roles
 |
 */
 
@@ -163,7 +165,7 @@
   |--------------------------------------------------------------------------
   | PERSONAL DATA
   |--------------------------------------------------------------------------
-  *
+  */
 ?>
 <div class="panel">
   <header class="panel-heading">
@@ -171,81 +173,87 @@
   </header>
   <div class="panel-body">
     <div class="row">
-      <div class="col-lg-8">
-        <div class="form-group row<?php if ( $user_model->hasErrors('wp_firstname') ) : ?> has-danger<?php endif; ?>">
-          <?= $form->label($user_model, 'wp_firstname', ['class' => 'col-lg-4 form-control-label']); ?>
-          <div class="col-lg-6">
-            <?=
-              $form->textField($user_model, 'wp_firstname', [
-                'maxlength' => 128,
-                'placeholder' => ''
-              ]);
-            ?>
-            <?= $form->error($user_model, 'wp_firstname'); ?>
-          </div>
-        </div>
+      <div class="col-lg-7">
+        <?=
+          $form->field(
+              $user_model,
+              'first_name',
+              [
+                'columns' => [
+                  'wrapper' => 'col-sm-9',
+                  'label'   => 'col-sm-3',
+                ]
+              ]
+            )
+            ->label(Yii::t('app', 'Name'))
+            ->textInput([
+              'maxlength' => true,
+              'placeholder' => true
+            ]);
+        ?>
+      </div>
+
+      <div class="col-lg-5">
+        <?=
+          $form->field(
+              $user_model,
+              'last_name',
+              [
+                'columns' => [
+                  'wrapper' => 'col-sm-12',
+                  'offset' => '',
+                ]
+              ]
+            )
+            ->label(false)
+            ->textInput([
+              'maxlength' => true,
+              'placeholder' => true
+            ]);
+        ?>
       </div>
     </div>
-
-    <div class="row">
-      <div class="col-lg-8">
-        <div class="form-group row<?php if ( $user_model->hasErrors('wp_lastname') ) : ?> has-danger<?php endif; ?>">
-          <?= $form->label($user_model, 'wp_lastname', ['class' => 'col-lg-4 form-control-label']); ?>
-          <div class="col-lg-6">
-            <?=
-              $form->textField($user_model, 'wp_lastname', [
-                'maxlength' => 128,
-                'placeholder' => ''
-              ]);
-            ?>
-            <?= $form->error($user_model, 'wp_lastname'); ?>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-lg-8">
-        <div class="form-group row<?php if ( $user_model->hasErrors('wp_company') ) : ?> has-danger<?php endif; ?>">
-          <?= $form->label($user_model, 'wp_company', ['class' => 'col-lg-4 form-control-label']); ?>
-          <div class="col-lg-6">
-            <?=
-              $form->textField($user_model, 'wp_company', [
-                'maxlength' => 128,
-                'placeholder' => ''
-              ]);
-            ?>
-            <?= $form->error($user_model, 'wp_company'); ?>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <?php if ( $current_action === 'create' || $user_model->is_enabled() ) : ?>
-      <div class="row">
-        <div class="col-lg-8">
-          <div class="form-group row<?php if ( $user_model->hasErrors('wp_is_auto_registration') ) : ?> has-danger<?php endif; ?>">
-            <?= $form->label($user_model, 'wp_is_auto_registration', ['class' => 'col-lg-4 col-sm-4 form-control-label']); ?>
-            <div class="col-lg-6">
-              <div class="form-group form-radio-group">
-                <div class="radio-custom radio-default radio-inline">
-                  <input type="radio" id="wp_is_auto_registration-1" name="User[wp_is_auto_registration]" value="1"<?php if ( $user_model->wp_is_auto_registration == 1 ) : ?> checked<?php endif; ?>>
-                  <label for="wp_is_auto_registration-1">Yes</label>
-                </div>
-                <div class="radio-custom radio-default radio-inline">
-                  <input type="radio" id="wp_is_auto_registration-0" name="User[wp_is_auto_registration]" value="0"<?php if ( $user_model->wp_is_auto_registration == 0 ) : ?> checked<?php endif; ?>>
-                  <label for="wp_is_auto_registration-0">No</label>
-                </div>
-              </div>
-              <?= $form->error($user_model,'wp_is_auto_registration'); ?>
-            </div>
-          </div>
-        </div>
-      </div>
-    <?php endif; ?>
   </div>
 </div>
 
+<?php
+  /*
+  |--------------------------------------------------------------------------
+  | ROLES and PERMISSIONS
+  |--------------------------------------------------------------------------
+  */
+?>
+<div class="panel">
+  <header class="panel-heading">
+    <h3 class="panel-title"><?= Yii::t('app', 'Roles and permissions'); ?></h3>
+  </header>
+  <div class="panel-body">
+    <div class="row">
+      <div class="col-lg-8">
+        <div class="form-group row field-user-roles">
+          <?= Html::label(Yii::t('app', 'Roles'), 'user-roles', ['class' => 'col-sm-3 form-control-label']); ?>
+          <?= Html::checkboxList('UserRoles', $vec_assigned_roles, $vec_roles, ['class' => 'col-sm-9']); ?>
+        </div>
+        <?php /*
+        <?=
+          $form->field(
+            $user_model,
+            'roles',
+            [
+              'columns' => [
+                'wrapper' => 'col-sm-9',
+                'label'   => 'col-sm-3',
+              ]
+            ]
+          )
+          ->label(Yii::t('app', 'Roles'))
+          ->checkboxList($vec_roles);
+        ?>
+        */ ?>
+      </div>
+    </div>
+  </div>
+</div>
 
 <?php
   /*

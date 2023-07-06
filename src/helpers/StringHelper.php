@@ -335,6 +335,8 @@ class StringHelper extends \yii\helpers\StringHelper
      */
     public static function randomString(int $length = 36, bool $is_extended_chars = false) : string
     {
+        // return Yii::$app->security->generateRandomString($length);
+
         if ( $is_extended_chars )
         {
             $valid_chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890`~!@#$%^&*()-_=+[]\{}|;:\'",./<>?"';
@@ -399,14 +401,8 @@ class StringHelper extends \yii\helpers\StringHelper
     /**
      * Encrypts a string value
      */
-    public static function encrypt(string $string = '', string $hash_method = '') : string
+    public static function encrypt(string $string = '', ?string $hash_method = null) : string
     {
-        // If user module is enabled, get default value from it
-        if ( empty($hash_method) && ! Dz::is_console() )
-        {
-            $hash_method = Yii::$app->user->hash_method;
-        }
-
         // Unless, MD5 will be the default method
         if ( empty($hash_method) )
         {
@@ -514,6 +510,16 @@ class StringHelper extends \yii\helpers\StringHelper
                 mt_rand( 0, 0xffff )
             );
         }
+    }
+
+
+    /**
+     * Validate an email address
+     */
+    public static function validateEmail(string $email) : bool
+    {
+        $validator = new \yii\validators\EmailValidator();
+        return $validator->validate($email, $error);
     }
 
 

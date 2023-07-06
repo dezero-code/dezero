@@ -6,6 +6,8 @@
 |
 | Available variables:
 |  - $user_model: User model
+|  - $vec_roles: Array with all the roles
+|  - $vec_assigned_roles: Array with assigned roles
 |
 */
 
@@ -34,7 +36,9 @@ $this->title = Yii::t('backend', 'Create user');
   <?=
     // Render form
     $this->render('//user/admin/_form', [
-      'user_model'  => $user_model,
+      'user_model'          => $user_model,
+      'vec_roles'           => $vec_roles,
+      'vec_assigned_roles'  => $vec_assigned_roles
     ]);
   ?>
 </div>

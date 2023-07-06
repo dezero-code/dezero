@@ -60,7 +60,7 @@ class AuthHelper
 
 
     /**
-     * Return all the roles as an array list
+     * Return all the roles into an array list
      */
     public static function getRolesList() : array
     {
@@ -207,7 +207,7 @@ class AuthHelper
     /**
      * Returns the roles that are assigned to the user
      */
-    public static function getRolesByUser(int $user_id) : array
+    public static function getRolesByUser(?int $user_id) : array
     {
         return Yii::$app->authManager->getRolesByUser($user_id);
     }
