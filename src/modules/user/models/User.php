@@ -74,6 +74,11 @@ class User extends BaseUser implements IdentityInterface
 
 
     /**
+     * @var Verify password
+     */
+    public $verify_password;
+
+    /**
      * {@inheritdoc}
      */
     public function rules() : array
@@ -81,7 +86,7 @@ class User extends BaseUser implements IdentityInterface
         /*
         return [
             // Typed rules
-            'requiredFields' => [['username', 'email', 'password', 'auth_token', 'created_date', 'created_user_id', 'updated_date', 'updated_user_id'], 'required'],
+            'requiredFields' => [['username', 'email', 'password', 'auth_token', ], 'required'],
             'integerFields' => [['last_login_date', 'is_verified_email', 'last_verification_date', 'is_force_change_password', 'last_change_password_date', 'is_superadmin', 'disabled_date', 'disabled_user_id', 'created_date', 'created_user_id', 'updated_date', 'updated_user_id'], 'integer'],
             
             // Max length rules
@@ -121,6 +126,16 @@ class User extends BaseUser implements IdentityInterface
                 'defaultStatus' => [['status_type'], 'default', 'value' => self::STATUS_TYPE_ACTIVE],
                 'defaultLanguage' => [['is_force_change_password'], 'default', 'value' => 'es-ES'],
                 'defaultTimezone' => [['timezone'], 'default', 'value' => 'Europe/Madrid'],
+                'passwordLength' => ['password', 'string', 'min' => 6, 'max' => 60],
+
+                // Verify Password
+                'verifyPassword' => [['verify_password'], 'string'],
+                'requiredVerifyPassword' => [['verify_password'], 'required', 'on' => 'change_password'],
+                'comparePasswords' => [
+                    ['verify_password'], 'compare', 'compareAttribute' => 'password',
+                    'message' => Yii::t('app', 'Passwords don\'t match'),
+                    'on' => 'change_password',
+                ],
             ]
         );
     }
@@ -173,6 +188,9 @@ class User extends BaseUser implements IdentityInterface
             'updated_date' => Yii::t('user', 'Updated Date'),
             'updated_user_id' => Yii::t('user', 'Updated User ID'),
             'entity_uuid' => Yii::t('user', 'Entity Uuid'),
+
+            // Custom labels
+            'verify_password' => Yii::t('user', 'Repeat Password'),
         ];
     }
 
@@ -406,6 +424,42 @@ class User extends BaseUser implements IdentityInterface
     public function isBanned()
     {
         return $this->status_type === self::STATUS_TYPE_BANNED;
+    }
+
+
+    /**
+     * Check if User model is forced to change the password
+     */
+    public function isForceChangePassword()
+    {
+        return $this->is_force_change_password === 1;
+    }
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Password methods
+    |--------------------------------------------------------------------------
+    */
+
+
+    /**
+     * Change password
+     */
+    public function changePassword(string $new_password, bool $is_update_force_change_password = true) : bool
+    {
+        $this->password = Yii::$app->security->generatePasswordHash($new_password);
+        $this->auth_token = Yii::$app->userManager->generateAuthToken();
+        $this->last_change_password_date = time();
+
+        // Update force change password?
+        if ( $is_update_force_change_password && $this->is_force_change_password == 1 )
+        {
+            $this->is_force_change_password = 0;
+        }
+
+        return true;
     }
 
 

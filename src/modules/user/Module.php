@@ -5,6 +5,9 @@
 
 namespace dezero\modules\user;
 
+use dezero\modules\user\assets\UserAsset;
+use Yii;
+
 class Module extends \dezero\base\Module
 {
     /**
@@ -35,6 +38,8 @@ class Module extends \dezero\base\Module
      */
     public function init()
     {
+        UserAsset::register(Yii::$app->view);
+
         parent::init();
     }
 }

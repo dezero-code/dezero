@@ -11,7 +11,7 @@ use dezero\helpers\StringHelper;
 use yii\base\Component;
 use Yii;
 
-class UserManager extends ApplicationComponent
+class UserManager extends Component
 {
     /**
      * Generate an auth_token value

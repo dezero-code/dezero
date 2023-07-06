@@ -18,9 +18,11 @@
   // Controller and action names in lowercase
   $current_action = \Dz::currentAction(true);
 
+  $form_id = 'user-form'; // $user_model->formName();
+
   // Create form object
   $form = ActiveForm::begin([
-    'id'                    => $user_model->formName(),
+    'id'                    => $form_id,
     'enableAjaxValidation'  => true,
     'layout'                => ActiveForm::LAYOUT_HORIZONTAL,
     'options'               => [
@@ -93,7 +95,7 @@
       </div>
     </div>
 
-    <div class="row">
+    <div class="row<?php if ( $current_action === 'update' ) : ?> password-row hide<?php endif; ?>">
       <div class="col-lg-8">
         <?=
           $form->field(
@@ -114,6 +116,45 @@
         ?>
       </div>
     </div>
+
+    <?php
+      // Set new password
+      if ( $current_action === 'update' ) :
+    ?>
+      <div class="row password-row hide">
+        <div class="col-lg-8">
+          <?=
+            $form->field(
+                $user_model,
+                'verify_password',
+                [
+                  'columns' => [
+                    'wrapper' => 'col-sm-9',
+                    'label'   => 'col-sm-3',
+                  ]
+                ]
+              )
+              ->label($user_model->getAttributeLabel('verify_password'))
+              ->passwordInput([
+                'maxlength' => true
+              ])
+              ->hint(Yii::t('backend', 'Retype password'));
+          ?>
+        </div>
+      </div>
+
+      <div class="row password-row">
+        <div class="col-lg-8">
+          <div class="form-group row">
+            <div class="col-sm-3 form-control-label"></div>
+            <div class="col-sm-9">
+              <a href="#" id="change-password-btn" class="btn btn-dark btn-outline"><?= Yii::t('backend', 'Set new password'); ?></a>
+              <input type="hidden" id="is-password-changed" name="IsPasswordChanged" value="0">
+            </div>
+          </div>
+        </div>
+      </div>
+    <?php endif; ?>
 
     <div class="row">
       <div class="col-lg-8">
@@ -138,23 +179,6 @@
         ?>
       </div>
     </div>
-
-    <?php
-      // Set new password
-      if ( $current_action === 'update' ) :
-    ?>
-      <div class="row password-row">
-        <div class="col-lg-8">
-          <div class="form-group row">
-            <div class="col-lg-4 col-sm-4 form-control-label"></div>
-            <div class="col-lg-6">
-              <a href="#" id="change-password-btn" class="btn btn-dark btn-outline"><?= Yii::t('backend', 'Set new password'); ?></a>
-              <input type="hidden" id="is-password-changed" name="is-password-changed" value="0">
-            </div>
-          </div>
-        </div>
-      </div>
-    <?php endif; ?>
   </div>
 </div>
 

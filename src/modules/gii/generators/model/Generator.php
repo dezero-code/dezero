@@ -63,6 +63,9 @@ class Generator extends \yii\gii\Generator
     public $relationsOne = [];
     public $relationsMany = [];
 
+    // Columns excluded for REQUIRED rule (TimestampBehavior and BlameableBehavior)
+    public $excludedColumns = ['created_date', 'created_user_id', 'updated_date', 'updated_user_id', 'entity_uuid'];
+
 
     /**
      * {@inheritdoc}
@@ -406,7 +409,7 @@ class Generator extends \yii\gii\Generator
                 continue;
             }
 
-            if ( ! $column->allowNull && $column->defaultValue === null )
+            if ( ! $column->allowNull && $column->defaultValue === null && ! in_array($column->name, $this->excludedColumns) )
             {
                 $vec_types['required'][] = $column->name;
             }

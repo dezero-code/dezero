@@ -14,7 +14,6 @@
 use dezero\helpers\Html;
 use dezero\helpers\Url;
 use dezero\widgets\ActiveForm;
-use yii\bootstrap\Alert;
 
 $this->title = Yii::t('backend', 'Create user');
 ?>

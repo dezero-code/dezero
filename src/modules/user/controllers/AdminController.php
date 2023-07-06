@@ -8,10 +8,10 @@
 namespace dezero\modules\user\controllers;
 
 use dezero\helpers\AuthHelper;
-use dezero\modules\user\events\UserEvent;
 use dezero\modules\user\models\User;
 use dezero\modules\user\models\search\UserSearch;
 use dezero\modules\user\services\UserCreateService;
+use dezero\modules\user\services\UserUpdateService;
 use dezero\web\Controller;
 use Dz;
 use Yii;
@@ -44,25 +44,19 @@ class AdminController extends Controller
 
         $user_model = Dz::makeObject(User::class);
         $vec_assigned_roles = Yii::$app->request->post('UserRoles', []);
-        // $user_event = Dz::makeObject(UserEvent::class, [$user_model]);
 
         // Validate model via AJAX
         $this->validateAjaxRequest($user_model);
 
-
         // Form submitted
-        // if ( $user_model->load(Yii::$app->request->post()) && $user_model->validate() )
         if ( $user_model->load(Yii::$app->request->post()) )
         {
-            // Custom event triggered on "before create"
-            // $this->trigger(UserEvent::EVENT_BEFORE_CREATE, $user_event);
-
-            // Create OrganizerUser via UserCreateService class
+            // Create user via UserCreateService class
             $user_create_service = Yii::createObject(UserCreateService::class, [$user_model, $vec_assigned_roles]);
             if ( $user_create_service->run() )
             {
                 Yii::$app->session->setFlash('success', Yii::t('user', 'User created succesfully'));
-                $this->redirect(['/admin/user/update', 'user_id' => $user_model->id]);
+                $this->redirect(['/user/admin/update', 'user_id' => $user_model->id]);
             }
         }
 
@@ -79,28 +73,56 @@ class AdminController extends Controller
      */
     public function actionUpdate($user_id)
     {
-
         $this->requireLogin();
         $this->requirePermission('user_manage');
 
+        // Load User model
         $user_model = Dz::loadModel(User::class, $user_id);
-        $user_event = Dz::makeObject(UserEvent::class, [$user_model]);
+
+        // Password has changed?
+        $is_password_changed = Yii::$app->request->post('IsPasswordChanged', false);
+        if ( ! $is_password_changed )
+        {
+            Yii::$app->request->removeBodyParam('User', 'password');
+            Yii::$app->request->removeBodyParam('User', 'verify_password');
+        }
 
         // Validate model via AJAX
         $this->validateAjaxRequest($user_model);
 
-         // Form submitted
-        if ( $user_model->load(Yii::$app->request->post()) && $user_model->validate() )
+        // Assigned roles
+        $vec_assigned_roles = $user_model->getRoles();
+        if ( !empty($vec_assigned_roles) )
         {
-            // Custom event triggered on "before update"
-            $this->trigger(UserEvent::EVENT_BEFORE_UPDATE, $user_event);
-
-            Yii::$app->session->setFlash('success', Yii::t('user', 'User updated succesfully'));
-            $this->redirect(['/admin/user/update', 'user_id' => $user_model->id]);
+            $vec_assigned_roles = array_keys($user_model->getRoles());
         }
 
+         // Form submitted
+        if ( $user_model->load(Yii::$app->request->post()) )
+        {
+            // Assinged roles
+            $vec_assigned_roles = Yii::$app->request->post('UserRoles', []);
+
+            // Enable, disable or delete action?
+            $status_change = Yii::$app->request->post('StatusChange', null);
+
+            // Update user via UserUpdateService class
+            $user_update_service = Yii::createObject(UserUpdateService::class, [$user_model, $vec_assigned_roles, $is_password_changed, $status_change]);
+            if ( $user_update_service->run() )
+            {
+                Yii::$app->session->setFlash('success', Yii::t('user', 'User updated succesfully'));
+                $this->redirect(['/user/admin/update', 'user_id' => $user_model->id]);
+            }
+        }
+
+        // Clean password
+        $user_model->password = '';
+        $user_model->verify_password = '';
+
         return $this->render('//user/admin/update', [
-            'user_model' => $user_model
+            'user_model'            => $user_model,
+            'vec_roles'             => AuthHelper::getRolesList(),
+            'vec_assigned_roles'    => $vec_assigned_roles,
         ]);
     }
 }

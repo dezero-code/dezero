@@ -86,7 +86,7 @@ abstract class User extends \dezero\entity\ActiveRecord
     {
         return [
             // Typed rules
-            'requiredFields' => [['username', 'email', 'password', 'auth_token', 'created_date', 'created_user_id', 'updated_date', 'updated_user_id'], 'required'],
+            'requiredFields' => [['username', 'email', 'password', 'auth_token', ], 'required'],
             'integerFields' => [['last_login_date', 'is_verified_email', 'last_verification_date', 'is_force_change_password', 'last_change_password_date', 'is_superadmin', 'disabled_date', 'disabled_user_id', 'created_date', 'created_user_id', 'updated_date', 'updated_user_id'], 'integer'],
             
             // Max length rules

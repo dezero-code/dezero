@@ -17,7 +17,7 @@ use Yii;
 class ActiveRecord extends \yii\db\ActiveRecord
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function init(): void
     {
