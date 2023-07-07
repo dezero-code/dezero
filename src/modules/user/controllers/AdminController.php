@@ -18,6 +18,13 @@ use Yii;
 
 class AdminController extends Controller
 {
+    public function beforeAction($action)
+    {
+        $this->enableCsrfValidation = false;
+        return parent::beforeAction($action);
+    }
+
+
     /**
      * List action for User models
      */
@@ -123,6 +130,82 @@ class AdminController extends Controller
             'user_model'            => $user_model,
             'vec_roles'             => AuthHelper::getRolesList(),
             'vec_assigned_roles'    => $vec_assigned_roles,
+        ]);
+    }
+
+
+    /**
+     * Change Status action for the SlidePanel widget
+     */
+    public function actionStatus($user_id)
+    {
+        $this->requireLogin();
+        $this->requirePermission('user_manage');
+
+        // Load User model
+        $user_model = Dz::loadModel(User::class, $user_id);
+
+        // Submitted form?
+        if ( Yii::$app->request->isPost )
+        {
+            $vec_ajax_output = [
+                'error_msg'     => '',
+                'error_code'    => 0,
+            ];
+
+            $vec_input = $this->jsonInput();
+
+            // #1 - JSON input params are correct?
+            if ( !empty($vec_input) && isset($vec_input['user_id']) && isset($vec_input['new_status']) )
+            {
+                // #2 - User exists?
+                if ( $user_model->user_id != $vec_input['user_id'] )
+                {
+                    $vec_ajax_output['error_code'] = 102;
+                    $vec_ajax_output['error_msg'] = 'Denied acces - User #'. $vec_input['user_id'] .' does not exist';
+                }
+                else
+                {
+                    // #3 - Check "is_sending_mail" value
+                    /*
+                    $is_sending_mail = false;
+                    if ( isset($vec_input['is_sending_mail']) && ($vec_input['is_sending_mail'] == "1" || $vec_input['is_sending_mail'] == 1) )
+                    {
+                        $is_sending_mail = true;
+                    }
+                    */
+
+                    // #4 - Save new status
+                    $comments = isset($vec_input['new_comments']) ? $vec_input['new_comments'] : null;
+                    if ( ! $user_model->changeStatus($vec_input['new_status'], $comments, true) )
+                    {
+                        $vec_ajax_output['error_code'] = 103;
+                        $vec_ajax_output['error_msg'] = 'Error - Status could not be changed';
+                    }
+                }
+            }
+            else
+            {
+                $vec_ajax_output['error_code'] = 201;
+                $vec_ajax_output['error_msg'] = 'Access denied - JSON input params are incorrect';
+            }
+
+            // Return JSON and end application
+            return $this->asJson($vec_ajax_output);
+        }
+        else
+        {
+            // By default, we'll send an email to the user
+            // $user_model->is_sending_mail = 1;
+        }
+
+        // If we arrive here (not POST params), render partial view
+        return $this->renderPartial('//entity/status/_slidepanel_status', [
+            'model'         => $user_model,
+            'buttonOptions' => [
+                'id'        => 'user-status-save-btn',
+                'data-user' => $user_model->user_id
+            ]
         ]);
     }
 }

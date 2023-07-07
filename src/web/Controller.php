@@ -6,10 +6,9 @@
  */
 
 namespace dezero\web;
-
-use dezero\helpers\Json;
 use dezero\validators\AjaxRequestValidator;
 use Dz;
+use yii\helpers\Json;
 use yii\web\BadRequestHttpException;
 use yii\web\ForbiddenHttpException;
 use yii\web\Response;

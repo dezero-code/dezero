@@ -18,6 +18,8 @@ class UserAsset extends AssetBundle
     ];
 
     public $js = [
-        'modules/user.js',    ];
+        'modules/user.js',
+        'modules/userStatus.js',
+    ];
 
 }

@@ -2,6 +2,13 @@
 
 All notable changes to `Dezero Framework` will be documented in this file
 
+## 0.1.11 - 2023-07-07
+
+- Frontend module - Added new module with HomeController to receive afterLogin requests
+- Create new Alert widget to show flash messages
+- User module - Create & update pages using services classes
+- Status buttons: Disable, enable and delete
+
 ## 0.1.10 - 2023-05-23
 
 - Gridivew - Custom widget adapted to Bootstrap theme
@@ -11,7 +18,6 @@ All notable changes to `Dezero Framework` will be documented in this file
 
 - Auth module - Add new module with RBAC system
 - User module - Login & logout process with custom events
-
 
 ## 0.1.8 - 2023-04-28
 

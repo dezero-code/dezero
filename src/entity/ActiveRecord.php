@@ -21,6 +21,7 @@ abstract class ActiveRecord extends \dezero\db\ActiveRecord implements TitleInte
 {
     use DisableTrait;
     use EnableTrait;
+    use StatusTrait;
 
 
     /**

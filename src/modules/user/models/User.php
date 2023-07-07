@@ -169,8 +169,8 @@ class User extends BaseUser implements IdentityInterface
             'auth_token' => Yii::t('user', 'Auth Token'),
             'first_name' => Yii::t('user', 'First Name'),
             'last_name' => Yii::t('user', 'Last Name'),
-            'status_type' => Yii::t('user', 'Status Type'),
-            'language_id' => Yii::t('user', 'Language ID'),
+            'status_type' => Yii::t('user', 'Status'),
+            'language_id' => Yii::t('user', 'Language'),
             'last_login_date' => Yii::t('user', 'Last Login'),
             'last_login_ip' => Yii::t('user', 'Last Login Ip'),
             'is_verified_email' => Yii::t('user', 'Is Verified Email'),
@@ -275,13 +275,7 @@ class User extends BaseUser implements IdentityInterface
      */
     public function status_type_labels() : array
     {
-        return [
-            self::STATUS_TYPE_ACTIVE => Yii::t('user', 'Active'),
-            self::STATUS_TYPE_DISABLED => Yii::t('user', 'Disabled'),
-            self::STATUS_TYPE_BANNED => Yii::t('user', 'Banned'),
-            self::STATUS_TYPE_PENDING => Yii::t('user', 'Pending'),
-            self::STATUS_TYPE_DELETED => Yii::t('user', 'Deleted'),
-        ];
+        return Yii::$app->userManager->statusLabels();
     }
 
 
@@ -294,6 +288,15 @@ class User extends BaseUser implements IdentityInterface
         $vec_labels = $this->status_type_labels();
 
         return isset($vec_labels[$status_type]) ? $vec_labels[$status_type] : '';
+    }
+
+
+    /**
+     * Get "status_type" colors
+     */
+    public function status_type_colors() : array
+    {
+        return Yii::$app->userManager->statusColors();
     }
 
 

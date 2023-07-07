@@ -11,6 +11,7 @@
 |
 */
 
+  use dezero\helpers\DateHelper;
   use dezero\helpers\Html;
   use dezero\helpers\Url;
   use dezero\widgets\ActiveForm;
@@ -51,7 +52,16 @@
   </header>
   <div class="panel-body">
     <div class="row">
-      <div class="col-lg-8">
+      <div class="col-lg-7">
+        <?php if ($current_action !== 'create') : ?>
+          <div class="form-group row">
+            <?= Html::activeLabel($user_model, 'user_id', ['class' => 'col-sm-3 form-control-label']); ?>
+            <div class="col-sm-9">
+              <p class="form-control-static"><?= $user_model->id; ?></p>
+            </div>
+          </div>
+        <?php endif; ?>
+
         <?=
           $form->field(
               $user_model,
@@ -69,11 +79,7 @@
             ])
             ->hint(Yii::t('backend', 'Required. User can access via email address or username'));
         ?>
-      </div>
-    </div>
 
-    <div class="row">
-      <div class="col-lg-8">
         <?=
           $form->field(
               $user_model,
@@ -91,41 +97,12 @@
             ])
             ->hint(Yii::t('backend', 'Only lowercase characteres or numbers is allowed. Do not enter white spaces'));
         ?>
-      </div>
-    </div>
 
-    <div class="row<?php if ( $current_action === 'update' ) : ?> password-row hide<?php endif; ?>">
-      <div class="col-lg-8">
-        <?=
-          $form->field(
-              $user_model,
-              'password',
-              [
-                'columns' => [
-                  'wrapper' => 'col-sm-9',
-                  'label'   => 'col-sm-3',
-                ]
-              ]
-            )
-            ->label($user_model->getAttributeLabel('password'))
-            ->passwordInput([
-              'maxlength' => true
-            ])
-            ->hint(Yii::t('backend', 'Minimal length 6 characters'));
-        ?>
-      </div>
-    </div>
-
-    <?php
-      // Set new password
-      if ( $current_action === 'update' ) :
-    ?>
-      <div class="row password-row hide">
-        <div class="col-lg-8">
+        <div class="<?php if ( $current_action === 'update' ) : ?> password-row hide<?php endif; ?>">
           <?=
             $form->field(
                 $user_model,
-                'verify_password',
+                'password',
                 [
                   'columns' => [
                     'wrapper' => 'col-sm-9',
@@ -133,30 +110,49 @@
                   ]
                 ]
               )
-              ->label($user_model->getAttributeLabel('verify_password'))
+              ->label($user_model->getAttributeLabel('password'))
               ->passwordInput([
                 'maxlength' => true
               ])
-              ->hint(Yii::t('backend', 'Retype password'));
+              ->hint(Yii::t('backend', 'Minimal length 6 characters'));
           ?>
         </div>
-      </div>
 
-      <div class="row password-row">
-        <div class="col-lg-8">
-          <div class="form-group row">
-            <div class="col-sm-3 form-control-label"></div>
-            <div class="col-sm-9">
-              <a href="#" id="change-password-btn" class="btn btn-dark btn-outline"><?= Yii::t('backend', 'Set new password'); ?></a>
-              <input type="hidden" id="is-password-changed" name="IsPasswordChanged" value="0">
+        <?php
+          // Set new password
+          if ( $current_action === 'update' ) :
+        ?>
+          <div class="password-row hide">
+            <?=
+              $form->field(
+                  $user_model,
+                  'verify_password',
+                  [
+                    'columns' => [
+                      'wrapper' => 'col-sm-9',
+                      'label'   => 'col-sm-3',
+                    ]
+                  ]
+                )
+                ->label($user_model->getAttributeLabel('verify_password'))
+                ->passwordInput([
+                  'maxlength' => true
+                ])
+                ->hint(Yii::t('backend', 'Retype password'));
+            ?>
+          </div>
+
+          <div class="password-row">
+            <div class="form-group row">
+              <div class="col-sm-3 form-control-label"></div>
+              <div class="col-sm-9">
+                <a href="#" id="change-password-btn" class="btn btn-dark btn-outline"><?= Yii::t('backend', 'Set new password'); ?></a>
+                <input type="hidden" id="is-password-changed" name="IsPasswordChanged" value="0">
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-    <?php endif; ?>
+        <?php endif; ?>
 
-    <div class="row">
-      <div class="col-lg-8">
         <?=
           $form->field(
               $user_model,
@@ -177,6 +173,71 @@
             ->hint(Yii::t('backend', 'If enabled, the user must change the password on the next login'));
         ?>
       </div>
+
+      <?php if ($current_action !== 'create') : ?>
+        <div class="col-lg-5">
+          <?php /*
+          <?=
+            $form->field(
+                $user_model,
+                'status_type',
+                [
+                  'columns' => [
+                    'wrapper' => 'col-sm-8',
+                    'label'   => 'col-sm-4',
+                  ]
+                ]
+              )
+              ->label($user_model->getAttributeLabel('status_type'))
+              ->dropDownList($user_model->status_type_labels(), [
+                'class'       => 'form-control',
+                'data-plugin' => 'select2',
+                'style'       => 'max-width: 300px',
+              ])
+              ->hint(Yii::t('backend', 'DISABLED users won\'t be able to access to the platform'));
+          ?>
+          */ ?>
+          <div class="form-group row">
+            <?= Html::activeLabel($user_model, 'status_type', ['class' => 'col-sm-4 form-control-label']); ?>
+            <div class="col-lg-8">
+              <div class="form-control view-field clean pl-0">
+                <?=
+                  $this->render('//entity/status/_view_status', [
+                    'vec_status_labels' => Yii::$app->userManager->statusLabels(),
+                    'vec_status_colors' => Yii::$app->userManager->statusColors(),
+                    'status_type'       => $user_model->status_type,
+                    'options'           => [
+                      'class'   => 'user-status-type'
+                    ]
+                  ]);
+                ?>
+                <a id="user-status-btn" class="btn btn-primary btn-xs ml-5" href="<?= Url::to('/user/admin/status', ['user_id' => $user_model->user_id]); ?>"><?= Yii::t('backend', 'Change'); ?></a>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <?= Html::activeLabel($user_model, 'created_date', ['class' => 'col-sm-4 form-control-label']); ?>
+            <div class="col-lg-8">
+              <p class="form-control view-field"><?= DateHelper::toFormat($user_model->created_date); ?></p>
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <?= Html::activeLabel($user_model, 'last_login_date', ['class' => 'col-sm-4 form-control-label']); ?>
+            <div class="col-lg-8">
+              <p class="form-control view-field"><?= !empty($user_model->last_login_date) ? DateHelper::toFormat($user_model->last_login_date) : Yii::t('app', 'Never'); ?></p>
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <?= Html::activeLabel($user_model, 'last_change_password_date', ['class' => 'col-sm-4 form-control-label']); ?>
+            <div class="col-lg-8">
+              <p class="form-control view-field"><?= ( !empty($user_model->last_change_password_date) && $user_model->last_change_password_date !== $user_model->created_date ) ? DateHelper::toFormat($user_model->last_change_password_date) : Yii::t('app', 'Never'); ?></p>
+            </div>
+          </div>
+        </div>
+      <?php endif; ?>
     </div>
   </div>
 </div>

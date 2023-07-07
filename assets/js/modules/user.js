@@ -29,5 +29,8 @@
     if ( $('#user-form').size() > 0  ) {
       $.userForm.init();
     }
+
+    // User change status via panelSlider
+    $.userStatus.slidePanel();
   });
 })(document, window, jQuery);
