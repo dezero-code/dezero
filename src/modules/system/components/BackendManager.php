@@ -215,7 +215,8 @@ class BackendManager extends Component
             $vec_files[] = ['/libraries/jquery/jquery.min.js', View::POS_HEAD];
 
             // JS - Dz Framework CORE
-            $vec_files[] = ['/js/site.min.js', View::POS_END];
+            // $vec_files[] = ['/js/site.min.js', View::POS_END];
+            $vec_files[] = ['/js/site.js', View::POS_END];
         }
 
         // Separated JS files?

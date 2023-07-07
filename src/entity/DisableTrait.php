@@ -44,9 +44,8 @@ trait DisableTrait
             return false;
         }
 
-        $this->scenario = 'disable';
         $this->disabled_date = time();
-        $this->disabled_uid = Dz::isConsole() ? 1 : Yii::$app->user->id;
+        $this->disabled_user_id = Dz::isConsole() ? 1 : Yii::$app->user->id;
 
         // Set "is_disabled" attribute
         if ( $this->hasAttribute('is_disabled') )

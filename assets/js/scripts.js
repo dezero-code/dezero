@@ -222,11 +222,11 @@ function dz_htmlUnescape(value){
         e.preventDefault();
         var $link = $(this);
         bootbox.confirm(
-          $link.data('confirm'),
+          $link.data('dialog'),
           function(confirmed){
             if ( confirmed ) {
               $('#status-change').val($link.data('value'));
-              $('#'+ $link.data('form')).submit();
+              $('#'+ $link.data('form-submit')).submit();
             }
           }
         );

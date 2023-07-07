@@ -44,7 +44,6 @@
   | USER ACCESS INFORMATION
   |--------------------------------------------------------------------------
   */
-  if ( $current_action === 'create' || $user_model->isEnabled() ) :
 ?>
 <div class="panel">
   <header class="panel-heading">
@@ -182,8 +181,6 @@
   </div>
 </div>
 
-<?php endif; ?>
-
 <?php
   /*
   |--------------------------------------------------------------------------
@@ -298,14 +295,7 @@
       ?>
       <?php
         // Cancel
-        if ( $current_action === 'create' || $user_model->isEnabled() )
-        {
-          echo Html::a(Yii::t('backend', 'Cancel'), ['/admin/user'], ['class' => 'btn btn-dark']);
-        }
-        else
-        {
-          echo Html::a(Yii::t('backend', 'Cancel'), ['/user/disabled'], ['class' => 'btn btn-dark']);
-        }
+        echo Html::a(Yii::t('backend', 'Cancel'), ['/admin/user'], ['class' => 'btn btn-dark']);
 
         // Delete, disable and enable buttons
         if ( $current_action !== 'create' )
@@ -313,15 +303,38 @@
           // Disable button
           if ( $user_model->isEnabled() )
           {
-            echo Html::a(Yii::t('backend', 'Delete'), ['#'], [
-              'id'            => 'delete-user-btn',
-              'class'         => 'btn btn-delete right',
-              'data-confirm'  => '<h3>Are you sure you want to <span class=\'text-danger\'>DELETE</span> this user?</h3><p><strong>WARNING:</strong> User won\'t be able to access to the platform!</p>',
-              'data-form'     => $form_id,
-              'data-value'    => 'delete',
-              'data-plugin'   => 'dz-status-button'
+            echo Html::a(Yii::t('backend', 'Disable'), ['#'], [
+              'id'                => 'disable-organizer-user-btn',
+              'class'             => 'btn btn-danger right',
+              'data-dialog'       => '<h3>Are you sure you want to <span class=\'text-danger\'>DISABLE</span> this user?</h3><p><strong>WARNING:</strong> User won\'t be able to access to the platform!</p>',
+              'data-form-submit'  => $form_id,
+              'data-value'        => 'disable',
+              'data-plugin'       => 'dz-status-button'
             ]);
           }
+
+          // Enable button
+          else
+          {
+            echo Html::a(Yii::t('backend', 'Enable'), ['#'], [
+              'id'                => 'enable-user-btn',
+              'class'             => 'btn btn-success right',
+              'data-dialog'       => '<h3>Are you sure you want to <span class=\'text-success\'>ENABLE</span> this user?</h3>',
+              'data-form-submit'  => $form_id,
+              'data-value'        => 'enable',
+              'data-plugin'       => 'dz-status-button'
+            ]);
+          }
+
+          // Delete button
+          echo Html::a(Yii::t('backend', 'Delete'), ['#'], [
+            'id'                => 'delete-user-btn',
+            'class'             => 'btn btn-delete right',
+            'data-dialog'       => '<h3>Are you sure you want to <span class=\'text-danger\'>DELETE</span> this user?</h3><p><strong>WARNING:</strong> All user data will be removed permanently. Please consider disabling the user.</p>',
+            'data-form-submit'  => $form_id,
+            'data-value'        => 'delete',
+            'data-plugin'       => 'dz-status-button'
+          ]);
         }
       ?>
     </div><!-- form-actions -->

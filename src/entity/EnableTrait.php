@@ -44,9 +44,8 @@ trait EnableTrait
             return false;
         }
 
-        $this->scenario = 'enable';
         $this->disabled_date = null;
-        $this->disabled_uid = null;
+        $this->disabled_user_id = null;
 
         // Set "is_disabled" attribute
         if ( $this->hasAttribute('is_disabled') )

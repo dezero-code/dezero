@@ -10,6 +10,7 @@ namespace dezero\helpers;
 
 use Dz;
 use dezero\helpers\ArrayHelper;
+use dezero\helpers\Url;
 use Yii;
 
 /**
@@ -22,6 +23,20 @@ class Html extends \yii\helpers\Html
     | OVERRIDED METHODS
     |--------------------------------------------------------------------------
     */
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function a($text, $url = null, $options = [])
+    {
+        if ( $url !== null )
+        {
+            // Allow hash key "#"
+            $options['href'] = ($url === '#' || $url === ['#']) ? '#' : Url::to($url);
+        }
+
+        return parent::tag('a', $text, $options);
+    }
 
 
     /**
