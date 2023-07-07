@@ -1,9 +1,9 @@
 <?php
 /**
- * Module for settings and language
+ * Module for frontend pages
  */
 
-namespace dezero\modules\settings;
+namespace dezero\modules\frontend;
 
 class Module extends \dezero\base\Module
 {
