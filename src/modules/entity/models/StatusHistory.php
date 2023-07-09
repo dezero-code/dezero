@@ -9,12 +9,11 @@
 
 namespace dezero\modules\entity\models;
 
+use dezero\behaviors\TimestampBehavior;
 use dezero\helpers\ArrayHelper;
 use dezero\modules\entity\models\query\StatusHistoryQuery;
 use dezero\modules\entity\models\base\StatusHistory as BaseStatusHistory;
 use user\models\User;
-use yii\behaviors\BlameableBehavior;
-use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQueryInterface;
 use Yii;
 
@@ -74,16 +73,7 @@ class StatusHistory extends BaseStatusHistory
         return ArrayHelper::merge(
             parent::behaviors(),
             [
-                [
-                    'class' => BlameableBehavior::class,
-                    'createdByAttribute' => 'created_user_id',
-                    // 'updatedByAttribute' => 'updated_user_id',
-                ],
-                [
-                    'class' => TimestampBehavior::class,
-                    'createdAtAttribute' => 'created_date',
-                    // 'updatedAtAttribute' => 'updated_date',
-                ]
+                TimestampBehavior::class
             ]
         );
     }

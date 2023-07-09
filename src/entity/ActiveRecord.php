@@ -7,6 +7,7 @@
 
 namespace dezero\entity;
 
+use dezero\behaviors\TimestampBehavior;
 use dezero\behaviors\UuidBehavior;
 use dezero\contracts\TitleInterface;
 use dezero\helpers\ArrayHelper;
@@ -16,8 +17,6 @@ use dezero\modules\entity\models\Entity;
 use dezero\modules\entity\models\StatusHistory;
 use Dz;
 use Yii;
-use yii\behaviors\BlameableBehavior;
-use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQueryInterface;
 
 /**
@@ -38,16 +37,7 @@ abstract class ActiveRecord extends \dezero\db\ActiveRecord implements TitleInte
         return ArrayHelper::merge(
             parent::behaviors(),
             [
-                [
-                    'class' => BlameableBehavior::class,
-                    'createdByAttribute' => 'created_user_id',
-                    'updatedByAttribute' => 'updated_user_id',
-                ],
-                [
-                    'class' => TimestampBehavior::class,
-                    'createdAtAttribute' => 'created_date',
-                    'updatedAtAttribute' => 'updated_date',
-                ],
+                TimestampBehavior::class,
                 UuidBehavior::class
             ]
         );

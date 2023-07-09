@@ -5,6 +5,7 @@ All notable changes to `Dezero Framework` will be documented in this file
 ## 0.1.12 - 2023-07-09
 
 - Entity module - Added new module to save Entity and StatusHistory records
+- TimestampBehavior - Custom behavior to register date and user before inserting or updating a model and checking if the attributes exist
 
 ## 0.1.11 - 2023-07-07
 
