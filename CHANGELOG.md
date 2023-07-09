@@ -2,6 +2,10 @@
 
 All notable changes to `Dezero Framework` will be documented in this file
 
+## 0.1.12 - 2023-07-09
+
+- Entity module - Added new module to save Entity and StatusHistory records
+
 ## 0.1.11 - 2023-07-07
 
 - Frontend module - Added new module with HomeController to receive afterLogin requests

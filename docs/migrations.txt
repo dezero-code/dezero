@@ -1,0 +1,15 @@
+================
+-- MIGRATIONS --
+================
+
+// Create a new migration in an APP module
+// Exactly, my_migrate_file.php file will be created on /app/modules/frontend/migrations
+    ```
+        > ./yii migrate create my_migrate_file --module_id=frontend
+    ```
+
+// Create a new migration in CORE
+// Exactly, my_core_migrate_file.php file will be created on /vendor/dezero/dezero/modules/entity/migrations
+    ```
+        ./yii migrate create my_core_migrate_file --module_id=core_entity
+    ```

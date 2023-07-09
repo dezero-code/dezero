@@ -18,6 +18,9 @@ use Yii;
 
 class AdminController extends Controller
 {
+    /**
+     * {@inheritdoc}
+     */
     public function beforeAction($action)
     {
         $this->enableCsrfValidation = false;

@@ -9,6 +9,7 @@ namespace dezero\entity;
 
 use Dz;
 use dezero\helpers\Log;
+use dezero\modules\entity\models\StatusHistory;
 use Yii;
 
 /**

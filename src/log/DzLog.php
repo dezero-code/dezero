@@ -104,7 +104,7 @@ class DzLog
         }
         elseif ( Yii::$app->user->id > 0 )
         {
-            $log_message .= ' - User ' . Yii::$app->user->id . ' (' . Yii::$app->user->username . ')';
+            $log_message .= ' - User ' . Yii::$app->user->id . ' (' . Yii::$app->user->model->username . ')';
         }
         else
         {

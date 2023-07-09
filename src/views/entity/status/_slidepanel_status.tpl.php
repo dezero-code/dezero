@@ -6,7 +6,7 @@
 |
 | Available variables:
 |  - $model: Entity model
-|  - $save: Array with
+|  - $buttonOptions: HTML options for SAVE button
 |
 */
   use dezero\helpers\Html;
@@ -31,9 +31,9 @@
       <div class="col-lg-9">
         <?=
           $this->render('//entity/status/_view_status', [
+            'status_type'        => $model->status_type,
             'vec_status_labels'  => $model->status_type_labels(),
-            'vec_status_colors'  => $model->status_type_colors(),
-            'status_type'        => $model->status_type
+            'vec_status_colors'  => $model->status_type_colors()
           ]);
         ?>
       </div>

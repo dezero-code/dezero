@@ -100,8 +100,8 @@ class Generator extends \yii\gii\Generator
             [['ns', 'queryNs', 'searchNs'], 'validateNamespace'],
             [['tableName'], 'validateTableName'],
             [['modelClass'], 'validateModelClass', 'skipOnEmpty' => false],
-            [['baseClass'], 'validateClass', 'params' => ['extends' => ActiveRecord::className()]],
-            [['queryBaseClass'], 'validateClass', 'params' => ['extends' => ActiveQuery::className()]],
+            [['baseClass'], 'validateClass', 'params' => ['extends' => ActiveRecord::class]],
+            [['queryBaseClass'], 'validateClass', 'params' => ['extends' => ActiveQuery::class]],
             [['generateRelations'], 'in', 'range' => [self::RELATIONS_NONE, self::RELATIONS_ALL, self::RELATIONS_ALL_INVERSE]],
             [['generateLabelsFromComments', 'useTablePrefix', 'useSchemaName', 'generateQuery', 'generateSearch', 'generateRelationsFromCurrentSchema'], 'boolean'],
             [['enableI18N', 'standardizeCapitals'], 'boolean'],
@@ -595,7 +595,7 @@ class Generator extends \yii\gii\Generator
                 $targetAttributes[] = "'$key' => '$value'";
             }
             $targetAttributes = implode(', ', $targetAttributes);
-            $vec_rules[] = "[['$attributes'], 'exist', 'skipOnError' => true, 'targetClass' => $refClassName::className(), 'targetAttribute' => [$targetAttributes]]";
+            $vec_rules[] = "[['$attributes'], 'exist', 'skipOnError' => true, 'targetClass' => $refClassName::class, 'targetAttribute' => [$targetAttributes]]";
         }
         */
 
@@ -634,7 +634,7 @@ class Generator extends \yii\gii\Generator
             if ( !isset($relations[$table0Schema->fullName][$relationName]) )
             {
                 $relations[$table0Schema->fullName][$relationName] = [
-                    "return \$this->hasMany($className1::className(), $link)->viaTable('"
+                    "return \$this->hasMany($className1::class, $link)->viaTable('"
                     . $this->generateTableName($table->name) . "', $viaLink);",
                     $className1,
                     true,
@@ -647,7 +647,7 @@ class Generator extends \yii\gii\Generator
             if ( !isset($relations[$table1Schema->fullName][$relationName]) )
             {
                 $relations[$table1Schema->fullName][$relationName] = [
-                    "return \$this->hasMany($className0::className(), $link)->viaTable('"
+                    "return \$this->hasMany($className0::class, $link)->viaTable('"
                     . $this->generateTableName($table->name) . "', $viaLink);",
                     $className0,
                     true,
@@ -724,14 +724,14 @@ class Generator extends \yii\gii\Generator
                     if ( ! isset($relations[$table->fullName][$relationName]) )
                     {
                         $relations[$table->fullName][$relationName] = [
-                            "return \$this->hasOne($refClassName::className(), $link);",
+                            "return \$this->hasOne($refClassName::class, $link);",
                             $refClassName,
                             false,
                         ];
                     }
 
                     // 23/03/2023 - Add special relationOne
-                    $this->relationsOne[$relationName] = ["$refClassName::className()", $refClassName];
+                    $this->relationsOne[$relationName] = ["$refClassName::class", $refClassName];
 
                     // Add relation for the referenced table
                     $hasMany = $this->isHasManyRelation($table, $fks);
@@ -740,7 +740,7 @@ class Generator extends \yii\gii\Generator
                     if ( ! isset($relations[$refTableSchema->fullName][$relationName]) )
                     {
                         $relations[$refTableSchema->fullName][$relationName] = [
-                            "return \$this->" . ($hasMany ? 'hasMany' : 'hasOne') . "($className::className(), $link);",
+                            "return \$this->" . ($hasMany ? 'hasMany' : 'hasOne') . "($className::class, $link);",
                             $className,
                             $hasMany,
                         ];
@@ -748,11 +748,11 @@ class Generator extends \yii\gii\Generator
                         // 23/03/2023 - Add special relationOne
                         if ( $hasMany )
                         {
-                            $this->relationsMany[$relationName] = ["$className::className()", $className];
+                            $this->relationsMany[$relationName] = ["$className::class", $className];
                         }
                         else
                         {
-                            $this->relationsOne[$relationName] = ["$className::className()", $className];
+                            $this->relationsOne[$relationName] = ["$className::class", $className];
                         }
                     }
                 }

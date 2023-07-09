@@ -203,10 +203,10 @@
               <div class="form-control view-field clean pl-0">
                 <?=
                   $this->render('//entity/status/_view_status', [
+                    'status_type'       => $user_model->status_type,
                     'vec_status_labels' => Yii::$app->userManager->statusLabels(),
                     'vec_status_colors' => Yii::$app->userManager->statusColors(),
-                    'status_type'       => $user_model->status_type,
-                    'options'           => [
+                    'container_options' => [
                       'class'   => 'user-status-type'
                     ]
                   ]);

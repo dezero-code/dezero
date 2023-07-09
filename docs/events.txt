@@ -1,6 +1,6 @@
-======================
--- EVENTTS EXAMPLES --
-======================
+=====================
+-- EVENTS EXAMPLES --
+=====================
 
 ## 1. CREATE EVENT CLASS
 Create an Event class inside a module in /events folder

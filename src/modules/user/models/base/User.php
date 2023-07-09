@@ -130,7 +130,7 @@ abstract class User extends \dezero\entity\ActiveRecord
      */
     public function getCreatedUser() : ActiveQueryInterface
     {
-        return $this->hasOne(User::className(), ['user_id' => 'created_user_id']);
+        return $this->hasOne(User::class, ['user_id' => 'created_user_id']);
     }
 
 
@@ -139,7 +139,7 @@ abstract class User extends \dezero\entity\ActiveRecord
      */
     public function getDisabledUser() : ActiveQueryInterface
     {
-        return $this->hasOne(User::className(), ['user_id' => 'disabled_user_id']);
+        return $this->hasOne(User::class, ['user_id' => 'disabled_user_id']);
     }
 
 
@@ -148,7 +148,7 @@ abstract class User extends \dezero\entity\ActiveRecord
      */
     public function getLanguage() : ActiveQueryInterface
     {
-        return $this->hasOne(Language::className(), ['language_id' => 'language_id']);
+        return $this->hasOne(Language::class, ['language_id' => 'language_id']);
     }
 
 
@@ -157,7 +157,7 @@ abstract class User extends \dezero\entity\ActiveRecord
      */
     public function getUpdatedUser() : ActiveQueryInterface
     {
-        return $this->hasOne(User::className(), ['user_id' => 'updated_user_id']);
+        return $this->hasOne(User::class, ['user_id' => 'updated_user_id']);
     }
 
 
@@ -166,7 +166,7 @@ abstract class User extends \dezero\entity\ActiveRecord
      */
     public function getLanguages() : ActiveQueryInterface
     {
-        return $this->hasMany(Language::className(), ['created_user_id' => 'user_id']);
+        return $this->hasMany(Language::class, ['created_user_id' => 'user_id']);
     }
 
 
@@ -175,7 +175,7 @@ abstract class User extends \dezero\entity\ActiveRecord
      */
     public function getUserSessions() : ActiveQueryInterface
     {
-        return $this->hasMany(UserSession::className(), ['user_id' => 'user_id']);
+        return $this->hasMany(UserSession::class, ['user_id' => 'user_id']);
     }
 
 
@@ -184,7 +184,7 @@ abstract class User extends \dezero\entity\ActiveRecord
      */
     public function getUsers() : ActiveQueryInterface
     {
-        return $this->hasMany(User::className(), ['created_user_id' => 'user_id']);
+        return $this->hasMany(User::class, ['created_user_id' => 'user_id']);
     }
 
 
