@@ -38,7 +38,7 @@ trait StatusTrait
             }
 
             // Save status history
-            // $this->saveStatusHistory($new_status, $comments);
+            $this->saveStatusHistory($new_status, $comments);
 
             // Send email notifications
             /*
@@ -54,6 +54,38 @@ trait StatusTrait
                 }
             }
             */
+        }
+
+        return true;
+    }
+
+
+    /**
+     * Save new status into status history
+     */
+    public function saveStatusHistory($new_status, $comments = null)
+    {
+        // Get last StatusHistory model
+        $last_status_history_model = StatusHistory::find()
+            ->where(['entity_uuid' => $this->entity_uuid])
+            ->orderBy(['status_history_id' => SORT_DESC])
+            ->one();
+        if ( $last_status_history_model === null || $last_status_history_model->status_type !== $new_status )
+        {
+            $status_history_model = Dz::makeObject(StatusHistory::class);
+            $status_history_model->setAttributes([
+                'entity_uuid'       => $this->entity_uuid,
+                'entity_source_id'  => $this->entity ? $this->entity->source_id : null,
+                'entity_type'       => $this->getEntityType(),
+                'status_type'       => $new_status,
+                'comments'          => $comments
+            ]);
+
+            if ( ! $status_history_model->save() )
+            {
+                Log::saveModelError($status_history_model);
+                return false;
+            }
         }
 
         return true;

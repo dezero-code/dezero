@@ -78,7 +78,7 @@ abstract class ActiveRecord extends \dezero\db\ActiveRecord implements TitleInte
     public function getStatusHistory() : ActiveQueryInterface
     {
         return $this->hasMany(StatusHistory::class, ['entity_uuid' => 'entity_uuid'])
-            ->orderBy(['status_history_id' => SORT_DESC]);;
+            ->orderBy(['status_history_id' => SORT_DESC]);
     }
 
 
@@ -119,6 +119,7 @@ abstract class ActiveRecord extends \dezero\db\ActiveRecord implements TitleInte
                 $source_id = is_int($source_name) ? $source_name : null;
             }
 
+            // Now, create the Entity model
             $entity_model = Dz::makeObject(Entity::class);
             $entity_model->setAttributes([
                 'entity_type'   => $this->getEntityType(),
