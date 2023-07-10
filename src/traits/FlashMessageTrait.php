@@ -14,7 +14,7 @@ trait FlashMessageTrait
     /**
      * Flash messages
      */
-    public $vec_messages = [];
+    private $vec_messages = [];
 
 
     /**

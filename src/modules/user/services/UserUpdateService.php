@@ -1,7 +1,7 @@
 <?php
 /*
 |--------------------------------------------------------------------------
-| Service for use case "Updates an user"
+| Use case "Updates an user"
 |--------------------------------------------------------------------------
 */
 
@@ -52,7 +52,7 @@ class UserUpdateService implements ServiceInterface
             return false;
         }
 
-        // Create new User model
+        // Save current User model
         if ( ! $this->saveUser() )
         {
             return false;
@@ -97,7 +97,7 @@ class UserUpdateService implements ServiceInterface
 
 
     /**
-     * Create new User model
+     * Save current User model
      */
     private function saveUser() : bool
     {

@@ -8,13 +8,14 @@
 namespace dezero\traits;
 
 use dezero\helpers\ArrayHelper;
+use Yii;
 
 trait ErrorTrait
 {
     /**
      * Registered errors
      */
-    public $vec_errors = [];
+    private $vec_errors = [];
 
 
     /**
@@ -38,6 +39,30 @@ trait ErrorTrait
         else
         {
             $this->vec_errors[] = $vec_errors;
+        }
+    }
+
+
+    /**
+     * Show error(s)
+     */
+    public function showErrors() : void
+    {
+        // Show errors
+        $vec_errors = $this->getErrors();
+        if ( !empty($vec_errors) )
+        {
+            Yii::$app->session->setFlash('error', $vec_errors);
+        }
+
+        // Get errors from Flash Messages
+        if ( method_exists($this, 'getFlashMessages') )
+        {
+            $vec_errors = $this->getFlashMessages('error');
+            if ( !empty($vec_errors) )
+            {
+                Yii::$app->session->setFlash('error', $vec_errors);
+            }
         }
     }
 }

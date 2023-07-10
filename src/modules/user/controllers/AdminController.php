@@ -11,6 +11,7 @@ use dezero\helpers\AuthHelper;
 use dezero\modules\user\models\User;
 use dezero\modules\user\models\search\UserSearch;
 use dezero\modules\user\services\UserCreateService;
+use dezero\modules\user\services\UserDeleteService;
 use dezero\modules\user\services\UserUpdateService;
 use dezero\web\Controller;
 use Dz;
@@ -68,6 +69,10 @@ class AdminController extends Controller
                 Yii::$app->session->setFlash('success', Yii::t('user', 'User created succesfully'));
                 return $this->redirect(['/user/admin/update', 'user_id' => $user_model->id]);
             }
+            else
+            {
+                $user_create_service->showErrors();
+            }
         }
 
         return $this->render('//user/admin/create', [
@@ -120,8 +125,13 @@ class AdminController extends Controller
             $user_update_service = Yii::createObject(UserUpdateService::class, [$user_model, $vec_assigned_roles, $is_password_changed, $status_change]);
             if ( $user_update_service->run() )
             {
+                // Success message & redirect
                 Yii::$app->session->setFlash('success', Yii::t('user', 'User updated succesfully'));
                 return $this->redirect(['/user/admin/update', 'user_id' => $user_model->id]);
+            }
+            else
+            {
+                $user_update_service->showErrors();
             }
         }
 
@@ -146,21 +156,18 @@ class AdminController extends Controller
         $this->requirePermission('user_manage');
         $this->requirePostRequest();
 
-        Yii::$app->session->setFlash('success', Yii::t('backend', 'We have arrive here.'));
-        return $this->redirect(['/user/admin']);
-
         // Load User model
         $user_model = Dz::loadModel(User::class, $user_id);
 
-         if ( $user_id == Yii::$app->user->id )
-         {
-            Yii::$app->session->setFlash('error', Yii::t('backend', 'You can not remove your own account.'));
+        // Delete user via UserDeleteService class
+        $user_delete_service = Yii::createObject(UserDeleteService::class, [$user_model]);
+        if ( $user_delete_service->run() )
+        {
+            Yii::$app->session->setFlash('success', Yii::t('user', 'User has been deleted.'));
         }
         else
         {
-            $user_model->delete();
-
-            Yii::$app->session->setFlash('success', Yii::t('backend', 'User has been deleted.'));
+            $user_delete_service->showErrors();
         }
 
         return $this->redirect(['/user/admin']);

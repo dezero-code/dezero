@@ -5,6 +5,7 @@ All notable changes to `Dezero Framework` will be documented in this file
 ## 0.1.13 - 2023-07-10
 
 - Gridview - Override yii.confirm() Javascript method and use Bootbox library for it
+- ErrorTrait - New method showErrors() for Services classes (use cases)
 
 ## 0.1.12 - 2023-07-09
 
