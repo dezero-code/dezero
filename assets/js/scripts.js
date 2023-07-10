@@ -116,7 +116,7 @@ function dz_htmlUnescape(value){
         e.preventDefault();
         var $link = $(this);
         bootbox.confirm(
-          $link.data('confirm'),
+          $link.data('dialog'),
           function(confirmed){
             if ( confirmed ) {
               if ( typeof($link.data('loading')) != 'undefined' ) {

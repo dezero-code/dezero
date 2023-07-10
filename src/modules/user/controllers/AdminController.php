@@ -138,6 +138,36 @@ class AdminController extends Controller
 
 
     /**
+     * Delete action for User model
+     */
+    public function actionDelete($user_id)
+    {
+        $this->requireLogin();
+        $this->requirePermission('user_manage');
+        $this->requirePostRequest();
+
+        Yii::$app->session->setFlash('success', Yii::t('backend', 'We have arrive here.'));
+        return $this->redirect(['/user/admin']);
+
+        // Load User model
+        $user_model = Dz::loadModel(User::class, $user_id);
+
+         if ( $user_id == Yii::$app->user->id )
+         {
+            Yii::$app->session->setFlash('error', Yii::t('backend', 'You can not remove your own account.'));
+        }
+        else
+        {
+            $user_model->delete();
+
+            Yii::$app->session->setFlash('success', Yii::t('backend', 'User has been deleted.'));
+        }
+
+        return $this->redirect(['/user/admin']);
+    }
+
+
+    /**
      * Change Status action for the SlidePanel widget
      */
     public function actionStatus($user_id)

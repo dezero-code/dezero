@@ -363,11 +363,16 @@ class Html extends \yii\helpers\Html
             $options['data-toggle'] = 'tooltip';
 
             // Button classes
-            $options['class'] = isset($options['class']) ? ' ' : '';
+            $options['class'] = isset($options['class']) ? $options['class'] . ' ' : '';
             $options['class'] .= 'btn btn-sm btn-icon btn-pure btn-default';
         }
 
-
+        // Replace "data-confirm" to "data-dialog"
+        // if ( isset($options['data-confirm']) )
+        // {
+        //     $options['data-dialog'] = $options['data-confirm'];
+        //     unset($options['data-confirm']);
+        // }
 
         return Html::a($text, $url, $options);
     }

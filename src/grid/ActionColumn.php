@@ -100,6 +100,13 @@ class ActionColumn extends \yii\grid\ActionColumn
                     $options['icon'] = $icon;
                 }
 
+                // Special class for delete button
+                // if ( $name === 'delete' )
+                // {
+                //     $options['class'] = $options['class'] ?? '';
+                //     $options['class'] .= ' dz-bootbox-confirm';
+                // }
+
                 return Html::gridButton($title, $url, $options);
             };
         }

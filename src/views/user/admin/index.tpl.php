@@ -85,10 +85,11 @@
                 ],
                 [
                   'class' => 'dezero\grid\ActionColumn',
-                  'template' => '{update} {delete} {custom}',
+                  'template' => '{update} {delete}',
                   'urlCreator' => function($action, $model, $key, $index) {
                     return Url::to([$action, 'user_id' => $key]);
                   },
+                  /*
                   'buttons' => [
                     'custom' => function($url, $model, $key) {
                       return Html::gridButton('Test', $url, [
@@ -98,6 +99,7 @@
                       ]);
                     }
                   ]
+                  */
                 ]
               ]
             ]);

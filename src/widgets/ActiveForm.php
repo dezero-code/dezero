@@ -8,6 +8,7 @@
 namespace dezero\widgets;
 
 use dezero\helpers\Html;
+use dezero\helpers\Url;
 use Yii;
 
 /**
@@ -81,6 +82,21 @@ class ActiveForm extends \yii\bootstrap4\ActiveForm
         }
 
         parent::init();
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function run()
+    {
+        // Ensure action URL is absolute
+        if ( empty($this->action) )
+        {
+            $this->action = Url::current([], true);
+        }
+
+        return parent::run();
     }
 
 

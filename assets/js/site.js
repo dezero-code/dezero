@@ -1914,7 +1914,7 @@ function dz_htmlUnescape(value){
         e.preventDefault();
         var $link = $(this);
         bootbox.confirm(
-          $link.data('confirm'),
+          $link.data('dialog'),
           function(confirmed){
             if ( confirmed ) {
               if ( typeof($link.data('loading')) != 'undefined' ) {
@@ -2155,9 +2155,28 @@ function dz_htmlUnescape(value){
     // $('body').dzScrollUp();
 
     // Bootbox
-    $('.dz-bootbox-confirm').dzBootbox();
+    // $('.dz-bootbox-confirm').dzBootbox();
 
-    // Bootbox
+    // Override "yii.confirm" behavior with Bootbox
+    // @see https://www.yiiframework.com/wiki/654/escape-from-defaults-yii2-delete-confirm-box#c20143
+    yii.confirm = function (message, ok, cancel) {
+      bootbox.confirm({
+        message: '<h3>'+ message +'</h3>',
+        callback: function (confirmed) {
+          if (confirmed) {
+            !ok || ok();
+          } else {
+            !cancel || cancel();
+          }
+        }
+      });
+
+      // confirm will always return false on the first call
+      // to cancel click handler
+      return false;
+    };
+
+    // Bootbox multilanguage
     bootbox.addLocale("custom", {
       OK: 'Continue',
       CANCEL: 'Cancel',
