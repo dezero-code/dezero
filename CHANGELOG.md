@@ -2,6 +2,10 @@
 
 All notable changes to `Dezero Framework` will be documented in this file
 
+## 0.1.13 - 2023-07-10
+
+- Gridview - Override yii.confirm() Javascript method and use Bootbox library for it
+
 ## 0.1.12 - 2023-07-09
 
 - Entity module - Added new module to save Entity and StatusHistory records
