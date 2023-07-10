@@ -48,7 +48,7 @@
 ?>
 <div class="panel">
   <header class="panel-heading">
-    <h3 class="panel-title"><?= Yii::t('app', 'User Access'); ?></h3>
+    <h3 class="panel-title"><?= Yii::t('user', 'User Access'); ?></h3>
   </header>
   <div class="panel-body">
     <div class="row">
@@ -167,8 +167,8 @@
             ->label($user_model->getAttributeLabel('is_force_change_password'))
             ->inline(true)
             ->radioList([
-              1 => Yii::t('app', 'Yes'),
-              0 => Yii::t('app', 'No'),
+              1 => Yii::t('backend', 'Yes'),
+              0 => Yii::t('backend', 'No'),
             ])
             ->hint(Yii::t('backend', 'If enabled, the user must change the password on the next login'));
         ?>
@@ -226,14 +226,14 @@
           <div class="form-group row">
             <?= Html::activeLabel($user_model, 'last_login_date', ['class' => 'col-sm-4 form-control-label']); ?>
             <div class="col-lg-8">
-              <p class="form-control view-field"><?= !empty($user_model->last_login_date) ? DateHelper::toFormat($user_model->last_login_date) : Yii::t('app', 'Never'); ?></p>
+              <p class="form-control view-field"><?= !empty($user_model->last_login_date) ? DateHelper::toFormat($user_model->last_login_date) : Yii::t('backend', 'Never'); ?></p>
             </div>
           </div>
 
           <div class="form-group row">
             <?= Html::activeLabel($user_model, 'last_change_password_date', ['class' => 'col-sm-4 form-control-label']); ?>
             <div class="col-lg-8">
-              <p class="form-control view-field"><?= ( !empty($user_model->last_change_password_date) && $user_model->last_change_password_date !== $user_model->created_date ) ? DateHelper::toFormat($user_model->last_change_password_date) : Yii::t('app', 'Never'); ?></p>
+              <p class="form-control view-field"><?= ( !empty($user_model->last_change_password_date) && $user_model->last_change_password_date !== $user_model->created_date ) ? DateHelper::toFormat($user_model->last_change_password_date) : Yii::t('backend', 'Never'); ?></p>
             </div>
           </div>
         </div>
@@ -251,7 +251,7 @@
 ?>
 <div class="panel">
   <header class="panel-heading">
-    <h3 class="panel-title"><?= Yii::t('app', 'Personal Data'); ?></h3>
+    <h3 class="panel-title"><?= Yii::t('backend', 'Personal Data'); ?></h3>
   </header>
   <div class="panel-body">
     <div class="row">
@@ -267,7 +267,7 @@
                 ]
               ]
             )
-            ->label(Yii::t('app', 'Name'))
+            ->label(Yii::t('backend', 'Name'))
             ->textInput([
               'maxlength' => true,
               'placeholder' => true
@@ -307,13 +307,13 @@
 ?>
 <div class="panel">
   <header class="panel-heading">
-    <h3 class="panel-title"><?= Yii::t('app', 'Roles and permissions'); ?></h3>
+    <h3 class="panel-title"><?= Yii::t('backend', 'Roles and permissions'); ?></h3>
   </header>
   <div class="panel-body">
     <div class="row">
       <div class="col-lg-8">
         <div class="form-group row field-user-roles">
-          <?= Html::label(Yii::t('app', 'Roles'), 'user-roles', ['class' => 'col-sm-3 form-control-label']); ?>
+          <?= Html::label(Yii::t('backend', 'Roles'), 'user-roles', ['class' => 'col-sm-3 form-control-label']); ?>
           <?= Html::checkboxList('UserRoles', $vec_assigned_roles, $vec_roles, ['class' => 'col-sm-9']); ?>
         </div>
         <?php /*
@@ -328,7 +328,7 @@
               ]
             ]
           )
-          ->label(Yii::t('app', 'Roles'))
+          ->label(Yii::t('backend', 'Roles'))
           ->checkboxList($vec_roles);
         ?>
         */ ?>
@@ -337,6 +337,38 @@
   </div>
 </div>
 
+<?php
+  /*
+  |--------------------------------------------------------------------------
+  | STATUS HISTORY INFORMATION
+  |--------------------------------------------------------------------------
+  */
+  if ( $current_action !== 'create' ) :
+?>
+<div class="panel">
+  <header class="panel-heading">
+    <h3 class="panel-title"><?= Yii::t('backend', 'Status History'); ?></h3>
+  </header>
+  <div class="panel-body">
+    <div class="row">
+      <div class="col-lg-12">
+        <?=
+          $this->render('//entity/status/_status_history', [
+            'model'                     => $user_model,
+            'vec_status_history_models' => $user_model->statusHistory,
+            'status_type'               => $user_model->status_type,
+            'vec_status_labels'         => Yii::$app->userManager->statusLabels(),
+            'vec_status_colors'         => Yii::$app->userManager->statusColors(),
+            'container_options'         => [
+              'class'   => 'user-status-type'
+            ]
+          ]);
+        ?>
+      </div>
+    </div>
+  </div>
+</div>
+<?php endif; ?>
 <?php
   /*
   |--------------------------------------------------------------------------

@@ -9,10 +9,13 @@
 |  - $vec_status_history_models: Array with all the StatusHistory models
 |  - $status_type: Current status type
 |  - $vec_status_labels: Array with all the status labels
-|  - $vec_status_color: Optional. Array with all the status colors
+|  - $vec_status_colors: Optional. Array with all the status colors
 |  - $container_options: Optional. Array with HTML options
 |
 */
+
+use dezero\helpers\DateHelper;
+
 ?>
 <div class="table-responsive table-status-history">
   <table class="table table-striped table-hover">
@@ -28,14 +31,14 @@
       <?php if ( !empty($vec_status_history_models) ) : ?>
         <?php foreach( $vec_status_history_models as $status_history_model ) : ?>
           <tr>
-            <td><?= $status_history_model->created_date; ?></td>
-            <td><?= $status_history_model->createdUser->fullname(); ?></td>
+            <td><?= DateHelper::toFormat($status_history_model->created_date); ?></td>
+            <td><?= $status_history_model->createdUser ? $status_history_model->createdUser->fullname() : '-'; ?></td>
             <td class="col-status">
-              <?php
-                $this->renderPartial('//entity/status/_view_status', [
-                  'status_type'       => $status_type,
-                  'vec_status_types'  => $vec_status_labels,
-                  'vec_status_color'  => $vec_status_color ?? [],
+              <?=
+                $this->render('//entity/status/_view_status', [
+                  'status_type'       => $status_history_model->status_type,
+                  'vec_status_labels' => $vec_status_labels,
+                  'vec_status_colors' => $vec_status_colors ?? [],
                   'container_options' => $container_options ?? [],
                 ]);
               ?>

@@ -11,12 +11,23 @@ use Dz;
 use dezero\helpers\Log;
 use dezero\modules\entity\models\StatusHistory;
 use Yii;
+use yii\db\ActiveQueryInterface;
 
 /**
  * Trait class to implement change status process
  */
 trait StatusTrait
 {
+    /**
+     * @return ActiveQueryInterface The relational query object.
+     */
+    public function getStatusHistory() : ActiveQueryInterface
+    {
+        return $this->hasMany(StatusHistory::class, ['entity_uuid' => 'entity_uuid'])
+            ->orderBy(['status_history_id' => SORT_DESC]);
+    }
+
+
     /**
      * Change status
      */
@@ -70,6 +81,7 @@ trait StatusTrait
             ->where(['entity_uuid' => $this->entity_uuid])
             ->orderBy(['status_history_id' => SORT_DESC])
             ->one();
+        \DzLog::dev($last_status_history_model);
         if ( $last_status_history_model === null || $last_status_history_model->status_type !== $new_status )
         {
             $status_history_model = Dz::makeObject(StatusHistory::class);

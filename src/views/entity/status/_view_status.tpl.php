@@ -7,7 +7,7 @@
 | Available variables:
 |  - $status_type: Current status type
 |  - $vec_status_labels: Array with all the status labels
-|  - $vec_status_color: Optional. Array with all the status colors
+|  - $vec_status_colors: Optional. Array with all the status colors
 |  - $container_options: Optional. Array with HTML options
 |
 */

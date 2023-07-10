@@ -63,16 +63,6 @@ abstract class ActiveRecord extends \dezero\db\ActiveRecord implements TitleInte
 
 
     /**
-     * @return ActiveQueryInterface The relational query object.
-     */
-    public function getStatusHistory() : ActiveQueryInterface
-    {
-        return $this->hasMany(StatusHistory::class, ['entity_uuid' => 'entity_uuid'])
-            ->orderBy(['status_history_id' => SORT_DESC]);
-    }
-
-
-    /**
      * {@inheritdoc}
      */
     public function afterSave($insert, $changedAttributes)
