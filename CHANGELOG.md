@@ -6,6 +6,7 @@ All notable changes to `Dezero Framework` will be documented in this file
 
 - Gridview - Override yii.confirm() Javascript method and use Bootbox library for it
 - ErrorTrait - New method showErrors() for Services classes (use cases)
+- Asset module - Created new module and firt version of AssetFile model
 
 ## 0.1.12 - 2023-07-09
 
