@@ -52,7 +52,6 @@
     afterGridLoaded: function() {
       this.loadTooltip();
       this.loadSelect2();
-      this.loadBootbox();
       this.clearButton();
       this.$grid.removeClass(this.loadingClass);
     },
@@ -74,14 +73,6 @@
         $tooltip_items.tooltip();
       }
     },
-
-
-    // Load bootbox confirm buttons
-    // ----------------------------------------------------
-    loadBootbox: function() {
-      // this.$filters.find('a.dz-bootbox-confirm').dzBootbox();
-    },
-
 
     // Clear Button click event
     // ----------------------------------------------------
