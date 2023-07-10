@@ -24,6 +24,7 @@
   // Create form object
   $form = ActiveForm::begin([
     'id'                    => $form_id,
+    'action'                => Url::to('/user/admin/update', ['user_id' => $user_model->user_id]),
     'enableAjaxValidation'  => true,
     'layout'                => ActiveForm::LAYOUT_HORIZONTAL,
     'options'               => [

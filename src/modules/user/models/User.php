@@ -395,7 +395,11 @@ class User extends BaseUser implements IdentityInterface
      */
     public function enable()
     {
-        $this->status_type = self::STATUS_TYPE_ACTIVE;
+        // $this->status_type = self::STATUS_TYPE_ACTIVE;
+        if ( ! $this->changeStatus(self::STATUS_TYPE_ACTIVE) )
+        {
+            return false;
+        }
 
         return parent::enable();
     }
@@ -415,7 +419,11 @@ class User extends BaseUser implements IdentityInterface
      */
     public function disable()
     {
-        $this->status_type = self::STATUS_TYPE_DISABLED;
+        // $this->status_type = self::STATUS_TYPE_DISABLED;
+        if ( ! $this->changeStatus(self::STATUS_TYPE_DISABLED) )
+        {
+            return false;
+        }
 
         return parent::disable();
     }
