@@ -57,7 +57,7 @@ class User extends \yii\web\User
     {
         if ( !$this->checkRedirectAcceptable() )
         {
-            throw new ForbiddenHttpException(Yii::t('app', 'Not registered user is allowed'));
+            throw new ForbiddenHttpException(Yii::t('backend', 'Not registered user is allowed'));
         }
 
         return Yii::$app->getResponse()->redirect($this->getReturnUrl($default_url));

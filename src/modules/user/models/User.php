@@ -133,7 +133,7 @@ class User extends BaseUser implements IdentityInterface
                 'requiredVerifyPassword' => [['verify_password'], 'required', 'on' => 'change_password'],
                 'comparePasswords' => [
                     ['verify_password'], 'compare', 'compareAttribute' => 'password',
-                    'message' => Yii::t('app', 'Passwords don\'t match'),
+                    'message' => Yii::t('backend', 'Passwords don\'t match'),
                     'on' => 'change_password',
                 ],
             ]

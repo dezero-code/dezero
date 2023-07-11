@@ -27,16 +27,30 @@ class StringHelper extends \yii\helpers\StringHelper
         $text = strtr($text, [
             'á' => 'a',
             'Á' => 'a',
+            'à' => 'a',
+            'À' => 'a',
+            'ã' => 'a',
+            'Ã' => 'a',
+            'â' => 'a',
+            'Â' => 'a',
             'é' => 'e',
+            'è' => 'e',
             'É' => 'e',
+            'È' => 'e',
             'í' => 'i',
             'Í' => 'i',
             'ó' => 'o',
             'Ó' => 'o',
+            'ò' => 'o',
+            'Ò' => 'o',
+            'õ' => 'o',
+            'Õ' => 'o',
             'ú' => 'u',
             'Ú' => 'u',
             'ñ' => 'n',
             'Ñ' => 'n',
+            'ç' => 'c',
+            'Ç' => 'c'
         ]);
         $text = self::strtolower($text);
         return preg_replace('@[^a-z0-9_]+@', '-', $text);

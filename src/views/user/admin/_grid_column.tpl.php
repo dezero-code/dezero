@@ -105,6 +105,6 @@
     */
     case 'last_change_password_date':
   ?>
-    <?= ( !empty($model->last_change_password_date) && $model->last_change_password_date !== $model->created_date ) ? DateHelper::toFormat($model->last_change_password_date) : Yii::t('app', 'Never'); ?>
+    <?= ( !empty($model->last_change_password_date) && $model->last_change_password_date !== $model->created_date ) ? DateHelper::toFormat($model->last_change_password_date) : Yii::t('backend', 'Never'); ?>
   <?php break; ?>
 <?php endswitch; ?>

@@ -13,6 +13,7 @@ use dezero\behaviors\TimestampBehavior;
 use dezero\helpers\ArrayHelper;
 use dezero\modules\entity\models\query\StatusHistoryQuery;
 use dezero\modules\entity\models\base\StatusHistory as BaseStatusHistory;
+use dezero\modules\entity\models\Entity;
 use user\models\User;
 use yii\db\ActiveQueryInterface;
 use Yii;
@@ -65,7 +66,7 @@ class StatusHistory extends BaseStatusHistory
     }
 
 
-        /**
+    /**
      * {@inheritdoc}
      */
     public function behaviors()
@@ -109,6 +110,15 @@ class StatusHistory extends BaseStatusHistory
     public function getCreatedUser() : ActiveQueryInterface
     {
         return $this->hasOne(User::class, ['user_id' => 'created_user_id']);
+    }
+
+
+    /**
+     * @return ActiveQueryInterface The relational query object.
+     */
+    public function getEntity() : ActiveQueryInterface
+    {
+        return $this->hasOne(Entity::class, ['entity_uuid' => 'entity_uuid']);
     }
 
 

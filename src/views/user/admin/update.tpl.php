@@ -24,28 +24,28 @@ $this->title = $user_model->title();
       // Superadmin?
       if ( $user_model->isSuperadmin() ) :
     ?>
-      <span class="badge badge-primary ml-5 mr-5" data-toggle="tooltip" data-placement="top" data-original-title="<?= Yii::t('app', 'Admin - Full Access'); ?>"><?= Yii::t('app', 'ADMIN'); ?></span>
+      <span class="badge badge-primary ml-5 mr-5" data-toggle="tooltip" data-placement="top" data-original-title="<?= Yii::t('backend', 'Admin - Full Access'); ?>"><?= Yii::t('backend', 'ADMIN'); ?></span>
     <?php endif; ?>
     <?php
       // Disabled user?
       if ( $user_model->isDisabled() ) :
     ?>
-      <span class="badge badge-danger ml-5 mr-5" data-toggle="tooltip" data-placement="top" data-original-title="<?php if ( !empty($user_model->disable_date) ) : ?>From <?= DateHelper::toFormat($user_model->disable_date); ?><?php else : ?><?= Yii::t('app', 'Inactive'); ?><?php endif; ?>"><?= Yii::t('app', 'DISABLE'); ?></span>
+      <span class="badge badge-danger ml-5 mr-5" data-toggle="tooltip" data-placement="top" data-original-title="<?php if ( !empty($user_model->disable_date) ) : ?>From <?= DateHelper::toFormat($user_model->disable_date); ?><?php else : ?><?= Yii::t('backend', 'Inactive'); ?><?php endif; ?>"><?= Yii::t('backend', 'DISABLE'); ?></span>
     <?php
       // Banned user?
       elseif ( $user_model->isBanned() ) :
     ?>
-      <span class="badge badge-danger ml-5 mr-5" data-toggle="tooltip" data-placement="top" data-original-title="<?= Yii::t('app', 'Access is not allowed'); ?>"><?= Yii::t('app', 'BANNED'); ?></span>
+      <span class="badge badge-danger ml-5 mr-5" data-toggle="tooltip" data-placement="top" data-original-title="<?= Yii::t('backend', 'Access is not allowed'); ?>"><?= Yii::t('backend', 'BANNED'); ?></span>
     <?php endif; ?>
     <?php
       // User must change password?
       if ( $user_model->isForceChangePassword() ) :
     ?>
-      <span class="badge badge-warning ml-5 mr-5" data-toggle="tooltip" data-placement="top" data-original-title="<?= Yii::t('app', 'User must change password at next logon'); ?>"><?= Yii::t('app', 'FORCE CHANGE PASSSWORD'); ?></span>
+      <span class="badge badge-warning ml-5 mr-5" data-toggle="tooltip" data-placement="top" data-original-title="<?= Yii::t('backend', 'User must change password at next logon'); ?>"><?= Yii::t('backend', 'FORCE CHANGE PASSSWORD'); ?></span>
     <?php endif; ?>
   </h1>
   <div class="page-header-actions">
-    <a href="<?= Url::to('/user/admin/'); ?>" class="btn btn-dark"><i class="wb-chevron-left"></i><?= Yii::t('app', 'Back'); ?></a>
+    <a href="<?= Url::to('/user/admin/'); ?>" class="btn btn-dark"><i class="wb-chevron-left"></i><?= Yii::t('backend', 'Back'); ?></a>
   </div>
   <?=
     // Breadcrumbs

@@ -59,6 +59,7 @@ class m230709_093653_entity_tables extends Migration
 
         // Create FOREIGN KEYS
         $this->addForeignKey(null, 'entity_status_history', ['created_user_id'], 'user_user', ['user_id'], 'CASCADE', null);
+        $this->addForeignKey(null, 'entity_status_history', ['entity_uuid'], 'entity_entity', ['entity_uuid'], 'CASCADE', null);
 
         return true;
     }

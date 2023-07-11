@@ -49,7 +49,7 @@ class ActionColumn extends \yii\grid\ActionColumn
     {
         // $this->filterOptions = ArrayHelper::merge(['class' => $this->filterAttribute .'_filter'], $this->filterOptions);
         // return parent::renderFilterCell();
-        return '<a class="clear btn btn-default" id="'. $this->grid->options['id'] .'-clear-btn" style="text-align:center;display:block;" data-toggle="tooltip" href="'. Url::canonical() .'" data-original-title="'. Yii::t('app', 'Clear filters') .'"><i class="wb-close"></i></a>';
+        return '<a class="clear btn btn-default" id="'. $this->grid->options['id'] .'-clear-btn" style="text-align:center;display:block;" data-toggle="tooltip" href="'. Url::canonical() .'" data-original-title="'. Yii::t('backend', 'Clear filters') .'"><i class="wb-close"></i></a>';
     }
 
 

@@ -22,7 +22,7 @@
 <div class="page-header">
   <h1 class="page-title"><?= $this->title; ?></h1>
   <div class="page-header-actions">
-    <a href="<?= Url::to('/user/admin/create'); ?>" class="btn btn-primary"><i class="icon wb-plus"></i><?= Yii::t('app', 'Add new user'); ?></a>
+    <a href="<?= Url::to('/user/admin/create'); ?>" class="btn btn-primary"><i class="icon wb-plus"></i><?= Yii::t('backend', 'Add new user'); ?></a>
   </div>
 </div>
 <div class="page-content">
