@@ -21,7 +21,7 @@ class DateHelper
     /**
      * Parses from UNIX timestamp format ot string "d/m/Y - H:i" date format
      */
-    public function toFormat(int $timestamp, string $format = 'd/m/Y - H:i') : string
+    public static function toFormat(int $timestamp, string $format = 'd/m/Y - H:i') : string
     {
         return date($format, $timestamp);
     }

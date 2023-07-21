@@ -388,7 +388,7 @@
       ?>
       <?php
         // Cancel
-        echo Html::a(Yii::t('backend', 'Cancel'), ['/admin/user'], ['class' => 'btn btn-dark']);
+        echo Html::a(Yii::t('backend', 'Cancel'), ['/user/admin'], ['class' => 'btn btn-dark']);
 
         // Delete, disable and enable buttons
         if ( $current_action !== 'create' )

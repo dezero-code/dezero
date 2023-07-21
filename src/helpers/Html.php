@@ -159,7 +159,7 @@ class Html extends \yii\helpers\Html
      *    <label for="user-roles-admin">No</label>
      *  ```
      */
-    public function checkboxInline($name, $checked = false, $options = [])
+    public static function checkboxInline($name, $checked = false, $options = [])
     {
         // 'checked' option has priority over $checked argument
         if ( !isset($options['checked']) )
@@ -198,7 +198,7 @@ class Html extends \yii\helpers\Html
      *    <label for="is_force_change_password-0">No</label>
      *  ```
      */
-    public function radioInline($name, $checked = false, $options = [])
+    public static function radioInline($name, $checked = false, $options = [])
     {
         // 'checked' option has priority over $checked argument
         if ( !isset($options['checked']) )

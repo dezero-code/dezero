@@ -25,7 +25,7 @@ class m230322_160210_user_table extends Migration
             'username' => $this->string(255)->notNull(),
             'email' => $this->string(255)->notNull(),
             'password' => $this->string(60)->notNull(),
-            'auth_token' => $this->sring(32)->notNull(),
+            'auth_token' => $this->string(32)->notNull(),
             'first_name' => $this->string(255),
             'last_name' => $this->string(255),
             'status_type' => $this->enum('status_type', ['active', 'disabled', 'banned', 'pending', 'deleted'])->notNull()->defaultValue('active'),
