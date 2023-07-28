@@ -30,7 +30,7 @@ $this->title = $user_model->title();
       // Disabled user?
       if ( $user_model->isDisabled() ) :
     ?>
-      <span class="badge badge-danger ml-5 mr-5" data-toggle="tooltip" data-placement="top" data-original-title="<?php if ( !empty($user_model->disable_date) ) : ?>From <?= DateHelper::toFormat($user_model->disable_date); ?><?php else : ?><?= Yii::t('backend', 'Inactive'); ?><?php endif; ?>"><?= Yii::t('backend', 'DISABLE'); ?></span>
+      <span class="badge badge-danger ml-5 mr-5" data-toggle="tooltip" data-placement="top" data-original-title="<?php if ( !empty($user_model->disable_date) ) : ?>From <?= DateHelper::toFormat($user_model->disable_date); ?><?php else : ?><?= Yii::t('backend', 'Inactive'); ?><?php endif; ?>"><?= Yii::t('backend', 'DISABLED'); ?></span>
     <?php
       // Banned user?
       elseif ( $user_model->isBanned() ) :

@@ -2,6 +2,11 @@
 
 All notable changes to `Dezero Framework` will be documented in this file
 
+## 0.1.14 - 2023-07-28
+
+- Category module - Created new module with first version of Category model
+- Template module builder - Created a new template module to work as scaffolding of future modules
+
 ## 0.1.13 - 2023-07-10
 
 - Gridview - Override yii.confirm() Javascript method and use Bootbox library for it

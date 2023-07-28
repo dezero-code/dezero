@@ -18,6 +18,7 @@ use dezero\helpers\Transliteration;
 use Yii;
 use yii\base\Behavior;
 use yii\base\InvalidConfigException;
+use yii\behaviors\AttributeBehavior;
 use yii\db\BaseActiveRecord;
 use yii\db\Expression;
 use yii\web\UploadedFile;

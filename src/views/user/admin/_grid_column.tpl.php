@@ -22,29 +22,29 @@
     */
     case 'user_id':
   ?>
-    <?= Html::a($model->id, ['update', 'user_id' => $model->id]); ?>
+    <?= Html::a($model->id, ['update', 'user_id' => $model->user_id]); ?>
     <?php
       // Superadmin?
       if ( $model->is_superadmin == 1 ) :
     ?>
-      <span class="badge badge-primary ml-5 mr-5" data-toggle="tooltip" data-placement="top" data-original-title="Admin - Full Access">ADMIN</span>
+      <span class="badge badge-primary ml-5 mr-5" data-toggle="tooltip" data-placement="top" data-original-title="<?= Yii::t('backend', 'Admin - Full Access'); ?>"><?= Yii::t('backend', 'ADMIN'); ?></span>
     <?php endif; ?>
     <?php
       // Disabled user?
       if ( $model->isDisabled() ) :
     ?>
-      <span class="badge badge-danger ml-5 mr-5" data-toggle="tooltip" data-placement="top" data-original-title="<?php if ( !empty($model->disable_date) ) : ?>From <?= $model->disable_date; ?><?php else : ?>Inactivo<?php endif; ?>">DISABLE</span>
+      <span class="badge badge-danger ml-5 mr-5" data-toggle="tooltip" data-placement="top" data-original-title="<?php if ( !empty($model->disable_date) ) : ?>From <?= $model->disable_date; ?><?php else : ?><?= Yii::t('backend', 'Inactive'); ?><?php endif; ?>"><?= Yii::t('backend', 'DISABLE'); ?></span>
     <?php
       // Banned user?
       elseif ( $model->isBanned() ) :
     ?>
-      <span class="badge badge-danger ml-5 mr-5" data-toggle="tooltip" data-placement="top" data-original-title="Baneado">BANNED</span>
+      <span class="badge badge-danger ml-5 mr-5" data-toggle="tooltip" data-placement="top" data-original-title="<?= Yii::t('backend', 'Access is not allowed'); ?>"><?= Yii::t('backend', 'BANNED'); ?></span>
     <?php endif; ?>
     <?php
       // User must change password?
       if ( $model->is_force_change_password == 1 ) :
     ?>
-      <span class="badge badge-warning ml-5 mr-5" data-toggle="tooltip" data-placement="top" data-original-title="User must change password at next logon">FORCE PASSWORD CHANGE</span>
+      <span class="badge badge-warning ml-5 mr-5" data-toggle="tooltip" data-placement="top" data-original-title="<?= Yii::t('backend', 'User must change password at next logon'); ?>"><?= Yii::t('backend', 'FORCE PASSWORD CHANGE'); ?></span>
     <?php endif; ?>
   <?php break; ?>
   <?php

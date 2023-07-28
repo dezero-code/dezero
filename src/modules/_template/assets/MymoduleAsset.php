@@ -1,16 +1,16 @@
 <?php
 /**
- * Asset class for User module
+ * Asset class for Mymodule module
  */
 
-namespace dezero\modules\user\assets;
+namespace dezero\modules\mymodule\assets;
 
 use yii\web\AssetBundle;
 
 /**
  * Main backend application asset bundle
  */
-class UserAsset extends AssetBundle
+class MymoduleAsset extends AssetBundle
 {
     public $sourcePath = '@core/assets/js';
 
@@ -18,8 +18,7 @@ class UserAsset extends AssetBundle
     ];
 
     public $js = [
-        'modules/user.js',
-        'modules/userStatus.js',
+        'modules/mymodule.js'
     ];
 
 }

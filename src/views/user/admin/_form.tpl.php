@@ -57,7 +57,7 @@
           <div class="form-group row">
             <?= Html::activeLabel($user_model, 'user_id', ['class' => 'col-sm-3 form-control-label']); ?>
             <div class="col-sm-9">
-              <p class="form-control-static"><?= $user_model->id; ?></p>
+              <p class="form-control-static"><?= $user_model->user_id; ?></p>
             </div>
           </div>
         <?php endif; ?>
@@ -380,7 +380,7 @@
     <div class="col-lg-12 form-actions buttons">
       <?=
         Html::submitButton(
-          $current_action === 'create' ? Yii::t('backend', 'Create User') : Yii::t('backend', 'Save'),
+          $current_action === 'create' ? Yii::t('backend', 'Create') : Yii::t('backend', 'Save'),
           [
             'class' => 'btn btn-primary'
           ]
@@ -397,7 +397,7 @@
           if ( $user_model->isEnabled() )
           {
             echo Html::a(Yii::t('backend', 'Disable'), ['#'], [
-              'id'                => 'disable-organizer-user-btn',
+              'id'                => 'disable-user-btn',
               'class'             => 'btn btn-danger right',
               'data-dialog'       => '<h3>Are you sure you want to <span class=\'text-danger\'>DISABLE</span> this user?</h3><p><strong>WARNING:</strong> User won\'t be able to access to the platform!</p>',
               'data-form-submit'  => $form_id,

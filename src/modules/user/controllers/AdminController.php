@@ -63,11 +63,11 @@ class AdminController extends Controller
         if ( $user_model->load(Yii::$app->request->post()) )
         {
             // Create user via UserCreateService class
-            $user_create_service = Yii::createObject(UserCreateService::class, [$user_model, $vec_assigned_roles]);
+            $user_create_service = Dz::makeObject(UserCreateService::class, [$user_model, $vec_assigned_roles]);
             if ( $user_create_service->run() )
             {
                 Yii::$app->session->setFlash('success', Yii::t('user', 'User created succesfully'));
-                return $this->redirect(['/user/admin/update', 'user_id' => $user_model->id]);
+                return $this->redirect(['/user/admin/update', 'user_id' => $user_model->user_id]);
             }
             else
             {
@@ -122,12 +122,12 @@ class AdminController extends Controller
             $status_change = Yii::$app->request->post('StatusChange', null);
 
             // Update user via UserUpdateService class
-            $user_update_service = Yii::createObject(UserUpdateService::class, [$user_model, $vec_assigned_roles, $is_password_changed, $status_change]);
+            $user_update_service = Dz::makeObject(UserUpdateService::class, [$user_model, $vec_assigned_roles, $is_password_changed, $status_change]);
             if ( $user_update_service->run() )
             {
                 // Success message & redirect
                 Yii::$app->session->setFlash('success', Yii::t('user', 'User updated succesfully'));
-                return $this->redirect(['/user/admin/update', 'user_id' => $user_model->id]);
+                return $this->redirect(['/user/admin/update', 'user_id' => $user_model->user_id]);
             }
             else
             {
@@ -160,7 +160,7 @@ class AdminController extends Controller
         $user_model = Dz::loadModel(User::class, $user_id);
 
         // Delete user via UserDeleteService class
-        $user_delete_service = Yii::createObject(UserDeleteService::class, [$user_model]);
+        $user_delete_service = Dz::makeObject(UserDeleteService::class, [$user_model]);
         if ( $user_delete_service->run() )
         {
             Yii::$app->session->setFlash('success', Yii::t('user', 'User has been deleted.'));

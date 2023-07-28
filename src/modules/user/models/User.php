@@ -201,12 +201,13 @@ class User extends BaseUser implements IdentityInterface
     |--------------------------------------------------------------------------
     */
 
+
     /**
      * @return ActiveQueryInterface The relational query object.
      */
-    public function getCreatedUser() : ActiveQueryInterface
+    public function getLanguage() : ActiveQueryInterface
     {
-        return $this->hasOne(User::class, ['user_id' => 'created_user_id']);
+        return $this->hasOne(Language::class, ['language_id' => 'language_id']);
     }
 
 
@@ -222,9 +223,9 @@ class User extends BaseUser implements IdentityInterface
     /**
      * @return ActiveQueryInterface The relational query object.
      */
-    public function getLanguage() : ActiveQueryInterface
+    public function getCreatedUser() : ActiveQueryInterface
     {
-        return $this->hasOne(Language::class, ['language_id' => 'language_id']);
+        return $this->hasOne(User::class, ['user_id' => 'created_user_id']);
     }
 
 
@@ -240,28 +241,11 @@ class User extends BaseUser implements IdentityInterface
     /**
      * @return ActiveQueryInterface The relational query object.
      */
-    public function getLanguages() : ActiveQueryInterface
-    {
-        return $this->hasMany(Language::class, ['created_user_id' => 'user_id']);
-    }
-
-
-    /**
-     * @return ActiveQueryInterface The relational query object.
-     */
     public function getUserSessions() : ActiveQueryInterface
     {
         return $this->hasMany(UserSession::class, ['user_id' => 'user_id']);
     }
 
-
-    /**
-     * @return ActiveQueryInterface The relational query object.
-     */
-    public function getUsers() : ActiveQueryInterface
-    {
-        return $this->hasMany(User::class, ['created_user_id' => 'user_id']);
-    }
 
 
    /*

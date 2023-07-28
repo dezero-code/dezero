@@ -75,29 +75,44 @@ abstract class ActiveRecord extends \dezero\db\ActiveRecord implements TitleInte
 
 
     /**
+     * {@inheritdoc}
+     */
+    public function title() : string
+    {
+        return $this->getSourceName();
+    }
+
+
+    /**
+     * Generate and return source_name attribute value
+     */
+    public function getSourceName() : mixed
+    {
+        $vec_keys = static::primaryKey();
+        if ( count($vec_keys) > 1 )
+        {
+            $vec_values = [];
+            foreach ( $vec_keys as $attribute_name )
+            {
+                $vec_values = $this->getAttribute($attribute_name);
+            }
+            return implode("-", $vec_values);
+        }
+
+        return $this->getAttribute($vec_keys[0]);
+    }
+
+
+    /**
      * Makes sure that the Entity model exists
      */
-    private function ensureEntityExists()
+    private function ensureEntityExists() : void
     {
         if ( ! $this->entity )
         {
             // First of all, get primary key data
-            $source_id = null;
-            $vec_keys = static::primaryKey();
-            if ( count($vec_keys) > 1 )
-            {
-                $vec_values = [];
-                foreach ( $vec_keys as $attribute_name )
-                {
-                    $vec_values = $this->getAttribute($attribute_name);
-                }
-                $source_name = implode("-", $vec_values);
-            }
-            else
-            {
-                $source_name = $this->getAttribute($vec_keys[0]);
-                $source_id = is_int($source_name) ? $source_name : null;
-            }
+            $source_name = $this->getSourceName();
+            $source_id = is_int($source_name) ? $source_name : null;
 
             // Now, create the Entity model
             $entity_model = Dz::makeObject(Entity::class);
@@ -120,7 +135,7 @@ abstract class ActiveRecord extends \dezero\db\ActiveRecord implements TitleInte
     /**
      * Return module name from current model
      */
-    private function getModuleName()
+    private function getModuleName() : string
     {
         $class_name = self::className();
         $class_name = str_replace('dezero\\modules\\', '', $class_name);

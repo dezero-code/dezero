@@ -272,6 +272,7 @@ class Dz extends Yii
         return [
             'asset'     => '\dezero\modules\asset\Module',
             'auth'      => '\dezero\modules\auth\Module',
+            'category'  => '\dezero\modules\category\Module',
             'entity'    => '\dezero\modules\entity\Module',
             'frontend'  => '\dezero\modules\frontend\Module',
             'settings'  => '\dezero\modules\settings\Module',
