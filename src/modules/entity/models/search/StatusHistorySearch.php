@@ -18,8 +18,7 @@ use yii\data\ActiveDataProvider;
  *
  * @see \dezero\modules\entity\models\StatusHistory
  */
-class StatusHistorySearch extends StatusHistory
- implements SearchInterface
+class StatusHistorySearch extends StatusHistory implements SearchInterface
 {
     /**
      * {@inheritdoc}

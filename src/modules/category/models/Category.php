@@ -217,6 +217,6 @@ class Category extends BaseCategory
      */
     public function title() : string
     {
-        return $this->category_type;
+        return $this->name;
     }
 }

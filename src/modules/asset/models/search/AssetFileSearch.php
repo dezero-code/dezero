@@ -18,8 +18,7 @@ use yii\data\ActiveDataProvider;
  *
  * @see \dezero\modules\asset\models\AssetFile
  */
-class AssetFileSearch extends AssetFile
- implements SearchInterface
+class AssetFileSearch extends AssetFile implements SearchInterface
 {
     /**
      * {@inheritdoc}

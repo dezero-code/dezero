@@ -18,8 +18,7 @@ use yii\data\ActiveDataProvider;
  *
  * @see \dezero\modules\category\models\Category
  */
-class CategorySearch extends Category
- implements SearchInterface
+class CategorySearch extends Category implements SearchInterface
 {
     /**
      * {@inheritdoc}

@@ -15,6 +15,7 @@
   "prefer-stable": true,
   "require": {
     "php": ">=7.4",
+    "kartik-v/yii2-widget-fileinput": "dev-master",
     "kint-php/kint": "~3.3",
     "mikehaertl/php-shellcommand": "^1.6.0",
     "spatie/image": "^2.0.0",

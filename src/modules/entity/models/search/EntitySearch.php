@@ -18,8 +18,7 @@ use yii\data\ActiveDataProvider;
  *
  * @see \dezero\modules\entity\models\Entity
  */
-class EntitySearch extends Entity
- implements SearchInterface
+class EntitySearch extends Entity implements SearchInterface
 {
     /**
      * {@inheritdoc}

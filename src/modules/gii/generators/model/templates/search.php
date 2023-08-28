@@ -41,7 +41,7 @@ use yii\data\ActiveDataProvider;
  *
  * @see <?= $modelFullClassName . "\n" ?>
  */
-class <?= $className ?> extends <?= $modelClassName . "\n" ?> implements SearchInterface
+class <?= $className ?> extends <?= $modelClassName; ?> implements SearchInterface
 {
     /**
      * {@inheritdoc}
