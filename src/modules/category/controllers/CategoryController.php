@@ -54,6 +54,7 @@ class CategoryController extends Controller
         $this->requirePermission('category_manage');
 
         $category_model = Dz::makeObject(Category::class);
+        $category_model->setScenario('insert');
 
         // Validate model via AJAX
         $this->validateAjaxRequest($category_model);
@@ -90,6 +91,7 @@ class CategoryController extends Controller
 
         // Load Category model
         $category_model = Dz::loadModel(Category::class, $category_id);
+        $category_model->setScenario('update');
 
         // Validate model via AJAX
         $this->validateAjaxRequest($category_model);

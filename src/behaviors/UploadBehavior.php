@@ -176,6 +176,7 @@ class UploadBehavior extends AttributeBehavior
     {
         if ( $this->file instanceof UploadedFile )
         {
+            dd($this->file);
             /*
             $path = $this->getUploadPath($this->attribute);
             if ( is_string($path) && File::ensureDirectory(dirname($path)) )
@@ -204,6 +205,20 @@ class UploadBehavior extends AttributeBehavior
         {
             $this->delete($attribute);
         }
+    }
+
+
+    /**
+     * Deletes old file
+     */
+    private function delete(string $attribute, bool $old = false) : void
+    {
+        /*
+        $path = $this->getUploadPath($attribute, $old);
+        if (is_file($path)) {
+            unlink($path);
+        }
+        */
     }
 
 

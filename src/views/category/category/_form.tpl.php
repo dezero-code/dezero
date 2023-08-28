@@ -13,6 +13,7 @@
   use dezero\helpers\Html;
   use dezero\helpers\Url;
   use dezero\widgets\ActiveForm;
+  use dezero\widgets\KrajeeFileInput;
 
   // Controller and action names in lowercase
   $current_action = \Dz::currentAction(true);
@@ -93,6 +94,46 @@
               'rows' => 3
             ])
             ->hint(Yii::t('backend', 'Optional'));
+        ?>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="panel">
+  <header class="panel-heading">
+    <h3 class="panel-title"><?= Yii::t('category', 'Image'); ?></h3>
+  </header>
+  <div class="panel-body">
+    <div class="row">
+      <div class="col-lg-7">
+        <?=
+          $form->field(
+              $category_model,
+              'imageFile',
+              [
+                'columns' => [
+                  'wrapper' => 'col-sm-9',
+                  'label'   => 'col-sm-3',
+                ]
+              ]
+            )
+          ->label($category_model->getAttributeLabel('imageFile'))
+            ->widget(KrajeeFileInput::class, [
+              'options' => [
+                'accept' => 'image/*',
+                'multiple' => false,
+              ],
+              'pluginOptions' => [
+                // 'showPreview' => true,
+                'dropZoneEnabled' => false,
+                'showCaption' => true,
+                'showRemove' => true,
+                'showUpload' => false,
+                'showClose' => false,
+              ]
+            ]);
         ?>
       </div>
     </div>

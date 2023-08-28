@@ -9,7 +9,9 @@
 
 namespace dezero\modules\category\models;
 
+use dezero\behaviors\UploadBehavior;
 use dezero\helpers\ArrayHelper;
+use dezero\modules\asset\models\AssetFile;
 use dezero\modules\category\models\query\CategoryQuery;
 use dezero\modules\category\models\base\Category as BaseCategory;
 use yii\db\ActiveQueryInterface;
@@ -54,6 +56,12 @@ use Yii;
 class Category extends BaseCategory
 {
     /**
+     * @var UploadedFile
+     */
+    public $imageFile;
+
+
+    /**
      * {@inheritdoc}
      */
     public function rules() : array
@@ -80,6 +88,7 @@ class Category extends BaseCategory
             parent::rules(),
             [
                 // Custom validation rules
+                'image' => [['imageFile'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg', 'on' => ['insert', 'update']],
             ]
         );
     }
@@ -87,17 +96,23 @@ class Category extends BaseCategory
 
     /**
      * {@inheritdoc}
-     *
+     */
     public function behaviors()
     {
         return ArrayHelper::merge(
             parent::behaviors(),
             [
-                // custom behaviors
+                [
+                    // custom behaviors
+                    'class' => UploadBehavior::class,
+                    'attribute' => 'imageFile',
+                    'scenarios' => ['insert', 'update'],
+                    'path' => '@webroot/files/uploads',
+                    // 'url' => '@web/upload/docs/{category.id}',
+                ]
             ]
         );
     }
-    */
 
 
     /**
@@ -123,6 +138,8 @@ class Category extends BaseCategory
             'updated_date' => Yii::t('category', 'Updated Date'),
             'updated_user_id' => Yii::t('category', 'Updated User ID'),
             'entity_uuid' => Yii::t('category', 'Entity Uuid'),
+
+            'imageFile' => Yii::t('category', 'Image'),
         ];
     }
 
