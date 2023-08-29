@@ -64,10 +64,10 @@ class CategoryUpdateService implements ServiceInterface
         if ( $this->asset_image_model->uploadFile($this->category_model, 'imageFile', '@www/files/category') )
         {
             $this->image_file_id = $this->asset_image_model->file_id;
-            // dd("uploaded into file_id #". $this->image_file_id);
+            dd("uploaded into file_id #". $this->image_file_id);
         }
 
-        // dd("not uploaded");
+        dd("not uploaded");
     }
 
 

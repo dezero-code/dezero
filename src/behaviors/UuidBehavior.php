@@ -44,7 +44,7 @@ class UuidBehavior extends AttributeBehavior
      */
     protected function getValue($event)
     {
-        if ( $this->owner->{$this->uuidAttribute} === null )
+        if ( $this->owner->{$this->uuidAttribute} === null || $this->owner->{$this->uuidAttribute} === '0' )
         {
             return $this->generateUUID();
         }

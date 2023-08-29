@@ -77,8 +77,7 @@ class EntityFile extends BaseEntityFile
         return ArrayHelper::merge(
             parent::behaviors(),
             [
-                TimestampBehavior::class,
-                UuidBehavior::class
+                TimestampBehavior::class
             ]
         );
     }
