@@ -16,6 +16,7 @@ use dezero\helpers\StringHelper;
 use dezero\modules\asset\models\AssetFile;
 use dezero\modules\entity\models\EntityFile;
 use dezero\traits\ErrorTrait;
+use yii\helpers\Json;
 use yii\web\UploadedFile;
 use Yii;
 
@@ -38,17 +39,18 @@ class UploadFileService implements ServiceInterface
     /**
      * @var string
      */
-    private $destinationPath;
+    private $savedPath;
 
 
-     /**
+    /**
      * Constructor
      */
-    public function __construct(EntityActiveRecord $reference_model, AssetFile $asset_file_model, EntityFile $entity_file_model)
+    public function __construct(EntityActiveRecord $reference_model, AssetFile $asset_file_model, EntityFile $entity_file_model, ?string $destination_path)
     {
         $this->asset_file_model = $asset_file_model;
         $this->reference_model = $reference_model;
         $this->entity_file_model = $entity_file_model;
+        $this->destination_path = $destination_path;
     }
 
 
@@ -110,9 +112,9 @@ class UploadFileService implements ServiceInterface
     private function saveUploadFile()
     {
         $temp_directory = Yii::$app->user->getTempDirectory();
-        $this->destinationPath = $temp_directory->filePath() . DIRECTORY_SEPARATOR;
+        $this->savedPath = $temp_directory->filePath() . DIRECTORY_SEPARATOR;
 
-        return $this->uploadedFile->saveAs($this->destinationPath . $this->uploadedFile->baseName . '.' . $this->uploadedFile->extension);
+        return $this->uploadedFile->saveAs($this->savedPath . $this->uploadedFile->baseName . '.' . $this->uploadedFile->extension);
     }
 
 
@@ -121,15 +123,22 @@ class UploadFileService implements ServiceInterface
      */
     private function saveAssetFile()
     {
-        $this->savedFile = File::load($this->destinationPath . $this->uploadedFile->baseName . '.' . $this->uploadedFile->extension);
+        $this->savedFile = File::load($this->savedPath . $this->uploadedFile->baseName . '.' . $this->uploadedFile->extension);
         $this->asset_file_model->setAttributes([
             'file_name'             => $this->savedFile->basename(),
-            'file_path'             => $this->destinationPath,
+            'file_path'             => $this->savedPath,
             'file_mime'             => $this->savedFile->mime(),
             'file_size'             => $this->savedFile->size(),
             'asset_type'            => $this->savedFile->isImage() ? AssetFile::ASSET_TYPE_IMAGE : AssetFile::ASSET_TYPE_DOCUMENT,
             'reference_entity_uuid' => ! $this->reference_model->getIsNewRecord() && $this->reference_model->hasAttribute('entity_uuid') ? $this->reference_model->getAttribute('entity_uuid') : null,
             'reference_entity_type' => $this->reference_model->getEntityType(),
+        ]);
+
+        // More attributes
+        $this->asset_file_model->original_file_name = $this->asset_file_model->file_name;
+        $this->asset_file_model->file_options = Json::encode([
+            'is_temp'           => 1,
+            'destination_path'  => $this->destination_path
         ]);
 
         // Validate model's attributes

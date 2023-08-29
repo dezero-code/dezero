@@ -53,7 +53,7 @@ class File extends \yii\base\BaseObject
     /**
      * File constructor
      */
-    public function __construct(string $file_path)
+    public function __construct(string $file_path, array $vec_config = [])
     {
         $this->file_path = $file_path;
         $this->real_path = FileHelper::realPath($file_path);
@@ -66,6 +66,9 @@ class File extends \yii\base\BaseObject
         {
             $this->info();
         }
+
+        // BaseObject::construct() must be called
+        parent::__construct($vec_config);
     }
 
 

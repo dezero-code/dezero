@@ -239,12 +239,17 @@ class AssetFile extends BaseAssetFile
     |--------------------------------------------------------------------------
     */
 
-    public function uploadFile(EntityActiveRecord $model, string $relation) : bool
+    /**
+     * Upload a file
+     */
+    public function uploadFile(EntityActiveRecord $model, string $attribute, ?string $destination_path = null) : bool
     {
+        // EntityFile information
         $entity_file_model = Dz::makeObject(EntityFile::class);
-        $entity_file_model->relation_type = $relation;
+        $entity_file_model->relation_type = $attribute;
 
-        $upload_file_service = Dz::makeObject(UploadFileService::class, [$model, $this, $entity_file_model]);
+        // Upload file via service
+        $upload_file_service = Dz::makeObject(UploadFileService::class, [$model, $this, $entity_file_model, $destination_path]);
         return $upload_file_service->run();
     }
 
