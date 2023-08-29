@@ -10,9 +10,13 @@
 namespace dezero\modules\asset\models;
 
 use dezero\base\File;
+use dezero\entity\ActiveRecord as EntityActiveRecord;
 use dezero\helpers\ArrayHelper;
 use dezero\modules\asset\models\query\AssetFileQuery;
 use dezero\modules\asset\models\base\AssetFile as BaseAssetFile;
+use dezero\modules\asset\services\UploadFileService;
+use dezero\modules\entity\models\EntityFile;
+use Dz;
 use user\models\User;
 use yii\db\ActiveQueryInterface;
 use Yii;
@@ -53,6 +57,12 @@ class AssetFile extends BaseAssetFile
      * @var \dezero\base\File
      */
     public $file;
+
+
+    /**
+     * @var \dezero\base\File
+     */
+    private $uploadedFile;
 
 
     /**
@@ -203,7 +213,7 @@ class AssetFile extends BaseAssetFile
     /**
      * Load File class object
      */
-    public function loadFile()
+    public function loadFile() : bool
     {
         if ( $this->file === null )
         {
@@ -217,9 +227,25 @@ class AssetFile extends BaseAssetFile
     /**
      * Return relative path
      */
-    public function getRelativePath()
+    public function getRelativePath() : string
     {
         return $this->file_path . $this->file_name;
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | UPLOAD METHODS
+    |--------------------------------------------------------------------------
+    */
+
+    public function uploadFile(EntityActiveRecord $model, string $relation) : bool
+    {
+        $entity_file_model = Dz::makeObject(EntityFile::class);
+        $entity_file_model->relation_type = $relation;
+
+        $upload_file_service = Dz::makeObject(UploadFileService::class, [$model, $this, $entity_file_model]);
+        return $upload_file_service->run();
     }
 
 

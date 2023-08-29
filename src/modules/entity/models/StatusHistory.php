@@ -10,6 +10,7 @@
 namespace dezero\modules\entity\models;
 
 use dezero\behaviors\TimestampBehavior;
+use dezero\behaviors\UuidBehavior;
 use dezero\helpers\ArrayHelper;
 use dezero\modules\entity\models\query\StatusHistoryQuery;
 use dezero\modules\entity\models\base\StatusHistory as BaseStatusHistory;
@@ -74,7 +75,8 @@ class StatusHistory extends BaseStatusHistory
         return ArrayHelper::merge(
             parent::behaviors(),
             [
-                TimestampBehavior::class
+                TimestampBehavior::class,
+                UuidBehavior::class
             ]
         );
     }

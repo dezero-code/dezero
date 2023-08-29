@@ -138,6 +138,14 @@ class File extends \yii\base\BaseObject
         return file_exists($this->real_path);
     }
 
+    /**
+     * Return file path for the current filesystem object
+     */
+    public function filePath() : ?string
+    {
+        return $this->file_path;
+    }
+
 
     /**
      * Return real path for the current filesystem object

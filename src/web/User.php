@@ -7,6 +7,7 @@
 
 namespace dezero\web;
 
+use dezero\base\File;
 use dezero\modules\auth\rbac\AuthTrait;
 use yii\web\IdentityInterface;
 use yii\web\ForbiddenHttpException;
@@ -61,5 +62,14 @@ class User extends \yii\web\User
         }
 
         return Yii::$app->getResponse()->redirect($this->getReturnUrl($default_url));
+    }
+
+
+    /**
+     * Return TEMP directory for this user
+     */
+    public function getTempDirectory() : File
+    {
+        return File::ensureDirectory('@tmp'. DIRECTORY_SEPARATOR . Yii::$app->session->id);
     }
 }

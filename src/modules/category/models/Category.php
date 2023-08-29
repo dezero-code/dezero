@@ -11,7 +11,7 @@ namespace dezero\modules\category\models;
 
 use dezero\behaviors\UploadBehavior;
 use dezero\helpers\ArrayHelper;
-use dezero\modules\asset\models\AssetFile;
+use dezero\modules\asset\models\AssetImage;
 use dezero\modules\category\models\query\CategoryQuery;
 use dezero\modules\category\models\base\Category as BaseCategory;
 use yii\db\ActiveQueryInterface;
@@ -48,19 +48,13 @@ use Yii;
  * @property Category $categoryTranslated
  * @property UserUser $createdUser
  * @property UserUser $disabledUser
- * @property AssetFile $imageFile
+ * @property AssetImage $imageFile
  * @property Language $language
  * @property UserUser $updatedUser
  * @property Category[] $categories
  */
 class Category extends BaseCategory
 {
-    /**
-     * @var UploadedFile
-     */
-    public $imageFile;
-
-
     /**
      * {@inheritdoc}
      */
@@ -88,7 +82,7 @@ class Category extends BaseCategory
             parent::rules(),
             [
                 // Custom validation rules
-                'image' => [['imageFile'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg', 'on' => ['insert', 'update']],
+                // 'image' => [['imageFile'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg', 'on' => ['insert', 'update']],
             ]
         );
     }
@@ -97,6 +91,7 @@ class Category extends BaseCategory
     /**
      * {@inheritdoc}
      */
+    /*
     public function behaviors()
     {
         return ArrayHelper::merge(
@@ -113,6 +108,7 @@ class Category extends BaseCategory
             ]
         );
     }
+    */
 
 
     /**
@@ -191,7 +187,7 @@ class Category extends BaseCategory
      */
     public function getImageFile() : ActiveQueryInterface
     {
-        return $this->hasOne(AssetFile::class, ['file_id' => 'image_file_id']);
+        return $this->hasOne(AssetImage::class, ['file_id' => 'image_file_id']);
     }
 
 

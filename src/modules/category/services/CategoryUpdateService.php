@@ -11,6 +11,7 @@ use Dz;
 use dezero\contracts\ServiceInterface;
 use dezero\helpers\Log;
 use dezero\helpers\StringHelper;
+use dezero\modules\asset\models\AssetImage;
 use dezero\modules\category\events\CategoryEvent;
 use dezero\modules\category\models\Category;
 use dezero\traits\ErrorTrait;
@@ -26,9 +27,10 @@ class CategoryUpdateService implements ServiceInterface
     /**
      * Constructor
      */
-    public function __construct(Category $category_model, ?string $status_change)
+    public function __construct(Category $category_model, AssetImage $asset_image_model, ?string $status_change)
     {
         $this->category_model = $category_model;
+        $this->asset_image_model = $asset_image_model;
         $this->status_change = !empty($status_change) ? $status_change : null;
     }
 
@@ -38,6 +40,9 @@ class CategoryUpdateService implements ServiceInterface
      */
     public function run() : bool
     {
+        // Upload image
+        $this->uploadImage();
+
         // Save current Category model
         if ( ! $this->saveCategory() )
         {
@@ -48,6 +53,21 @@ class CategoryUpdateService implements ServiceInterface
         $this->applyStatusChange();
 
         return true;
+    }
+
+
+    /**
+     * Upload image
+     */
+    private function uploadImage() : bool
+    {
+        if ( $this->asset_image_model->uploadFile($this->category_model, 'imageFile') )
+        {
+            $this->image_file_id = $this->asset_image_model->file_id;
+            dd("uploaded into file_id #". $this->image_file_id);
+        }
+
+        dd("not uploaded");
     }
 
 

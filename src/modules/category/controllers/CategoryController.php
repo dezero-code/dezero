@@ -8,6 +8,7 @@
 namespace dezero\modules\category\controllers;
 
 use dezero\helpers\AuthHelper;
+use dezero\modules\asset\models\AssetImage;
 use dezero\modules\category\models\Category;
 use dezero\modules\category\models\search\CategorySearch;
 use dezero\modules\category\services\CategoryCreateService;
@@ -93,6 +94,13 @@ class CategoryController extends Controller
         $category_model = Dz::loadModel(Category::class, $category_id);
         $category_model->setScenario('update');
 
+        // AssetFile model
+        $asset_image_model = $category_model->imageFile;
+        if ( ! $asset_image_model )
+        {
+            $asset_image_model = Dz::makeObject(AssetImage::class);
+        }
+
         // Validate model via AJAX
         $this->validateAjaxRequest($category_model);
 
@@ -103,7 +111,7 @@ class CategoryController extends Controller
             $status_change = Yii::$app->request->post('StatusChange', null);
 
             // Update category via CategoryUpdateService class
-            $category_update_service = Dz::makeObject(CategoryUpdateService::class, [$category_model, $status_change]);
+            $category_update_service = Dz::makeObject(CategoryUpdateService::class, [$category_model, $asset_image_model, $status_change]);
             if ( $category_update_service->run() )
             {
                 // Success message & redirect
