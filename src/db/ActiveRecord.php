@@ -26,4 +26,15 @@ class ActiveRecord extends \yii\db\ActiveRecord
         // Load default values by default
         $this->loadDefaultValues();
     }
+
+
+    /**
+     * Saves a selected list of attributes without validation
+     *
+     * Alias from BaseActiveRecord::updateAttributes()
+     */
+    public function saveAttributes(array $vec_attributes)
+    {
+        return $this->updateAttributes($vec_attributes);
+    }
 }

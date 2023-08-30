@@ -16,6 +16,7 @@ use dezero\helpers\Url;
 use dezero\modules\asset\models\query\AssetFileQuery;
 use dezero\modules\asset\models\base\AssetFile as BaseAssetFile;
 use dezero\modules\asset\services\UploadFileService;
+use dezero\modules\asset\services\UploadFileTempService;
 use dezero\modules\entity\models\EntityFile;
 use Dz;
 use user\models\User;
@@ -228,12 +229,51 @@ class AssetFile extends BaseAssetFile
     }
 
 
+/*
+    |--------------------------------------------------------------------------
+    | EVENTs
+    |--------------------------------------------------------------------------
+    */
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function afterValidate()
+    {
+        // Image?
+        if ( preg_match("/^image\//", $this->file_mime) )
+        {
+            $this->asset_type = self::ASSET_TYPE_IMAGE;
+        }
+
+        // Video?
+        if ( preg_match("/^video\//", $this->file_mime) )
+        {
+            $this->asset_type = self::ASSET_TYPE_VIDEO;
+        }
+
+        return parent::afterValidate();
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function delete()
+    {
+        // Delete file
+        $this->deleteFile();
+
+        return parent::delete();
+    }
+
+
     /*
     |--------------------------------------------------------------------------
     | FILE METHODS
     |--------------------------------------------------------------------------
     */
-
 
     /**
      * Load File class object
@@ -258,6 +298,65 @@ class AssetFile extends BaseAssetFile
     }
 
 
+
+    /**
+     * Check if current file is image
+     */
+    public function isImage() : bool
+    {
+        if ( $this->loadFile() )
+        {
+            return $this->file->isImage();
+        }
+
+        return false;
+    }
+
+
+    /**
+     * Check if current file is saved on a TEMP directory
+     */
+    public function isTemp() : bool
+    {
+        return preg_match("/^\@tmp|^\@privateTmp/", $this->file_path);
+    }
+
+
+
+    /**
+     * Move a file to a new destination
+     */
+    public function move(string $destination_path) : bool
+    {
+        // Check if file exists and if destination path is different from current path
+        if ( $this->loadFile() && $this->file_path !== $destination_path && $this->file->move($destination_path . $this->file_name) )
+        {
+            $this->file_path = $destination_path;
+            $this->saveAttributes(['file_path' => $this->file_path]);
+
+            return true;
+        }
+
+        return false;
+    }
+
+
+    /**
+     * Delete file from filesystem
+     */
+    public function deleteFile() : bool
+    {
+        if ( $this->loadFile() )
+        {
+            return $this->file->delete();
+        }
+
+        return false;
+    }
+
+
+
+
     /*
     |--------------------------------------------------------------------------
     | UPLOAD METHODS
@@ -267,7 +366,7 @@ class AssetFile extends BaseAssetFile
     /**
      * Upload a file
      */
-    public function uploadFile(EntityActiveRecord $model, string $file_attribute, ?string $destination_path = null, ?string $saved_attribute = null, bool $is_multiple = false) : bool
+    public function uploadFile(EntityActiveRecord $model, string $file_attribute, ?string $destination_path = null, bool $is_multiple = false) : bool
     {
         // EntityFile information
         $entity_file_model = null;
@@ -282,7 +381,7 @@ class AssetFile extends BaseAssetFile
         $entity_file_model->relation_type = $file_attribute;
 
         // Upload file via UploadFileService
-        $upload_file_service = Dz::makeObject(UploadFileService::class, [$model, $this, $entity_file_model, $destination_path]);
+        $upload_file_service = Dz::makeObject(UploadFileService::class, [$model, $file_attribute, $this, $entity_file_model, $destination_path]);
         if ( ! $upload_file_service->run() )
         {
             // Upload file has been deleted?
@@ -299,9 +398,31 @@ class AssetFile extends BaseAssetFile
 
 
     /**
+     * Upload a file into a TEMP directory
+     */
+    public function uploadTempFile(EntityActiveRecord $model, string $file_attribute, bool $is_multiple = false) : bool
+    {
+        // Upload file via UploadFileTempService
+        $upload_file_temp_service = Dz::makeObject(UploadFileTempService::class, [$model, $file_attribute, $this]);
+        if ( ! $upload_file_temp_service->run() )
+        {
+            // Upload file has been deleted?
+            if ( $upload_file_temp_service->last_action === 'delete' )
+            {
+                $this->addUploadDeleted($file_attribute);
+            }
+
+            return false;
+        }
+
+        return true;
+    }
+
+
+    /**
      * Add a new upload deleted
      */
-    public function addUploadDeleted($attribute)
+    public function addUploadDeleted($attribute) : void
     {
         $this->vec_upload_deleted[$attribute] = $attribute;
     }
@@ -310,7 +431,7 @@ class AssetFile extends BaseAssetFile
     /**
      * Check if upload has been deleted
      */
-    public function isUploadDeleted($attribute)
+    public function isUploadDeleted($attribute) : bool
     {
         return !empty($this->vec_upload_deleted) && isset($this->vec_upload_deleted[$attribute]);
     }
@@ -319,30 +440,18 @@ class AssetFile extends BaseAssetFile
 
     /*
     |--------------------------------------------------------------------------
-    | GETTER METHODS
+    | TITLE METHODS
     |--------------------------------------------------------------------------
     */
-
-    /**
-     * Check if current file is image
-     */
-    public function isImage()
-    {
-        if ( $this->loadFile() )
-        {
-            return $this->file->isImage();
-        }
-
-        return false;
-    }
 
 
     /**
      * Return file URL
      */
-    public function url()
+    public function url() : string
     {
         $url = str_replace(Yii::getAlias('@webroot'), '', Yii::getAlias($this->getRelativePath()));
+
         return Url::to($url);
     }
 

@@ -7,6 +7,7 @@
 
 namespace dezero\web;
 
+use dezero\helpers\StringHelper;
 use Yii;
 
 
@@ -31,5 +32,20 @@ class Request extends \yii\web\Request
 
             $this->setBodyParams($vec_values);
         }
+    }
+
+
+    /**
+     * Return a specific POST parameter with a given model and attribute
+     */
+    public function postAttribute($model, $attribute)
+    {
+        $vec_post_data = $this->post(StringHelper::basename($model::className()));
+        if ( !empty($vec_post_data) && isset($vec_post_data[$attribute]) )
+        {
+            return $vec_post_data[$attribute];
+        }
+
+        return null;
     }
 }

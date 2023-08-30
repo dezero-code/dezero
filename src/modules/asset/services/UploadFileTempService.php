@@ -1,7 +1,7 @@
 <?php
 /*
 |--------------------------------------------------------------------------
-| Use case "Upload a file into TEMP directory"
+| Use case "Upload a file"
 |--------------------------------------------------------------------------
 */
 
@@ -19,7 +19,7 @@ use dezero\traits\ErrorTrait;
 use yii\web\UploadedFile;
 use Yii;
 
-class UploadFileService implements ServiceInterface
+class UploadFileTempService implements ServiceInterface
 {
     use ErrorTrait;
 
@@ -56,13 +56,11 @@ class UploadFileService implements ServiceInterface
     /**
      * Constructor
      */
-    public function __construct(EntityActiveRecord $reference_model, string $file_attribute, AssetFile $asset_file_model, EntityFile $entity_file_model, ?string $destination_path)
+    public function __construct(EntityActiveRecord $reference_model, string $file_attribute, AssetFile $asset_file_model)
     {
         $this->reference_model = $reference_model;
         $this->file_attribute = $file_attribute;
         $this->asset_file_model = $asset_file_model;
-        $this->entity_file_model = $entity_file_model;
-        $this->destination_path = $destination_path;
     }
 
 
@@ -74,8 +72,8 @@ class UploadFileService implements ServiceInterface
         // New uploaded file?
         if ( ! $this->isUploadFile() )
         {
-            // Update or deleted previous file?
-            $this->processPreviousFile();
+            // Delete previous file?
+            $this->deletePreviousFile();
 
             return false;
         }
@@ -91,19 +89,11 @@ class UploadFileService implements ServiceInterface
         // Save AssetFile model
         if ( ! $this->saveAssetFile() )
         {
-            $this->addError('AssetFile model could not be created for new uploaded file');
-
-            return false;
-        }
-
-
-        // Save EntityFile model
-        if ( ! $this->saveEntityFile() )
-        {
             $this->addError('AssetFile model could not be created for the new uploaded file');
 
             return false;
         }
+
 
         return true;
     }
@@ -122,28 +112,16 @@ class UploadFileService implements ServiceInterface
 
 
     /**
-     * Update or deleted previous file
+     * Check if we need to delete previous file
      */
-    private function processPreviousFile()
+    private function deletePreviousFile()
     {
         // Return file_attribute value from $_POST
         $file_attribute = Yii::$app->request->postAttribute($this->reference_model, $this->file_attribute);
-        if ( $file_attribute !== null )
+        if ( $file_attribute !== null && empty($file_attribute) )
         {
-            // Delete previous uploaded file
-            if ( empty($file_attribute) )
-            {
-                $this->last_action = 'delete';
-                $this->asset_file_model->delete();
-            }
-
-            // Move file from TEMP directory to final destination
-            else if  ( $this->asset_file_model->isTemp() )
-            {
-                $this->last_action = 'move';
-                $this->asset_file_model->move($this->destination_path);
-                $this->saveEntityFile();
-            }
+            $this->last_action = 'delete';
+            $this->asset_file_model->delete();
         }
     }
 
@@ -153,9 +131,9 @@ class UploadFileService implements ServiceInterface
      */
     private function saveUploadFile()
     {
-        $destination_directory = File::ensureDirectory($this->destination_path);
+        $destination_directory = Yii::$app->user->getTempDirectory();
         $this->savedPath = $destination_directory->filePath() . DIRECTORY_SEPARATOR;
-        $this->savedFilename = Transliteration::file($this->uploadedFile->baseName .'.'. $this->uploadedFile->extension);
+        $this->savedFilename = Transliteration::file($this->uploadedFile->baseName . '.' . $this->uploadedFile->extension);
 
         // Check if it already exists a file with same name
         $existing_file = File::load($this->savedPath . $this->savedFilename);
@@ -173,13 +151,6 @@ class UploadFileService implements ServiceInterface
      */
     private function saveAssetFile()
     {
-        // Replace a previous file?
-        $old_file = null;
-        if ( ! $this->asset_file_model->getIsNewRecord() && $this->asset_file_model->loadFile() )
-        {
-            $old_file = $this->asset_file_model->file;
-        }
-
         $this->savedFile = File::load($this->savedPath . $this->savedFilename);
         $this->asset_file_model->setAttributes([
             'file_name'             => Transliteration::file($this->savedFile->basename()),
@@ -187,7 +158,7 @@ class UploadFileService implements ServiceInterface
             'file_mime'             => $this->savedFile->mime(),
             'file_size'             => $this->savedFile->size(),
             'asset_type'            => $this->savedFile->isImage() ? AssetFile::ASSET_TYPE_IMAGE : AssetFile::ASSET_TYPE_DOCUMENT,
-            'reference_entity_uuid' => ! $this->reference_model->getIsNewRecord() && $this->reference_model->hasAttribute('entity_uuid') ? $this->reference_model->getAttribute('entity_uuid') : null,
+            'reference_entity_uuid' => null,
             'reference_entity_type' => $this->reference_model->getEntityType(),
         ]);
 
@@ -200,43 +171,8 @@ class UploadFileService implements ServiceInterface
             return false;
         }
 
-        // Remove replaced file?
-        if ( $old_file !== null )
-        {
-            $old_file->delete();
-        }
-
         // Save the model
         $this->asset_file_model->save(false);
-
-        return true;
-    }
-
-
-    /**
-     * Save EntityFile model
-     */
-    private function saveEntityFile()
-    {
-        $this->entity_file_model->setAttributes([
-            'file_id'       => $this->asset_file_model->file_id,
-            'entity_uuid'   => ! $this->reference_model->getIsNewRecord() && $this->reference_model->hasAttribute('entity_uuid') ? $this->reference_model->getAttribute('entity_uuid') : null,
-            'entity_type'   => $this->reference_model->getEntityType(),
-        ]);
-        $reference_source_id = $this->reference_model->getSourceName();
-        if ( is_numeric($reference_source_id) )
-        {
-            $this->entity_file_model->entity_source_id = $reference_source_id;
-        }
-
-        // Validate model's attributes
-        if ( ! $this->entity_file_model->validate() )
-        {
-            return false;
-        }
-
-        // Save the model
-        $this->entity_file_model->save(false);
 
         return true;
     }

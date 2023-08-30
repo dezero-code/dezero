@@ -221,9 +221,17 @@ class Category extends BaseCategory
 
     /*
     |--------------------------------------------------------------------------
-    | TITLE METHODS
+    | INFORMATION METHODS
     |--------------------------------------------------------------------------
     */
+
+    /**
+     * Return image directory path
+     */
+    public function imageDirectory()
+    {
+        return '@www/files/category/'. $this->category_id .'/';
+    }
 
     /**
      * Title used for this model

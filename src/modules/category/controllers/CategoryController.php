@@ -55,15 +55,16 @@ class CategoryController extends Controller
         $this->requirePermission('category_manage');
 
         $category_model = Dz::makeObject(Category::class);
+        $asset_image_model = Dz::makeObject(AssetImage::class);
 
         // Validate model via AJAX
-        $this->validateAjaxRequest($category_model);
+        // $this->validateAjaxRequest($category_model);
 
         // Form submitted
         if ( $category_model->load(Yii::$app->request->post()) )
         {
             // Create category via CategoryCreateService class
-            $category_create_service = Dz::makeObject(CategoryCreateService::class, [$category_model]);
+            $category_create_service = Dz::makeObject(CategoryCreateService::class, [$category_model, $asset_image_model]);
             if ( $category_create_service->run() )
             {
                 Yii::$app->session->setFlash('success', Yii::t('category', 'Category created succesfully'));

@@ -62,13 +62,13 @@ class CategoryUpdateService implements ServiceInterface
     private function uploadImage() : void
     {
         // Uploads a new file
-        if ( $this->asset_image_model->uploadFile($this->category_model, 'imageFile', '@www/files/category/'. $this->category_model->category_id, 'image_file_id') )
+        if ( $this->asset_image_model->uploadFile($this->category_model, 'image_file_id', $this->category_model->imageDirectory()) )
         {
             $this->category_model->image_file_id = $this->asset_image_model->file_id;
         }
 
         // Deleted previous file
-        else if ( $this->asset_image_model->isUploadDeleted('imageFile') )
+        else if ( $this->asset_image_model->isUploadDeleted('image_file_id') )
         {
             $this->category_model->image_file_id = null;
         }

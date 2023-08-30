@@ -23,7 +23,7 @@
   // Create form object
   $form = ActiveForm::begin([
     'id'                    => $form_id,
-    'enableAjaxValidation'  => true,
+    'enableAjaxValidation'  => false, // true,
     'layout'                => ActiveForm::LAYOUT_HORIZONTAL,
     'options'               => [
       // 'class' => 'form-horizontal category-form-wrapper',
@@ -111,7 +111,8 @@
         <?=
           $form->field(
               $category_model,
-              'imageFile',
+              // 'imageFile',
+              'image_file_id',
               [
                 'columns' => [
                   'wrapper' => 'col-sm-9',
