@@ -25,6 +25,12 @@ class UploadFileService implements ServiceInterface
     use ErrorTrait;
 
     /**
+     * Register last action
+     */
+    public $last_action = 'upload';
+
+
+    /**
      * @var \yii\web\UploadedFile
      */
     private $uploadedFile;
@@ -47,8 +53,8 @@ class UploadFileService implements ServiceInterface
      */
     public function __construct(EntityActiveRecord $reference_model, AssetFile $asset_file_model, EntityFile $entity_file_model, ?string $destination_path)
     {
-        $this->asset_file_model = $asset_file_model;
         $this->reference_model = $reference_model;
+        $this->asset_file_model = $asset_file_model;
         $this->entity_file_model = $entity_file_model;
         $this->destination_path = $destination_path;
     }
@@ -62,6 +68,9 @@ class UploadFileService implements ServiceInterface
         // New uploaded file?
         if ( ! $this->isUploadFile() )
         {
+            // Delete previous file?
+            $this->deletePreviousFile();
+
             return false;
         }
 
@@ -103,6 +112,20 @@ class UploadFileService implements ServiceInterface
         $this->uploadedFile = UploadedFile::getInstance($this->reference_model, $this->entity_file_model->relation_type);
 
         return $this->uploadedFile !== null && $this->uploadedFile instanceof UploadedFile;
+    }
+
+
+    /**
+     * Check if we need to delete previous file
+     */
+    private function deletePreviousFile()
+    {
+        $vec_post_data = Yii::$app->request->post(StringHelper::basename($this->reference_model::className()));
+        if ( !empty($vec_post_data) && isset($vec_post_data[$this->entity_file_model->relation_type]) && empty($vec_post_data[$this->entity_file_model->relation_type]) )
+        {
+            $this->last_action = 'delete';
+            $this->asset_file_model->delete();
+        }
     }
 
 

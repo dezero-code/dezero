@@ -40,7 +40,7 @@ class CategoryUpdateService implements ServiceInterface
      */
     public function run() : bool
     {
-        // Upload image
+        // Upload or delete image
         $this->uploadImage();
 
         // Save current Category model
@@ -57,17 +57,21 @@ class CategoryUpdateService implements ServiceInterface
 
 
     /**
-     * Upload image
+     * Upload or delete image
      */
-    private function uploadImage() : bool
+    private function uploadImage() : void
     {
-        if ( $this->asset_image_model->uploadFile($this->category_model, 'imageFile', '@www/files/category/'. $this->category_model->category_id) )
+        // Uploads a new file
+        if ( $this->asset_image_model->uploadFile($this->category_model, 'imageFile', '@www/files/category/'. $this->category_model->category_id, 'image_file_id') )
         {
-            $this->image_file_id = $this->asset_image_model->file_id;
-            dd("uploaded into file_id #". $this->image_file_id);
+            $this->category_model->image_file_id = $this->asset_image_model->file_id;
         }
 
-        dd("not uploaded");
+        // Deleted previous file
+        else if ( $this->asset_image_model->isUploadDeleted('imageFile') )
+        {
+            $this->category_model->image_file_id = null;
+        }
     }
 
 

@@ -5,6 +5,9 @@
 
 namespace dezero\modules\asset;
 
+use dezero\modules\asset\assets\AssetAsset;
+use Yii;
+
 class Module extends \dezero\base\Module
 {
     /**
@@ -16,6 +19,9 @@ class Module extends \dezero\base\Module
      */
     public function init()
     {
+        // Register Javascript & CSS files for this module
+        AssetAsset::register(Yii::$app->view);
+
         parent::init();
     }
 }

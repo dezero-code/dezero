@@ -67,6 +67,12 @@ class AssetFile extends BaseAssetFile
 
 
     /**
+     * @var array. Register uploads deleted
+     */
+    private $vec_upload_deleted = [];
+
+
+    /**
      * {@inheritdoc}
      */
     public function rules() : array
@@ -204,6 +210,24 @@ class AssetFile extends BaseAssetFile
     }
 
 
+    /**
+     * @return ActiveQueryInterface The relational query object.
+     */
+    public function getEntityFile() : ActiveQueryInterface
+    {
+        return $this->hasOne(EntityFile::class, ['file_id' => 'file_id']);
+    }
+
+
+    /**
+     * @return ActiveQueryInterface The relational query object.
+     */
+    public function getEntityFiles() : ActiveQueryInterface
+    {
+        return $this->hasMany(EntityFile::class, ['file_id' => 'file_id']);
+    }
+
+
     /*
     |--------------------------------------------------------------------------
     | FILE METHODS
@@ -243,15 +267,73 @@ class AssetFile extends BaseAssetFile
     /**
      * Upload a file
      */
-    public function uploadFile(EntityActiveRecord $model, string $attribute, ?string $destination_path = null) : bool
+    public function uploadFile(EntityActiveRecord $model, string $file_attribute, ?string $destination_path = null, ?string $saved_attribute = null, bool $is_multiple = false) : bool
     {
         // EntityFile information
-        $entity_file_model = Dz::makeObject(EntityFile::class);
-        $entity_file_model->relation_type = $attribute;
+        $entity_file_model = null;
+        if ( ! $is_multiple )
+        {
+            $entity_file_model = $this->getEntityFile()->one();
+        }
+        if ( $entity_file_model === null )
+        {
+            $entity_file_model = Dz::makeObject(EntityFile::class);
+        }
+        $entity_file_model->relation_type = $file_attribute;
 
-        // Upload file via service
+        // Upload file via UploadFileService
         $upload_file_service = Dz::makeObject(UploadFileService::class, [$model, $this, $entity_file_model, $destination_path]);
-        return $upload_file_service->run();
+        if ( ! $upload_file_service->run() )
+        {
+            // Upload file has been deleted?
+            if ( $upload_file_service->last_action === 'delete' )
+            {
+                $this->addUploadDeleted($file_attribute);
+            }
+
+            return false;
+        }
+
+        return true;
+    }
+
+
+    /**
+     * Add a new upload deleted
+     */
+    public function addUploadDeleted($attribute)
+    {
+        $this->vec_upload_deleted[$attribute] = $attribute;
+    }
+
+
+    /**
+     * Check if upload has been deleted
+     */
+    public function isUploadDeleted($attribute)
+    {
+        return !empty($this->vec_upload_deleted) && isset($this->vec_upload_deleted[$attribute]);
+    }
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | GETTER METHODS
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Check if current file is image
+     */
+    public function isImage()
+    {
+        if ( $this->loadFile() )
+        {
+            return $this->file->isImage();
+        }
+
+        return false;
     }
 
 

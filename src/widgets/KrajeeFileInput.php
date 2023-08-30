@@ -11,6 +11,7 @@ use dezero\helpers\ArrayHelper;
 use dezero\helpers\Html;
 use dezero\helpers\Url;
 use dezero\modules\asset\models\AssetFile;
+use dezero\modules\asset\assets\FileinputAsset;
 use kartik\file\FileInput;
 use Yii;
 
@@ -66,14 +67,27 @@ class KrajeeFileInput extends FileInput
           'borderless'      => '<i class="wb-arrow-shrink"></i>',
           'close'           => '<i class="wb-close"></i>'
         ];
+
+        // Events
+        $this->pluginEvents['fileclear'] = '$.dezeroFileinput.fileclear';
     }
 
 
-   /**
-     * Initializes widget
-     *
-     * @throws ReflectionException
-     * @throws InvalidConfigException
+    /**
+     * {@inheritdoc}
+     */
+    public function registerAssets()
+    {
+        parent::registerAssets();
+
+        // Register custom Javascript
+        $view = $this->getView();
+        FileinputAsset::register($view);
+    }
+
+
+    /**
+     * {@inheritdoc}
      */
     protected function initWidget()
     {
@@ -87,11 +101,23 @@ class KrajeeFileInput extends FileInput
                 $asset_file_model = AssetFile::findOne($this->value);
                 if ( $asset_file_model )
                 {
-                    $this->pluginOptions['initialPreviewAsData'] = true;
+                    if ( $asset_file_model->isImage() )
+                    {
+                        $this->pluginOptions['initialPreviewAsData'] = true;
+                        $this->pluginOptions['initialPreview'] = [
+                            $asset_file_model->url()
+                        ];
+                    }
+                    else
+                    {
+                        $this->pluginOptions['preferIconicPreview'] = true;
+                        $this->pluginOptions['initialPreviewAsData'] = false;
+                        $this->pluginOptions['initialPreview'] = [
+                            '<div class="file-preview-other"><span class="file-other-icon"><i class="wb-file"></i></span></div>'
+                        ];
+                    }
+
                     $this->pluginOptions['overwriteInitial'] = true;
-                    $this->pluginOptions['initialPreview'] = [
-                        $asset_file_model->url()
-                    ];
                     $this->pluginOptions['initialPreviewConfig'] = [
                         [
                             'caption'   => $asset_file_model->file_name,
@@ -100,6 +126,8 @@ class KrajeeFileInput extends FileInput
                     ];
 
                 }
+
+                $this->options['hiddenOptions']['id'] = Html::getInputId($this->model, $this->attribute) .'-hidden';
                 $this->options['hiddenOptions']['value'] = $this->value;
             }
         }

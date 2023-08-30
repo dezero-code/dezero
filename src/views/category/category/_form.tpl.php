@@ -6,7 +6,6 @@
 |
 | Available variables:
 |  - $category_model: Category model
-|  - $asset_image_model: AssetImage model
 |
 */
 
@@ -123,7 +122,7 @@
             ->label($category_model->getAttributeLabel('imageFile'))
             ->widget(KrajeeFileInput::class, [
               'options' => [
-                'accept' => 'image/*',
+                // 'accept' => 'image/*',
                 'multiple' => false,
               ],
               'pluginOptions' => [

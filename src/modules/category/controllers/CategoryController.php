@@ -55,7 +55,6 @@ class CategoryController extends Controller
         $this->requirePermission('category_manage');
 
         $category_model = Dz::makeObject(Category::class);
-        $category_model->setScenario('insert');
 
         // Validate model via AJAX
         $this->validateAjaxRequest($category_model);
@@ -92,9 +91,8 @@ class CategoryController extends Controller
 
         // Load Category model
         $category_model = Dz::loadModel(Category::class, $category_id);
-        $category_model->setScenario('update');
 
-        // AssetFile model
+        // AssetImage model
         $asset_image_model = $category_model->imageFile;
         if ( ! $asset_image_model )
         {
@@ -104,7 +102,7 @@ class CategoryController extends Controller
         // Validate model via AJAX
         $this->validateAjaxRequest($category_model);
 
-         // Form submitted
+        // Form submitted
         if ( $category_model->load(Yii::$app->request->post()) )
         {
             // Enable, disable or delete action?
@@ -125,8 +123,7 @@ class CategoryController extends Controller
         }
 
         return $this->render('//category/category/update', [
-            'category_model'    => $category_model,
-            'asset_image_model' => $asset_image_model
+            'category_model'    => $category_model
         ]);
     }
 

@@ -77,6 +77,25 @@ abstract class ActiveRecord extends \dezero\db\ActiveRecord implements TitleInte
     /**
      * {@inheritdoc}
      */
+    public function delete()
+    {
+        // Load Entity model
+        $entity_model = $this->getEntity()->one();
+
+        // Going on with delete()
+        parent::delete();
+
+        // Remove Entity model
+        if ( $entity_model )
+        {
+            $entity_model->delete();
+        }
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
     public function title() : string
     {
         return $this->getSourceName();

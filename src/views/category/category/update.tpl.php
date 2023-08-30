@@ -6,7 +6,6 @@
 |
 | Available variables:
 |  - $category_model: Category model
-|  - $asset_image_model: AssetImage model
 |
 */
 
@@ -45,8 +44,7 @@ $this->title = $category_model->title();
   <?=
     // Render form
     $this->render('//category/category/_form', [
-      'category_model'    => $category_model,
-      'asset_image_model' => $asset_image_model
+      'category_model'    => $category_model
     ]);
   ?>
 </div>
