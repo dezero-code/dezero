@@ -239,7 +239,7 @@ class AssetFile extends BaseAssetFile
     /**
      * {@inheritdoc}
      */
-    public function afterValidate()
+    public function beforeValidate()
     {
         // Image?
         if ( preg_match("/^image\//", $this->file_mime) )
@@ -253,7 +253,7 @@ class AssetFile extends BaseAssetFile
             $this->asset_type = self::ASSET_TYPE_VIDEO;
         }
 
-        return parent::afterValidate();
+        return parent::beforeValidate();
     }
 
 

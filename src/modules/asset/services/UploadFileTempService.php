@@ -132,7 +132,7 @@ class UploadFileTempService implements ServiceInterface
     private function saveUploadFile()
     {
         $destination_directory = Yii::$app->user->getTempDirectory();
-        $this->savedPath = $destination_directory->filePath() . DIRECTORY_SEPARATOR;
+        $this->savedPath = $destination_directory->filePath();
         $this->savedFilename = Transliteration::file($this->uploadedFile->baseName . '.' . $this->uploadedFile->extension);
 
         // Check if it already exists a file with same name
