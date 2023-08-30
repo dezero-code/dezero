@@ -126,6 +126,7 @@ class CategoryController extends Controller
 
         return $this->render('//category/category/update', [
             'category_model'    => $category_model,
+            'asset_image_model' => $asset_image_model
         ]);
     }
 

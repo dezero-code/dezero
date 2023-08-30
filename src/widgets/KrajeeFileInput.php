@@ -7,8 +7,10 @@
 
 namespace dezero\widgets;
 
+use dezero\helpers\ArrayHelper;
 use dezero\helpers\Html;
 use dezero\helpers\Url;
+use dezero\modules\asset\models\AssetFile;
 use kartik\file\FileInput;
 use Yii;
 
@@ -41,6 +43,9 @@ class KrajeeFileInput extends FileInput
         // File actions (preview before upload)
         $this->pluginOptions['fileActionSettings'] = [
             'showZoom'          => false,
+            'showRemove'        => false,
+            'showRotate'        => false,
+            'showDrag'          => false,
 
             // Icons when image/file is selected
             'zoomIcon'          => '<i class="wb-zoom-in"></i>',
@@ -61,5 +66,44 @@ class KrajeeFileInput extends FileInput
           'borderless'      => '<i class="wb-arrow-shrink"></i>',
           'close'           => '<i class="wb-close"></i>'
         ];
+    }
+
+
+   /**
+     * Initializes widget
+     *
+     * @throws ReflectionException
+     * @throws InvalidConfigException
+     */
+    protected function initWidget()
+    {
+        if ( $this->hasModel() && !empty($this->value) )
+        {
+            // Check if multiple option is enabled
+            $is_multiple = ArrayHelper::getValue($this->options, 'multiple') && !ArrayHelper::getValue($this->pluginOptions, 'uploadUrl');
+            if ( ! $is_multiple && is_numeric($this->value) )
+            {
+                // File exist, show a preview
+                $asset_file_model = AssetFile::findOne($this->value);
+                if ( $asset_file_model )
+                {
+                    $this->pluginOptions['initialPreviewAsData'] = true;
+                    $this->pluginOptions['overwriteInitial'] = true;
+                    $this->pluginOptions['initialPreview'] = [
+                        $asset_file_model->url()
+                    ];
+                    $this->pluginOptions['initialPreviewConfig'] = [
+                        [
+                            'caption'   => $asset_file_model->file_name,
+                            'size'   => $asset_file_model->file_size,
+                        ]
+                    ];
+
+                }
+                $this->options['hiddenOptions']['value'] = $this->value;
+            }
+        }
+
+        return parent::initWidget();
     }
 }

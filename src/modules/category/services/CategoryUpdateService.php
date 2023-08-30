@@ -61,7 +61,7 @@ class CategoryUpdateService implements ServiceInterface
      */
     private function uploadImage() : bool
     {
-        if ( $this->asset_image_model->uploadFile($this->category_model, 'imageFile', '@www/files/category') )
+        if ( $this->asset_image_model->uploadFile($this->category_model, 'imageFile', '@www/files/category/'. $this->category_model->category_id) )
         {
             $this->image_file_id = $this->asset_image_model->file_id;
             dd("uploaded into file_id #". $this->image_file_id);

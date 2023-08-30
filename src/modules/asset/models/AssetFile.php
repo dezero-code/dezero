@@ -12,6 +12,7 @@ namespace dezero\modules\asset\models;
 use dezero\base\File;
 use dezero\entity\ActiveRecord as EntityActiveRecord;
 use dezero\helpers\ArrayHelper;
+use dezero\helpers\Url;
 use dezero\modules\asset\models\query\AssetFileQuery;
 use dezero\modules\asset\models\base\AssetFile as BaseAssetFile;
 use dezero\modules\asset\services\UploadFileService;
@@ -251,6 +252,16 @@ class AssetFile extends BaseAssetFile
         // Upload file via service
         $upload_file_service = Dz::makeObject(UploadFileService::class, [$model, $this, $entity_file_model, $destination_path]);
         return $upload_file_service->run();
+    }
+
+
+    /**
+     * Return file URL
+     */
+    public function url()
+    {
+        $url = str_replace(Yii::getAlias('@webroot'), '', Yii::getAlias($this->getRelativePath()));
+        return Url::to($url);
     }
 
 

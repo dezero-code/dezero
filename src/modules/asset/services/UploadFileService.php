@@ -111,8 +111,11 @@ class UploadFileService implements ServiceInterface
      */
     private function saveUploadFile()
     {
-        $temp_directory = Yii::$app->user->getTempDirectory();
-        $this->savedPath = $temp_directory->filePath() . DIRECTORY_SEPARATOR;
+        $destination_directory = File::ensureDirectory($this->destination_path);
+        $this->savedPath = $destination_directory->filePath() . DIRECTORY_SEPARATOR;
+
+        // $temp_directory = Yii::$app->user->getTempDirectory();
+        // $this->savedPath = $temp_directory->filePath() . DIRECTORY_SEPARATOR;
 
         return $this->uploadedFile->saveAs($this->savedPath . $this->uploadedFile->baseName . '.' . $this->uploadedFile->extension);
     }
