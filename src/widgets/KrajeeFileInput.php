@@ -45,8 +45,10 @@ class KrajeeFileInput extends FileInput
         $this->pluginOptions['fileActionSettings'] = [
             'showZoom'          => false,
             'showRemove'        => false,
+            'removeClass'       => 'hide',
             'showRotate'        => false,
             'showDrag'          => false,
+            'showDownload'      => true,
 
             // Icons when image/file is selected
             'zoomIcon'          => '<i class="wb-zoom-in"></i>',
@@ -120,8 +122,9 @@ class KrajeeFileInput extends FileInput
                     $this->pluginOptions['overwriteInitial'] = true;
                     $this->pluginOptions['initialPreviewConfig'] = [
                         [
-                            'caption'   => $asset_file_model->file_name,
-                            'size'   => $asset_file_model->file_size,
+                            'caption'       => $asset_file_model->file_name,
+                            'size'          => $asset_file_model->file_size,
+                            'downloadUrl'   => $asset_file_model->url()
                         ]
                     ];
 
