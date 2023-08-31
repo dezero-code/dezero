@@ -58,7 +58,7 @@ class CategoryController extends Controller
         $asset_image_model = Dz::makeObject(AssetImage::class);
 
         // Validate model via AJAX
-        // $this->validateAjaxRequest($category_model);
+        $this->validateAjaxRequest($category_model);
 
         // Form submitted
         if ( $category_model->load(Yii::$app->request->post()) )
@@ -99,6 +99,9 @@ class CategoryController extends Controller
         {
             $asset_image_model = Dz::makeObject(AssetImage::class);
         }
+        // $asset_image_model->generatePreset('large');
+        // $asset_image_model->generatePresets(['small', 'medium');
+        // $asset_image_model->generateAllPresets();
 
         // Validate model via AJAX
         $this->validateAjaxRequest($category_model);

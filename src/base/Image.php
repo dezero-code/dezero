@@ -52,7 +52,7 @@ class Image extends SpatieImage
     /**
      * {@inheritdoc}
      */
-    public static function load(string $pathToImage) : self
+    public static function load(string $pathToImage) : static
     {
         // Return the real file path from a Yii alias or normalize it
         $pathToImage = FileHelper::realPath($pathToImage);
@@ -67,7 +67,7 @@ class Image extends SpatieImage
      * @param string $outputPath
      * @return void
      */
-    public function save($outputPath = '')
+    public function save(string $outputPath = '') : void
     {
         // Accept Yii alias pathes and relative pathes
         if ($outputPath !== '')

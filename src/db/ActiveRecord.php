@@ -24,7 +24,10 @@ class ActiveRecord extends \yii\db\ActiveRecord
         parent::init();
 
         // Load default values by default
-        $this->loadDefaultValues();
+        if ( $this->isNewRecord )
+        {
+            $this->loadDefaultValues();
+        }
     }
 
 
