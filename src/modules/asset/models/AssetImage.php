@@ -16,6 +16,7 @@ use dezero\modules\asset\models\query\AssetFileQuery;
 use dezero\modules\asset\models\AssetFile;
 use user\models\User;
 use yii\db\ActiveQueryInterface;
+use yii\helpers\Json;
 use Yii;
 
 /**
@@ -40,6 +41,68 @@ class AssetImage extends AssetFile
      */
     // public $asset_type = parent::ASSET_TYPE_IMAGE;
 
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | EVENTS
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * {@inheritdoc}
+     */
+    /*
+    public function beforeValidate()
+    {
+        if ( $this->loadImage() )
+        {
+            $vec_dimensions = [
+                'width'     => $this->image->getWidth(),
+                'height'    => $this->image->getHeight()
+            ];
+            $this->file_options = Json::encode($vec_dimensions);
+        }
+
+        return parent::beforeValidate();
+    }
+    */
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | CONFIGURATION METHODS
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Load configuration options
+     */
+    public function loadConfig() : void
+    {
+        if ( empty($this->vec_config) )
+        {
+            $this->vec_config = Yii::$app->config->get('images');
+        }
+    }
+
+
+    /**
+     * Return a preset configuration
+     */
+    public function getPresetConfig(string $preset_name) : ?array
+    {
+        $this->loadConfig();
+        return $this->vec_config['presets'][$preset_name] ?? null;
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | FILE / IMAGE METHODS
+    |--------------------------------------------------------------------------
+    */
 
     /**
      * {@inheritdoc}
@@ -70,27 +133,11 @@ class AssetImage extends AssetFile
     }
 
 
-    /**
-     * Load configuration options
-     */
-    public function loadConfig() : void
-    {
-        if ( empty($this->vec_config) )
-        {
-            $this->vec_config = Yii::$app->config->get('images');
-        }
-    }
-
-
-    /**
-     * Return a preset configuration
-     */
-    public function getPresetConfig(string $preset_name) : ?array
-    {
-        $this->loadConfig();
-        return $this->vec_config['presets'][$preset_name] ?? null;
-    }
-
+    /*
+    |--------------------------------------------------------------------------
+    | GENERATE PRESETS
+    |--------------------------------------------------------------------------
+    */
 
     /**
      * Generate preset/thumbnail image given as input parameter
