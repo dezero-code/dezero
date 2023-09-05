@@ -213,6 +213,51 @@ class Category extends BaseCategory
     }
 
 
+    /*
+    |--------------------------------------------------------------------------
+    | EVENTS
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * {@inheritdoc}
+     */
+    public function beforeValidate()
+    {
+        // Force checking category_parent_id (must be different from current category_id)
+        if ( ! $this->isNewRecord && $this->category_parent_id === $this->category_id )
+        {
+            $this->category_parent_id = null;
+        }
+
+        // Get depth level
+        $this->depth = $this->getDepthLevel();
+
+        return parent::beforeValidate();
+    }
+
+
+
+    /**
+     * Get depth level (tree level)
+     */
+    public function getDepthLevel()
+    {
+        $depth = $this->depth;
+        if ( $this->categoryParent )
+        {
+            $depth = $this->categoryParent->depth + 1;
+        }
+
+        // Max lenght is 255
+        if ( $depth > 255 )
+        {
+            $depth = 255;
+        }
+
+        return $depth;
+    }
+
 
     /*
     |--------------------------------------------------------------------------
