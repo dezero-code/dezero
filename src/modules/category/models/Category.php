@@ -9,7 +9,7 @@
 
 namespace dezero\modules\category\models;
 
-use dezero\behaviors\UploadBehavior;
+use dezero\behaviors\WeightBehavior;
 use dezero\helpers\ArrayHelper;
 use dezero\modules\asset\models\AssetImage;
 use dezero\modules\category\models\query\CategoryQuery;
@@ -91,24 +91,19 @@ class Category extends BaseCategory
     /**
      * {@inheritdoc}
      */
-    /*
     public function behaviors()
     {
         return ArrayHelper::merge(
             parent::behaviors(),
             [
                 [
-                    // custom behaviors
-                    'class' => UploadBehavior::class,
-                    'attribute' => 'imageFile',
-                    'scenarios' => ['insert', 'update'],
-                    'path' => '@webroot/files/uploads',
-                    // 'url' => '@web/upload/docs/{category.id}',
+                    // Weight
+                    'class' => WeightBehavior::class,
+                    'vec_attributes' => ['category_parent_id', 'category_type']
                 ]
             ]
         );
     }
-    */
 
 
     /**

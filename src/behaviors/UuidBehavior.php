@@ -20,7 +20,7 @@ class UuidBehavior extends AttributeBehavior
     /**
      * @var string the attribute that will receive the UUID value user ID value
      */
-    public $uuidAttribute = 'entity_uuid';
+    public $uuid_attribute = 'entity_uuid';
 
 
     /**
@@ -33,7 +33,7 @@ class UuidBehavior extends AttributeBehavior
         if ( empty($this->attributes) )
         {
             $this->attributes = [
-                BaseActiveRecord::EVENT_BEFORE_VALIDATE => $this->uuidAttribute,
+                BaseActiveRecord::EVENT_BEFORE_VALIDATE => $this->uuid_attribute,
             ];
         }
     }
@@ -44,12 +44,12 @@ class UuidBehavior extends AttributeBehavior
      */
     protected function getValue($event)
     {
-        if ( $this->owner->{$this->uuidAttribute} === null || $this->owner->{$this->uuidAttribute} === '0' )
+        if ( $this->owner->{$this->uuid_attribute} === null || $this->owner->{$this->uuid_attribute} === '0' )
         {
             return $this->generateUUID();
         }
 
-        return $this->owner->{$this->uuidAttribute};
+        return $this->owner->{$this->uuid_attribute};
         // return parent::getValue($event);
     }
 
