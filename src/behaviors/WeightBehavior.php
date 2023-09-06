@@ -10,6 +10,7 @@
  */
 namespace dezero\behaviors;
 
+use dezero\db\Query;
 use dezero\helpers\StringHelper;
 use Yii;
 use yii\behaviors\AttributeBehavior;
@@ -80,27 +81,21 @@ class WeightBehavior extends AttributeBehavior
             }
         }
 
-        if ( !empty($vec_conditions) )
+        // Get last weight value for given conditions
+        $weight = (new Query())
+            ->select($this->weight_attribute)
+            ->from($model_class::tableName())
+            ->where($vec_conditions)
+            ->orderBy([
+                $this->weight_attribute => SORT_DESC
+            ])
+            ->scalar();
+
+        if ( $weight === false || $weight === null )
         {
-            $last_model = $model_class::find()
-                ->where($vec_conditions)
-                ->orderBy($this->weight_attribute .' DESC')
-                ->limit(1)
-                ->one();
-        }
-        else
-        {
-            $last_model = $model_class::find()
-                ->orderBy($this->weight_attribute .' DESC')
-                ->limit(1)
-                ->one();
+            return 1;
         }
 
-        if ( $last_model !== null && $last_model->hasAttribute('weight') )
-        {
-            return (int)$last_model->getAttribute('weight') + 1;
-        }
-
-        return 1;
+        return (int)$weight + 1;
     }
 }

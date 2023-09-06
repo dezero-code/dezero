@@ -1,6 +1,6 @@
 <?php
 /**
- * ActiveQuery class file
+ * Query class file
  *
  * @author Fabián Ruiz <fabian@dezero.es>
  * @link http://www.dezero.es
@@ -9,54 +9,15 @@
 
 namespace dezero\db;
 
+use dezero\errors\QueryAbortedException;
 use Yii;
+use yii\db\Connection as YiiConnection;
 
 /**
- * ActiveQuery represents a DB query associated with an Active Record class.
+ * Query represents a SELECT SQL statement in a way that is independent of DBMS.
  */
-class ActiveQuery extends \yii\db\ActiveQuery
+class Query extends \yii\db\Query
 {
-    /**
-     * Filter the query by "entity_uuid" attribute value
-     */
-    public function uuid(string $uuid) : self
-    {
-        $this->andWhere(['entity_uuid' => $uuid]);
-
-        return $this;
-    }
-
-
-    /**
-     * Filter the query by enabled elements
-     */
-    public function enabled() : self
-    {
-        // $this->andWhere(['is_disabled' => 0]);
-        $this->andWhere('disabled_date IS NULL');
-
-        return $this;
-    }
-
-
-    /**
-     * Filter the query by disabled elements
-     */
-    public function disabled() : self
-    {
-        // $this->andWhere(['is_disabled' => 1]);
-        $this->andWhere('disabled_date IS NOT NULL');
-
-        return $this;
-    }
-
-
-   /*
-    |--------------------------------------------------------------------------
-    | METHODS FROM \dezero\db\Query
-    |--------------------------------------------------------------------------
-    */
-
     /**
      * @inheritdoc
      * @return mixed|null first row of the query result array, or `null` if there are no query results.
