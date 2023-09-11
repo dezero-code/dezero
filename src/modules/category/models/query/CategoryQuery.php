@@ -32,4 +32,13 @@ class CategoryQuery extends \dezero\db\ActiveQuery
     {
         return $this->andWhere(['category_type' => $category_type]);
     }
+
+
+    /**
+     * Filter the query by "depth" attribute value
+     */
+    public function depth(int $depth) : self
+    {
+        return $this->andWhere(['depth' => $depth]);
+    }
 }

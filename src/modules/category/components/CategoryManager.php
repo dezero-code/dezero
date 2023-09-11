@@ -174,10 +174,8 @@ class CategoryManager extends Component
     public function getAllByDepth(string $category_type, int $depth = 0) : ?array
     {
         return Category::find()
-            ->where([
-                'category_type' => $category_type,
-                'depth'         => $depth
-            ])
+            ->category_type($category_type)
+            ->depth($depth)
             ->orderBy(['weight' => SORT_ASC])
             ->all();
     }
