@@ -261,6 +261,45 @@ class Category extends BaseCategory
 
     /*
     |--------------------------------------------------------------------------
+    | CONFIGURATION METHODS
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Return the configuration options for current category type
+     */
+    public function getConfig(?string $category_type = null) : ?array
+    {
+        $category_type = ( $category_type !== null ) ? $category_type : $this->category_type;
+
+        return Yii::$app->categoryManager->getConfig($category_type);
+    }
+
+
+    /**
+     * Return the view file path for a category type
+     */
+    public function viewPath(string $view_file, ?string $category_type = null) : string
+    {
+        $category_type = ( $category_type !== null ) ? $category_type : $this->category_type;
+
+        return Yii::$app->categoryManager->viewPath($view_file, $category_type);
+    }
+
+
+    /**
+     * Return the corresponding text
+     */
+    public function text(string $text_key, ?string $category_type = null) : string
+    {
+        $category_type = ( $category_type !== null ) ? $category_type : $this->category_type;
+
+        return Yii::$app->categoryManager->text($text_key, $category_type);
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
     | INFORMATION METHODS
     |--------------------------------------------------------------------------
     */
