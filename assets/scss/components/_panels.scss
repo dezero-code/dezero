@@ -71,6 +71,27 @@
 }
 
 .panel {
+    &.panel-top-summary {
+        .panel-body {
+            > .page-content-actions {
+                margin-top: -6px;
+                margin-bottom: 0;
+            }
+        }
+
+        .grid-view {
+            margin-top: 0;
+        }
+
+        .summary {
+            position: absolute;
+            top: -45px; // 15px;
+            right: 15px;
+            text-align: right;
+            font-size: 12px;
+        }
+    }
+
     .panel-title {
         .btn {
             color: #FFF;
@@ -96,29 +117,6 @@
                 }
             }
 
-        }
-    }
-
-    &.panel-top-summary {
-        .panel-body {
-            > .page-content-actions {
-                margin-top: -6px;
-                margin-bottom: 0;
-            }
-        }
-
-        &.panel-content-summary {
-            .grid-view {
-                margin-top: 0;
-            }
-
-            .summary {
-                position: absolute;
-                top: -45px; // 15px;
-                right: 15px;
-                text-align: right;
-                font-size: 12px;
-            }
         }
     }
 }

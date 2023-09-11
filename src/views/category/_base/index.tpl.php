@@ -37,7 +37,7 @@
       if ( isset($vec_config['is_first_level_sortable']) && $vec_config['is_first_level_sortable'] === true ) :
     ?>
       <div class="col-lg-3">
-        <div class="panel category-tree-wrapper">
+        <div class="panel panel-tree category-tree-wrapper">
           <header class="panel-heading">
             <h3 class="panel-title"><?= Yii::t('backend', $category_search_model->text('panel_title')); ?></h3>
           </header>
@@ -52,6 +52,7 @@
                 ]);
               ?>
               <?php if ( isset($vec_config['is_editable']) && $vec_config['is_editable'] === true ) : ?>
+                <hr>
                 <div class="buttons">
                   <a href="<?= Url::to("/category/{$category_search_model->category_type}/create"); ?>" class="btn mr-10 mb-10 btn-primary"><i class="icon wb-plus"></i> <?= $category_search_model->text('add_button'); ?></a>
                 </div>

@@ -1,0 +1,37 @@
+{
+  "name": "dezero-core",
+  "version": "0.1.0",
+  "description": "Gruntfile for Dezero Framework",
+  "main": "Gruntfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dezero-code/dezero"
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "grunt": "^1.1.0",
+    "grunt-browser-sync": "latest",
+    "grunt-contrib-clean": "latest",
+    "grunt-contrib-concat": "latest",
+    "grunt-contrib-copy": "latest",
+    "grunt-contrib-imagemin": "^4.0.0",
+    "grunt-contrib-jshint": "latest",
+    "grunt-contrib-sass": "latest",
+    "grunt-contrib-uglify": "latest",
+    "grunt-contrib-watch": "latest",
+    "grunt-imageoptim": "latest",
+    "grunt-newer": "latest",
+    "grunt-rsync-2": "latest",
+    "grunt-svgmin": "latest",
+    "grunt-svgstore": "latest",
+    "jshint-stylish": "latest",
+    "load-grunt-tasks": "latest",
+    "time-grunt": "latest"
+  },
+  "dependencies": {
+    "bcrypt": "latest"
+  }
+}
