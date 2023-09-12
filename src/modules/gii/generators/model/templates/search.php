@@ -105,7 +105,7 @@ class <?= $className ?> extends <?= $modelClassName; ?> implements SearchInterfa
         // Compare conditions
         $query->andFilterWhere([
 <?php foreach ( $searchFilters['compare'] as $column_name ) : ?>
-            '<?= $column_name; ?>' => $this-><?= $column_name; ?>,
+            <?php if ( $column_name === 'entity_uuid' ) : ?>// <?php endif; ?>'<?= $column_name; ?>' => $this-><?= $column_name; ?>,
 <?php endforeach; ?>
         ]);
 <?php endif; ?>

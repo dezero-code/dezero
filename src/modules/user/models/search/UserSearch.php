@@ -105,10 +105,10 @@ class UserSearch extends User implements SearchInterface
             'is_verified_email' => $this->is_verified_email,
             'is_force_change_password' => $this->is_force_change_password,
             'is_superadmin' => $this->is_superadmin,
-            'disabled_user_id' => $this->disabled_user_id,
-            'created_user_id' => $this->created_user_id,
-            'updated_user_id' => $this->updated_user_id,
-            'entity_uuid' => $this->entity_uuid,
+            // 'disabled_user_id' => $this->disabled_user_id,
+            // 'created_user_id' => $this->created_user_id,
+            // 'updated_user_id' => $this->updated_user_id,
+            // 'entity_uuid' => $this->entity_uuid,
         ]);
 
         // Like conditions

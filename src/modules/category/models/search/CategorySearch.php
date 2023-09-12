@@ -83,15 +83,15 @@ class CategorySearch extends Category implements SearchInterface
         $query->andFilterWhere([
             'category_id' => $this->category_id,
             'category_parent_id' => $this->category_parent_id,
-            'weight' => $this->weight,
             'depth' => $this->depth,
-            'image_file_id' => $this->image_file_id,
             'language_id' => $this->language_id,
             'category_translated_id' => $this->category_translated_id,
-            'disabled_user_id' => $this->disabled_user_id,
-            'created_user_id' => $this->created_user_id,
-            'updated_user_id' => $this->updated_user_id,
-            'entity_uuid' => $this->entity_uuid,
+            // 'weight' => $this->weight,
+            // 'image_file_id' => $this->image_file_id,
+            // 'disabled_user_id' => $this->disabled_user_id,
+            // 'created_user_id' => $this->created_user_id,
+            // 'updated_user_id' => $this->updated_user_id,
+            // 'entity_uuid' => $this->entity_uuid,
         ]);
 
         // Like conditions
