@@ -43,6 +43,9 @@ class CategorySearch extends Category implements SearchInterface
     {
         $query = Category::find();
 
+        // Order
+        $query->orderBy(['weight' => SORT_ASC]);
+
         $data_provider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => [

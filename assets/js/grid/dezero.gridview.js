@@ -111,16 +111,16 @@
   // GRIDVIEW - CLEAR BUTTON
   $.fn.clearFields = $.fn.clearInputs = function() {
     return this.each(function() {
-        var t = this.type, tag = this.tagName.toLowerCase();
-        if (t == 'text' || t == 'password' || tag == 'textarea') {
-            this.value = '';
-        }
-        else if (t == 'checkbox' || t == 'radio') {
-            this.checked = false;
-        }
-        else if (tag == 'select') {
-            this.selectedIndex = -1;
-        }
+      var t = this.type, tag = this.tagName.toLowerCase();
+      if (t == 'text' || t == 'password' || tag == 'textarea') {
+        this.value = '';
+      }
+      else if (t == 'checkbox' || t == 'radio') {
+        this.checked = false;
+      }
+      else if (tag == 'select') {
+        this.selectedIndex = -1;
+      }
     });
   };
 })(document, window, jQuery);

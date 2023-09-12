@@ -57,7 +57,7 @@
             data: { nestable: que_nestable },
             success: function(data) {
               if ( $('#'+ $this.data('name') +'-grid').size() > 0 ) {
-                $.fn.yiiGridView.update($this.data('name') + '-grid');
+                $.pjax.reload({container: '#'+ $this.data('name') + '-grid-container'});
               }
               $('#'+ $this.data('name') +'-loading-tree').addClass('hide');
               $this.removeClass('hide');
