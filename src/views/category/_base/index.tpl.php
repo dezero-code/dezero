@@ -42,7 +42,7 @@
           </header>
           <div class="panel-body">
             <div id="category-loading-tree" class='dz-loading center hide'></div>
-            <div class="dd dd-category-group" id="category-nestable-wrapper" data-name="category" data-url="<?= Url::to("/category/{$category_search_model->category_type}/updateWeight"); ?>?category_id=0">
+            <div class="dd dd-category-group" id="category-nestable-wrapper" data-name="category" data-url="<?= Url::to("/category/{$category_search_model->category_type}/weight"); ?>?category_id=0"<?php if ( ! $category_search_model->config->isEditable() ) : ?> data-readonly="true"<?php endif; ?>>
               <?=
                 // Render tree main
                 $this->render($category_search_model->config->viewPath('_tree_main'), [

@@ -15,6 +15,7 @@ use dezero\modules\category\services\CategoryCreateService;
 use dezero\modules\category\services\CategoryDeleteService;
 use dezero\modules\category\services\CategoryUpdateService;
 use dezero\web\Controller;
+use dezero\web\assets\NestableAsset;
 use Dz;
 use Yii;
 
@@ -45,6 +46,9 @@ abstract class BaseCategoryController extends Controller
      */
     public function actionIndex()
     {
+        // Register Javascript for nestable
+        NestableAsset::register(Yii::$app->view);
+
         $category_search_model = Dz::makeObject(CategorySearch::class);
         $category_search_model->category_type = $this->getCategoryType();
 
@@ -145,6 +149,7 @@ abstract class BaseCategoryController extends Controller
      */
     public function actionDelete($category_id)
     {
+        // Delete action only allowed by POST requests
         $this->requirePostRequest();
 
         // Load Category model
@@ -162,6 +167,51 @@ abstract class BaseCategoryController extends Controller
         }
 
         return $this->redirect(["/category/{$category_model->category_type}"]);
+    }
+
+
+    /**
+     * Update category weights
+     */
+    public function actionWeight($category_id)
+    {
+        // Update action only allowed by POST requests
+        $this->requirePostRequest();
+
+        $vec_ajax_output = ['result' => -1];
+
+        $vec_nestable = Yii::$app->request->post('nestable', []);
+
+        if ( !empty($vec_nestable) && is_array($vec_nestable) )
+        {
+            // 1st level (no parents)
+            if ( $category_id == 0 )
+            {
+                foreach ( $vec_nestable as $num_category => $que_category )
+                {
+                    if ( isset($que_category['id']) )
+                    {
+                        $new_weight = (int)$num_category+1;
+                        Yii::$app->categoryManager->updateWeightById($new_weight, (int)$que_category['id']);
+                    }
+                }
+            }
+
+            // 2nd LEVEL
+            else if ( isset($vec_nestable[0]['id']) && $vec_nestable[0]['id'] == $category_id )
+            {
+                // Check if current category has subactegories (children)
+                if ( isset($vec_nestable[0]['children']) && !empty($vec_nestable[0]['children']) )
+                {
+                    Yii::$app->categoryManager->updateChildrenWeights($vec_nestable[0]['children']);
+                }
+            }
+
+            $vec_ajax_output = ['result' => 1];
+        }
+
+        // Return JSON and end application
+        return $this->asJson($vec_ajax_output);
     }
 
 

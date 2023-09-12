@@ -7,9 +7,9 @@
  * @copyright Copyright &copy; 2023 Fabián Ruiz
  */
 
-namespace dezero\base;
+namespace dezero\entity;
 
-use dezero\base\ConfigInterface;
+use dezero\contracts\ConfigInterface;
 use dezero\entity\ActiveRecord;
 use Yii;
 
