@@ -1,0 +1,65 @@
+===========================
+-- ACTIVE QUERY EXAMPLES --
+===========================
+
+@see https://yii2-framework.readthedocs.io/en/stable/guide/db-active-record/
+@see https://www.yiiframework.com/doc/guide/2.0/en/db-query-builder
+
+---
+
+// WHERE -> ONE result
+    $result = Product::find()
+        ->where(['product_id' => 7])
+        ->one();
+
+// DIRECT SQL condition
+    $sql = 'SELECT * FROM product';
+    $result = Product::findBySql($sql)->all();
+
+// WHERE, ORDER, LIMIT & OFFSET
+    $result = Product::find()
+    ->where(['is_on_offer' => 1, 'status_type' => 'enable'])
+    ->orderBy(['product_id' => SORT_ASC])
+    ->limit(4)
+    ->offset(1)
+    ->all();
+
+
+// WHERE -> Greater THAN or DIFFERENT condition
+    $result = Product::find()
+        ->where('>', 'id', '2')
+        ->andWhere('!=', 'status', 'disabled')
+        ->one();
+
+// WHERE -> LIKE condition
+    $result = Product::find()
+        ->where('like', 'name', $_GET['q'] . '%', false)
+        ->all();
+
+    ...or...
+
+    $result = Product::find()
+        ->where(new \yii\db\Expression('name LIKE :term', [':term' => $_GET['q'] . '%'])
+        ->all();
+
+// WHERE -> IN condition
+    $result = Product::find()
+        ->where(['in', 'product_id', [1,2]])
+        ->where(['product_id' => [1,2]])
+        ->all();
+
+// WHERE -> IS NULL or IS NOT NULL
+    $result = Product::find()
+        ->where(['is', 'disabled_date', new \yii\db\Expression('null')])    <--- WHERE disabled_date IS NULL
+        ->where('disable_date IS NULL')                                     <--- (alternative)
+        ->where(['is', ['disabled_date' => null]])                          <--- (alternative)
+
+        ->andWhere(['not', 'product_id', new \yii\db\Expression('null')])   <--- WHERE product IS NOT NULL
+        ->where('product_id IS NOT NULL')                                   <--- (alternative)
+        ->andWhere(['not', ['product_id' => null]])                         <--- (alternative)
+
+// WITH (relations)
+$orders = Order::find()
+    ->select(['id', 'amount', 'customer_id'])
+    ->with('customer')
+    ->all();

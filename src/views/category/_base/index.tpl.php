@@ -7,7 +7,6 @@
 | Available variables:
 |  - $data_provider: ActiveDataProvider model
 |  - $category_search_model: CategorySearch model class
-|  - $vec_config: Array with category type configuration
 |
 */
 
@@ -34,27 +33,26 @@
       | SORT FIRST LEVEL?
       |----------------------------------------------------------------------------------------
       */
-      if ( isset($vec_config['is_first_level_sortable']) && $vec_config['is_first_level_sortable'] === true ) :
+      if ( $category_search_model->config->get('is_first_level_sortable') === true ) :
     ?>
       <div class="col-lg-3">
         <div class="panel panel-tree category-tree-wrapper">
           <header class="panel-heading">
-            <h3 class="panel-title"><?= Yii::t('backend', $category_search_model->text('panel_title')); ?></h3>
+            <h3 class="panel-title"><?= Yii::t('backend', $category_search_model->config->text('panel_title')); ?></h3>
           </header>
           <div class="panel-body">
             <div id="category-loading-tree" class='dz-loading center hide'></div>
             <div class="dd dd-category-group" id="category-nestable-wrapper" data-name="category" data-url="<?= Url::to("/category/{$category_search_model->category_type}/updateWeight"); ?>?category_id=0">
               <?=
                 // Render tree main
-                $this->render($category_search_model->viewPath('_tree_main'), [
-                  'category_model'  => $category_search_model,
-                  'vec_config'      => $vec_config
+                $this->render($category_search_model->config->viewPath('_tree_main'), [
+                  'category_model'  => $category_search_model
                 ]);
               ?>
-              <?php if ( isset($vec_config['is_editable']) && $vec_config['is_editable'] === true ) : ?>
+              <?php if ( $category_search_model->config->isEditable() ) : ?>
                 <hr>
                 <div class="buttons">
-                  <a href="<?= Url::to("/category/{$category_search_model->category_type}/create"); ?>" class="btn mr-10 mb-10 btn-primary"><i class="icon wb-plus"></i> <?= $category_search_model->text('add_button'); ?></a>
+                  <a href="<?= Url::to("/category/{$category_search_model->category_type}/create"); ?>" class="btn mr-10 mb-10 btn-primary"><i class="icon wb-plus"></i> <?= $category_search_model->config->text('add_button'); ?></a>
                 </div>
               <?php endif; ?>
             </div>
@@ -67,7 +65,7 @@
     <?php endif; ?>
     <div class="panel panel-category-summary panel-top-summary">
       <header class="panel-heading">
-        <h3 class="panel-title"><?= Yii::t('app', $category_search_model->text('list_title')); ?></h3>
+        <h3 class="panel-title"><?= Yii::t('app', $category_search_model->config->text('list_title')); ?></h3>
       </header>
       <div class="panel-body container-fluid">
         <?php GridViewPjax::begin(['gridview' => 'category-grid']) ?>
@@ -86,7 +84,7 @@
                 'attribute' => 'name',
                 'header' => Yii::t('category', 'Name'),
                 'value' => function($model) {
-                  return $this->render($model->viewPath('_grid_column'), ['column' => 'name', 'model' => $model]);
+                  return $this->render($model->config->viewPath('_grid_column'), ['column' => 'name', 'model' => $model]);
                 }
               ],
               [

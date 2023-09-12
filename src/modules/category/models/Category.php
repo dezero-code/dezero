@@ -10,10 +10,13 @@
 namespace dezero\modules\category\models;
 
 use dezero\behaviors\WeightBehavior;
+use dezero\contracts\ConfigInterface;
 use dezero\helpers\ArrayHelper;
 use dezero\modules\asset\models\AssetImage;
+use dezero\modules\category\config\CategoryConfigBuilder;
 use dezero\modules\category\models\query\CategoryQuery;
 use dezero\modules\category\models\base\Category as BaseCategory;
+use Dz;
 use yii\db\ActiveQueryInterface;
 use Yii;
 
@@ -53,8 +56,14 @@ use Yii;
  * @property UserUser $updatedUser
  * @property Category[] $categories
  */
-class Category extends BaseCategory
+class Category extends BaseCategory implements ConfigInterface
 {
+    /**
+     * @var \dezero\modules\category\config\CategoryConfigBuilder
+     */
+    private $configBuilder;
+
+
     /**
      * {@inheritdoc}
      */
@@ -261,40 +270,21 @@ class Category extends BaseCategory
 
     /*
     |--------------------------------------------------------------------------
-    | CONFIGURATION METHODS
+    | CONFIGURATION BUILDER
     |--------------------------------------------------------------------------
     */
 
     /**
-     * Return the configuration options for current category type
+     * Return the configBuilder class to manage configuration options
      */
-    public function getConfig(?string $category_type = null) : ?array
+    public function getConfig() : CategoryConfigBuilder
     {
-        $category_type = ( $category_type !== null ) ? $category_type : $this->category_type;
+        if ( $this->configBuilder === null )
+        {
+            $this->configBuilder = Dz::makeObject(CategoryConfigBuilder::class, [$this, $this->category_type]);
+        }
 
-        return Yii::$app->categoryManager->getConfig($category_type);
-    }
-
-
-    /**
-     * Return the view file path for a category type
-     */
-    public function viewPath(string $view_file, ?string $category_type = null) : string
-    {
-        $category_type = ( $category_type !== null ) ? $category_type : $this->category_type;
-
-        return Yii::$app->categoryManager->viewPath($view_file, $category_type);
-    }
-
-
-    /**
-     * Return the corresponding text
-     */
-    public function text(string $text_key, ?string $category_type = null) : string
-    {
-        $category_type = ( $category_type !== null ) ? $category_type : $this->category_type;
-
-        return Yii::$app->categoryManager->text($text_key, $category_type);
+        return $this->configBuilder;
     }
 
 

@@ -1,0 +1,96 @@
+==========================
+-- CONFIG BUILDER GUIDE --
+==========================
+
+1. CONFIG FILE
+    - Define your config file into /app/config/components directory
+    ---> @see /app/config/components/categories.php
+
+2. ConfigBuilder CLASS
+    - Create a class into /<your_module>/config directory. This class must extend from \dezero\entity\ConfigBuilder
+        ---> @see dezero\modules\category\config\CategoryConfigBuilder
+
+            ```
+            class CategoryConfigBuilder extends ConfigBuilder implements ConfigBuilderInterface
+            {
+                ...
+            }
+        ```
+
+
+3. DEFINE METHODS
+    - Define the method loadConfiguration() to load a specific type
+    - Define the method defaultConfiguration() if specific type does not exist
+    ---> @see dezero\modules\category\config\CategoryConfigBuilder class
+
+
+4. ADD ConfiguBuilder TO YOUR MODEL
+    - Implements interface dezero\contracts\ConfigInterface
+    - Create a method getConfig() and init the ConfigBuilder if it does not exist
+    - IMPORTANT: The TYPE must be defined on the second parameter of the constructor
+        ---> @see dezero\modules\category\models\Category
+
+            ```
+            use dezero\modules\category\config\CategoryConfigBuilder;
+
+            class Category extends BaseCategory implements ConfigInterface
+            {
+                /**
+                 * @var \dezero\modules\category\config\CategoryConfigBuilder
+                 */
+                private $configBuilder;
+
+                ...
+
+
+                /**
+                 * Return the configBuilder class to manage configuration options
+                 */
+                public function getConfig() : CategoryConfigBuilder
+                {
+                    if ( $this->configBuilder === null )
+                    {
+                        $this->configBuilder = Dz::makeObject(CategoryConfigBuilder::class, [$this, $this->category_type]);
+                    }
+
+                    return $this->configBuilder;
+                }
+
+                ...
+            }
+        ```
+
+5. ACCESS TO ConfiguBuilder VIA "->config" magic property
+
+    - Get a CONFIGURATION option
+        > $category_model->config->get('is_editable')
+
+    - Get a VIEW PATH defined in "views" configuration option
+        > $category_model->config->viewPath('_form')
+
+    - Get a TEXT defined in "texts" configuration option
+        > $category_model->config->text('panel_title')
+
+
+6. OPTIONAl - CUSTOM METHODS
+    - Create your custom methods into your ConfigBuilder class
+        ---> @see dezero\modules\category\config\CategoryConfigBuilder
+
+        ```
+            class CategoryConfigBuilder extends ConfigBuilder implements ConfigBuilderInterface
+            {
+                ...
+
+                /**
+                 * Check if category type is editable
+                 */
+                public function isEditable()
+                {
+                    return $this->get('is_editable') === true;
+                }
+
+                ...
+            }
+        ```
+
+    - And now you can use "$category_model->config->isEditable()" custom method

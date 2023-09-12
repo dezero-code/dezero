@@ -43,7 +43,7 @@ $this->title = $category_model->title();
 <div class="page-content container-fluid">
   <?=
     // Render form
-    $this->render($category_model->viewPath('_form'), [
+    $this->render($category_model->config->viewPath('_form'), [
       'category_model'    => $category_model
     ]);
   ?>

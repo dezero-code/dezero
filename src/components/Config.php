@@ -20,7 +20,6 @@ class Config extends Component
     /**
      * Find a config file inside @app.config alias path and return the content
      * 
-     * @param string Config file name or config file path
      * @return mixed
      */
     public function get(string $config_path, ?string $config_key = null)
@@ -50,8 +49,13 @@ class Config extends Component
             $vec_config = require($config_file_path);
             
             // Return just the content from a configuration key
-            if ( !empty($vec_config) && is_array($vec_config) && $config_key !== null && array_key_exists($config_key, $vec_config) )
+            if ( !empty($vec_config) && is_array($vec_config) && $config_key !== null )
             {
+                if ( ! array_key_exists($config_key, $vec_config) )
+                {
+                    return null;
+                }
+
                 return $vec_config[$config_key];
             }
 

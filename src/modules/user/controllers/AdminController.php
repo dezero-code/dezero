@@ -24,6 +24,10 @@ class AdminController extends Controller
      */
     public function beforeAction($action)
     {
+        // Permissions
+        $this->requireLogin();
+        $this->requirePermission('user_manage');
+
         $this->enableCsrfValidation = false;
         return parent::beforeAction($action);
     }
@@ -50,9 +54,6 @@ class AdminController extends Controller
      */
     public function actionCreate()
     {
-        $this->requireLogin();
-        $this->requirePermission('user_manage');
-
         $user_model = Dz::makeObject(User::class);
         $vec_assigned_roles = Yii::$app->request->post('UserRoles', []);
 
@@ -88,9 +89,6 @@ class AdminController extends Controller
      */
     public function actionUpdate($user_id)
     {
-        $this->requireLogin();
-        $this->requirePermission('user_manage');
-
         // Load User model
         $user_model = Dz::loadModel(User::class, $user_id);
 
@@ -152,8 +150,6 @@ class AdminController extends Controller
      */
     public function actionDelete($user_id)
     {
-        $this->requireLogin();
-        $this->requirePermission('user_manage');
         $this->requirePostRequest();
 
         // Load User model
@@ -179,9 +175,6 @@ class AdminController extends Controller
      */
     public function actionStatus($user_id)
     {
-        $this->requireLogin();
-        $this->requirePermission('user_manage');
-
         // Load User model
         $user_model = Dz::loadModel(User::class, $user_id);
 

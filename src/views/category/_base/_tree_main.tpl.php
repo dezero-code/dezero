@@ -6,7 +6,6 @@
 |
 | Available variables:
 |  - $category_model: Category model class
-|  - $vec_config: Category configuration options
 |
 */
   use dezero\helpers\Url;
@@ -26,7 +25,7 @@
     <?php endforeach; ?>
   </ol>
 <?php else : ?>
-  <p><?= $category_model->text('empty_text'); ?></p>
+  <p><?= $category_model->config->text('empty_text'); ?></p>
 <?php endif; ?>
 <?php
   /*
@@ -38,7 +37,7 @@
       ->registerScriptFile(Yii::app()->theme->baseUrl. '/js/dz.nestable.js', CClientScript::POS_END);
   }
 
-  if ( ! $vec_config['is_editable'] )
+  if ( ! $category_model->config->isEditable() )
   {
     // Load category nestable
     Yii::app()->clientscript->registerScript('category_tree_js',

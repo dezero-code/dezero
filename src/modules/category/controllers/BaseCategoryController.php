@@ -31,6 +31,10 @@ abstract class BaseCategoryController extends Controller
      */
     public function beforeAction($action)
     {
+        // Permissions
+        $this->requireLogin();
+        $this->requirePermission('category_manage');
+
         $this->enableCsrfValidation = false;
         return parent::beforeAction($action);
     }
@@ -46,10 +50,9 @@ abstract class BaseCategoryController extends Controller
 
         $data_provider = $category_search_model->search(Yii::$app->request->get());
 
-        return $this->render($category_search_model->viewPath('index'),[
+        return $this->render($category_search_model->config->viewPath('index'),[
             'data_provider'         => $data_provider,
-            'category_search_model' => $category_search_model,
-            'vec_config'            => $category_search_model->getConfig()
+            'category_search_model' => $category_search_model
         ]);
     }
 
@@ -59,9 +62,6 @@ abstract class BaseCategoryController extends Controller
      */
     public function actionCreate()
     {
-        $this->requireLogin();
-        $this->requirePermission('category_manage');
-
         $category_model = Dz::makeObject(Category::class);
         $asset_image_model = Dz::makeObject(AssetImage::class);
 
@@ -85,7 +85,7 @@ abstract class BaseCategoryController extends Controller
             }
         }
 
-        return $this->render($category_model->viewPath('create'), [
+        return $this->render($category_model->config->viewPath('create'), [
             'category_model'    => $category_model,
         ]);
     }
@@ -96,9 +96,6 @@ abstract class BaseCategoryController extends Controller
      */
     public function actionUpdate($category_id)
     {
-        $this->requireLogin();
-        $this->requirePermission('category_manage');
-
         // Load Category model
         $category_model = Dz::loadModel(Category::class, $category_id);
 
@@ -137,7 +134,7 @@ abstract class BaseCategoryController extends Controller
             }
         }
 
-        return $this->render($category_model->viewPath('update'), [
+        return $this->render($category_model->config->viewPath('update'), [
             'category_model'    => $category_model
         ]);
     }
@@ -148,8 +145,6 @@ abstract class BaseCategoryController extends Controller
      */
     public function actionDelete($category_id)
     {
-        $this->requireLogin();
-        $this->requirePermission('category_manage');
         $this->requirePostRequest();
 
         // Load Category model
