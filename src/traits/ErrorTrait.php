@@ -28,6 +28,15 @@ trait ErrorTrait
 
 
     /**
+     * @return array
+     */
+    public function hasErrors() : bool
+    {
+        return !empty($this->vec_errors);
+    }
+
+
+    /**
      * Add error(s)
      */
     public function addError($vec_errors) : void

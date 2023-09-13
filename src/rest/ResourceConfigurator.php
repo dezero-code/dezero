@@ -9,6 +9,7 @@ namespace dezero\rest;
 
 use dezero\base\Configurator;
 use dezero\contracts\ConfiguratorInterface;
+use dezero\helpers\ConfigHelper;
 use Yii;
 
 /**

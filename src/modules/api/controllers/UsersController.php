@@ -31,6 +31,11 @@ class UsersController extends Controller
                 case 'GET':
                     $users_resource->run();
                 break;
+
+                // Create new user - POST method: api/v1/users
+                case 'POST':
+                    $users_resource->run();
+                break;
             }
         }
 

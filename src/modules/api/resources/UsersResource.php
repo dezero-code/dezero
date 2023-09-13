@@ -15,8 +15,14 @@ class UsersResource extends Resource
     /**
      * Validate input parameters
      */
-    public function validate()
+    public function validate() : bool
     {
+        // Check auth validation from parent
+        if ( ! parent::validate() )
+        {
+            return false;
+        }
+
         return true;
     }
 

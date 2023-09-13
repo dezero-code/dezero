@@ -40,7 +40,6 @@ class Response extends \yii\web\Response
                 $this->data = [
                     'status_code'   => $this->getStatusCode(),
                     'errors'        => [$error_message],
-                    'results'       => [],
                     '_debug'        => $this->data
                 ];
             }
