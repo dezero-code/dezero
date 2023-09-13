@@ -9,16 +9,22 @@ namespace dezero\rest;
 
 use dezero\contracts\ConfigInterface;
 use dezero\helpers\ConfigHelper;
-use dezero\helpers\Json;
 use dezero\rest\ResourceConfigurator;
 use Dz;
+use yii\helpers\Json;
 use Yii;
 
 /**
  * Controller is the base class dor RESTful API controller classess
  */
-abstract class Resource implements ConfigInterface
+abstract class Resource extends \yii\base\BaseObject implements ConfigInterface
 {
+    /**
+     * API name
+     */
+    protected $api_name;
+
+
     /**
      * @var \dezero\base\Configurator
      */
@@ -46,9 +52,9 @@ abstract class Resource implements ConfigInterface
     /**
      * Constructor
      */
-    public function __construct(?string $api_name = null)
+    public function __construct(string $api_name = 'default')
     {
-        $this->api_name = $api_name ?? 'default';
+        $this->api_name = $api_name;
 
         $this->init();
     }
@@ -59,14 +65,22 @@ abstract class Resource implements ConfigInterface
      */
     public function init()
     {
-        // Load a specific configuration
-        $this->getConfig();
-
         // Get HTTP request method
         $this->request_method = Yii::$app->request->getMethod();
 
+        // Load a specific configuration
+        $this->getConfig();
+
         // Load input parameters
         $this->loadInput();
+
+        // Init response
+        $this->vec_response = [
+            'status_code'   => 403,
+            'errors'        => ['Access denied'],
+            'total_results' => 0,
+            'results'       => []
+        ];
     }
 
 
@@ -114,6 +128,20 @@ abstract class Resource implements ConfigInterface
 
 
     /**
+     * Check authorization
+     */
+    public function checkAuth()
+    {
+        if ( $this->config->isAuth() )
+        {
+
+        }
+
+        return true;
+    }
+
+
+    /**
      * Gets RestFul data and decodes its JSON request
      */
     public function jsonInput()
@@ -128,5 +156,14 @@ abstract class Resource implements ConfigInterface
     public function sendResponse(bool $is_save_log = true)
     {
         return $this->vec_response;
+    }
+
+
+    /**
+     * Send a custom error
+     */
+    public function sendError()
+    {
+
     }
 }

@@ -13,10 +13,26 @@ use Yii;
 class UsersResource extends Resource
 {
     /**
-     * List action for User models
+     * Validate input parameters
      */
-    public function actionTest()
+    public function validate()
     {
-        return [];
+        return true;
+    }
+
+
+    /**
+     * Run the resource
+     */
+    public function run()
+    {
+        // Prepare common REST API output
+        $this->vec_response = [
+            'status_code'   => 1,
+            'errors'        => [],
+            'total_results' => 0,
+            'filters'       => new \stdClass,
+            'results'       => [],
+        ];
     }
 }

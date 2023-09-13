@@ -86,4 +86,13 @@ class ResourceConfigurator extends Configurator implements ConfiguratorInterface
     {
         return ConfigHelper::getValue($this->vec_config, $config_key, $config_subkey);
     }
+
+
+    /**
+     * Check if auth configuration has been enabled
+     */
+    public function isAuth()
+    {
+        return $this->get('auth') !== false;
+    }
 }

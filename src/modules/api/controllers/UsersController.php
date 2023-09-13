@@ -19,25 +19,21 @@ class UsersController extends Controller
      */
     public function actionIndex()
     {
-        $user_resource = Dz::makeObject(UsersResource::class);
+        $users_resource = Dz::makeObject(UsersResource::class);
 
         // #1 - VALIDATE INPUT PARAMS
-        if ( $users_resource->validate('index') )
+        if ( $users_resource->validate() )
         {
             // #2  - PROCESS REQUEST
             switch ( $users_resource->method )
             {
                 // List of accepted users - GET method: api/v1/users
                 case 'GET':
-                    $users_resource->user_list();
+                    $users_resource->run();
                 break;
             }
         }
-        // $vec_input = $this->jsonInput();
 
-        return [
-            'status_code'   => 100,
-            'errors'        => ['Testing']
-        ];
+        return $users_resource->sendResponse();
     }
 }
