@@ -11,7 +11,7 @@ class Module extends \dezero\base\Module
      * @var array mapping from controller ID to controller configurations.
      */
     public $controllerMap = [
-        'users'     => \dezero\modules\api\controllers\UsersController::class,
+        'users'     => \dezero\modules\api\controllers\UsersController::class
     ];
 
 

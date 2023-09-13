@@ -6,11 +6,10 @@
  */
 
 namespace dezero\rest;
+
 use dezero\web\Response;
-use Dz;
 use yii\filters\ContentNegotiator;
-use yii\helpers\Json;
-use Yii;
+use yii\filters\Cors;
 
 /**
  * Controller is the base class dor RESTful API controller classess
@@ -30,13 +29,13 @@ class Controller extends \dezero\web\Controller
     {
         return [
             'contentNegotiator' => [
-                'class' => ContentNegotiator::className(),
+                'class' => ContentNegotiator::class,
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
                 ],
             ],
             'corsFilter' => [
-                'class' => \yii\filters\Cors::class,
+                'class' => Cors::class,
                 'cors' => [
                     'Origin' => ['*'],  // ['http://dezero.demo']
                     'Access-Control-Request-Method' => ['GET', 'POST', 'PUT', 'DELETE'],

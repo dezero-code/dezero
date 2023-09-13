@@ -13,7 +13,7 @@ use dezero\behaviors\WeightBehavior;
 use dezero\contracts\ConfigInterface;
 use dezero\helpers\ArrayHelper;
 use dezero\modules\asset\models\AssetImage;
-use dezero\modules\category\config\CategoryConfigBuilder;
+use dezero\modules\category\components\CategoryConfigurator;
 use dezero\modules\category\models\query\CategoryQuery;
 use dezero\modules\category\models\base\Category as BaseCategory;
 use Dz;
@@ -59,9 +59,9 @@ use Yii;
 class Category extends BaseCategory implements ConfigInterface
 {
     /**
-     * @var \dezero\modules\category\config\CategoryConfigBuilder
+     * @var \dezero\modules\category\components\CategoryConfigurator
      */
-    private $configBuilder;
+    private $configurator;
 
 
     /**
@@ -275,16 +275,16 @@ class Category extends BaseCategory implements ConfigInterface
     */
 
     /**
-     * Return the configBuilder class to manage configuration options
+     * Return the Configurator class to manage configuration options
      */
-    public function getConfig() : CategoryConfigBuilder
+    public function getConfig() : CategoryConfigurator
     {
-        if ( $this->configBuilder === null )
+        if ( $this->configurator === null )
         {
-            $this->configBuilder = Dz::makeObject(CategoryConfigBuilder::class, [$this, $this->category_type]);
+            $this->configurator = Dz::makeObject(CategoryConfigurator::class, [$this, $this->category_type]);
         }
 
-        return $this->configBuilder;
+        return $this->configurator;
     }
 
 

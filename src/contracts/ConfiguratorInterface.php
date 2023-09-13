@@ -1,11 +1,11 @@
 <?php
 /**
- * ConfigBuilder contract
+ * Configurator contract
  */
 
 namespace dezero\contracts;
 
-interface ConfigBuilderInterface
+interface ConfiguratorInterface
 {
     /**
      * Return configuration value(s) for current type

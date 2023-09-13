@@ -7,17 +7,16 @@
  * @copyright Copyright &copy; 2023 Fabián Ruiz
  */
 
-namespace dezero\modules\category\config;
+namespace dezero\modules\category\components;
 
-use dezero\contracts\ConfigBuilderInterface;
-use dezero\entity\ConfigBuilder;
+use dezero\contracts\ConfiguratorInterface;
+use dezero\entity\EntityConfigurator;
 use Yii;
 
 /**
- * Base class to handle configuration options, view files and texts
- * for a specific category type of a Category model
+ * Base class to handle configuration options for Category models
  */
-class CategoryConfigBuilder extends ConfigBuilder implements ConfigBuilderInterface
+class CategoryConfigurator extends EntityConfigurator implements ConfiguratorInterface
 {
     /**
      * Load the configuration for a specific type

@@ -1,0 +1,99 @@
+========================
+-- CONFIGURATOR GUIDE --
+========================
+
+--> How to define a CONFIGURATOR and add it into your classes
+
+
+1. CONFIG FILE
+    - Define your config file into /app/config/components directory
+    ---> @see /app/config/components/categories.php
+
+2. Configurator CLASS
+    - Create a class into /<your_module>/components directory. This class must extend from \dezero\entity\Configurator
+        ---> @see dezero\modules\category\components\CategoryConfigurator
+
+            ```
+            class CategoryConfigurator extends Configurator implements ConfiguratorInterface
+            {
+                ...
+            }
+        ```
+
+
+3. DEFINE METHODS
+    - Define the method loadConfiguration() to load a specific type
+    - Define the method defaultConfiguration() if specific type does not exist
+    ---> @see dezero\modules\category\components\CategoryConfigurator class
+
+
+4. ADD ConfiguBuilder TO YOUR MODEL
+    - Implements interface dezero\contracts\ConfigInterface
+    - Create a method getConfig() and init the Configurator if it does not exist
+    - IMPORTANT: The TYPE must be defined on the second parameter of the constructor
+        ---> @see dezero\modules\category\models\Category
+
+            ```
+            use dezero\modules\category\components\CategoryConfigurator;
+
+            class Category extends BaseCategory implements ConfigInterface
+            {
+                /**
+                 * @var \dezero\modules\category\components\CategoryConfigurator
+                 */
+                private $configurator;
+
+                ...
+
+
+                /**
+                 * Return the configurator class to manage configuration options
+                 */
+                public function getConfig() : CategoryConfigurator
+                {
+                    if ( $this->configurator === null )
+                    {
+                        $this->configurator = Dz::makeObject(CategoryConfigurator::class, [$this, $this->category_type]);
+                    }
+
+                    return $this->configurator;
+                }
+
+                ...
+            }
+        ```
+
+5. ACCESS TO ConfiguBuilder VIA "->config" magic property
+
+    - Get a CONFIGURATION option
+        > $category_model->config->get('is_editable')
+
+    - Get a VIEW PATH defined in "views" configuration option
+        > $category_model->config->viewPath('_form')
+
+    - Get a TEXT defined in "texts" configuration option
+        > $category_model->config->text('panel_title')
+
+
+6. OPTIONAl - CUSTOM METHODS
+    - Create your custom methods into your Configurator class
+        ---> @see dezero\modules\category\components\CategoryConfigurator
+
+        ```
+            class CategoryConfigurator extends Configurator implements ConfiguratorInterface
+            {
+                ...
+
+                /**
+                 * Check if category type is editable
+                 */
+                public function isEditable()
+                {
+                    return $this->get('is_editable') === true;
+                }
+
+                ...
+            }
+        ```
+
+    - And now you can use "$category_model->config->isEditable()" custom method

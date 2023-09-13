@@ -1,30 +1,28 @@
 <?php
 /**
- * ConfigBuilder class file
+ * Configurator class file
  *
  * @author Fabián Ruiz <fabian@dezero.es>
  * @link http://www.dezero.es
  * @copyright Copyright &copy; 2023 Fabián Ruiz
  */
 
-namespace dezero\entity;
+namespace dezero\base;
 
-use dezero\contracts\ConfigBuilderInterface;
-use dezero\entity\ActiveRecord;
+use dezero\contracts\ConfiguratorInterface;
+use dezero\helpers\ConfigHelper;
 use Yii;
 
 /**
- * Base class to handle configuration options, view files and texts
- * for a specific type/subtype of an Entity model
+ * Base class to manage configuration options
  */
-abstract class ConfigBuilder implements ConfigBuilderInterface
+abstract class Configurator implements ConfiguratorInterface
 {
     /**
      * Constructor
      */
-    public function __construct(ActiveRecord $model, string $type, array $vec_config = [])
+    public function __construct(string $type, array $vec_config = [])
     {
-        $this->model = $model;
         $this->type = $type;
         $this->vec_config = $vec_config;
 
@@ -77,24 +75,7 @@ abstract class ConfigBuilder implements ConfigBuilderInterface
      */
     public function getConfig(?string $config_key = null, ?string $config_subkey = null)
     {
-        // Check if configuration key exists
-        if ( !empty($this->vec_config) && array_key_exists($config_key, $this->vec_config) )
-        {
-            // Check if configuration option exists
-            if ( $config_subkey !== null && array_key_exists($config_subkey, $this->vec_config[$config_key]) )
-            {
-                return $this->vec_config[$config_key][$config_subkey];
-            }
-
-            return $this->vec_config[$config_key];
-        }
-
-        if ( $config_key !== null )
-        {
-            return null;
-        }
-
-        return $this->vec_config;
+        return ConfigHelper::getValue($this->vec_config, $config_key, $config_subkey);
     }
 
 
@@ -104,23 +85,5 @@ abstract class ConfigBuilder implements ConfigBuilderInterface
     public function get(string $config_key, ?string $config_subkey = null)
     {
         return $this->getConfig($config_key, $config_subkey);
-    }
-
-
-    /**
-     * Return the view file path for current type
-     */
-    public function viewPath(string $view_file) : ?string
-    {
-        return $this->getConfig('views', $view_file);
-    }
-
-
-    /**
-     * Return the corresponding text
-     */
-    public function text(string $text_key) : ?string
-    {
-        return $this->getConfig('texts', $text_key);
     }
 }

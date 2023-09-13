@@ -1,16 +1,16 @@
 <?php
 /**
- * Config contract for models
+ * Config contract for classes
  */
 
 namespace dezero\contracts;
 
-use dezero\entity\ConfigBuilder;
+use dezero\base\Configurator;
 
 interface ConfigInterface
 {
     /**
-     * Return the configBuilder class to manage configuration options
+     * Return the Configurator class to manage configuration options
      */
-    public function getConfig() : ConfigBuilder;
+    public function getConfig() : Configurator;
 }
