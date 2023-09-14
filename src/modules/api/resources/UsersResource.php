@@ -30,7 +30,7 @@ class UsersResource extends Resource
     /**
      * Run the resource
      */
-    public function run()
+    public function run() : void
     {
         // Prepare common REST API output
         $this->vec_response = [

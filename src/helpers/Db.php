@@ -1,6 +1,6 @@
 <?php
 /**
- * DB class file for Dz Framework
+ * DB class file for Dezero Framework
  */
 
 namespace dezero\helpers;

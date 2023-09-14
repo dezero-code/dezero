@@ -46,7 +46,7 @@ class AuthResource extends Resource
     /**
      * Run the resource
      */
-    public function run()
+    public function run() : void
     {
         // Dummy token
         $this->vec_response['status_code'] = 1;

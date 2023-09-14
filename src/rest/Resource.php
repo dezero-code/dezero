@@ -162,6 +162,12 @@ abstract class Resource extends \yii\base\BaseObject implements ConfigInterface
 
 
     /**
+     * Run the resource
+     */
+    abstract public function run() : void;
+
+
+    /**
      * Check authorization
      */
     public function checkAuth() : bool
