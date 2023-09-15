@@ -48,6 +48,9 @@ abstract class BaseCategoryController extends Controller
         $category_search_model = Dz::makeObject(CategorySearch::class);
         $category_search_model->category_type = $this->getCategoryType();
 
+        // Filter by only the first level
+        $category_search_model->category_parent_id = null;
+
         $data_provider = $category_search_model->search(Yii::$app->request->get());
 
         return $this->render($category_search_model->config->viewPath('index'),[
@@ -89,10 +92,12 @@ abstract class BaseCategoryController extends Controller
             {
                 Yii::$app->session->setFlash('success', Yii::t('backend', $category_model->config->text('created_success')));
 
+                // Redirect to update page
                 return $this->redirect(["/category/{$category_model->category_type}/update", 'category_id' => $category_model->category_id]);
             }
             else
             {
+                // Show error messages
                 $category_create_service->showErrors();
             }
         }
@@ -135,14 +140,21 @@ abstract class BaseCategoryController extends Controller
             $category_update_service = Dz::makeObject(CategoryUpdateService::class, [$category_model, $asset_image_model, $status_change]);
             if ( $category_update_service->run() )
             {
-                // Success message & redirect
-                Yii::$app->session->setFlash('success', Yii::t('category', 'Category updated succesfully'));
+                // Show flash messages if disable, enable or delete actions has been executed
+                $category_update_service->showFlashMessages();
 
+                // Delete action? Redirect to list page
+                if ( $status_change === 'delete' )
+                {
+                    return $this->redirect(["/category/{$category_model->category_type}"]);
+                }
+
+                // Refresh page
                 return $this->redirect(["/category/{$category_model->category_type}/update", 'category_id' => $category_model->category_id]);
-
             }
             else
             {
+                // Show error messages
                 $category_update_service->showErrors();
             }
         }
@@ -168,7 +180,7 @@ abstract class BaseCategoryController extends Controller
         $category_delete_service = Dz::makeObject(CategoryDeleteService::class, [$category_model]);
         if ( $category_delete_service->run() )
         {
-            Yii::$app->session->setFlash('success', Yii::t('category', 'Category has been deleted.'));
+            Yii::$app->session->setFlash('success', Yii::t('backend', $category_model->config->text('delete_success')));
         }
         else
         {
@@ -206,7 +218,7 @@ abstract class BaseCategoryController extends Controller
                 }
             }
 
-            // 2nd LEVEL
+            // From 2nd level to Nth levels
             else if ( isset($vec_nestable[0]['id']) && $vec_nestable[0]['id'] == $category_id )
             {
                 // Check if current category has subcategories (children)

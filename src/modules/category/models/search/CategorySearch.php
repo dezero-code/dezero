@@ -56,7 +56,7 @@ class CategorySearch extends Category implements SearchInterface
         // Uncomment the following line if you do not want to return any records when validation fails
         if ( ! ( $this->load($params) && $this->validate() ) )
         {
-            return $data_provider;
+            // return $data_provider;
         }
 
 
@@ -79,10 +79,17 @@ class CategorySearch extends Category implements SearchInterface
         }
         */
 
+        // Category parent
+        if ( $this->category_parent_id === null )
+        {
+            $query->andWhere('category_parent_id IS NULL');
+        } else {
+            $query->andFilterWhere(['category_parent_id' => $this->category_parent_id]);
+        }
+
         // Compare conditions
         $query->andFilterWhere([
             'category_id' => $this->category_id,
-            'category_parent_id' => $this->category_parent_id,
             'depth' => $this->depth,
             'language_id' => $this->language_id,
             'category_translated_id' => $this->category_translated_id,

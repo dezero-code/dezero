@@ -48,15 +48,15 @@
 ?>
 <div class="panel">
   <header class="panel-heading">
-    <h3 class="panel-title"><?= Yii::t('category', 'Category Information'); ?></h3>
+    <h3 class="panel-title"><?php if ( $category_model->depth > 0 || $category_model->category_parent_id !== null ) : ?><?= $category_model->config->text('subentity_label'); ?><?php else : ?><?= $category_model->config->text('entity_label'); ?><?php endif; ?> <?= Yii::t('backend', 'Information'); ?></h3>
   </header>
   <div class="panel-body">
     <div class="row">
-      <div class="col-lg-7">
+      <div class="col-lg-11">
         <?php if ($current_action !== 'create') : ?>
           <div class="form-group row">
-            <?= Html::activeLabel($category_model, 'category_id', ['class' => 'col-sm-3 form-control-label']); ?>
-            <div class="col-sm-9">
+            <?= Html::activeLabel($category_model, 'category_id', ['class' => 'col-sm-2 form-control-label']); ?>
+            <div class="col-sm-10">
               <p class="form-control-static"><?= $category_model->category_id; ?></p>
             </div>
           </div>
@@ -68,8 +68,8 @@
               'name',
               [
                 'columns' => [
-                  'wrapper' => 'col-sm-9',
-                  'label'   => 'col-sm-3',
+                  'wrapper' => 'col-sm-10',
+                  'label'   => 'col-sm-2',
                 ]
               ]
             )
@@ -85,8 +85,8 @@
               'description',
               [
                 'columns' => [
-                  'wrapper' => 'col-sm-9',
-                  'label'   => 'col-sm-3',
+                  'wrapper' => 'col-sm-10',
+                  'label'   => 'col-sm-2',
                 ]
               ]
             )
@@ -101,14 +101,20 @@
   </div>
 </div>
 
-
+<?php
+  /*
+  |--------------------------------------------------------------------------
+  | IMAGE
+  |--------------------------------------------------------------------------
+  */
+?>
 <div class="panel">
   <header class="panel-heading">
     <h3 class="panel-title"><?= Yii::t('category', 'Image'); ?></h3>
   </header>
   <div class="panel-body">
     <div class="row">
-      <div class="col-lg-7">
+      <div class="col-lg-11">
         <?=
           $form->field(
               $category_model,
@@ -116,8 +122,8 @@
               'image_file_id',
               [
                 'columns' => [
-                  'wrapper' => 'col-sm-9',
-                  'label'   => 'col-sm-3',
+                  'wrapper' => 'col-sm-10',
+                  'label'   => 'col-sm-2',
                 ]
               ]
             )
@@ -172,7 +178,7 @@
             echo Html::a(Yii::t('backend', 'Disable'), ['#'], [
               'id'                => 'disable-category-btn',
               'class'             => 'btn btn-danger right',
-              'data-dialog'       => '<h3>Are you sure you want to <span class=\'text-danger\'>DISABLE</span> this category?</h3>',
+              'data-dialog'       => Yii::t('backend', $category_model->config->text('disable_confirm')),
               'data-form-submit'  => $form_id,
               'data-value'        => 'disable',
               'data-plugin'       => 'dz-status-button'
@@ -185,7 +191,7 @@
             echo Html::a(Yii::t('backend', 'Enable'), ['#'], [
               'id'                => 'enable-category-btn',
               'class'             => 'btn btn-success right',
-              'data-dialog'       => '<h3>Are you sure you want to <span class=\'text-success\'>ENABLE</span> this category?</h3>',
+              'data-dialog'       => Yii::t('backend', $category_model->config->text('enable_confirm')),
               'data-form-submit'  => $form_id,
               'data-value'        => 'enable',
               'data-plugin'       => 'dz-status-button'
@@ -196,7 +202,7 @@
           echo Html::a(Yii::t('backend', 'Delete'), ['#'], [
             'id'                => 'delete-category-btn',
             'class'             => 'btn btn-delete right',
-            'data-dialog'       => '<h3>Are you sure you want to <span class=\'text-danger\'>DELETE</span> this category?</h3><p><strong>WARNING:</strong> All category data will be removed permanently. Please consider disabling the category.</p>',
+            'data-dialog'       => Yii::t('backend', $category_model->config->text('delete_confirm')),
             'data-form-submit'  => $form_id,
             'data-value'        => 'delete',
             'data-plugin'       => 'dz-status-button'

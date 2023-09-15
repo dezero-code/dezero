@@ -62,9 +62,7 @@ class UserUpdateService implements ServiceInterface
         $this->updateRoles();
 
         // Status change action? Enable, disable or delete
-        $this->applyStatusChange();
-
-        return true;
+        return $this->applyStatusChange();
     }
 
 
@@ -188,72 +186,85 @@ class UserUpdateService implements ServiceInterface
     /**
      * Status change action? Enable, disable or delete
      */
-    private function applyStatusChange() : void
+    private function applyStatusChange() : bool
     {
-        if ( $this->status_change !== null )
+        switch ( $this->status_change )
         {
-            switch ( $this->status_change )
-            {
-                case 'disable':
-                    $this->disable();
-                break;
+            // DISABLE action
+            case 'disable':
+                return $this->disable();
+            break;
 
-                case 'enable':
-                    $this->enable();
-                break;
+            // ENABLE action
+            case 'enable':
+                return $this->enable();
+            break;
 
-                case 'delete':
-                    $this->delete();
-                break;
-            }
+            // DELETE action
+            case 'delete':
+                return $this->delete();
+            break;
+
+            // SAVE action --> Show success message
+            default:
+                $this->addFlashMessage(Yii::t('backend', 'User updated succesfully'));
+
+                return true;
+            break;
         }
     }
 
 
     /**
-     * Disables OrganizerUser model
+     * Disables an User model
      */
-    private function disable()
+    private function disable() : bool
     {
         if ( $this->user_model->disable() )
         {
-            $this->addFlashMessage('User DISABLED successfully');
+            $this->addFlashMessage(Yii::t('backend', 'User DISABLED successfully'));
+
+            return true;
         }
-        else
-        {
-            $this->addError('User could not be DISABLED');
-        }
+
+        $this->addError(Yii::t('backend', 'User could not be DISABLED'));
+
+        return false;
     }
 
 
     /**
-     * Enables OrganizerUser model
+     * Enables an User model
      */
-    private function enable()
+    private function enable() : bool
     {
         if ( $this->user_model->enable() )
         {
-            $this->addFlashMessage('User ENABLED successfully');
+            $this->addFlashMessage(Yii::t('backend', 'User ENABLED successfully'));
+
+            return true;
         }
-        else
-        {
-            $this->addError('User could not be ENABLED');
-        }
+
+        $this->addError(Yii::t('backend', 'User could not be ENABLED'));
+
+        return false;
     }
 
 
     /**
-     * Deletes OrganizerUser model
+     * Deletes an User model
      */
-    private function delete()
+    private function delete() : bool
     {
-        if ( $this->user_model->delete() )
+        if ( $this->user_model->delete() !== false )
         {
-            $this->addFlashMessage('User DELETED successfully');
+            $this->addFlashMessage(Yii::t('backend', 'User DELETED successfully'));
+
+            return true;
         }
-        else
-        {
-            $this->addError('User could not be DELETED');
-        }
+
+        $this->addError(Yii::t('backend', 'User could not be DELETED'));
+
+        return false;
     }
 }

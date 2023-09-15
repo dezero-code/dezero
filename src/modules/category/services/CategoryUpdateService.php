@@ -50,9 +50,7 @@ class CategoryUpdateService implements ServiceInterface
         }
 
         // Status change action? Enable, disable or delete
-        $this->applyStatusChange();
-
-        return true;
+        return $this->applyStatusChange();
     }
 
 
@@ -104,72 +102,85 @@ class CategoryUpdateService implements ServiceInterface
     /**
      * Status change action? Enable, disable or delete
      */
-    private function applyStatusChange() : void
+    private function applyStatusChange() : bool
     {
-        if ( $this->status_change !== null )
+        switch ( $this->status_change )
         {
-            switch ( $this->status_change )
-            {
-                case 'disable':
-                    $this->disable();
-                break;
+            // DISABLE action
+            case 'disable':
+                return $this->disable();
+            break;
 
-                case 'enable':
-                    $this->enable();
-                break;
+            // ENABLE action
+            case 'enable':
+                return $this->enable();
+            break;
 
-                case 'delete':
-                    $this->delete();
-                break;
-            }
+            // DELETE action
+            case 'delete':
+                return $this->delete();
+            break;
+
+            // SAVE action --> Show success message
+            default:
+                $this->addFlashMessage(Yii::t('backend', $this->category_model->config->text('updated_success')));
+
+                return true;
+            break;
         }
     }
 
 
     /**
-     * Disables OrganizerCategory model
+     * Disables a Category model
      */
-    private function disable()
+    private function disable() : bool
     {
         if ( $this->category_model->disable() )
         {
-            $this->addFlashMessage('Category DISABLED successfully');
+            $this->addFlashMessage(Yii::t('backend', $this->category_model->config->text('disable_success')));
+
+            return true;
         }
-        else
-        {
-            $this->addError('Category could not be DISABLED');
-        }
+
+        $this->addError(Yii::t('backend', $this->category_model->config->text('disable_error')));
+
+        return false;
     }
 
 
     /**
-     * Enables OrganizerCategory model
+     * Enables a Category model
      */
-    private function enable()
+    private function enable() : bool
     {
         if ( $this->category_model->enable() )
         {
-            $this->addFlashMessage('Category ENABLED successfully');
+            $this->addFlashMessage(Yii::t('backend', $this->category_model->config->text('enable_success')));
+
+            return true;
         }
-        else
-        {
-            $this->addError('Category could not be ENABLED');
-        }
+
+        $this->addError(Yii::t('backend', $this->category_model->config->text('enable_error')));
+
+        return false;
     }
 
 
     /**
-     * Deletes OrganizerCategory model
+     * Deletes a Category model
      */
-    private function delete()
+    private function delete() : bool
     {
-        if ( $this->category_model->delete() )
+        if ( $this->category_model->delete() !== false )
         {
-            $this->addFlashMessage('Category DELETED successfully');
+            $this->addFlashMessage(Yii::t('backend', $this->category_model->config->text('delete_success')));
+
+            return true;
         }
-        else
-        {
-            $this->addError('Category could not be DELETED');
-        }
+
+        $this->addError(Yii::t('backend', $this->category_model->config->text('delete_error')));
+
+        return false;
     }
 }

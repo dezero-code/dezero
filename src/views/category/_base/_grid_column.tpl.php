@@ -25,9 +25,9 @@
     <?= Html::a($model->title(), ['update', 'category_id' => $model->category_id]); ?>
     <?php
       // Multiple levels?
-      if ( $model->getMaxLevels() > 1 ) :
+      if ( $model->getMaxLevels() > 1 && $model->totalSubcategories > 0 ) :
     ?>
-      <?= Html::a($model->totalSubcategories() .' '. $model->config->text('subcategories'), ['update', 'category_id' => $model->category_id], ['class' => 'btn btn-dark btn-outline btn-sm ml-5']); ?>
+      <?= Html::a($model->totalSubcategories .' '. $model->config->text('subcategories'), ['update', 'category_id' => $model->category_id], ['class' => 'btn btn-dark btn-outline btn-sm ml-5']); ?>
     <?php endif; ?>
     <?php
       // Disabled category?

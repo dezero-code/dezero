@@ -72,6 +72,7 @@ class AdminController extends Controller
             }
             else
             {
+                // Show error messages
                 $user_create_service->showErrors();
             }
         }
@@ -123,12 +124,21 @@ class AdminController extends Controller
             $user_update_service = Dz::makeObject(UserUpdateService::class, [$user_model, $vec_assigned_roles, $is_password_changed, $status_change]);
             if ( $user_update_service->run() )
             {
-                // Success message & redirect
-                Yii::$app->session->setFlash('success', Yii::t('user', 'User updated succesfully'));
+                // Show flash messages if disable, enable or delete actions has been executed
+                $user_update_service->showFlashMessages();
+
+                // Delete action? Redirect to list page
+                if ( $status_change === 'delete' )
+                {
+                    return $this->redirect(["/user/admin"]);
+                }
+
+                // Refresh page
                 return $this->redirect(['/user/admin/update', 'user_id' => $user_model->user_id]);
             }
             else
             {
+                // Show error messages
                 $user_update_service->showErrors();
             }
         }

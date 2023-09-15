@@ -15,14 +15,18 @@
   use dezero\helpers\Url;
   use dezero\grid\GridView;
   use dezero\widgets\GridViewPjax;
+  use Dz;
+
+  // Current controller
+  $current_controller = Dz::currentController(true);
 
   // Page title
-  $this->title = Yii::t('backend', 'Manage categories');
+  $this->title = Yii::t('backend', $category_search_model->config->text('index_title'));
 ?>
 <div class="page-header">
   <h1 class="page-title"><?= $this->title; ?></h1>
   <div class="page-header-actions">
-    <a href="<?= Url::to("/category/{$category_search_model->category_type}/create"); ?>" class="btn btn-primary"><i class="icon wb-plus"></i><?= Yii::t('backend', 'Add new category'); ?></a>
+    <a href="<?= Url::to("/category/{$current_controller}/create"); ?>" class="btn btn-primary"><i class="icon wb-plus"></i><?= Yii::t('backend', 'Add new category'); ?></a>
   </div>
 </div>
 <div class="page-content">
@@ -42,7 +46,7 @@
           </header>
           <div class="panel-body">
             <div id="category-loading-tree" class='dz-loading center hide'></div>
-            <div class="dd dd-category-group" id="category-nestable-wrapper" data-name="category" data-max-depth="<?= $category_search_model->getMaxLevels(); ?>" data-url="<?= Url::to("/category/{$category_search_model->category_type}/weight"); ?>?category_id=0"<?php if ( ! $category_search_model->config->isEditable() ) : ?> data-readonly="true"<?php endif; ?>>
+            <div class="dd dd-category-group" id="category-nestable-wrapper" data-name="category" data-max-depth="<?= $category_search_model->getMaxLevels(); ?>" data-url="<?= Url::to("/category/{$current_controller}/weight"); ?>?category_id=0"<?php if ( ! $category_search_model->config->isEditable() ) : ?> data-readonly="true"<?php endif; ?>>
               <?=
                 // Render tree main
                 $this->render($category_search_model->config->viewPath('_tree_main'), [
@@ -52,7 +56,7 @@
               <?php if ( $category_search_model->config->isEditable() ) : ?>
                 <hr>
                 <div class="buttons">
-                  <a href="<?= Url::to("/category/{$category_search_model->category_type}/create"); ?>" class="btn mr-10 mb-10 btn-primary"><i class="icon wb-plus"></i> <?= $category_search_model->config->text('add_button'); ?></a>
+                  <a href="<?= Url::to("/category/{$current_controller}/create"); ?>" class="btn mr-10 mb-10 btn-primary"><i class="icon wb-plus"></i> <?= $category_search_model->config->text('add_button'); ?></a>
                 </div>
               <?php endif; ?>
             </div>

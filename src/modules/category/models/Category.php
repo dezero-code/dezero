@@ -63,6 +63,11 @@ class Category extends BaseCategory implements ConfigInterface
      */
     private $configurator;
 
+    /**
+     * @var int
+     */
+    private $total_subcategories;
+
 
     /**
      * {@inheritdoc}
@@ -278,16 +283,21 @@ class Category extends BaseCategory implements ConfigInterface
     /**
      * Return total number of subcategories
      */
-    public function totalSubcategories() : int
+    public function getTotalSubcategories() : int
     {
-        return $this->getCategories()->count();
+        if ( $this->total_subcategories === null )
+        {
+            $this->total_subcategories = $this->getCategories()->count();
+        }
+
+        return $this->total_subcategories;
     }
 
 
     /**
      * Return all parents
      */
-    public function getAllParents()
+    public function getAllParents() : array
     {
         $vec_output = [];
         if ( $this->categoryParent )
@@ -297,6 +307,20 @@ class Category extends BaseCategory implements ConfigInterface
         }
 
         return $vec_output;
+    }
+
+
+    /**
+     * Check if a "category_id" is parent (father, grandfather, ...)
+     */
+    public function isParent(int $category_id) : bool
+    {
+        if ( $this->category_parent_id === $category_id )
+        {
+            return true;
+        }
+
+        return $this->categoryParent ? $this->categoryParent->isParent($category_id) : false;
     }
 
 

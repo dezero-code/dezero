@@ -67,14 +67,15 @@ class CategoryConfigurator extends EntityConfigurator implements ConfiguratorInt
 
             // View files path
             'views' => [
-                'index'         => '//category/_base/index',
-                'create'        => '//category/_base/create',
-                'update'        => '//category/_base/update',
-                '_form'         => '//category/_base/_form',
-                '_form_seo'     => '//category/_base/_form_seo',
-                '_grid_column'  => '//category/_base/_grid_column',
-                '_tree'         => '//category/_base/_tree',
-                '_tree_main'    => '//category/_base/_tree_main',
+                'index'             => '//category/_base/index',
+                'create'            => '//category/_base/create',
+                'update'            => '//category/_base/update',
+                '_form'             => '//category/_base/_form',
+                '_form_seo'         => '//category/_base/_form_seo',
+                '_grid_column'      => '//category/_base/_grid_column',
+                '_tree_main'        => '//category/_base/_tree_main',
+                '_tree'             => '//category/_base/_tree',
+                '_tree_sublevels'   => '//category/_base/_tree_sublevels',
             ],
 
             // Texts

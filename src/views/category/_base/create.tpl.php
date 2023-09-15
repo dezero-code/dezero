@@ -10,16 +10,20 @@
 |
 */
 
-use dezero\helpers\Html;
-use dezero\helpers\Url;
-use dezero\widgets\ActiveForm;
+  use dezero\helpers\Html;
+  use dezero\helpers\Url;
+  use dezero\widgets\ActiveForm;
+  use Dz;
 
-// Page title
-$this->title = Yii::t('backend', $category_model->config->text('create_title'));
-if ( $category_parent_model !== null )
-{
-  $this->title = Yii::t('backend', $category_model->config->text('subcategory_title'), ['subcategory' => $category_parent_model->title()]);
-}
+  // Current controller
+  $current_controller = Dz::currentController(true);
+
+  // Page title
+  $this->title = Yii::t('backend', $category_model->config->text('create_title'));
+  if ( $category_parent_model !== null )
+  {
+    $this->title = Yii::t('backend', $category_model->config->text('subcategory_title'), ['subcategory' => $category_parent_model->title()]);
+  }
 ?>
 <div class="page-header">
   <h1 class="page-title"><?= $this->title; ?></h1>
@@ -31,8 +35,8 @@ if ( $category_parent_model !== null )
       // Breadcrumbs
       Html::breadcrumbs([
         [
-          'label' => Yii::t('backend', 'Manage Categories'),
-          'url'   => ["/category/{$category_model->category_type}"],
+          'label' => Yii::t('backend', $category_model->config->text('entities_label')),
+          'url'   => ["/category/{$current_controller}"],
         ],
         $this->title
       ]);
@@ -45,12 +49,12 @@ if ( $category_parent_model !== null )
       // Breadcrumbs
       Html::breadcrumbs([
         [
-          'label' => Yii::t('backend', 'Manage Categories'),
-          'url'   => ["/category/{$category_model->category_type}"],
+          'label' => Yii::t('backend', $category_model->config->text('entities_label')),
+          'url'   => ["/category/{$current_controller}"],
         ],
         [
           'label' => $category_parent_model->title(),
-          'url'   => ["/category/{$category_model->category_type}/update", "category_id" => $category_parent_model->category_id],
+          'url'   => ["/category/{$current_controller}/update", "category_id" => $category_parent_model->category_id],
         ],
         $this->title
       ]);

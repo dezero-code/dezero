@@ -8,6 +8,7 @@
 namespace dezero\traits;
 
 use dezero\helpers\ArrayHelper;
+use Yii;
 
 trait FlashMessageTrait
 {
@@ -43,6 +44,23 @@ trait FlashMessageTrait
         else
         {
             $this->vec_messages[$type][] = $vec_messages;
+        }
+    }
+
+
+    /**
+     * Show flash messages: ['success', 'warning', 'error']
+     */
+    public function showFlashMessages() : void
+    {
+        $vec_classes = ['success', 'info', 'warning', 'error'];
+        foreach ( $vec_classes as $class_type )
+        {
+            $vec_messages = $this->getFlashMessages($class_type);
+            if ( !empty($vec_messages) )
+            {
+                Yii::$app->session->setFlash($class_type, $vec_messages);
+            }
         }
     }
 }

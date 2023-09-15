@@ -24,6 +24,10 @@ class MymoduleController extends Controller
      */
     public function beforeAction($action)
     {
+        // Permissions
+        $this->requireLogin();
+        $this->requirePermission('category_manage');
+
         $this->enableCsrfValidation = false;
         return parent::beforeAction($action);
     }
@@ -50,9 +54,6 @@ class MymoduleController extends Controller
      */
     public function actionCreate()
     {
-        $this->requireLogin();
-        $this->requirePermission('mymodule_manage');
-
         $mymodule_model = Dz::makeObject(Mymodule::class);
 
         // Validate model via AJAX
@@ -70,6 +71,7 @@ class MymoduleController extends Controller
             }
             else
             {
+                // Show error messages
                 $mymodule_create_service->showErrors();
             }
         }
@@ -85,9 +87,6 @@ class MymoduleController extends Controller
      */
     public function actionUpdate($mymodule_id)
     {
-        $this->requireLogin();
-        $this->requirePermission('mymodule_manage');
-
         // Load Mymodule model
         $mymodule_model = Dz::loadModel(Mymodule::class, $mymodule_id);
 
@@ -104,12 +103,21 @@ class MymoduleController extends Controller
             $mymodule_update_service = Dz::makeObject(MymoduleUpdateService::class, [$mymodule_model, $status_change]);
             if ( $mymodule_update_service->run() )
             {
-                // Success message & redirect
-                Yii::$app->session->setFlash('success', Yii::t('mymodule', 'Mymodule updated succesfully'));
-                return $this->redirect(['/mymodule/mymodule/update', 'mymodule_id' => $mymodule_model->mymodule_id]);
+                // Show flash messages if disable, enable or delete actions has been executed
+                $mymodule_update_service->showFlashMessages();
+
+                // Delete action? Redirect to list page
+                if ( $status_change === 'delete' )
+                {
+                    return $this->redirect(["/mymodule/mymodule"]);
+                }
+
+                // Refresh page
+                return $this->redirect(['/mymodule/mymodule/update', 'user_id' => $user_model->user_id]);
             }
             else
             {
+                // Show error messages
                 $mymodule_update_service->showErrors();
             }
         }
@@ -125,8 +133,6 @@ class MymoduleController extends Controller
      */
     public function actionDelete($mymodule_id)
     {
-        $this->requireLogin();
-        $this->requirePermission('mymodule_manage');
         $this->requirePostRequest();
 
         // Load Mymodule model
