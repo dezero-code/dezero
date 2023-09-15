@@ -1,0 +1,154 @@
+==============================
+-- LOCAL INSTALLATION GUIDE --
+==============================
+
+-----------------------------------
+-- STEP 1 - APACHE & HOSTS
+-----------------------------------
+1. DOCUMENT ROOT - Create a directory into your document root.
+    > mkdir /Users/my_user/www/my.project
+
+2. APACHE VIRTUAL HOST - Create a new Apache VirtualHost
+
+   Find your Apache configuration file (http.conf).
+    > cd /usr/local/etc/httpd (macOS Big Sur)
+    > cd /opt/homebrew/etc/httpd/extra (macOS Monterey)
+
+   Edit the Apache configuration file (http.conf) and add the following lines at the end:
+    > subl /opt/homebrew/etc/httpd/extra/httpd-vhosts.conf
+    > subl /usr/local/etc/httpd/httpd.conf
+
+    <VirtualHost *:80>
+        ServerName my.project
+        DocumentRoot /Users/my_user/www/my.project/www
+        Options +FollowSymlinks
+
+        ErrorLog /Users/my_user/www/my.project/storage/logs/error_apache.log
+        LogLevel info
+
+        <Directory /Users/my_user/www/my.project/www>
+            AllowOverride all
+        </Directory>
+    </VirtualHost>
+
+2.B. APACHE VIRTUAL HOST with HTTPS
+
+   Edit the Apache configuration file (http.conf) and add the following lines at the end:
+    > subl /opt/homebrew/etc/httpd/extra/httpd-vhosts.conf
+    > subl /usr/local/etc/httpd/httpd.conf
+
+    <VirtualHost *:443>
+        ServerName my.project
+        DocumentRoot /Users/fabian/www/my.project/www
+        Options +FollowSymlinks
+
+        SSLEngine on
+        SSLCertificateFile "/usr/local/etc/httpd/server.crt"
+        SSLCertificateKeyFile "/usr/local/etc/httpd/server.key"
+
+        ErrorLog /Users/fabian/www/my.project/storage/logs/error_apache.log
+        LogLevel info
+
+        <Directory /Users/fabian/www/my.project/www>
+            AllowOverride all
+        </Directory>
+    </VirtualHost>
+
+
+3. HOSTS FILE
+
+   Open your local HOSTS file
+    > subl /etc/hosts
+
+   Add the following line at the end
+    > 127.0.0.1  my.project
+
+
+4. RESTART APACHE
+    > sudo apachectl -k restart
+
+
+-----------------------------------
+-- STEP 2 - GIT & DEZERO.STARTER
+-----------------------------------
+1. Create a GIT repository on Bitbucket for this project
+
+2. Clone your empty repository into your project directory
+    > cd /Users/my_user/www/my.project
+    > git clone git@bitbucket.org:dezero/my-project.git .
+
+3. Go to the DEZERO.STARTER project and copy ALL the files to your project directory, except ".git", ".sass-cache" and ".phpintel" subdirectories
+
+4. Open composer.json file and put the "name", "description" and "homepage" attributes for this project
+
+5. Update the project via COMPOSER
+    > cup2
+    > cup
+
+    or
+
+    > composer update --ignore-platform-reqs
+
+6. (EXCLUDE) Update NODE package manager (npm). Used by Grunt
+    > npm update
+
+7. Open README.md and change project name
+
+
+---------------------------------------------
+-- STEP 3 - DATABASE & CONFIGURATION
+---------------------------------------------
+1. Create a new MySQL database
+
+2. Edit .ENV (main configuration file)
+    > cd /Users/my_user/www/my.project
+    > subl .env
+
+3. Set the correct values for DATABASE, paths (BASE_PATH) and SMTP
+
+4. Choose a SECRET_KEY
+
+5. Run a YII migration update to install all the CORE database tables
+    > chmod 775 ./yii
+    > ./yii migrate/up
+
+6. Set PARAMS value
+    > subl app/config/local/params.php
+
+    // Check following command paths:
+    > which mysqldump
+    > which mysql
+    > which zip
+    > which git
+
+7. Check your STORAGE subdirectories exist (private directories) and have 755 permissions
+    > cd /Users/my_user/www/my.project
+    > chmod -R 775 storage/backups
+    > chmod -R 775 storage/logs
+    > chmod -R 775 storage/runtime
+    > chmod -R 775 storage/files
+    > chmod -R 775 storage/tmp
+
+8. Check your ASSET & FILES subdirectories exist (public directories) and have 755 permissions
+    > chmod -R 775 www/assets
+    > chmod -R 775 www/files
+
+# 9. Regenerate CSS & JS files via GRUNT
+#     > grunt sass_backend
+#     > grunt core
+
+10. Clear caches
+    > ./yii cc/all
+
+
+---------------------------------------------
+-- STEP 4 - ACCESS BACKEND
+---------------------------------------------
+1. Open your browser and go to http://my.project
+
+2. Enter "superadmin" user and "admin" as password
+
+3. Go to LANGUAGE admin page (http://my.project/settings/language/)
+   and configure the languages of your project
+
+4. Same with CURRENCIES (if apply)

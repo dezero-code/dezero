@@ -1,0 +1,11 @@
+RESTRICT
+Es el comportamiento por defecto, que impide realizar modificaciones que atentan contra la integridad referencial.
+
+CASCADE
+Borra los registros de la tabla dependiente cuando se borra el registro de la tabla principal (en una sentencia DELETE), o actualiza el valor de la clave secundaria cuando se actualiza el valor de la clave referenciada (en una sentencia UPDATE).
+
+SET NULL
+Establece a NULL el valor de la clave secundaria cuando se elimina el registro en la tabla principal o se modifica el valor del campo referenciado.
+
+NO ACTION
+Inhabilita el efecto de la restricción, permitiendo que se efectúe el cambio en la base de datos.

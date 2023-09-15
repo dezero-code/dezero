@@ -1,0 +1,150 @@
+=======================
+-- DEVELOPMENT GUIDE --
+=======================
+
+-----------------------------------
+// STEP 0 - INSTALL GIT eXTRAS
+--> https://github.com/tj/git-extras/blob/master/Commands.md
+-----------------------------------
+
+
+-----------------------------------
+// STEP 1 - GIT CONFIG
+--> Copy these lines into ".gitconfigure" file
+-----------------------------------
+[alias]
+  st = status
+  ci = commit
+  br = branch
+  co = checkout
+  df = diff
+  dc = diff --cached
+  lg = log -p
+  lol = log --graph --decorate --pretty=oneline --abbrev-commit
+  lola = log --graph --decorate --pretty=oneline --abbrev-commit --all
+  ls = ls-files
+
+  # Show files ignored by git:
+  ign = ls-files -o -i --exclude-standard
+
+  # From gitalias & gitkurwa
+  branch-name = "!git rev-parse --abbrev-ref HEAD"
+  get = "!sh -c 'git pull --rebase ${1:-origin} $(git branch-name)' -"
+  put = "!sh -c 'git add --all && git commit -m \"$1\"' -"
+  publish = "!sh -c 'git push -u ${1:-origin} $(git branch-name)' -"
+  goto = !git checkout -b
+  branches = branch -avvl
+
+#BASIC HISTORY VIEWING
+    hist = log --pretty=format:'%Cred%h%Creset %C(bold blue)<%an>%Creset%C(yellow)%d%Creset %Cgreen(%cr)%Creset%n%w(80,8,8)%s' --graph
+    histfull = log --pretty=format:'%Cred%h%Creset %C(bold blue)<%an>%Creset%C(yellow)%d%Creset %Cgreen(%cr)%Creset%n%w(80,8,8)%s%n' --graph --name-status
+    llog = log --pretty=format:'%C(yellow)%h %Cred%ad %Cblue%an%Cgreen%d %Creset%s' --date=iso
+    changelog = log --pretty=format:'%Cgreen%d %Creset%s' --date=iso
+    ls = log --pretty=format:'%C(yellow)%p..%h %C(white dim)%cd %<|(49,trunc)%an %C(reset)%s' --date=short --abbrev=8 --no-merges
+
+# CUSTOM FUNCITONS
+# Run yii or yiic only if it exits
+function dzyii() {
+  if command -v $(pwd)/yii  >/dev/null 2>&1
+    then
+      command $(pwd)/yii "$@"
+    else
+      command $(pwd)/yiic "$@"
+    fi
+}
+
+-----------------------------------
+// STEP 2 - BASH INSTALLATION
+--> Copy these "alias" into ".bash_profile" or ".zshrc" and restart the terminal
+-----------------------------------
+# HANDY BASH SHELL ALIASES
+#
+# @see https://www.cyberciti.biz/tips/bash-aliases-mac-centos-linux-unix.html
+#
+alias cd..='cd ..'
+alias ..='cd ..'
+alias ...='cd ../../../'
+alias ....='cd ../../../../'
+alias .....='cd ../../../../'
+
+#DIRECTORIES
+alias cdh='cd /Users/fabian/www'
+alias cdd='cd /Users/fabian/Downloads'
+alias cda='cd /opt/homebrew/etc/httpd'
+alias cdp='cd /opt/homebrew/etc/php'
+
+#SYSTEM
+alias o='open .'
+alias oc='open /Users/fabian/Pictures/capture\ screenshots'
+alias s='subl .'
+alias ls='ls -lahtr'
+alias phpmy='chrome-cli open http://localhost/phpmyadmin -i'
+alias vhosts='subl /opt/homebrew/etc/httpd/extra/httpd-vhosts.conf'
+alias ar='sudo apachectl -k restart && sleep 3 && sudo apachectl -k start && chrome-cli open http://localhost/info.php'
+alias as='sudo apachectl -k start && chrome-cli open http://localhost/info.php'
+
+#GIT
+alias gpl='git get'
+alias gplm='git pull --rebase origin master'
+alias gps='git publish'
+alias gpsm='git push origin master'
+alias goto='git checkout'
+alias gs='git status'
+alias gst='git status'
+alias gpstags='git push origin master --tags'
+
+#DZ FRAMEWORK
+alias cup='composer update'
+alias cup1='composer self-update --1'
+alias cup2='composer self-update --2'
+alias mup='dzyii migrate up'
+alias ycc='dzyii cc all'
+alias dzpull='$(pwd)/scripts/pull_core.sh'
+alias dzpush='$(pwd)/scripts/push_core.sh'
+alias dzlab='$(pwd)/scripts/push_lab.sh'
+
+-----------------------------------
+// STEP 3 - USE GIT COMMANDS
+-----------------------------------
+// git pull with rebase
+> gpl
+
+// git add & git commit
+> git put 'My message'
+
+// git push (git publish)
+> gps
+
+// Create a new branch & move to this branch
+> git feature new-feature
+> git bug new-bug
+> git refactor new-refactor
+
+// Change git branch & pull changes
+> goto feature/new-feature
+> goto master
+> gpl
+
+// Close a branch & merge to master
+> goto master
+> git feature finish -new-feature
+> gps
+
+
+---------------------------------------
+// STEP 4 - DEZERO FRAMEWORK COMMANDS
+---------------------------------------
+// composer update (get last commit from Dezero Framework)
+> cup
+
+// Copy CORE files from dezero.core to current project
+> dzpull
+
+// Copy CORE files from current project to dezero.core
+> dzpush
+
+// clear caches (database and assets)
+> ycc
+
+
+
