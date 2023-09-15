@@ -19,20 +19,12 @@
           'label' => 'Categorías',
           'url'   => '#',
           'icon'  => 'wb-tag',
-          'is_active' => ($current_module == 'bike' || ($current_module == 'commerce' && $current_controller == 'size')),
-          'visible' => Yii::$app->user->can('category_manage'),
+          'is_active' => ($current_module == 'category'),
+          // 'visible' => Yii::$app->user->can('category_manage'),
           'items' => [
             [
-              'label' => 'Tipos',
-              'url'   => ['/category/bike'],
-            ],
-            [
-              'label' => 'Tallas',
-              'url'   => ['/commerce/size'],
-            ],
-            [
-              'label' => 'Extras',
-              'url'   => ['/commerce/extra'],
+              'label' => 'Categorías',
+              'url'   => ['/category/category'],
             ],
           ],
         ],
@@ -98,12 +90,13 @@
           'url'   => '#',
           'icon'  => 'wb-users',
           'is_active' => ($current_module == 'user'),
-          'visible' => Yii::$app->user->can('user_manage'),
+          // 'visible' => Yii::$app->user->can('user_manage'),
           'items' => [
             [
               'label' => 'Listado usuarios',
               'url'   => ['/user/admin'],
             ],
+            /*
             [
               'label' => 'Roles & Permisos',
               'url'   => ['/auth/dzAuth/tasks'],
@@ -116,6 +109,7 @@
               'label' => 'Permisos (avanzado)',
               'url'   => ['/auth/task'],
             ],
+            */
           ],
         ],
 
@@ -162,6 +156,7 @@
           'url'   => '#',
           'icon'  => 'wb-wrench',
           'is_active' => ($current_module == 'admin'),
+          'visible' => Yii::$app->user->can('admin_manage'),
           // 'visible' => Yii::$app->user->isAdmin(),
           'items' => [
             [

@@ -15,7 +15,6 @@
   use dezero\helpers\Url;
   use dezero\grid\GridView;
   use dezero\widgets\GridViewPjax;
-  use Dz;
 
   // Current controller
   $current_controller = Dz::currentController(true);
@@ -26,7 +25,7 @@
 <div class="page-header">
   <h1 class="page-title"><?= $this->title; ?></h1>
   <div class="page-header-actions">
-    <a href="<?= Url::to("/category/{$current_controller}/create"); ?>" class="btn btn-primary"><i class="icon wb-plus"></i><?= Yii::t('backend', 'Add new category'); ?></a>
+    <a href="<?= Url::to("/category/{$current_controller}/create"); ?>" class="btn btn-primary"><i class="icon wb-plus"></i><?= Yii::t('backend', $category_search_model->config->text('add_button')); ?></a>
   </div>
 </div>
 <div class="page-content">

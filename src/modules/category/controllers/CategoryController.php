@@ -8,8 +8,6 @@
 namespace dezero\modules\category\controllers;
 
 use dezero\modules\category\controllers\BaseCategoryController;
-use Dz;
-use Yii;
 
 class CategoryController extends BaseCategoryController
 {

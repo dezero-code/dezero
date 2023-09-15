@@ -2,6 +2,16 @@
 
 All notable changes to `Dezero Framework` will be documented in this file
 
+## 0.2.0 - 2023-09-15
+- Category module - First finished version
+- API module - First working version with REST API
+
+## 0.1.16 - 2023-08-31
+- Generate presets images
+
+## 0.1.15 - 2023-08-30
+- Upload files via UploadFileService
+
 ## 0.1.14 - 2023-07-28
 
 - Category module - Created new module with first version of Category model
