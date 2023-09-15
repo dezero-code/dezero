@@ -24,6 +24,12 @@
   ?>
     <?= Html::a($model->title(), ['update', 'category_id' => $model->category_id]); ?>
     <?php
+      // Multiple levels?
+      if ( $model->getMaxLevels() > 1 ) :
+    ?>
+      <?= Html::a($model->totalSubcategories() .' '. $model->config->text('subcategories'), ['update', 'category_id' => $model->category_id], ['class' => 'btn btn-dark btn-outline btn-sm ml-5']); ?>
+    <?php endif; ?>
+    <?php
       // Disabled category?
       if ( $model->isDisabled() ) :
     ?>

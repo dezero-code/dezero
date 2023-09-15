@@ -216,9 +216,10 @@ class Category extends BaseCategory implements ConfigInterface
     /**
      * @return ActiveQueryInterface The relational query object.
      */
-    public function getCategories() : ActiveQueryInterface
+    public function getSubCategories() : ActiveQueryInterface
     {
-        return $this->hasMany(Category::class, ['category_parent_id' => 'category_id']);
+        return $this->hasMany(Category::class, ['category_parent_id' => 'category_id'])
+            ->orderBy(['weight' => SORT_ASC]);
     }
 
 
@@ -270,6 +271,51 @@ class Category extends BaseCategory implements ConfigInterface
 
     /*
     |--------------------------------------------------------------------------
+    | SUBCATEGORIES
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Return total number of subcategories
+     */
+    public function totalSubcategories() : int
+    {
+        return $this->getCategories()->count();
+    }
+
+
+    /**
+     * Return all parents
+     */
+    public function getAllParents()
+    {
+        $vec_output = [];
+        if ( $this->categoryParent )
+        {
+            $vec_output[] = $this->categoryParent;
+            return ArrayHelper::merge($vec_output, $this->categoryParent->getAllParents());
+        }
+
+        return $vec_output;
+    }
+
+
+    /**
+     * Return the first level Category model
+     */
+    public function getFirstLevelCategory() : self
+    {
+        if ( $this->categoryParent )
+        {
+            return $this->categoryParent->getFirstLevelCategory();
+        }
+
+        return $this;
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
     | CONFIGURATION BUILDER
     |--------------------------------------------------------------------------
     */
@@ -285,6 +331,15 @@ class Category extends BaseCategory implements ConfigInterface
         }
 
         return $this->configurator;
+    }
+
+
+    /**
+     * Return max depth level
+     */
+    public function getMaxLevels() : int
+    {
+        return $this->config ? $this->config->getMaxLevels() : 1;
     }
 
 

@@ -19,7 +19,7 @@
       <li class="dd-item dd3-item dd-item-group dd-level1" data-rel="level1" data-id="<?= $category_model->category_id; ?>" id="dd-item-<?= $category_model->category_id; ?>">
         <div class="dd-handle dd3-handle"></div>
         <div class="dd3-content">
-          <a href="<?= Url::to("/category/{$category_model->category_type}/update", ["id" => $category_model->category_id]); ?>"<?php if ( $category_model->isDisabled() ) : ?> class="text-danger"<?php endif; ?>><?= $category_model->title(); ?></a>
+          <a href="<?= Url::to("/category/{$category_model->category_type}/update", ["category_id" => $category_model->category_id]); ?>"<?php if ( $category_model->isDisabled() ) : ?> class="text-danger"<?php endif; ?>><?= $category_model->title(); ?></a>
         </div>
       </li>
     <?php endforeach; ?>

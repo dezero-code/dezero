@@ -6,6 +6,7 @@
 namespace dezero\modules\category;
 
 use dezero\modules\category\assets\CategoryAsset;
+use dezero\web\assets\NestableAsset;
 use Yii;
 
 class Module extends \dezero\base\Module
@@ -30,6 +31,9 @@ class Module extends \dezero\base\Module
     {
         // Register Javascript & CSS files for this module
         CategoryAsset::register(Yii::$app->view);
+
+        // Register Javascript for nestable
+        NestableAsset::register(Yii::$app->view);
 
         parent::init();
     }

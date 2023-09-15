@@ -25,10 +25,11 @@ class CategoryCreateService implements ServiceInterface
     /**
      * Constructor
      */
-    public function __construct(Category $category_model, AssetImage $asset_image_model)
+    public function __construct(Category $category_model, AssetImage $asset_image_model, ?Category $category_parent_model)
     {
         $this->category_model = $category_model;
         $this->asset_image_model = $asset_image_model;
+        $this->category_parent_model = $category_parent_model;
     }
 
 
@@ -37,6 +38,9 @@ class CategoryCreateService implements ServiceInterface
      */
     public function run() : bool
     {
+        // Check parent category
+        $this->checkParent();
+
         // Create new Category model
         if ( ! $this->saveCategory() )
         {
@@ -50,6 +54,20 @@ class CategoryCreateService implements ServiceInterface
         $this->uploadImage();
 
         return true;
+    }
+
+
+    /**
+     * Check parent category
+     */
+    private function checkParent() : void
+    {
+        if ( $this->category_parent_model !== null )
+        {
+            $this->category_model->category_parent_id = $this->category_parent_model->category_id;
+            $this->category_model->category_type = $this->category_parent_model->category_type;
+            $this->category_model->depth = $this->category_parent_model->depth + 1;
+        }
     }
 
 

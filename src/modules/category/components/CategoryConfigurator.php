@@ -88,6 +88,7 @@ class CategoryConfigurator extends EntityConfigurator implements ConfiguratorInt
                 'list_title'        => 'Categories list',
                 'add_button'        => 'Add category',
                 'create_title'      => 'Create category',
+                'sub_add_button'    => 'Add subcategory',
                 'subcategory_title' => 'Create subcategory of "{subcategory}"',
 
                 // Success messages
@@ -120,7 +121,7 @@ class CategoryConfigurator extends EntityConfigurator implements ConfiguratorInt
     /**
      * Check if first level is sortable
      */
-    public function isFirstLevelSortable()
+    public function isFirstLevelSortable() : bool
     {
         return $this->get('is_first_level_sortable') === true;
     }
@@ -129,7 +130,7 @@ class CategoryConfigurator extends EntityConfigurator implements ConfiguratorInt
     /**
      * Check if category type is editable
      */
-    public function isEditable()
+    public function isEditable() : bool
     {
         return $this->get('is_editable') === true;
     }
@@ -138,7 +139,7 @@ class CategoryConfigurator extends EntityConfigurator implements ConfiguratorInt
     /**
      * Check if category type has allowed the DISABLE option
      */
-    public function isDisableAllowed()
+    public function isDisableAllowed() : bool
     {
         return $this->get('is_disable_allowed') === true;
     }
@@ -147,8 +148,17 @@ class CategoryConfigurator extends EntityConfigurator implements ConfiguratorInt
     /**
      * Check if category type has allowed the DELETE option
      */
-    public function isDeleteAllowed()
+    public function isDeleteAllowed() : bool
     {
         return $this->get('is_delete_allowed') === true;
+    }
+
+
+    /**
+     * Return max depth level
+     */
+    public function getMaxLevels() : int
+    {
+        return $this->get('max_levels');
     }
 }

@@ -15,7 +15,6 @@ use dezero\modules\category\services\CategoryCreateService;
 use dezero\modules\category\services\CategoryDeleteService;
 use dezero\modules\category\services\CategoryUpdateService;
 use dezero\web\Controller;
-use dezero\web\assets\NestableAsset;
 use Dz;
 use Yii;
 
@@ -46,9 +45,6 @@ abstract class BaseCategoryController extends Controller
      */
     public function actionIndex()
     {
-        // Register Javascript for nestable
-        NestableAsset::register(Yii::$app->view);
-
         $category_search_model = Dz::makeObject(CategorySearch::class);
         $category_search_model->category_type = $this->getCategoryType();
 
@@ -67,7 +63,19 @@ abstract class BaseCategoryController extends Controller
     public function actionCreate()
     {
         $category_model = Dz::makeObject(Category::class);
+        $category_model->category_type = $this->getCategoryType();
         $asset_image_model = Dz::makeObject(AssetImage::class);
+
+        // Check if parent has been defined
+        $category_parent_model = null;
+        if ( !empty(Yii::$app->request->get('parent_id')) )
+        {
+            $category_parent_model = Dz::loadModel(Category::class, Yii::$app->request->get('parent_id'));
+            if ( $category_parent_model )
+            {
+                $category_model->category_parent_id = $category_parent_model->category_id;
+            }
+        }
 
         // Validate model via AJAX
         $this->validateAjaxRequest($category_model);
@@ -76,10 +84,10 @@ abstract class BaseCategoryController extends Controller
         if ( $category_model->load(Yii::$app->request->post()) )
         {
             // Create category via CategoryCreateService class
-            $category_create_service = Dz::makeObject(CategoryCreateService::class, [$category_model, $asset_image_model]);
+            $category_create_service = Dz::makeObject(CategoryCreateService::class, [$category_model, $asset_image_model, $category_parent_model]);
             if ( $category_create_service->run() )
             {
-                Yii::$app->session->setFlash('success', Yii::t('category', 'Category created succesfully'));
+                Yii::$app->session->setFlash('success', Yii::t('backend', $category_model->config->text('created_success')));
 
                 return $this->redirect(["/category/{$category_model->category_type}/update", 'category_id' => $category_model->category_id]);
             }
@@ -90,7 +98,8 @@ abstract class BaseCategoryController extends Controller
         }
 
         return $this->render($category_model->config->viewPath('create'), [
-            'category_model'    => $category_model,
+            'category_model'        => $category_model,
+            'category_parent_model' => $category_parent_model
         ]);
     }
 
@@ -200,7 +209,7 @@ abstract class BaseCategoryController extends Controller
             // 2nd LEVEL
             else if ( isset($vec_nestable[0]['id']) && $vec_nestable[0]['id'] == $category_id )
             {
-                // Check if current category has subactegories (children)
+                // Check if current category has subcategories (children)
                 if ( isset($vec_nestable[0]['children']) && !empty($vec_nestable[0]['children']) )
                 {
                     Yii::$app->categoryManager->updateChildrenWeights($vec_nestable[0]['children']);

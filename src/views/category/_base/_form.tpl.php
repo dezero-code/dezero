@@ -6,6 +6,7 @@
 |
 | Available variables:
 |  - $category_model: Category model
+|  - $category_parent_model: (Optional) Category parent
 |
 */
 

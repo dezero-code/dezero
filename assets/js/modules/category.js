@@ -18,7 +18,7 @@
   $.categoryNestable = function() {
     var $nestable = $('#category-nestable-wrapper');
     $nestable.dezeroNestable({
-      maxDepth: 1,
+      maxDepth: $nestable.attr('data-max-depth') ? $nestable.data('max-depth') : 1,
       readOnly: $nestable.attr('data-readonly') ? true : false
     });
   };
