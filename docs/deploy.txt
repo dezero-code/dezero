@@ -1,0 +1,142 @@
+======================
+-- DEPLOYMENT GUIDE --
+======================
+
+-----------------------------------
+-- GIT
+-----------------------------------
+0. Go to document root
+
+1. Install git (DEBIAN)
+    > sudo apt update
+    > sudo apt install git
+
+GITHUB
+------
+    2. Generate SSH keygen
+        > ssh-keygen -t ed25519 -C "fabian@dezero.es"
+
+    3. Start SSH agent in the background
+        > eval "$(ssh-agent -s)"
+
+    4. Add your SSH private key to the ssh-agent software
+        > ssh-add ~/.ssh/id_ed25519
+
+    5. Copy SSH key into Github repository
+        > cat ~/.ssh/id_ed25519.pub
+        > https://github.com/fabian-dz/<my_repo>/settings/keys
+
+    6. Copy SSH key into Github DEZERO-CORE repository (or generate access token)
+        > https://github.com/dezero-code/dezero/settings/keys
+
+    7. Clone repository
+        > git clone git@github.com:fabian-dz/<my_repo>.git  .
+
+    8. Update code
+        > git pull origin main
+
+BITBUCKET
+---------
+    2. Generate SSH keygen
+        > ssh-keygen
+
+    3. Copy SSH key into Bitbucket repository
+        > cat ~/.ssh/id_rsa.pub
+        > https://bitbucket.org/dezero/<my_repo>/admin/access-keys/
+
+    4. Copy SSH key into Bitbucket DEZERO-CORE repository
+        > https://github.com/dezero-code/dezero/settings/keys
+
+    5. Clone repository
+        > git clone git@bitbucket.org:dezero/<my_repo>.git .
+
+    6. Update code
+        > git pull origin master
+
+
+-----------------------------------
+-- COMPOSER
+-----------------------------------
+0. Go to document root
+
+1. Install composer (DEBIAN)
+    > sudo apt update
+    > sudo apt install curl php-cli php-mbstring git unzip
+    > cd ~
+    > curl -sS https://getcomposer.org/installer -o composer-setup.php
+    > php -r "if (hash_file('SHA384', 'composer-setup.php') === '$HASH') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+    > sudo php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+    > composer
+
+2. Fixing problems with server minimum requirements
+    > composer update --ignore-platform-reqs
+
+    En PLESK
+    > /opt/plesk/php/7.3/bin/php -f /usr/local/bin/composer update --ignore-platform-reqs
+    > /opt/plesk/php/8.1/bin/php -f /usr/local/bin/composer update --ignore-platform-reqs
+
+
+-----------------------------------
+-- DIRECTORIES
+-----------------------------------
+0. Go to document root
+
+1. Create STORAGE directories (private directories)
+    > mkdir storage/backups && chmod 775 storage/backups
+    > mkdir storage/backups/assets && chmod 775 storage/backups/assets
+    > mkdir storage/backups/db && chmod 775 storage/backups/db
+    > mkdir storage/backups/files && chmod 775 storage/backups/files
+    > mkdir storage/backups/logs && chmod 775 storage/backups/logs
+    > mkdir storage/backups/tmp && chmod 775 storage/backups/tmp
+    > mkdir storage/logs && chmod 775 storage/logs
+    > mkdir storage/runtime && chmod 775 storage/runtime
+    > mkdir storage/files && chmod 775 storage/files
+    > mkdir storage/tmp && chmod 775 storage/tmp
+
+2. Create ASSETS & FILES directories (public directories)
+    # Assets & files
+    > mkdir www/assets && chmod 775 www/assets
+    > mkdir www/files && chmod 775 www/files
+    > mkdir www/files/tmp && chmod 775 www/files/tmp
+    > mkdir www/files/images && chmod 775 www/files/images
+
+3. Configuration - Copy LOCAL configuration files
+    > cp vendor/dezero/dezero/install/config/app.local.php app/config/local/app.local.php
+    > cp vendor/dezero/dezero/install/config/params.php app/config/local/params.php
+
+5. Set PARAMS value
+    > nano app/config/local/params.php
+
+    // Check following command paths:
+    > which mysqldump
+    > which mysql
+    > which zip
+    > which git
+
+7. Copy .ENV (main configuration file)
+    > cp .env.example .env
+
+8. Set configuration values on .env file
+    > pwd           // for getting BASE_PATH variable
+    > nano .env
+
+
+-----------------------------------
+-- YII MIGRATION
+-----------------------------------
+0. Go to document root
+
+1. Check your PHP bin command path
+    > which php
+
+2. Insert correct PHP bin command path into YII command.
+    // Change it, if PHP path is not "/usr/local/bin/php"
+    //  PLESK 7.3 -> /opt/plesk/php/7.3/bin/php
+    > nano ./yii
+
+3. Migration update
+    > chmod 775 ./yii
+    > ./yii migrate/up
+
+4. Clear caches
+    > ./yii cc/all
