@@ -85,23 +85,29 @@ class ConfigHelper
      */
     public static function getValue(array $vec_config, ?string $config_key = null, ?string $config_subkey = null)
     {
-        // Check if configuration key exists
-        if ( !empty($vec_config) && array_key_exists($config_key, $vec_config) )
-        {
-            // Check if configuration option exists
-            if ( $config_subkey !== null && array_key_exists($config_subkey, $vec_config[$config_key]) )
-            {
-                return $vec_config[$config_key][$config_subkey];
-            }
-
-            return $vec_config[$config_key];
-        }
-
-        if ( $config_key !== null )
+        if ( empty($vec_config) )
         {
             return null;
         }
 
-        return $vec_config;
+        // Return all the configuration array
+        if ( $config_key === null )
+        {
+            return $vec_config;
+        }
+
+        // Check if configuration key exists
+        if ( ! array_key_exists($config_key, $vec_config) )
+        {
+            return null;
+        }
+
+        // Check if configuration subkey exists
+        if ( $config_subkey !== null )
+        {
+            return array_key_exists($config_subkey, $vec_config[$config_key]) ? $vec_config[$config_key][$config_subkey] : null;
+        }
+
+        return $vec_config[$config_key];
     }
 }
