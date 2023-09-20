@@ -27,7 +27,7 @@ abstract class Resource extends \yii\base\BaseObject implements ConfigInterface
 
 
     /**
-     * @var \dezero\base\Configurator
+     * @var \dezero\rest\ResourceConfigurator
      */
     protected $configurator;
 
@@ -88,7 +88,7 @@ abstract class Resource extends \yii\base\BaseObject implements ConfigInterface
     }
 
 
-    /*
+    /**
      * Return the Configurator class to manage configuration options
      */
     public function getConfig() : ResourceConfigurator

@@ -13,9 +13,9 @@ use dezero\helpers\ConfigHelper;
 use Yii;
 
 /**
- * Controller is the base class for RESTful API controller classes
+ * Controller is the base class for HTTP client class
  */
-class ResourceConfigurator extends Configurator implements ConfiguratorInterface
+class ClientConfigurator extends Configurator implements ConfiguratorInterface
 {
     /**
      * Constructor
@@ -43,7 +43,7 @@ class ResourceConfigurator extends Configurator implements ConfiguratorInterface
      */
     public function loadConfiguration() : array
     {
-        $vec_config = Yii::$app->config->get('components/api', $this->type);
+        $vec_config = Yii::$app->config->get('components/http_client', $this->type);
         if ( $vec_config === null )
         {
             return [];
@@ -61,31 +61,19 @@ class ResourceConfigurator extends Configurator implements ConfiguratorInterface
      */
     public function defaultConfiguration() : array
     {
-        // Try with default configuration defined on "/app/config/api"
-        $vec_config = Yii::$app->config->get('components/api', 'default');
+        // Try with default configuration defined on "/app/config/http_client"
+        $vec_config = Yii::$app->config->get('components/http_client', 'default');
         if ( $vec_config !== null )
         {
             return $vec_config;
         }
 
         return [
-            // Log settings
-            'log'   => [
-                // Allowed values: file (log file), db (database)
-                'destination' => 'file', // 'db',
+            // Debug mode?
+            'debug' => true,
 
-                // Log category
-                'category'  => 'rest',
-
-                // Log error category
-                'error_category'  => 'rest_error',
-            ],
-
-            // Authorization?
-            'auth' => false,
-
-            // Allowed hosts
-            'allowed_hosts'  => []
+            // Base URL
+            'base_url' => getenv('SITE_URL')
         ];
     }
 
@@ -99,37 +87,19 @@ class ResourceConfigurator extends Configurator implements ConfiguratorInterface
 
 
     /**
-     * Check if auth configuration has been enabled
+     * Check if debug has been enabled
      */
-    public function isAuth() : bool
+    public function isDebug() : bool
     {
-        return $this->get('auth') !== false;
+        return $this->get('debug') === true;
     }
 
 
     /**
-     * Return log destination
+     * Return BASE URL
      */
-    public function getLogDestination() : string
+    public function getBaseUrl() : string
     {
-        return $this->get('log', 'destination') ?? 'file';
-    }
-
-
-    /**
-     * Return category for REST logs
-     */
-    public function getLogCategory() : string
-    {
-        return $this->get('log', 'category') ?? 'rest';
-    }
-
-
-    /**
-     * Return category for REST error logs
-     */
-    public function getLogErrorCategory() : string
-    {
-        return $this->get('log', 'error_category') ?? 'rest_error';
+        return $this->get('base_url');
     }
 }
