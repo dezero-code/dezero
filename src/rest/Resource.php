@@ -100,14 +100,11 @@ abstract class Resource extends \yii\base\BaseObject implements ConfigInterface
     }
 
 
-    /**
-     * Return the request method
-     */
-    public function getMethod() : string
-    {
-        return $this->request_method;
-    }
-
+   /*
+    |--------------------------------------------------------------------------
+    | REQUEST / INPUT
+    |--------------------------------------------------------------------------
+    */
 
     /*
      * Return the received input
@@ -145,6 +142,31 @@ abstract class Resource extends \yii\base\BaseObject implements ConfigInterface
 
 
     /**
+     * Gets RestFul data and decodes its JSON request
+     */
+    public function jsonInput()
+    {
+        return Json::decode(file_get_contents('php://input'));
+    }
+
+
+    /**
+     * Return the request method
+     */
+    public function getMethod() : string
+    {
+        return $this->request_method;
+    }
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | VALIDATION
+    |--------------------------------------------------------------------------
+    */
+
+    /**
      * Validate process
      */
     public function validate() : bool
@@ -162,10 +184,32 @@ abstract class Resource extends \yii\base\BaseObject implements ConfigInterface
 
 
     /**
-     * Run the resource
+     * Validate required parameters
      */
-    abstract public function run() : void;
+    public function validateRequired(array $vec_parameters) : bool
+    {
+        $is_valid = true;
+        foreach ( $vec_parameters as $parameter_name )
+        {
+            $vec_input = $this->getInput();
+            if ( ! array_key_exists($parameter_name, $vec_input) )
+            {
+                $is_valid = false;
+                $this->addError(Yii::t('backend', 'The parameter \'{name}\' is required', [
+                    'name' => $parameter_name
+                ]));
+            }
+        }
 
+        return $is_valid;
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | AUTHORIZATION
+    |--------------------------------------------------------------------------
+    */
 
     /**
      * Check authorization
@@ -215,42 +259,37 @@ abstract class Resource extends \yii\base\BaseObject implements ConfigInterface
     }
 
 
-    /**
-     * Gets RestFul data and decodes its JSON request
-     */
-    public function jsonInput()
-    {
-        return Json::decode(file_get_contents('php://input'));
-    }
 
+    /*
+    |--------------------------------------------------------------------------
+    | EXECUTION
+    |--------------------------------------------------------------------------
+    */
 
     /**
-     * Validate required parameters
+     * Run the resource
      */
-    public function validateRequired(array $vec_parameters) : bool
-    {
-        $is_valid = true;
-        foreach ( $vec_parameters as $parameter_name )
-        {
-            $vec_input = $this->getInput();
-            if ( ! array_key_exists($parameter_name, $vec_input) )
-            {
-                $is_valid = false;
-                $this->addError(Yii::t('backend', 'The parameter \'{name}\' is required', [
-                    'name' => $parameter_name
-                ]));
-            }
-        }
+    abstract public function run() : void;
 
-        return $is_valid;
-    }
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | RESPONSE / OUTPUT
+    |--------------------------------------------------------------------------
+    */
 
     /**
      * Return response
      */
     public function sendResponse(bool $is_save_log = true) : array
     {
+        // Save log?
+        if ( $is_save_log )
+        {
+            $this->saveLog();
+        }
+
         // Check if we have errors
         if ( $this->hasErrors() )
         {
@@ -281,6 +320,9 @@ abstract class Resource extends \yii\base\BaseObject implements ConfigInterface
             'errors'        => $vec_errors
         ];
 
+        // Save log error
+        $this->saveLogError();
+
         return $this->vec_response;
     }
 
@@ -291,5 +333,43 @@ abstract class Resource extends \yii\base\BaseObject implements ConfigInterface
     public function sendErrors() : array
     {
         return $this->sendError();
+    }
+
+
+    /**
+     * Save request and response into a LOG (database or file)
+     */
+    public function saveLog($log_category = null )
+    {
+        if ( $log_category === null )
+        {
+            $log_category = $this->config->getLogCategory();
+        }
+
+        switch ( $this->config->getLogDestination() )
+        {
+            // Save log in "rest.log" file (or "<log_category>.log" file)
+            case 'file':
+                $json_input = is_array($this->vec_input) ? Json::encode($this->vec_input) : $this->vec_input;
+
+                $log_message  = "\n";
+                $log_message .= " - IP: ". Yii::$app->getRequest()->getUserIP() ."\n";
+                $log_message .= " - Endpoint: ". Yii::$app->getRequest()->getPathInfo() ."\n";
+                $log_message .= " - Método: ". $this->getMethod() ."\n";
+                $log_message .= " - Parámetros: ". $json_input ."\n";
+                $log_message .= " - Respuesta (HTTP code ". Yii::$app->getResponse()->getStatusCode() ."): ". Json::encode($this->vec_response) ."\n";
+
+                Yii::info($log_message, $log_category);
+            break;
+        }
+    }
+
+
+    /**
+     * Save errors into the log
+     */
+    public function saveLogError()
+    {
+        return $this->saveLog($this->config->getLogErrorCategory());
     }
 }

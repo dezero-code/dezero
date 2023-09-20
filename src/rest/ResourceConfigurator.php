@@ -69,8 +69,17 @@ class ResourceConfigurator extends Configurator implements ConfiguratorInterface
         }
 
         return [
-            // Allowed values: file (log file), db (database)
-            'log_destination'   => 'file', // 'db',
+            // Log settings
+            'log'   => [
+                // Allowed values: file (log file), db (database)
+                'destination' => 'file', // 'db',
+
+                // Log category
+                'category'  => 'rest',
+
+                // Log error category
+                'error_category'  => 'rest_error',
+            ],
 
             // Authorization?
             'auth' => false,
@@ -92,8 +101,35 @@ class ResourceConfigurator extends Configurator implements ConfiguratorInterface
     /**
      * Check if auth configuration has been enabled
      */
-    public function isAuth()
+    public function isAuth() : bool
     {
         return $this->get('auth') !== false;
+    }
+
+
+    /**
+     * Return log destination
+     */
+    public function getLogDestination() : string
+    {
+        return $this->get('log', 'destination') ?? 'file';
+    }
+
+
+    /**
+     * Return category for REST logs
+     */
+    public function getLogCategory() : string
+    {
+        return $this->get('log', 'category') ?? 'rest';
+    }
+
+
+    /**
+     * Return category for REST error logs
+     */
+    public function getLogErrorCategory() : string
+    {
+        return $this->get('log', 'error_category') ?? 'rest_error';
     }
 }
