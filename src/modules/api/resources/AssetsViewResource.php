@@ -29,11 +29,11 @@ class AssetsViewResource extends Resource
     /**
      * Constructor
      */
-    public function __construct(int $id, string $api_name = 'default')
+    public function __construct(int $id, string $api_name = 'default', array $vec_config = [])
     {
         $this->id = $id;
 
-        return parent::__construct($api_name);
+        parent::__construct($api_name, $vec_config);
     }
 
 

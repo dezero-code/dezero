@@ -13,7 +13,7 @@ use dezero\helpers\ConfigHelper;
 use Yii;
 
 /**
- * Controller is the base class for HTTP client class
+ * Class to manage configuration options for HTTP Client objects
  */
 class ClientConfigurator extends Configurator implements ConfiguratorInterface
 {
@@ -73,7 +73,10 @@ class ClientConfigurator extends Configurator implements ConfiguratorInterface
             'debug' => true,
 
             // Base URL
-            'base_url' => getenv('SITE_URL')
+            'base_url' => getenv('SITE_URL'),
+
+            // Auth URL
+            'auth_url' => null
         ];
     }
 
@@ -87,7 +90,7 @@ class ClientConfigurator extends Configurator implements ConfiguratorInterface
 
 
     /**
-     * Check if debug has been enabled
+     * Check if debug mode is enabled
      */
     public function isDebug() : bool
     {
@@ -101,5 +104,14 @@ class ClientConfigurator extends Configurator implements ConfiguratorInterface
     public function getBaseUrl() : string
     {
         return $this->get('base_url');
+    }
+
+
+    /**
+     * Return AUTH URL
+     */
+    public function getAuthUrl() : string
+    {
+        return $this->get('auth_url');
     }
 }

@@ -17,10 +17,10 @@ use Yii;
 /**
  * HTTP Client class for REST API communication
  */
-class Client extends Component implements ConfigInterface
+class Client extends HttpClient implements ConfigInterface
 {
     /**
-     * API name
+     * Client name
      */
     protected $client_name;
 
@@ -32,18 +32,22 @@ class Client extends Component implements ConfigInterface
 
 
     /**
-     * @var yii\httpclient\Client;
+     * Constructor
      */
-    private $http_client;
+    public function __construct(string $client_name = 'bc', array $vec_config = [])
+    {
+        $this->init();
+        parent::__construct($vec_config);
+    }
 
 
     /**
-     * Constructor
+     * Initializes the object
      */
-    public function __construct(string $client_name = 'default')
+    public function init() : void
     {
-        $this->client_name = $client_name;
-        $this->init();
+        // Load a specific configuration
+        $this->getConfig();
     }
 
 
@@ -62,47 +66,28 @@ class Client extends Component implements ConfigInterface
 
 
     /**
-     * Return HTTP Client
+     * Return API client base URL
      */
-    public function getClient() : HttpClient
+    public function getBaseUrl() : string
     {
-        if ( !is_object($this->http_client) )
-        {
-            $this->http_client = Yii::createObject([
-                'class' => HttpClient::class,
-                'baseUrl' => $this->config->getBaseUrl(),
-            ]);
-        }
-
-        return $this->http_client;
+        return $this->config->getBaseUrl();
     }
 
 
     /**
-     * Send a GET request to an URI
+     * Return API client auth URL
      */
-    public function get(string $uri, array $vec_query_string = [], array $vec_headers = [] )
+    public function getAuthUrl() : string
     {
-        return $this->send($uri, 'GET', $vec_query_string, $vec_headers);
+        return $this->config->getAuthUrl();
     }
 
 
     /**
-     * Send an HTTP request
+     * Check if debug mode is enabled
      */
-    public function send(string $uri, string $method = 'GET', array $vec_input = [], array $vec_headers = [] )
+    public function isDebug() : bool
     {
-        switch ( $method )
-        {
-            case 'GET':
-                // return $this->client->get($uri, $vec_input)->send();
-            break;
-
-            case 'POST':
-                // return $this->client->post($uri, $vec_input)->send();
-            break;
-        }
-
+        return $this->config->isDebug();
     }
-
 }

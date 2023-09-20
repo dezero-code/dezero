@@ -70,6 +70,11 @@ class Dz extends Yii
      */
     public static function currentController(bool $is_lowercase = false) : ?string
     {
+        if ( ! self::$app->controller )
+        {
+            return null;
+        }
+
         return $is_lowercase ? StringHelper::strtolower(self::$app->controller->id) : self::$app->controller->id;
     }
 
@@ -79,6 +84,10 @@ class Dz extends Yii
      */
     public static function currentAction(bool $is_lowercase = false) : ?string
     {
+        if ( ! self::$app->controller )
+        {
+            return null;
+        }
         return $is_lowercase ? StringHelper::strtolower(self::$app->controller->action->id) : self::$app->controller->action->id;
     }
 
@@ -88,7 +97,7 @@ class Dz extends Yii
      */
     public static function currentModule(bool $is_lowercase = false) : ?string
     {
-        if ( ! self::$app->controller->module )
+        if ( ! self::$app->controller || ! self::$app->controller->hasProperty('module') || ! self::$app->controller->module )
         {
             return null;
         }

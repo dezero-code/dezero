@@ -59,10 +59,11 @@ abstract class Resource extends \yii\base\BaseObject implements ConfigInterface
     /**
      * Constructor
      */
-    public function __construct(string $api_name = 'default')
+    public function __construct(string $api_name = 'default', array $vec_config = [])
     {
         $this->api_name = $api_name;
         $this->init();
+        parent::__construct($vec_config);
     }
 
 

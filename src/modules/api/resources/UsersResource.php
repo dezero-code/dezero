@@ -13,6 +13,15 @@ use Yii;
 class UsersResource extends Resource
 {
     /**
+     * Constructor
+     */
+    public function __construct(string $api_name = 'default', array $vec_config = [])
+    {
+        parent::__construct($api_name, $vec_config);
+    }
+
+
+    /**
      * Validate input parameters
      */
     public function validate() : bool

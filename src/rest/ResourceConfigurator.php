@@ -12,8 +12,9 @@ use dezero\contracts\ConfiguratorInterface;
 use dezero\helpers\ConfigHelper;
 use Yii;
 
+
 /**
- * Controller is the base class for RESTful API controller classes
+ * Class to manage configuration options for REST resources objects
  */
 class ResourceConfigurator extends Configurator implements ConfiguratorInterface
 {
