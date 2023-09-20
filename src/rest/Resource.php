@@ -8,9 +8,9 @@
 namespace dezero\rest;
 
 use dezero\contracts\ConfigInterface;
+use dezero\helpers\ArrayHelper;
 use dezero\helpers\StringHelper;
 use dezero\rest\ResourceConfigurator;
-use dezero\traits\ErrorTrait;
 use Dz;
 use yii\helpers\Json;
 use Yii;
@@ -20,9 +20,6 @@ use Yii;
  */
 abstract class Resource extends \yii\base\BaseObject implements ConfigInterface
 {
-    use ErrorTrait;
-
-
     /**
      * API name
      */
@@ -54,12 +51,17 @@ abstract class Resource extends \yii\base\BaseObject implements ConfigInterface
 
 
     /**
+     * Registered errors
+     */
+    private $vec_errors = [];
+
+
+    /**
      * Constructor
      */
     public function __construct(string $api_name = 'default')
     {
         $this->api_name = $api_name;
-
         $this->init();
     }
 
@@ -177,7 +179,7 @@ abstract class Resource extends \yii\base\BaseObject implements ConfigInterface
             return true;
         }
 
-        $this->sendError(401, ['Unauthorized']);
+        $this->addError('Unauthorized', 401);
 
         return false;
     }
@@ -284,16 +286,17 @@ abstract class Resource extends \yii\base\BaseObject implements ConfigInterface
      */
     public function sendResponse(bool $is_save_log = true) : array
     {
+        // Check if we have errors
+        if ( $this->hasErrors() )
+        {
+            $status_code = $this->vec_response['status_code'] ?? 400;
+            return $this->sendErrors($status_code);
+        }
+
         // Save log?
         if ( $is_save_log )
         {
             $this->saveLog();
-        }
-
-        // Check if we have errors
-        if ( $this->hasErrors() )
-        {
-            return $this->sendErrors();
         }
 
         return $this->vec_response;
@@ -315,13 +318,19 @@ abstract class Resource extends \yii\base\BaseObject implements ConfigInterface
             $vec_errors = ['Bad Request'];
         }
 
+        // Avoid to send "status_code" as 1 (success)
+        if ( $status_code === 1 )
+        {
+            $status_code = 400;
+        }
+
         $this->vec_response = [
             'status_code'   => $status_code,
             'errors'        => $vec_errors
         ];
 
         // Save log error
-        $this->saveLogError();
+        $this->saveLogError($status_code);
 
         return $this->vec_response;
     }
@@ -330,16 +339,64 @@ abstract class Resource extends \yii\base\BaseObject implements ConfigInterface
     /**
      * Return all the errors
      */
-    public function sendErrors() : array
+    public function sendErrors(int $status_code = 400) : array
     {
-        return $this->sendError();
+        return $this->sendError($status_code);
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | ERRORS
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * @return array
+     */
+    public function getErrors() : array
+    {
+        return $this->vec_errors;
     }
 
 
     /**
+     * @return array
+     */
+    public function hasErrors() : bool
+    {
+        return !empty($this->vec_errors);
+    }
+
+
+    /**
+     * Add error(s)
+     */
+    public function addError($vec_errors, int $status_code = 400) : void
+    {
+        if ( is_array($vec_errors) )
+        {
+            $this->vec_errors = ArrayHelper::merge($this->vec_errors, $vec_errors);
+        }
+        else
+        {
+            $this->vec_errors[] = $vec_errors;
+        }
+
+        $this->vec_response['status_code'] = $status_code;
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | LOGS
+    |--------------------------------------------------------------------------
+    */
+
+    /**
      * Save request and response into a LOG (database or file)
      */
-    public function saveLog($log_category = null )
+    public function saveLog(?string $log_category = null, int $status_code = 1) : bool
     {
         if ( $log_category === null )
         {
@@ -358,18 +415,24 @@ abstract class Resource extends \yii\base\BaseObject implements ConfigInterface
                 $log_message .= " - Método: ". $this->getMethod() ."\n";
                 $log_message .= " - Parámetros: ". $json_input ."\n";
                 $log_message .= " - Respuesta (HTTP code ". Yii::$app->getResponse()->getStatusCode() ."): ". Json::encode($this->vec_response) ."\n";
+                $log_message .= ( $status_code === 401 || $status_code === 403 ) ? " - Authorization: ". Yii::$app->request->getHeaders()->get('Authorization') ."\n" : "";
 
                 Yii::info($log_message, $log_category);
+
+                return true;
             break;
         }
+
+        return false;
     }
 
 
     /**
      * Save errors into the log
      */
-    public function saveLogError()
+    public function saveLogError(int $status_code = 400) : bool
     {
-        return $this->saveLog($this->config->getLogErrorCategory());
+        return $this->saveLog($this->config->getLogErrorCategory(), $status_code);
     }
+
 }

@@ -9,7 +9,9 @@
 
 namespace dezero\log;
 
+use yii\base\InvalidConfigException;
 use yii\helpers\FileHelper;
+use yii\log\LogRuntimeException;
 use Yii;
 
 /**
@@ -47,10 +49,7 @@ class FileTarget extends \yii\log\FileTarget
 
 
     /**
-     * Writes log messages to a file.
-     * Starting from version 2.0.14, this method throws LogRuntimeException in case the log can not be exported.
-     * @throws InvalidConfigException if unable to open the log file for writing
-     * @throws LogRuntimeException if unable to write complete log to file
+     * {@inheritdoc}
      */
     public function export()
     {
@@ -61,8 +60,10 @@ class FileTarget extends \yii\log\FileTarget
             return; // No messages to export, so we exit the function early
         }
 
-        // DEZERO - Add a break line at the beginning and at the end
+        // DEZERO - Add a break line for better readability
+        // ------------------------------------------------------------------
         $trimmedText = "\n". $trimmedText ."\n\n---\n";
+
 
         if (strpos($this->logFile, '://') === false || strncmp($this->logFile, 'file://', 7) === 0) {
             $logPath = dirname($this->logFile);
