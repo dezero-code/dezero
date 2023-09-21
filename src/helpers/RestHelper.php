@@ -6,6 +6,7 @@
 namespace dezero\helpers;
 
 use dezero\db\Connection;
+use dezero\helpers\DateHelper;
 use Dz;
 use Yii;
 
@@ -45,5 +46,14 @@ class RestHelper
     public static function date(int $unix_date) : string
     {
         return date("Y-m-d H:i:s", $unix_date);
+    }
+
+
+    /**
+     * Validate a date
+     */
+    public static function validateDate($date) : bool
+    {
+        return DateHelper::toUnix($date, 'Y-m-d H:i') !== null || DateHelper::toUnix($date, 'Y-m-d H:i:s') !== null;
     }
 }

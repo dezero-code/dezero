@@ -63,12 +63,12 @@ class DateHelper
             }
         }
 
-        $date = DateTime::createFromFormat($format, $date);
-        if ( $date === false )
+        $date_time = DateTime::createFromFormat($format, $date);
+        if ( $date_time === false )
         {
             return null;
         }
 
-        return $date->getTimestamp();
+        return $date_time->getTimestamp();
     }
 }
