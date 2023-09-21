@@ -118,7 +118,7 @@ class ResourceConfigurator extends Configurator implements ConfiguratorInterface
 
 
     /**
-     * Return category for REST logs
+     * Return category for logs
      */
     public function getLogCategory() : string
     {
@@ -127,7 +127,7 @@ class ResourceConfigurator extends Configurator implements ConfiguratorInterface
 
 
     /**
-     * Return category for REST error logs
+     * Return category for error logs
      */
     public function getLogErrorCategory() : string
     {

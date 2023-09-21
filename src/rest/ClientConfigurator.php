@@ -12,6 +12,7 @@ use dezero\contracts\ConfiguratorInterface;
 use dezero\helpers\ConfigHelper;
 use Yii;
 
+
 /**
  * Class to manage configuration options for HTTP Client objects
  */
@@ -76,7 +77,22 @@ class ClientConfigurator extends Configurator implements ConfiguratorInterface
             'base_url' => getenv('SITE_URL'),
 
             // Auth URL
-            'auth_url' => null
+            'auth_url' => null,
+
+            // Log settings
+            'log'   => [
+                // Allowed values: file (log file), db (database)
+                'destination' => 'file', // 'db',
+
+                // Log category
+                'category'  => 'http_client',
+
+                // Log error category
+                'error_category'  => 'http_client_error',
+
+                // Log debug category
+                'debug_category'  => 'http_client_dev',
+            ],
         ];
     }
 
@@ -114,4 +130,40 @@ class ClientConfigurator extends Configurator implements ConfiguratorInterface
     {
         return $this->get('auth_url');
     }
+
+    /**
+     * Return log destination
+     */
+    public function getLogDestination() : string
+    {
+        return $this->get('log', 'destination') ?? 'file';
+    }
+
+
+    /**
+     * Return category for logs
+     */
+    public function getLogCategory() : string
+    {
+        return $this->get('log', 'category') ?? 'http_client';
+    }
+
+
+    /**
+     * Return category for error logs
+     */
+    public function getLogErrorCategory() : string
+    {
+        return $this->get('log', 'error_category') ?? 'http_client_error';
+    }
+
+
+    /**
+     * Return category for debug logs
+     */
+    public function getLogDebugCategory() : string
+    {
+        return $this->get('log', 'debug_category') ?? 'http_dev_error';
+    }
+
 }

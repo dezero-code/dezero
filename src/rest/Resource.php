@@ -421,7 +421,7 @@ abstract class Resource extends \yii\base\BaseObject implements ConfigInterface
     /**
      * Save request and response into a LOG (database or file)
      */
-    public function saveLog(?string $log_category = null, int $status_code = 1) : bool
+    public function saveLog(?string $log_category = null) : bool
     {
         if ( $log_category === null )
         {
@@ -437,9 +437,9 @@ abstract class Resource extends \yii\base\BaseObject implements ConfigInterface
                 $log_message  = "\n";
                 $log_message .= " - IP: ". Yii::$app->getRequest()->getUserIP() ."\n";
                 $log_message .= " - Endpoint: ". Yii::$app->getRequest()->getPathInfo() ."\n";
-                $log_message .= " - Método: ". $this->getMethod() ."\n";
-                $log_message .= " - Parámetros: ". $json_input ."\n";
-                $log_message .= " - Respuesta (HTTP code ". Yii::$app->getResponse()->getStatusCode() ."): ". Json::encode($this->vec_response) ."\n";
+                $log_message .= " - Method: ". $this->getMethod() ."\n";
+                $log_message .= " - Parameters: ". $json_input ."\n";
+                $log_message .= " - Reponse (HTTP code ". Yii::$app->getResponse()->getStatusCode() ."): ". Json::encode($this->vec_response) ."\n";
                 $log_message .= ( $status_code === 401 || $status_code === 403 ) ? " - Authorization: ". Yii::$app->request->getHeaders()->get('Authorization') ."\n" : "";
 
                 Yii::info($log_message, $log_category);
