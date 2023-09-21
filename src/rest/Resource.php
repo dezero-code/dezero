@@ -11,6 +11,7 @@ use dezero\contracts\ConfigInterface;
 use dezero\helpers\ArrayHelper;
 use dezero\helpers\StringHelper;
 use dezero\rest\ResourceConfigurator;
+use dezero\traits\WarningTrait;
 use Dz;
 use yii\helpers\Json;
 use Yii;
@@ -20,6 +21,9 @@ use Yii;
  */
 abstract class Resource extends \yii\base\BaseObject implements ConfigInterface
 {
+    use WarningTrait;
+
+
     /**
      * API name
      */
@@ -72,11 +76,8 @@ abstract class Resource extends \yii\base\BaseObject implements ConfigInterface
      */
     public function init() : void
     {
-        // Get HTTP request method
-        $this->request_method = Yii::$app->request->getMethod();
-
         // Load a specific configuration
-        $this->getConfig();
+        $configurator = $this->getConfig();
 
         // Load input parameters
         $this->loadInput();
@@ -112,17 +113,25 @@ abstract class Resource extends \yii\base\BaseObject implements ConfigInterface
     /*
      * Return the received input
      */
-    public function getInput() : array
+    public function getInput(?string $param = null)
     {
-        return $this->vec_input;
+        if ( $param === null )
+        {
+            return $this->vec_input;
+        }
+
+        return $this->vec_input[$param] ?? null;
     }
 
 
     /**
      * Load input parameters
      */
-    public function loadInput() : void
+    private function loadInput() : void
     {
+        // Get HTTP request method
+        $this->request_method = Yii::$app->request->getMethod();
+
         switch ( $this->request_method )
         {
             case 'POST':
@@ -145,20 +154,20 @@ abstract class Resource extends \yii\base\BaseObject implements ConfigInterface
 
 
     /**
-     * Gets RestFul data and decodes its JSON request
-     */
-    public function jsonInput()
-    {
-        return Json::decode(file_get_contents('php://input'));
-    }
-
-
-    /**
      * Return the request method
      */
     public function getMethod() : string
     {
         return $this->request_method;
+    }
+
+
+    /**
+     * Gets RestFul data and decodes its JSON request
+     */
+    private function jsonInput()
+    {
+        return Json::decode(file_get_contents('php://input'));
     }
 
 
@@ -294,6 +303,12 @@ abstract class Resource extends \yii\base\BaseObject implements ConfigInterface
             return $this->sendErrors($status_code);
         }
 
+        // Check if we have warnings
+        if ( $this->hasWarnings() )
+        {
+            $this->vec_response['warnings'] = $this->getWarnings();
+        }
+
         // Save log?
         if ( $is_save_log )
         {
@@ -346,6 +361,15 @@ abstract class Resource extends \yii\base\BaseObject implements ConfigInterface
     }
 
 
+    /**
+     * Set error code (status code)
+     */
+    public function setErrorCode(int $status_code = 400) : void
+    {
+        $this->vec_response['status_code'] = $status_code;
+    }
+
+
     /*
     |--------------------------------------------------------------------------
     | ERRORS
@@ -362,7 +386,7 @@ abstract class Resource extends \yii\base\BaseObject implements ConfigInterface
 
 
     /**
-     * @return array
+     * @return bool
      */
     public function hasErrors() : bool
     {

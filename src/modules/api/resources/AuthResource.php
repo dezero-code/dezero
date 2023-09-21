@@ -39,7 +39,23 @@ class AuthResource extends Resource
             return false;
         }
 
+        // Check credentials
+        if ( ! $this->checkCredentials() )
+        {
+            $this->addError('Unauthorized', 401);
+            return false;
+        }
+
         return true;
+    }
+
+
+    /**
+     * Check credentials
+     */
+    private function checkCredentials() : bool
+    {
+        return $this->getInput('client_id') === 'test' && $this->getInput('client_secret') === 'test00';
     }
 
 

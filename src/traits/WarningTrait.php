@@ -27,6 +27,15 @@ trait WarningTrait
 
 
     /**
+     * @return bool
+     */
+    public function hasWarnings() : bool
+    {
+        return !empty($this->vec_warnings);
+    }
+
+
+    /**
      * Add warning(s)
      */
     public function addWarning($vec_warnings) : void
