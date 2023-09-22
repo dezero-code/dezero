@@ -440,7 +440,7 @@ abstract class Resource extends \yii\base\BaseObject implements ConfigInterface
                 $log_message .= " - Method: ". $this->getMethod() ."\n";
                 $log_message .= " - Parameters: ". $json_input ."\n";
                 $log_message .= " - Reponse (HTTP code ". Yii::$app->getResponse()->getStatusCode() ."): ". Json::encode($this->vec_response) ."\n";
-                $log_message .= ( $status_code === 401 || $status_code === 403 ) ? " - Authorization: ". Yii::$app->request->getHeaders()->get('Authorization') ."\n" : "";
+                $log_message .= ( $this->vec_response['status_code'] === 401 || $this->vec_response['status_code'] === 403 ) ? " - Authorization: ". Yii::$app->request->getHeaders()->get('Authorization') ."\n" : "";
 
                 Yii::info($log_message, $log_category);
 
