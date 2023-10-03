@@ -39,13 +39,14 @@ class Generator extends \yii\gii\Generator
     public $tableName;
     public $modelClass;
     public $baseClass = 'dezero\entity\ActiveRecord';
-    public $generateRelations = self::RELATIONS_NONE;
+    public $generateRelations = self::RELATIONS_ALL;
     public $generateRelationsFromCurrentSchema = true;
     public $generateLabelsFromComments = false;
     public $useTablePrefix = false;
     public $standardizeCapitals = false;
     public $useSchemaName = true;
     public $moduleName;
+    public $messageCategory = 'backend';
 
     // ActiveQuery
     public $generateQuery = true;
@@ -137,6 +138,8 @@ class Generator extends \yii\gii\Generator
             'generateSearch' => 'Generate Search Subclass',
             'searchNs' => 'Search Subclass Namespace',
             'searchClass' => 'Search Class',
+
+            'messageCategory' => 'Message Category',
 
         ]);
     }
@@ -567,7 +570,7 @@ class Generator extends \yii\gii\Generator
                         else if ( $attributesCount > 1 )
                         {
                             $columnsList = implode("', '", $uniqueColumns);
-                            $vec_rules[] = $prefix_rule ."'{$field_name}List' => [['$columnsList'], 'unique', 'targetAttribute' => ['$columnsList']]";
+                            $vec_rules[] = $prefix_rule ."'". StringHelper::camelCase($uniqueColumns[0]) . StringHelper::camelCase($uniqueColumns[1]) ."Unique' => [['$columnsList'], 'unique', 'targetAttribute' => ['$columnsList']]";
                         }
                     }
                 }

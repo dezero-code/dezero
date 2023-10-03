@@ -80,10 +80,29 @@ $script = <<< JS
         $('.field-generator-searchns').find('.sticky-value').html(module_id +"\\\models\\\search");
         $('#generator-searchns').val(module_id +"\\\models\\\search");
 
-        var model_class = $('#generator-modelclass').val().toLowerCase();
-        $('.field-generator-messagecategory').find('.sticky-value').html(model_class);
-        $('#generator-messagecategory').val(model_class);
+        // var model_class = $('#generator-modelclass').val().toLowerCase();
+        // $('.field-generator-messagecategory').find('.sticky-value').html(model_class);
+        $('#generator-messagecategory').val('backend');
     }
+
+    // model generator: translate model class to query class and search class
+    $('#model-generator #generator-modelclass').off('blur').on('blur', function () {
+        var modelClass = $(this).val();
+        if (modelClass !== '') {
+            var queryClass = $('#generator-queryclass').val();
+            if (queryClass === '') {
+                queryClass = modelClass + 'Query';
+                $('#generator-queryclass').val(queryClass);
+            }
+
+            // Search class
+            var searchClass = $('#generator-searchclass').val();
+            if (searchClass === '') {
+                searchClass = modelClass + 'Search';
+                $('#generator-searchclass').val(searchClass);
+            }
+        }
+    });
 JS;
 $this->registerJs($script, yii\web\View::POS_END);
 
