@@ -17,6 +17,7 @@ use dezero\modules\category\components\CategoryConfigurator;
 use dezero\modules\category\models\query\CategoryQuery;
 use dezero\modules\category\models\base\Category as BaseCategory;
 use Dz;
+use user\models\User;
 use yii\db\ActiveQueryInterface;
 use Yii;
 
@@ -49,11 +50,11 @@ use Yii;
  * -------------------------------------------------------------------------
  * @property Category $categoryParent
  * @property Category $categoryTranslated
- * @property UserUser $createdUser
- * @property UserUser $disabledUser
+ * @property User $createdUser
+ * @property User $disabledUser
  * @property AssetImage $imageFile
  * @property Language $language
- * @property UserUser $updatedUser
+ * @property User $updatedUser
  * @property Category[] $categories
  */
 class Category extends BaseCategory implements ConfigInterface
@@ -126,25 +127,25 @@ class Category extends BaseCategory implements ConfigInterface
     public function attributeLabels() : array
     {
         return [
-            'category_id' => Yii::t('category', 'Category ID'),
-            'category_type' => Yii::t('category', 'Category Type'),
-            'category_parent_id' => Yii::t('category', 'Category Parent ID'),
-            'name' => Yii::t('category', 'Name'),
-            'description' => Yii::t('category', 'Description'),
-            'weight' => Yii::t('category', 'Weight'),
-            'depth' => Yii::t('category', 'Depth'),
-            'image_file_id' => Yii::t('category', 'Image File ID'),
-            'language_id' => Yii::t('category', 'Language ID'),
-            'category_translated_id' => Yii::t('category', 'Category Translated ID'),
-            'disabled_date' => Yii::t('category', 'Disabled Date'),
-            'disabled_user_id' => Yii::t('category', 'Disabled User ID'),
-            'created_date' => Yii::t('category', 'Created Date'),
-            'created_user_id' => Yii::t('category', 'Created User ID'),
-            'updated_date' => Yii::t('category', 'Updated Date'),
-            'updated_user_id' => Yii::t('category', 'Updated User ID'),
-            'entity_uuid' => Yii::t('category', 'Entity Uuid'),
+            'category_id' => Yii::t('backend', 'Category ID'),
+            'category_type' => Yii::t('backend', 'Category Type'),
+            'category_parent_id' => Yii::t('backend', 'Category Parent ID'),
+            'name' => Yii::t('backend', 'Name'),
+            'description' => Yii::t('backend', 'Description'),
+            'weight' => Yii::t('backend', 'Weight'),
+            'depth' => Yii::t('backend', 'Depth'),
+            'image_file_id' => Yii::t('backend', 'Image File ID'),
+            'language_id' => Yii::t('backend', 'Language ID'),
+            'category_translated_id' => Yii::t('backend', 'Category Translated ID'),
+            'disabled_date' => Yii::t('backend', 'Disabled Date'),
+            'disabled_user_id' => Yii::t('backend', 'Disabled User ID'),
+            'created_date' => Yii::t('backend', 'Created Date'),
+            'created_user_id' => Yii::t('backend', 'Created User ID'),
+            'updated_date' => Yii::t('backend', 'Updated Date'),
+            'updated_user_id' => Yii::t('backend', 'Updated User ID'),
+            'entity_uuid' => Yii::t('backend', 'Entity Uuid'),
 
-            'imageFile' => Yii::t('category', 'Image'),
+            'imageFile' => Yii::t('backend', 'Image'),
         ];
     }
 
@@ -178,7 +179,7 @@ class Category extends BaseCategory implements ConfigInterface
      */
     public function getCreatedUser() : ActiveQueryInterface
     {
-        return $this->hasOne(UserUser::class, ['user_id' => 'created_user_id']);
+        return $this->hasOne(User::class, ['user_id' => 'created_user_id']);
     }
 
 
@@ -187,7 +188,7 @@ class Category extends BaseCategory implements ConfigInterface
      */
     public function getDisabledUser() : ActiveQueryInterface
     {
-        return $this->hasOne(UserUser::class, ['user_id' => 'disabled_user_id']);
+        return $this->hasOne(User::class, ['user_id' => 'disabled_user_id']);
     }
 
 
@@ -214,7 +215,7 @@ class Category extends BaseCategory implements ConfigInterface
      */
     public function getUpdatedUser() : ActiveQueryInterface
     {
-        return $this->hasOne(UserUser::class, ['user_id' => 'updated_user_id']);
+        return $this->hasOne(User::class, ['user_id' => 'updated_user_id']);
     }
 
 

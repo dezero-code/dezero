@@ -46,11 +46,11 @@ use Yii;
  * -------------------------------------------------------------------------
  * @property Category $categoryParent
  * @property Category $categoryTranslated
- * @property UserUser $createdUser
- * @property UserUser $disabledUser
+ * @property User $createdUser
+ * @property User $disabledUser
  * @property AssetFile $imageFile
  * @property Language $language
- * @property UserUser $updatedUser
+ * @property User $updatedUser
  * @property Category[] $categories
  */
 abstract class Category extends \dezero\entity\ActiveRecord
@@ -116,7 +116,7 @@ abstract class Category extends \dezero\entity\ActiveRecord
      */
     public function getCreatedUser() : ActiveQueryInterface
     {
-        return $this->hasOne(UserUser::class, ['user_id' => 'created_user_id']);
+        return $this->hasOne(User::class, ['user_id' => 'created_user_id']);
     }
 
 
@@ -125,7 +125,7 @@ abstract class Category extends \dezero\entity\ActiveRecord
      */
     public function getDisabledUser() : ActiveQueryInterface
     {
-        return $this->hasOne(UserUser::class, ['user_id' => 'disabled_user_id']);
+        return $this->hasOne(User::class, ['user_id' => 'disabled_user_id']);
     }
 
 
@@ -152,7 +152,7 @@ abstract class Category extends \dezero\entity\ActiveRecord
      */
     public function getUpdatedUser() : ActiveQueryInterface
     {
-        return $this->hasOne(UserUser::class, ['user_id' => 'updated_user_id']);
+        return $this->hasOne(User::class, ['user_id' => 'updated_user_id']);
     }
 
 

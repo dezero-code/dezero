@@ -1132,6 +1132,17 @@ class Generator extends \yii\gii\Generator
             }
         }
 
+        // DEZERO - Check if table has a prefix equal to table name.
+        // Example: class of table "user_user" will be User and not UserUSer
+        if ( preg_match("/\_/", $className) )
+        {
+            $vec_class_name = explode("_", $className);
+            if ( count($vec_class_name) === 2 && $vec_class_name[0] === $vec_class_name[1] )
+            {
+                $className = $vec_class_name[0];
+            }
+        }
+
         if ($this->standardizeCapitals) {
             $schemaName = ctype_upper(preg_replace('/[_-]/', '', $schemaName)) ? strtolower($schemaName) : $schemaName;
             $className = ctype_upper(preg_replace('/[_-]/', '', $className)) ? strtolower($className) : $className;

@@ -110,7 +110,7 @@
 ?>
 <div class="panel">
   <header class="panel-heading">
-    <h3 class="panel-title"><?= Yii::t('category', 'Image'); ?></h3>
+    <h3 class="panel-title"><?= Yii::t('backend', 'Image'); ?></h3>
   </header>
   <div class="panel-body">
     <div class="row">

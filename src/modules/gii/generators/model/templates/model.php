@@ -27,8 +27,9 @@ echo "<?php\n";
 namespace <?= $generator->ns ?>;
 
 use dezero\helpers\ArrayHelper;
-use <?= $generator->queryNs; ?>\<?= $queryClassName; ?>;
 use <?= $generator->ns ?>\base\<?= $className ?> as Base<?= $className ?>;
+use <?= $generator->queryNs; ?>\<?= $queryClassName; ?>;
+use user\models\User;
 use yii\db\ActiveQueryInterface;
 use Yii;
 

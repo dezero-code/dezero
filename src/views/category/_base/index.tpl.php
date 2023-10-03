@@ -85,7 +85,7 @@
             'columns' => [
               [
                 'attribute' => 'name',
-                'header' => Yii::t('category', 'Name'),
+                'header' => Yii::t('backend', 'Name'),
                 'value' => function($model) {
                   return $this->render($model->config->viewPath('_grid_column'), ['column' => 'name', 'model' => $model]);
                 }
