@@ -11,8 +11,8 @@
 
   use yii\helpers\Html;
 
-  // Get URL where backend assets are published
-  $backend_assets_url = Yii::$app->backendManager->assetUrl();
+  // Get the CORE URL where backend assets are published
+  $core_assets_url = Yii::$app->backendManager->coreAssetUrl();
 
   // Register CSS files
   $this->registerCssBackend();
@@ -63,12 +63,12 @@
   <?php $this->head(); ?>
 
   <!--[if lt IE 9]>
-    <script src="<?= $backend_assets_url; ?>/libraries/html5shiv/html5shiv.min.js"></script>
+    <script src="<?= $core_assets_url; ?>/libraries/html5shiv/html5shiv.min.js"></script>
   <![endif]-->
   <!--[if lt IE 10]>
-    <script src="<?= $backend_assets_url; ?>/libraries/media-match/media.match.min.js"></script>
-    <script src="<?= $backend_assets_url; ?>/libraries/respond/respond.min.js"></script>
+    <script src="<?= $core_assets_url; ?>/libraries/media-match/media.match.min.js"></script>
+    <script src="<?= $core_assets_url; ?>/libraries/respond/respond.min.js"></script>
   <![endif]-->
-  <script src="<?= $backend_assets_url; ?>/libraries/breakpoints/breakpoints.min.js"></script>
+  <script src="<?= $core_assets_url; ?>/libraries/breakpoints/breakpoints.min.js"></script>
   <script>Breakpoints();</script>
 </head>

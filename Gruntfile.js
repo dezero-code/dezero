@@ -24,7 +24,7 @@ module.exports = function(grunt) {
         // Run: `grunt watch` from command line for this section to take effect
         watch: {
             dezero_css: {
-                tasks: ['sass:dezero'],
+                tasks: ['sass:dezero', 'concat:all_css'],
                 files: ['<%= paths.dezero_sass %>/**/*.scss']
             },
         },
@@ -46,9 +46,10 @@ module.exports = function(grunt) {
                     '<%= paths.dezero_assets %>/libraries/bootstrap-tokenfield/bootstrap-tokenfield.min.css',
                     '<%= paths.dezero_assets %>/libraries/slidepanel/slidePanel.min.css',
                     '<%= paths.dezero_assets %>/fonts/font-awesome/font-awesome.min.css',
-                    '<%= paths.dezero_assets %>/fonts/web-icons/dz-web-icons.min.css'
+                    '<%= paths.dezero_assets %>/fonts/web-icons/dz-web-icons.min.css',
+                    '<%= paths.dezero_css %>/style.min.css'
                 ],
-                dest: '<%= paths.dezero_css %>/site.min.css'
+                dest: '<%= paths.dezero_css %>/dezero-core.min.css'
             },
             all_js: {
                 src: [
@@ -95,7 +96,7 @@ module.exports = function(grunt) {
                     '<%= paths.dezero_assets %>/js/dz.fileStatusTable.js',
                     '<%= paths.dezero_assets %>/js/scripts.js',
                 ],
-                dest: '<%= paths.dezero_js %>/site.js'
+                dest: '<%= paths.dezero_js %>/dezero-core.js'
             }
         },
 
@@ -122,7 +123,7 @@ module.exports = function(grunt) {
                 },
 
                 files: {
-                    '<%= paths.dezero_js %>/site.min.js' : ['<%= paths.dezero_js %>/site.js'],
+                    '<%= paths.dezero_js %>/dezero-core.min.js' : ['<%= paths.dezero_js %>/dezero-core.js'],
                 },
             },
         },

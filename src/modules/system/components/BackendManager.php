@@ -19,21 +19,39 @@ use yii\base\Component;
 class BackendManager extends Component
 {
     /**
-     * @var string Source path where backend assets are stored
+     * @var string Source path where CORE backend assets are stored
      */
-    public $source_asset_path = '@core/assets';
+    public $core_source_path = '@core/assets';
 
 
     /**
-     * @var string Path where backend assets are published
+     * @var string Path where CORE backend assets are published
      */
-    public $published_asset_path;
+    private $core_asset_path;
 
 
     /**
-     * @var string URL where backend assets are published
+     * @var string URL where CORE backend assets are published
      */
-    public $published_asset_url;
+    private $core_asset_url;
+
+
+    /**
+     * @var string Source path where APP backend assets are stored
+     */
+    public $app_source_path = '@backend/assets';
+
+
+    /**
+     * @var string Path where APP backend assets are published
+     */
+    private $app_asset_path;
+
+
+    /**
+     * @var string URL where APP backend assets are published
+     */
+    private $app_asset_url;
 
 
     /**
@@ -127,55 +145,83 @@ class BackendManager extends Component
 
 
     /**
-     * Return published asset URL
+     * Return CORE published asset URL
+     */
+    public function coreAssetUrl() : string
+    {
+        if ( empty($this->core_asset_url) )
+        {
+            list($this->core_asset_path, $this->core_asset_url) = Yii::$app->assetManager->publish($this->core_source_path);
+            $this->core_asset_url = Url::to($this->core_asset_url);
+        }
+
+        return $this->core_asset_url;
+    }
+
+
+    /**
+     * Return CORE published asset URL
+     */
+    public function coreAssetPath() : string
+    {
+        if ( empty($this->core_asset_path) )
+        {
+            $core_asset_url = $this->coreAssetUrl();
+        }
+
+        return $this->core_asset_path;
+    }
+
+
+    /**
+     * Return APP published asset URL
      */
     public function assetUrl() : string
     {
-        if ( empty($this->published_asset_url) )
+        if ( empty($this->app_asset_url) )
         {
-            list($this->published_asset_path, $this->published_asset_url) = Yii::$app->assetManager->publish($this->source_asset_path);
-            $this->published_asset_url = Url::to($this->published_asset_url);
+            list($this->app_asset_path, $this->app_asset_url) = Yii::$app->assetManager->publish($this->app_source_path);
+            $this->app_asset_url = Url::to($this->app_asset_url);
         }
 
-        return $this->published_asset_url;
+        return $this->app_asset_url;
     }
 
 
     /**
-     * Return published asset URL
+     * Return APP published asset URL
      */
     public function assetPath() : string
     {
-        if ( empty($this->published_asset_path) )
+        if ( empty($this->app_asset_path) )
         {
-            $published_asset_url = $this->assetUrl();
+            $app_asset_url = $this->assetUrl();
         }
 
-        return $this->published_asset_path;
+        return $this->app_asset_path;
     }
 
 
     /**
-     * Return CSS files needed for the backend theme
+     * Return CORE CSS files needed for the backend theme
+     *
+     * These files are placed on {@core/assets/css}
      */
-    public function cssFiles(bool $is_unified = true) : array
+    public function coreCssFiles(bool $is_unified = true) : array
     {
         $vec_files = [];
 
         // Unify CSS files?
         if ( $is_unified )
         {
-            // CSS - Dz Framework CORE
-            $vec_files[] = '/css/site.min.css';
-
-            // CSS - Custom
-            $vec_files[] = '/css/style.min.css';
+            // CSS - Dezero framework
+            $vec_files[] = '/css/dezero-core.min.css';
         }
 
         // Separated CSS files?
         else
         {
-            // CSS - CORE
+            // CSS - Remark & core
             $vec_files[] = '/libraries/_remark/global/css/bootstrap.min.css';
             $vec_files[] = '/libraries/_remark/global/css/bootstrap-extend.min.css';
             $vec_files[] = '/libraries/_remark/assets/css/site.min.css';
@@ -193,7 +239,7 @@ class BackendManager extends Component
             // CSS - Fonts
             $vec_files[] = '/fonts/web-icons/web-icons.min.css';
 
-            // CSS - Custom stylesheets
+            // CSS - Dezero framework
             $vec_files[] = '/css/style.min.css';
         }
 
@@ -202,9 +248,31 @@ class BackendManager extends Component
 
 
     /**
-     * Return Javascript files needed for the backend theme
+     * Return CORE CSS files needed for the backend theme
+     *
+     * These files are placed on {@app/themes/backend/css}
      */
-    public function javascriptFiles(bool $is_unified = true) : array
+    public function cssFiles(bool $is_minified = true) : array
+    {
+        if ( $is_minified )
+        {
+            return [
+                '/css/app.min.css'
+            ];
+        }
+
+        return [
+            '/css/app.min.css'
+        ];
+    }
+
+
+    /**
+     * Return CORE Javascript files needed for the backend theme
+     *
+     * These files are placed on {@core/assets/js}
+     */
+    public function coreJavascriptFiles(bool $is_unified = true) : array
     {
         $vec_files = [];
 
@@ -214,9 +282,9 @@ class BackendManager extends Component
             // Jquery
             $vec_files[] = ['/libraries/jquery/jquery.min.js', View::POS_HEAD];
 
-            // JS - Dz Framework CORE
-            // $vec_files[] = ['/js/site.min.js', View::POS_END];
-            $vec_files[] = ['/js/site.js', View::POS_END];
+            // JS - Dezero CORE Framework
+            $vec_files[] = ['/js/dezero-core.min.js', View::POS_END];
+            // $vec_files[] = ['/js/dezero-core.min.js', View::POS_END];
         }
 
         // Separated JS files?
@@ -270,6 +338,27 @@ class BackendManager extends Component
 
         return $vec_files;
     }
+
+
+    /**
+     * Return CORE JS files needed for the backend theme
+     *
+     * These files are placed on {@app/themes/backend/js}
+     */
+    public function javascriptFiles(bool $is_minified = true) : array
+    {
+        if ( $is_minified )
+        {
+            return [
+                '/js/app.min.js'
+            ];
+        }
+
+        return [
+            '/js/app.js'
+        ];
+    }
+
 
     /**
      * Return Javascript files and variables needed for the backend theme

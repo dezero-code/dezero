@@ -85,8 +85,30 @@ class View extends \yii\web\View
      */
     public function registerCssBackend(bool $is_unified = true) : void
     {
-        // Get URL where backend assets are published
-        $assets_url = Yii::$app->backendManager->assetUrl();
+        // -------------------------------------------------------------------------
+        // CORE CSS FILES
+        // -------------------------------------------------------------------------
+
+        // Get URL where CORE backend assets are published
+        $core_assets_url = Yii::$app->backendManager->coreAssetUrl();
+
+        // CSS files needed for the backend theme
+        $vec_css_files = Yii::$app->backendManager->coreCssFiles($is_unified);
+        if ( ! empty($vec_css_files) )
+        {
+            foreach ( $vec_css_files as $css_file )
+            {
+                $this->registerCssFile($core_assets_url . $css_file);
+            }
+        }
+
+
+        // --------------------------------------------------------------------------
+        // APP CSS FILES
+        // --------------------------------------------------------------------------
+
+        // Get URL where APP backend assets are published
+        $app_assets_url = Yii::$app->backendManager->assetUrl();
 
         // CSS files needed for the backend theme
         $vec_css_files = Yii::$app->backendManager->cssFiles($is_unified);
@@ -94,7 +116,7 @@ class View extends \yii\web\View
         {
             foreach ( $vec_css_files as $css_file )
             {
-                $this->registerCssFile($assets_url . $css_file);
+                $this->registerCssFile($app_assets_url . $css_file);
             }
         }
     }
@@ -105,8 +127,37 @@ class View extends \yii\web\View
      */
     public function registerJsBackend(bool $is_unified = true) : void
     {
+        // -------------------------------------------------------------------------
+        // CORE JS FILES
+        // -------------------------------------------------------------------------
+
         // Get URL where backend assets are published
-        $assets_url = Yii::$app->backendManager->assetUrl();
+        $core_assets_url = Yii::$app->backendManager->coreAssetUrl();
+
+        // Javascript FILES needed for the backend theme
+        $vec_javascript_files = Yii::$app->backendManager->coreJavascriptFiles($is_unified);
+        if ( ! empty($vec_javascript_files) )
+        {
+            foreach ( $vec_javascript_files as $javacript_file )
+            {
+                if ( is_array($javacript_file) )
+                {
+                    $this->registerJsFile($core_assets_url . $javacript_file[0], ['position' => $javacript_file[1]]);
+                }
+                else
+                {
+                    $this->registerJsFile($core_assets_url . $javacript_file);
+                }
+            }
+        }
+
+
+        // -------------------------------------------------------------------------
+        // APP JS FILES
+        // -------------------------------------------------------------------------
+
+        // Get URL where backend assets are published
+        $app_assets_url = Yii::$app->backendManager->assetUrl();
 
         // Javascript FILES needed for the backend theme
         $vec_javascript_files = Yii::$app->backendManager->javascriptFiles($is_unified);
@@ -116,14 +167,19 @@ class View extends \yii\web\View
             {
                 if ( is_array($javacript_file) )
                 {
-                    $this->registerJsFile($assets_url . $javacript_file[0], ['position' => $javacript_file[1]]);
+                    $this->registerJsFile($app_assets_url . $javacript_file[0], ['position' => $javacript_file[1]]);
                 }
                 else
                 {
-                    $this->registerJsFile($assets_url . $javacript_file);
+                    $this->registerJsFile($app_assets_url . $javacript_file);
                 }
             }
         }
+
+
+        // -------------------------------------------------------------------------
+        // JAVASCRIPT VARIABLES
+        // -------------------------------------------------------------------------
 
         // Javascript VARIABLES used by the backend theme
         $vec_javascript_variables = Yii::$app->backendManager->javascriptVariables($is_unified);
