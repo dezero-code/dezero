@@ -176,6 +176,7 @@ class Client extends HttpClient implements ConfigInterface
             case 'db':
                 $this->api_log_model = Dz::makeObject(ApiLog::class);
                 $this->api_log_model->setAttributes([
+                    'api_type'              => ApiLog::API_TYPE_CLIENT,
                     'api_name'              => $this->client_name,
                     'request_type'          => $this->request->getMethod(),
                     'request_url'           => $this->request->getFullUrl(),
@@ -185,15 +186,13 @@ class Client extends HttpClient implements ConfigInterface
                     'response_http_code'    => $this->response->getStatusCode(),
                     'response_json'         => $this->response->getContent()
                 ]);
-                if ( ! $this->api_log_model->save() )
+                if ( $this->api_log_model->save() )
                 {
-                    // Some error saving log into database
-                    Log::saveModelError($this->api_log_model);
-
-                    return false;
+                    return true;
                 }
 
-                return true;
+                // Some error saving log into database
+                Log::saveModelError($this->api_log_model);
             break;
         }
 

@@ -28,7 +28,7 @@ class ApiLogSearch extends ApiLog implements SearchInterface
         return [
             'defaultNull' => [['request_input_json', 'request_hostname', 'response_json', 'entity_uuid', 'entity_type', 'entity_source_id'], 'default', 'value' => null],
             'integerFields' => [['api_log_id', 'response_http_code', 'entity_source_id', 'created_date', 'created_user_id'], 'integer'],
-            'safeFields' => [['api_name', 'request_type', 'request_url', 'request_endpoint', 'request_input_json', 'request_hostname', 'response_json', 'entity_uuid', 'entity_type'], 'safe'],
+            'safeFields' => [['api_type', 'api_name', 'request_type', 'request_url', 'request_endpoint', 'request_input_json', 'request_hostname', 'response_json', 'entity_uuid', 'entity_type'], 'safe'],
             
             // Custom search filters
             // 'customFilters' => [['name_filter'], 'safe'],
@@ -79,6 +79,7 @@ class ApiLogSearch extends ApiLog implements SearchInterface
         // Compare conditions
         $query->andFilterWhere([
             'api_log_id' => $this->api_log_id,
+            'api_type' => $this->api_type,
             'request_type' => $this->request_type,
             'response_http_code' => $this->response_http_code,
             // 'entity_uuid' => $this->entity_uuid,

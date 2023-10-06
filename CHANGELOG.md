@@ -2,14 +2,34 @@
 
 All notable changes to `Dezero Framework` will be documented in this file
 
+## 0.2.3 - 2023-10-06
+
+- API module - Created new ApiLog model to save requests and responses into database
+- REST - Resource component (server) - Implemented option to save log into database via ApiLog model
+- REST - Client component (server) - Implemented option to save log into database via ApiLog model
+
+## 0.2.2 - 2023-10-03
+
+- CSS & JS redefined to be extended from the app without changing the core
+- Gii module - Improved search class generation process
+- Settings module - Created Language model
+
+## 0.2.1 - 2023-09-21
+
+- REST - Custom & extended HTTP client created
+- REST - HTTP client with Oauth integration finished
+
 ## 0.2.0 - 2023-09-15
+
 - Category module - First finished version
 - API module - First working version with REST API
 
 ## 0.1.16 - 2023-08-31
+
 - Generate presets images
 
 ## 0.1.15 - 2023-08-30
+
 - Upload files via UploadFileService
 
 ## 0.1.14 - 2023-07-28

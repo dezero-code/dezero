@@ -326,4 +326,12 @@ class Dz extends Yii
         return $vec_contrib_modules;
     }
 
+
+    /**
+     * Return base URL (SITE_URL)
+     */
+    public static function baseUrl() : string
+    {
+        return getenv('SITE_URL');
+    }
 }

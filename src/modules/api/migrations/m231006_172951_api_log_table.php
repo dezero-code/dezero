@@ -21,6 +21,7 @@ class m231006_172951_api_log_table extends Migration
 
         $this->createTable('api_log', [
             'api_log_id' => $this->primaryKey(),
+            'api_type' => $this->enum('api_type', ['client', 'server'])->notNull()->defaultValue('client'),
             'api_name' => $this->string(32)->notNull()->defaultValue('default'),
             'request_type' => $this->enum('request_type', ['GET', 'POST', 'PUT', 'DELETE'])->notNull()->defaultValue('GET'),
             'request_url' => $this->string(512)->notNull(),
@@ -37,8 +38,8 @@ class m231006_172951_api_log_table extends Migration
         ]);
 
         // Create indexes
-        $this->createIndex(null, 'api_log', ['api_name'], false);
-        $this->createIndex(null, 'api_log', ['api_name', 'request_endpoint'], false);
+        $this->createIndex(null, 'api_log', ['api_type', 'api_name'], false);
+        $this->createIndex(null, 'api_log', ['api_type', 'api_name', 'request_endpoint'], false);
         $this->createIndex(null, 'api_log', ['entity_type', 'entity_source_id'], false);
 
         // Create FOREIGN KEYS

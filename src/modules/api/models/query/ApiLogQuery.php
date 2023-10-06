@@ -26,10 +26,10 @@ class ApiLogQuery extends \dezero\db\ActiveQuery
 
 
     /**
-     * Filter the query by "api_name" attribute value
+     * Filter the query by "api_type" attribute value
      */
-    public function api_name(string $api_name) : self
+    public function api_type(string $api_type) : self
     {
-        return $this->andWhere(['api_name' => $api_name]);
+        return $this->andWhere(['api_type' => $api_type]);
     }
 }

@@ -28,6 +28,7 @@ use Yii;
  * COLUMN ATTRIBUTES
  * -------------------------------------------------------------------------
  * @property int $api_log_id
+ * @property string $api_type
  * @property string $api_name
  * @property string $request_type
  * @property string $request_url
@@ -50,6 +51,8 @@ use Yii;
  */
 class ApiLog extends BaseApiLog
 {
+    public const API_TYPE_CLIENT = 'client';
+    public const API_TYPE_SERVER = 'server';
     public const REQUEST_TYPE_GET = 'GET';
     public const REQUEST_TYPE_POST = 'POST';
     public const REQUEST_TYPE_PUT = 'PUT';
@@ -75,6 +78,11 @@ class ApiLog extends BaseApiLog
             'max512' => [['request_url'], 'string', 'max' => 512],
             
             // ENUM rules
+            'apiTypeList' => ['api_type', 'in', 'range' => [
+                   self::API_TYPE_CLIENT,
+                   self::API_TYPE_SERVER,
+               ]
+            ],
             'requestTypeList' => ['request_type', 'in', 'range' => [
                     self::REQUEST_TYPE_GET,
                     self::REQUEST_TYPE_POST,
@@ -118,6 +126,7 @@ class ApiLog extends BaseApiLog
     {
         return [
             'api_log_id' => Yii::t('backend', 'Api Log ID'),
+            'api_type' => Yii::t('backend', 'Api Type'),
             'api_name' => Yii::t('backend', 'Api Name'),
             'request_type' => Yii::t('backend', 'Request Type'),
             'request_url' => Yii::t('backend', 'Request Url'),
@@ -164,6 +173,30 @@ class ApiLog extends BaseApiLog
     | ENUM LABELS
     |--------------------------------------------------------------------------
     */
+
+    /**
+    * Get "api_type" labels
+    */
+    public function api_type_labels() : array
+    {
+       return [
+           self::API_TYPE_CLIENT => Yii::t('backend', 'Client'),
+           self::API_TYPE_SERVER => Yii::t('backend', 'Server'),
+       ];
+    }
+
+
+    /**
+    * Get "api_type" specific label
+    */
+    public function api_type_label(?string $api_type = null) : string
+    {
+       $api_type = ( $api_type === null ) ? $this->api_type : $api_type;
+       $vec_labels = $this->api_type_labels();
+
+       return isset($vec_labels[$api_type]) ? $vec_labels[$api_type] : '';
+    }
+
 
     /**
      * Get "request_type" labels
@@ -287,6 +320,6 @@ class ApiLog extends BaseApiLog
      */
     public function title() : string
     {
-        return $this->api_name .' - '. $this->request_endpoint;
+        return "{$this->api_name} ({$this->api_type}) - $this->request_endpoint";
     }
 }

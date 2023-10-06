@@ -8,8 +8,10 @@
 namespace dezero\rest;
 
 use dezero\contracts\ConfigInterface;
+use dezero\entity\ActiveRecord;
 use dezero\helpers\ArrayHelper;
 use dezero\helpers\StringHelper;
+use dezero\modules\api\models\ApiLog;
 use dezero\rest\ResourceConfigurator;
 use dezero\traits\WarningTrait;
 use Dz;
@@ -58,6 +60,12 @@ abstract class Resource extends \yii\base\BaseObject implements ConfigInterface
      * Registered errors
      */
     private $vec_errors = [];
+
+
+    /**
+     * @var \dezero\modules\api\models\ApiLog
+     */
+    private $api_log_model;
 
 
     /**
@@ -428,23 +436,48 @@ abstract class Resource extends \yii\base\BaseObject implements ConfigInterface
             $log_category = $this->config->getLogCategory();
         }
 
+        // Input data in JSON format
+        $input_data = is_array($this->vec_input) ? Json::encode($this->vec_input) : $this->vec_input;
+
         switch ( $this->config->getLogDestination() )
         {
             // Save log in "rest.log" file (or "<log_category>.log" file)
             case 'file':
-                $json_input = is_array($this->vec_input) ? Json::encode($this->vec_input) : $this->vec_input;
-
                 $log_message  = "\n";
                 $log_message .= " - IP: ". Yii::$app->getRequest()->getUserIP() ."\n";
                 $log_message .= " - Endpoint: ". Yii::$app->getRequest()->getPathInfo() ."\n";
                 $log_message .= " - Method: ". $this->getMethod() ."\n";
-                $log_message .= " - Parameters: ". $json_input ."\n";
+                $log_message .= " - Parameters: ". $input_data ."\n";
                 $log_message .= " - Reponse (HTTP code ". Yii::$app->getResponse()->getStatusCode() ."): ". Json::encode($this->vec_response) ."\n";
                 $log_message .= ( $this->vec_response['status_code'] === 401 || $this->vec_response['status_code'] === 403 ) ? " - Authorization: ". Yii::$app->request->getHeaders()->get('Authorization') ."\n" : "";
 
                 Yii::info($log_message, $log_category);
 
                 return true;
+            break;
+
+            // Save log into database (ApiLog model)
+            case 'db':
+                $path_info = Yii::$app->getRequest()->getPathInfo();
+                $this->api_log_model = Dz::makeObject(ApiLog::class);
+                $this->api_log_model->setAttributes([
+                    'api_type'              => ApiLog::API_TYPE_SERVER,
+                    'api_name'              => $this->api_name,
+                    'request_type'          => $this->getMethod(),
+                    'request_url'           => Dz::baseUrl() . $path_info,
+                    'request_endpoint'      => $this->getMethod() .'___'. $path_info,
+                    'request_hostname'      => Yii::$app->getRequest()->getUserIP(),
+                    'request_input_json'    => $input_data,
+                    'response_http_code'    => Yii::$app->getResponse()->getStatusCode(),
+                    'response_json'         => Json::encode($this->vec_response)
+                ]);
+                if ( $this->api_log_model->save() )
+                {
+                    return true;
+                }
+
+                // Some error saving log into database
+                Log::saveModelError($this->api_log_model);
             break;
         }
 
@@ -458,6 +491,20 @@ abstract class Resource extends \yii\base\BaseObject implements ConfigInterface
     public function saveLogError(int $status_code = 400) : bool
     {
         return $this->saveLog($this->config->getLogErrorCategory(), $status_code);
+    }
+
+
+    /**
+     * Link an Entity model with last ApiLog model
+     */
+    public function linkEntity(ActiveRecord $entity_model) : bool
+    {
+        if ( $this->api_log_model === null )
+        {
+            return false;
+        }
+
+        return $this->api_log_model->linkEntity($entity_model);
     }
 
 }
