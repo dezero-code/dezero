@@ -219,15 +219,11 @@ class UploadFileService implements ServiceInterface
     private function saveEntityFile()
     {
         $this->entity_file_model->setAttributes([
-            'file_id'       => $this->asset_file_model->file_id,
-            'entity_uuid'   => ! $this->reference_model->getIsNewRecord() && $this->reference_model->hasAttribute('entity_uuid') ? $this->reference_model->getAttribute('entity_uuid') : null,
-            'entity_type'   => $this->reference_model->getEntityType(),
+            'file_id'           => $this->asset_file_model->file_id,
+            'entity_uuid'       => ! $this->reference_model->getIsNewRecord() && $this->reference_model->hasAttribute('entity_uuid') ? $this->reference_model->getAttribute('entity_uuid') : 0,
+            'entity_type'       => $this->reference_model->getEntityType(),
+            'entity_source_id'  => $this->reference_model->getSourceId()
         ]);
-        $reference_source_id = $this->reference_model->getSourceName();
-        if ( is_numeric($reference_source_id) )
-        {
-            $this->entity_file_model->entity_source_id = $reference_source_id;
-        }
 
         // Validate model's attributes
         if ( ! $this->entity_file_model->validate() )

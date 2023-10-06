@@ -279,6 +279,7 @@ class Dz extends Yii
     public static function getCoreModules() : array
     {
         return [
+            'api'       => '\dezero\modules\api\Module',
             'asset'     => '\dezero\modules\asset\Module',
             'auth'      => '\dezero\modules\auth\Module',
             'category'  => '\dezero\modules\category\Module',

@@ -10,7 +10,6 @@
 namespace dezero\modules\entity\models;
 
 use dezero\behaviors\TimestampBehavior;
-use dezero\behaviors\UuidBehavior;
 use dezero\helpers\ArrayHelper;
 use dezero\modules\entity\models\query\EntityFileQuery;
 use dezero\modules\entity\models\base\EntityFile as BaseEntityFile;

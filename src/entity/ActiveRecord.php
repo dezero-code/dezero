@@ -103,7 +103,7 @@ abstract class ActiveRecord extends \dezero\db\ActiveRecord implements TitleInte
 
 
     /**
-     * Generate and return source_name attribute value
+     * Generate and return source_name (PRIMARY KEY) attribute value
      */
     public function getSourceName() : mixed
     {
@@ -123,6 +123,17 @@ abstract class ActiveRecord extends \dezero\db\ActiveRecord implements TitleInte
 
 
     /**
+     * Generate and return source_id (PRIMARY KEY) attribute
+     * only if it's an INTEGER number
+     */
+    public function getSourceId() : ?int
+    {
+        $source_name = $this->getSourceName();
+        return is_int($source_name) ? $source_name : null;
+    }
+
+
+    /**
      * Makes sure that the Entity model exists
      */
     private function ensureEntityExists() : void
@@ -131,7 +142,7 @@ abstract class ActiveRecord extends \dezero\db\ActiveRecord implements TitleInte
         {
             // First of all, get primary key data
             $source_name = $this->getSourceName();
-            $source_id = is_int($source_name) ? $source_name : null;
+            $source_id = $this->getSourceId();
 
             // Now, create the Entity model
             $entity_model = Dz::makeObject(Entity::class);

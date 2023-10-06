@@ -8,6 +8,9 @@
 namespace dezero\rest;
 
 use dezero\contracts\ConfigInterface;
+use dezero\entity\ActiveRecord;
+use dezero\helpers\Log;
+use dezero\modules\api\models\ApiLog;
 use dezero\rest\ClientConfigurator;
 use Dz;
 use yii\base\Component;
@@ -42,6 +45,12 @@ class Client extends HttpClient implements ConfigInterface
      * @var \yii\web\Response
      */
     protected $response;
+
+
+    /**
+     * @var \dezero\modules\api\models\ApiLog
+     */
+    private $api_log_model;
 
 
     /**
@@ -134,18 +143,18 @@ class Client extends HttpClient implements ConfigInterface
             $log_category = $this->config->getLogCategory();
         }
 
+        // Process input parameters
+        $input_data = $this->request->getData();
+        if ( empty($input_data) )
+        {
+            $input_data = $this->request->getContent();
+        }
+        $input_data = is_array($input_data) ? Json::encode($input_data) : $input_data;
+
         switch ( $this->config->getLogDestination() )
         {
             // Save log in "http_client.log" file (or "<log_category>.log" file)
             case 'file':
-                // Process input parameters
-                $input_data = $this->request->getData();
-                if ( empty($input_data) )
-                {
-                    $input_data = $this->request->getContent();
-                }
-                $input_data = is_array($input_data) ? Json::encode($input_data) : $input_data;
-
                 // Request
                 $log_message  = "\n";
                 $log_message .= " - Endpoint: {$this->request->getFullUrl()}\n";
@@ -159,6 +168,30 @@ class Client extends HttpClient implements ConfigInterface
                 $log_message .= " - Response ({$response_label} - HTTP code {$this->response->getStatusCode()}): ". $this->response->getContent() ."\n";
 
                 Yii::info($log_message, $log_category);
+
+                return true;
+            break;
+
+            // Save log into database (ApiLog model)
+            case 'db':
+                $this->api_log_model = Dz::makeObject(ApiLog::class);
+                $this->api_log_model->setAttributes([
+                    'api_name'              => $this->client_name,
+                    'request_type'          => $this->request->getMethod(),
+                    'request_url'           => $this->request->getFullUrl(),
+                    'request_endpoint'      => $this->request->getMethod() .'___'. $this->request->getUrl(),
+                    // 'request_hostname'      => $this->request->getUserIP(),
+                    'request_input_json'    => $input_data,
+                    'response_http_code'    => $this->response->getStatusCode(),
+                    'response_json'         => $this->response->getContent()
+                ]);
+                if ( ! $this->api_log_model->save() )
+                {
+                    // Some error saving log into database
+                    Log::saveModelError($this->api_log_model);
+
+                    return false;
+                }
 
                 return true;
             break;
@@ -183,5 +216,19 @@ class Client extends HttpClient implements ConfigInterface
     public function saveLogDebug() : bool
     {
         return $this->saveLog($this->config->getLogDebugCategory());
+    }
+
+
+    /**
+     * Link an Entity model with last ApiLog model
+     */
+    public function linkEntity(ActiveRecord $entity_model) : bool
+    {
+        if ( $this->api_log_model === null )
+        {
+            return false;
+        }
+
+        return $this->api_log_model->linkEntity($entity_model);
     }
 }

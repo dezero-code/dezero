@@ -1,0 +1,19 @@
+==========================
+-- HTTP CLIENT EXAMPLES --
+==========================
+
+// Example saving ENTITY into ApiLog
+```
+    use mymodule\components\MyClient;
+
+    ...
+
+    $product_model = Product::findOne(3);
+
+    $client = Dz::makeObject(MyClient::class);
+    $response = $client->get('product/3')->send();
+    if ( $response->isOk )
+    {
+        $client->linkEntity($product_model);
+    }
+```
