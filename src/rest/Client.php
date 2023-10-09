@@ -42,7 +42,7 @@ class Client extends HttpClient implements ConfigInterface
 
 
     /**
-     * @var \yii\web\Response
+     * @var \yii\httpclient\Response
      */
     protected $response;
 

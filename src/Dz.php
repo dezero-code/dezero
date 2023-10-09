@@ -286,6 +286,7 @@ class Dz extends Yii
             'entity'    => '\dezero\modules\entity\Module',
             'frontend'  => '\dezero\modules\frontend\Module',
             'settings'  => '\dezero\modules\settings\Module',
+            'sync'      => '\dezero\modules\sync\Module',
             'system'    => '\dezero\modules\system\Module',
             'user'      => '\dezero\modules\user\Module',
         ];

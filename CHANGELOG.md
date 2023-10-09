@@ -2,6 +2,11 @@
 
 All notable changes to `Dezero Framework` will be documented in this file
 
+## 0.2.4 - 2023-10-09
+
+- SYNC module - Created new module to manage sync operations: import and exports
+- Batch model - Created new model to I/O operations (batch jobs)
+
 ## 0.2.3 - 2023-10-06
 
 - API module - Created new ApiLog model to save requests and responses into database

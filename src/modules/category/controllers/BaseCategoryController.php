@@ -87,7 +87,7 @@ abstract class BaseCategoryController extends Controller
         if ( $category_model->load(Yii::$app->request->post()) )
         {
             // Create category via CategoryCreateService class
-            $category_create_service = Dz::makeObject(CategoryCreateService::class, [$category_model, $asset_image_model, $category_parent_model]);
+            $category_create_service = Dz::makeObject(CategoryCreateService::class, [$category_model, $category_parent_model, $asset_image_model]);
             if ( $category_create_service->run() )
             {
                 Yii::$app->session->setFlash('success', Yii::t('backend', $category_model->config->text('created_success')));

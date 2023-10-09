@@ -27,10 +27,10 @@ class CategoryUpdateService implements ServiceInterface
     /**
      * Constructor
      */
-    public function __construct(Category $category_model, AssetImage $asset_image_model, ?string $status_change)
+    public function __construct(Category $category_model, ?AssetImage $asset_image_model, ?string $status_change)
     {
         $this->category_model = $category_model;
-        $this->asset_image_model = $asset_image_model;
+        $this->asset_image_model = !empty($asset_image_model) ? $asset_image_model : null;
         $this->status_change = !empty($status_change) ? $status_change : null;
     }
 
@@ -59,8 +59,13 @@ class CategoryUpdateService implements ServiceInterface
      */
     private function uploadImage() : void
     {
+        if ( $this->asset_image_model === null )
+        {
+            return ;
+        }
+
         // Uploads a new file
-        if ( $this->asset_image_model->uploadFile($this->category_model, 'image_file_id', $this->category_model->imageDirectory()) )
+        if ( $this->$this->asset_image_model->uploadFile($this->category_model, 'image_file_id', $this->category_model->imageDirectory()) )
         {
             $this->category_model->image_file_id = $this->asset_image_model->file_id;
         }

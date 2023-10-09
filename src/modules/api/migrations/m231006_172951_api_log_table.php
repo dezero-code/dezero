@@ -43,7 +43,7 @@ class m231006_172951_api_log_table extends Migration
         $this->createIndex(null, 'api_log', ['entity_type', 'entity_source_id'], false);
 
         // Create FOREIGN KEYS
-        $this->addForeignKey(null, 'api_log', ['entity_uuid'], 'entity_entity', ['entity_uuid'], 'CASCADE', null);
+        $this->addForeignKey(null, 'api_log', ['entity_uuid'], 'entity_entity', ['entity_uuid'], 'SET NULL', null);
         $this->addForeignKey(null, 'api_log', ['created_user_id'], 'user_user', ['user_id'], 'CASCADE', null);
 
         return true;
