@@ -138,6 +138,24 @@ class CategoryConfigurator extends EntityConfigurator implements ConfiguratorInt
 
 
     /**
+     * Check if category has enabled the image field
+     */
+    public function isImage() : bool
+    {
+        return $this->get('is_image') === true;
+    }
+
+
+    /**
+     * Check if category has enabled the description field
+     */
+    public function isDescription() : bool
+    {
+        return $this->get('is_description') === true;
+    }
+
+
+    /**
      * Check if category type has allowed the DISABLE option
      */
     public function isDisableAllowed() : bool

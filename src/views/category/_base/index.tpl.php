@@ -24,9 +24,14 @@
 ?>
 <div class="page-header">
   <h1 class="page-title"><?= $this->title; ?></h1>
-  <div class="page-header-actions">
-    <a href="<?= Url::to("/category/{$current_controller}/create"); ?>" class="btn btn-primary"><i class="icon wb-plus"></i><?= Yii::t('backend', $category_search_model->config->text('add_button')); ?></a>
-  </div>
+  <?php
+    // Add button at right
+    if ( $category_search_model->config->isEditable() ) :
+  ?>
+    <div class="page-header-actions">
+      <a href="<?= Url::to("/category/{$current_controller}/create"); ?>" class="btn btn-primary"><i class="icon wb-plus"></i><?= Yii::t('backend', $category_search_model->config->text('add_button')); ?></a>
+    </div>
+  <?php endif; ?>
 </div>
 <div class="page-content">
   <div class="row row-lg">
@@ -36,7 +41,7 @@
       | SORT FIRST LEVEL?
       |----------------------------------------------------------------------------------------
       */
-      if ( $category_search_model->config->isFirstLevelSortable() === true ) :
+      if ( $category_search_model->config->isFirstLevelSortable() ) :
     ?>
       <div class="col-lg-3">
         <div class="panel panel-tree category-tree-wrapper">
@@ -52,7 +57,10 @@
                   'category_model'  => $category_search_model
                 ]);
               ?>
-              <?php if ( $category_search_model->config->isEditable() ) : ?>
+              <?php
+                // Add button in NESTABLE panel
+                if ( $category_search_model->config->isEditable() ) :
+              ?>
                 <hr>
                 <div class="buttons">
                   <a href="<?= Url::to("/category/{$current_controller}/create"); ?>" class="btn mr-10 mb-10 btn-primary"><i class="icon wb-plus"></i> <?= $category_search_model->config->text('add_button'); ?></a>
@@ -93,6 +101,7 @@
               [
                 'class' => 'dezero\grid\ActionColumn',
                 'template' => '{update} {delete}',
+                'visible' => $category_search_model->config->isEditable(),
                 'urlCreator' => function($action, $model, $key, $index) {
                   return Url::to([$action, 'category_id' => $key]);
                 },
