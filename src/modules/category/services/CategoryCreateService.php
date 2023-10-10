@@ -28,8 +28,8 @@ class CategoryCreateService implements ServiceInterface
     public function __construct(Category $category_model, ?Category $category_parent_model, ?AssetImage $asset_image_model)
     {
         $this->category_model = $category_model;
-        $this->category_parent_model = !empty($category_parent_model) ? $category_parent_model : null;
-        $this->asset_image_model = !empty($asset_image_model) ? $asset_image_model : null;
+        $this->category_parent_model = $category_parent_model;
+        $this->asset_image_model = $asset_image_model;
     }
 
 
@@ -102,7 +102,7 @@ class CategoryCreateService implements ServiceInterface
     private function uploadTempImage() : void
     {
         // Uploads a new file
-        if ( $this->asset_image_model && $this->asset_image_model->uploadTempFile($this->category_model, 'image_file_id') )
+        if ( $this->asset_image_model !== null && $this->asset_image_model->uploadTempFile($this->category_model, 'image_file_id') )
         {
             $this->category_model->image_file_id = $this->asset_image_model->file_id;
         }
@@ -115,7 +115,7 @@ class CategoryCreateService implements ServiceInterface
     private function uploadImage() : void
     {
         // Uploads a new file
-        if ( $this->asset_image_model && $this->asset_image_model->uploadFile($this->category_model, 'image_file_id', $this->category_model->imageDirectory()) )
+        if ( $this->asset_image_model !== null && $this->asset_image_model->uploadFile($this->category_model, 'image_file_id', $this->category_model->imageDirectory()) )
         {
             $this->category_model->image_file_id = $this->asset_image_model->file_id;
         }

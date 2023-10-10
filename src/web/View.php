@@ -8,8 +8,8 @@
 namespace dezero\web;
 
 use dezero\helpers\ArrayHelper;
+use dezero\helpers\Json;
 use Yii;
-use yii\helpers\Json;
 
 /**
  * View represents a view object in the MVC pattern.

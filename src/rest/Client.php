@@ -9,13 +9,15 @@ namespace dezero\rest;
 
 use dezero\contracts\ConfigInterface;
 use dezero\entity\ActiveRecord;
+use dezero\helpers\Json;
 use dezero\helpers\Log;
 use dezero\modules\api\models\ApiLog;
 use dezero\rest\ClientConfigurator;
 use Dz;
 use yii\base\Component;
-use yii\helpers\Json;
 use yii\httpclient\Client as HttpClient;
+use yii\httpclient\Request;
+use yii\httpclient\Response;
 use Yii;
 
 /**
@@ -36,7 +38,7 @@ class Client extends HttpClient implements ConfigInterface
 
 
     /**
-     * @var \yii\web\Request
+     * @var \yii\httpclient\Request
      */
     protected $request;
 
@@ -115,9 +117,27 @@ class Client extends HttpClient implements ConfigInterface
 
 
 
+    /*
+    |--------------------------------------------------------------------------
+    | REQUEST & RESPONSE
+    |--------------------------------------------------------------------------
+    */
+
+    public function getRequest() : Request
+    {
+        return $this->request;
+    }
+
+
     public function setRequest($request) : void
     {
         $this->request = $request;
+    }
+
+
+    public function getResponse() : Response
+    {
+        return $this->response;
     }
 
 

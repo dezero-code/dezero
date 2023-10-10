@@ -15,6 +15,7 @@
 namespace dezero\behaviors;
 
 use dezero\helpers\StringHelper;
+use Dz;
 use Yii;
 use yii\behaviors\AttributeBehavior;
 use yii\db\BaseActiveRecord;
@@ -130,7 +131,7 @@ class TimestampBehavior extends AttributeBehavior
     private function currentUser()
     {
         $user_id = null;
-        if ( Yii::$app->has('user') )
+        if ( ! Dz::isConsole() && Yii::$app->has('user') )
         {
             $user_id = Yii::$app->get('user')->id;
         }

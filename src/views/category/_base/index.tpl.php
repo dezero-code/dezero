@@ -68,7 +68,7 @@
     <?php endif; ?>
     <div class="panel panel-category-summary panel-top-summary">
       <header class="panel-heading">
-        <h3 class="panel-title"><?= Yii::t('app', $category_search_model->config->text('list_title')); ?></h3>
+        <h3 class="panel-title"><?= Yii::t('backend', $category_search_model->config->text('list_title')); ?></h3>
       </header>
       <div class="panel-body container-fluid">
         <?php GridViewPjax::begin(['gridview' => 'category-grid']) ?>

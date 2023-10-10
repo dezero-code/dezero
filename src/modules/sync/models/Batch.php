@@ -12,6 +12,7 @@ namespace dezero\modules\sync\models;
 use dezero\behaviors\TimestampBehavior;
 use dezero\entity\ActiveRecord;
 use dezero\helpers\ArrayHelper;
+use dezero\helpers\Json;
 use dezero\helpers\Log;
 use dezero\modules\asset\models\AssetFile;
 use dezero\modules\entity\models\Entity;
@@ -19,7 +20,6 @@ use dezero\modules\sync\models\base\Batch as BaseBatch;
 use dezero\modules\sync\models\query\BatchQuery;
 use user\models\User;
 use yii\db\ActiveQueryInterface;
-use yii\helpers\Json;
 use Yii;
 
 /**

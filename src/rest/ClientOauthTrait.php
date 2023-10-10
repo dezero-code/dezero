@@ -9,7 +9,7 @@ namespace dezero\rest;
 
 use dezero\base\File;
 use dezero\helpers\ArrayHelper;
-use yii\helpers\Json;
+use dezero\helpers\Json;
 use Yii;
 
 trait ClientOauthTrait
