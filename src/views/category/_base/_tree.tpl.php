@@ -64,7 +64,7 @@
           ?>
             <?=
               $this->render($category_model->config->viewPath('_tree_sublevels'), [
-                'parent_category_model' => $second_level_category_model,
+                'category_parent_model' => $second_level_category_model,
                 'category_model'        => $category_model,
                 'num_level'             => 3,
                 'max_levels'            => $max_levels

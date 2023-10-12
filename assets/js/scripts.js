@@ -247,7 +247,7 @@ function dz_htmlUnescape(value){
     // $('body').dzScrollUp();
 
     // Bootbox
-    $('.dz-bootbox-confirm').dzBootbox();
+    // $('.dz-bootbox-confirm').dzBootbox();
 
     // AJAX Session Timeout - DZ_LOGIN_REQUIRED
     $(document).ajaxComplete(

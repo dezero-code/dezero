@@ -2045,15 +2045,7 @@ function dz_htmlUnescape(value){
     // $('body').dzScrollUp();
 
     // Bootbox
-    $('.dz-bootbox-confirm').dzBootbox();
-
-    // Bootbox
-    bootbox.addLocale("custom", {
-      OK: 'Continue',
-      CANCEL: 'Cancel',
-      CONFIRM: 'Continue'
-    });
-    bootbox.setDefaults({locale: "custom"});
+    // $('.dz-bootbox-confirm').dzBootbox();
 
     // AJAX Session Timeout - DZ_LOGIN_REQUIRED
     $(document).ajaxComplete(

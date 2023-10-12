@@ -5,7 +5,7 @@
 |--------------------------------------------------------------------------
 |
 | Available variables:
-|  - $parent_category_model: Category model class
+|  - $category_parent_model: Category model class
 |  - $category_model: Category model class
 |  - $num_level: Current level
 |  - $max_levels: Max levels allowed
@@ -18,10 +18,10 @@
   // Current controller
   $current_controller = Dz::currentController(true);
 
-  if ( $parent_category_model->category_id === $category_model->category_id || $category_model->isParent($parent_category_model->category_id) ) :
+  if ( $category_parent_model->category_id === $category_model->category_id || $category_model->isParent($category_parent_model->category_id) ) :
 ?>
   <ol class="dd-list">
-    <?php foreach ( $parent_category_model->subCategories as $sub_level_category_model ) : ?>
+    <?php foreach ( $category_parent_model->subCategories as $sub_level_category_model ) : ?>
       <li class="dd-item dd3-item dd-item-subcategory<?php if ( $category_model->category_id === $sub_level_category_model->category_id ) : ?> active<?php endif; ?>" data-rel="level<?= $num_level; ?>" data-id="q-<?= $sub_level_category_model->category_id; ?>" id="dd-item-q-<?= $sub_level_category_model->category_id; ?>">
         <div class="dd-handle dd3-handle"></div>
         <div class="dd3-content">
@@ -39,7 +39,7 @@
           ?>
             <?=
               $this->render($category_model->config->viewPath('_tree_sublevels'), [
-                'parent_category_model' => $sub_level_category_model,
+                'category_parent_model' => $sub_level_category_model,
                 'category_model'        => $category_model,
                 'num_level'             => $num_level + 1,
                 'max_levels'            => $max_levels
