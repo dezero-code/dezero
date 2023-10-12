@@ -382,6 +382,27 @@ class Category extends BaseCategory implements ConfigInterface
         return '@www/files/category/'. $this->category_id .'/';
     }
 
+
+    /**
+     * Full title with parents
+     */
+    public function fullTitle() : string
+    {
+        $title = "";
+        if ( $this->categoryParent )
+        {
+            $title = $this->categoryParent->fullTitle();
+        }
+
+        if ( !empty($title) )
+        {
+            $title .= " - ";
+        }
+
+        return $title . $this->title();
+    }
+
+
     /**
      * Title used for this model
      */

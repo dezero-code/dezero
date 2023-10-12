@@ -8,6 +8,7 @@ namespace dezero\helpers;
 use Dz;
 use dezero\helpers\ArrayHelper;
 use Stringy\Stringy as BaseStringy;
+use voku\helper\UTF8;
 use Yii;
 use yii\helpers\HtmlPurifier;
 
@@ -200,6 +201,17 @@ class StringHelper extends \yii\helpers\StringHelper
 
 
     /**
+     * Clean UTF-8 text
+     *
+     * @see \voku\helper\UTF8::cleanup
+     */
+    public static function cleanUTF8(string $text) : string
+    {
+        return UTF8::cleanup($text);
+    }
+
+
+    /**
      * Remove non printable characters from a string
      *
      * @see https://github.com/bcit-ci/CodeIgniter/blob/b862664f2ce2d20382b9af5bfa4dd036f5755409/system/core/Common.php
@@ -266,6 +278,20 @@ class StringHelper extends \yii\helpers\StringHelper
 
         // Do not count UTF-8 continuation bytes.
         return substr(preg_replace("", '', $text), $start, $length);
+    }
+
+
+    /**
+     * Return the first $length characters of a string if it's longer than this
+     */
+    public static function max(string $text, int $length, bool $is_use_mbstring = true, bool $is_html = false) : string
+    {
+        if ( self::strlen($text) <= $length || $length <= 0 )
+        {
+            return $text;
+        }
+
+        return self::substr($text, 0, $length - 1, $is_use_mbstring, $is_html);
     }
 
 

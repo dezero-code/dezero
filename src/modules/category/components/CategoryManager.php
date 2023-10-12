@@ -72,4 +72,32 @@ class CategoryManager extends Component
             }
         }
     }
+
+
+    /**
+     * Category list (usually used on a SELECT2 dropdown)
+     */
+    public function getCategoryList($category_type) : array
+    {
+        $vec_output = [];
+
+        $vec_category_models = Category::find()
+            ->category_type($category_type)
+            ->enabled()
+            ->orderBy([
+                'depth'     => SORT_ASC,
+                'weight'    => SORT_ASC
+            ])
+            ->all();
+
+        if ( !empty($vec_category_models) )
+        {
+            foreach ( $vec_category_models as $category_model )
+            {
+                $vec_output[$category_model->category_id] = $category_model->fullTitle();
+            }
+        }
+
+        return $vec_output;
+    }
 }
