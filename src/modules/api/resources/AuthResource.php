@@ -32,7 +32,7 @@ class AuthResource extends Resource
             return false;
         }
 
-        // Require params
+        // Required params
         $vec_required_params = ['client_id', 'client_secret'];
         if ( ! $this->validateRequired($vec_required_params) )
         {
