@@ -61,7 +61,7 @@ class StringHelper extends \yii\helpers\StringHelper
     /**
      * Convert a string to UPPERCASE but having SPANISH special characters into account
      */
-    public static function strtoupper(string $text, bool $is_use_mbstring = false) : string
+    public static function strtoupper(string $text, bool $is_use_mbstring = true) : string
     {
         if ( $is_use_mbstring )
         {
@@ -83,7 +83,7 @@ class StringHelper extends \yii\helpers\StringHelper
     /**
      * Convert a string to LOWERCASE but having SPANISH special characters into account
      */
-    public static function strtolower(string $text, bool $is_use_mbstring = false) : string
+    public static function strtolower(string $text, bool $is_use_mbstring = true) : string
     {
         if ( $is_use_mbstring )
         {
@@ -102,11 +102,25 @@ class StringHelper extends \yii\helpers\StringHelper
 
 
     /**
+     * Make a string's first character uppercase
+     */
+    public static function ucfirst(string $text, bool $is_use_mbstring = true) : string
+    {
+        if ( ! $is_use_mbstring )
+        {
+            return ucfirst($text);
+        }
+
+        return self::strtoupper(self::substr($text, 0, 1)) . self::substr($text, 1, self::strlen($text));
+    }
+
+
+    /**
      * Alias of StringHelper::strtoupper() method
      *
      * Convert a string to UPPERCASE but having SPANISH special characters into account
      */
-    public static function uppercase(string $text, bool $is_use_mbstring = false) : string
+    public static function uppercase(string $text, bool $is_use_mbstring = true) : string
     {
         return self::strtoupper($text, $is_use_mbstring);
     }
@@ -117,7 +131,7 @@ class StringHelper extends \yii\helpers\StringHelper
      *
      * Convert a string to LOWERCASE but having SPANISH special characters into account
      */
-    public static function lowercase(string $text, bool $is_use_mbstring = false) : string
+    public static function lowercase(string $text, bool $is_use_mbstring = true) : string
     {
         return self::strtolower($text, $is_use_mbstring);
     }
