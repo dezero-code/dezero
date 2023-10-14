@@ -312,6 +312,15 @@ class Category extends BaseCategory implements ConfigInterface
 
 
     /**
+     * Return all parents
+     */
+    public function getAllChildren() : array
+    {
+        return Yii::$app->categoryManager->getAllChildren($this->category_id);
+    }
+
+
+    /**
      * Check if a "category_id" is parent (father, grandfather, ...)
      */
     public function isParent(int $category_id) : bool

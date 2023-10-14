@@ -61,7 +61,8 @@ class GridView extends \yii\grid\GridView
             'options'           => [
                 'id'    => $this->options['id'] .'-pager',
                 'class' => 'pagination'
-            ]
+            ],
+            'maxButtonCount' => 5
         ];
 
         // Change summary content

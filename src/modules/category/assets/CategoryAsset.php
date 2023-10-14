@@ -1,6 +1,8 @@
 <?php
 /**
- * Asset class for Category module
+ * @author Fabián Ruiz <fabian@dezero.es>
+ * @link http://www.dezero.es
+ * @copyright Copyright &copy; 2023 Fabián Ruiz
  */
 
 namespace dezero\modules\category\assets;
@@ -8,7 +10,7 @@ namespace dezero\modules\category\assets;
 use yii\web\AssetBundle;
 
 /**
- * Main backend application asset bundle
+ * Asset bundle for Category module
  */
 class CategoryAsset extends AssetBundle
 {

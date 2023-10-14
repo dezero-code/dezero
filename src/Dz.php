@@ -30,6 +30,19 @@ class Dz extends Yii
 
 
     /**
+     * Create a new a object with "cleanAttributes" options enabled
+     *
+     * @see ClassMap::make()
+     */
+    public static function makeCleanObject(string $class, array $params = [], array $config = []) : object
+    {
+        $params[] = ['clearAttributes' => true];
+
+        return self::makeObject($class, $params, $config);
+    }
+
+
+    /**
      * Returns the data model based on the primary key given.
      * If the data model is not found, a 404 HTTP exception will be raised.
      * @param string $id the ID of the model to be loaded. If the model has a composite primary key,

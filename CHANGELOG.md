@@ -2,6 +2,14 @@
 
 All notable changes to `Dezero Framework` will be documented in this file
 
+## 0.2.5 - 2023-10-14
+
+- GridView - Custom options for SELECT2
+- Dz - Create new method Dz::makeCleanObject to create ActiveRecord instances without executing loadDefaultValues()
+- CategoryManager - Created new methods getCategoryList() and getAllChildren()
+- Category model - Created new method fullTitle() to return the title with all the parents.
+- StringHelper - New methods cleanUTF8() and max()
+
 ## 0.2.4 - 2023-10-09
 
 - SYNC module - Created new module to manage sync operations: import and exports

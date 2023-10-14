@@ -9,12 +9,18 @@ namespace dezero\grid;
 
 use dezero\helpers\ArrayHelper;
 use dezero\helpers\Html;
+use Yii;
 
 /**
  * ActionColumn is a column for the [[GridView]] widget that displays buttons for viewing and manipulating the items.
  */
 class DataColumn extends \yii\grid\DataColumn
 {
+    /**
+     * @var bool
+     */
+    public $select2Options;
+
     /**
      * @var string|array|Closure in which format should the value of each data model be displayed as (e.g. `"raw"`, `"text"`, `"html"`,
      * `['date', 'php:Y-m-d']`). Supported formats are determined by the [[GridView::formatter|formatter]] used by
@@ -61,7 +67,31 @@ class DataColumn extends \yii\grid\DataColumn
     {
         if ( $this->attribute !== null )
         {
-            $this->filterOptions = ArrayHelper::merge(['class' => $this->filterAttribute .'_filter'], $this->filterOptions);
+            $vec_filter_options = [
+                'class' => $this->filterAttribute .'_filter',
+                'id'    => $this->grid->id .'--'. $this->filterAttribute .'--filter',
+            ];
+
+            // Custom options for SELECT2 widget
+            if ( $this->select2Options === null )
+            {
+                 $this->select2Options = [
+                    'is_custom' => false,
+                    'placeholder' => Yii::t('backend', '- All -')
+                ];
+            }
+
+            if ( $this->select2Options['is_custom'] === true )
+            {
+                $vec_filter_options['class'] .= ' select2-custom';
+            }
+
+            if ( isset($this->select2Options['placeholder']) )
+            {
+                $this->filterInputOptions['data-placeholder'] = $this->select2Options['placeholder'];
+            }
+
+            $this->filterOptions = ArrayHelper::merge($vec_filter_options, $this->filterOptions);
         }
 
         return parent::renderFilterCell();

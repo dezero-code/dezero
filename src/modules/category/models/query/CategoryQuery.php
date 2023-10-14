@@ -26,6 +26,15 @@ class CategoryQuery extends \dezero\db\ActiveQuery
 
 
     /**
+     * Filter the query by "category_parent_id" attribute value
+     */
+    public function category_parent(int $category_parent_id) : self
+    {
+        return $this->andWhere(['category_parent_id' => $category_parent_id]);
+    }
+
+
+    /**
      * Filter the query by "category_type" attribute value
      */
     public function category_type(string $category_type) : self

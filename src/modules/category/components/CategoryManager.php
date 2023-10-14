@@ -7,18 +7,49 @@
 
 namespace dezero\modules\category\components;
 
+use dezero\helpers\ArrayHelper;
 use dezero\helpers\Db;
 use dezero\modules\category\models\Category;
 use Yii;
 use yii\base\Component;
 
 /**
- * CategoryManager - Helper classes collection for category theme
+ * CategoryManager - Helper classes collection for Category model
  */
 class CategoryManager extends Component
 {
     /**
-     * Get Category models from LEVEL 1
+     * Return an array with all the children for a Category model
+     */
+    public function getAllChildren(int $category_id) : array
+    {
+        $vec_output = [];
+
+        $vec_category_children_models = Category::find()
+            ->category_parent($category_id)
+            ->all();
+
+        if ( !empty($vec_category_children_models) )
+        {
+            foreach ( $vec_category_children_models as $category_children_model )
+            {
+                $vec_output[] = $category_children_model;
+
+                // Find grandchildren
+                $vec_category_grandchildren_models = $this->getAllChildren($category_children_model->category_id);
+                if ( ! empty($vec_category_grandchildren_models) )
+                {
+                    $vec_output = ArrayHelper::merge($vec_output, $vec_category_grandchildren_models);
+                }
+            }
+        }
+
+        return $vec_output;
+    }
+
+
+    /**
+     * Get Category models given a depth level
      */
     public function getAllByDepth(string $category_type, int $depth = 0) : ?array
     {

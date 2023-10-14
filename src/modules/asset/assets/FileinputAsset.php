@@ -8,7 +8,7 @@ namespace dezero\modules\asset\assets;
 use yii\web\AssetBundle;
 
 /**
- * Main backend application asset bundle
+ * Asset bundle for custom Krajee FileInput
  */
 class FileinputAsset extends AssetBundle
 {

@@ -17,6 +17,35 @@ use Yii;
 class ActiveRecord extends \yii\db\ActiveRecord
 {
     /**
+     * @var bool
+     */
+    private $isClearAttributes = false;
+
+    /**
+     * Constructor
+     */
+    public function __construct(array $vec_config = [])
+    {
+        /**
+         * Clear attributes? If yes, DO NOT execute "loadDefaultValues()" method
+         *
+         * @see Dz::makeCleanObject()
+         */
+        if ( isset($vec_config['clearAttributes']) )
+        {
+            if ( $vec_config['clearAttributes'] === true )
+            {
+                $this->isClearAttributes = true;
+            }
+
+            unset($vec_config['clearAttributes']);
+        }
+
+        parent::__construct($vec_config);
+    }
+
+
+    /**
      * {@inheritdoc}
      */
     public function init(): void
@@ -24,7 +53,7 @@ class ActiveRecord extends \yii\db\ActiveRecord
         parent::init();
 
         // Load default values by default
-        if ( $this->isNewRecord )
+        if ( $this->isNewRecord && $this->isClearAttributes === false )
         {
             $this->loadDefaultValues();
         }

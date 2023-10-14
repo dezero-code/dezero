@@ -1,6 +1,8 @@
 <?php
 /**
- * Asset class for User module
+ * @author Fabián Ruiz <fabian@dezero.es>
+ * @link http://www.dezero.es
+ * @copyright Copyright &copy; 2023 Fabián Ruiz
  */
 
 namespace dezero\modules\user\assets;
@@ -8,7 +10,7 @@ namespace dezero\modules\user\assets;
 use yii\web\AssetBundle;
 
 /**
- * Main backend application asset bundle
+ * Asset bundle for User module
  */
 class UserAsset extends AssetBundle
 {

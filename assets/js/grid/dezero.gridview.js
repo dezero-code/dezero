@@ -60,7 +60,12 @@
     // Load select2 for filters
     // ----------------------------------------------------
     loadSelect2: function() {
-      this.$filters.find('select').select2({allowClear: false, placeholder: '- All -'});
+      this.$filters.find('select').each(function() {
+        // Exclude fitlers with "customSelect2" enabled
+        if ( ! $(this).parent().hasClass('select2-custom') ) {
+          $(this).select2({allowClear: false});
+        }
+      });
     },
 
 
