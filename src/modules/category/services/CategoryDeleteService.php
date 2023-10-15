@@ -54,7 +54,7 @@ class CategoryDeleteService implements ServiceInterface
         $category_event = Dz::makeObject(CategoryEvent::class, [$this->category_model]);
         $this->category_model->trigger(CategoryEvent::EVENT_BEFORE_DELETE, $category_event);
 
-        if ( $this->category_model->delete() )
+        if ( $this->category_model->delete() !== false )
         {
             // Custom event triggered on "afterDelete"
             $this->category_model->trigger(CategoryEvent::EVENT_AFTER_DELETE, $category_event);

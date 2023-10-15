@@ -1,7 +1,7 @@
 <?php
 /*
 |--------------------------------------------------------------------------
-| Use case "Upload a file into TEMP directory"
+| Use case "Upload a single file"
 |--------------------------------------------------------------------------
 */
 
@@ -149,7 +149,7 @@ class UploadFileService implements ServiceInterface
 
 
     /**
-     * Save upload file into a filesystem directory
+     * Save uploaded file into a filesystem directory
      */
     private function saveUploadFile()
     {

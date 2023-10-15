@@ -77,7 +77,7 @@ class UserDeleteService implements ServiceInterface
         $user_event = Dz::makeObject(UserEvent::class, [$this->user_model]);
         $this->user_model->trigger(UserEvent::EVENT_BEFORE_DELETE, $user_event);
 
-        if ( $this->user_model->delete() )
+        if ( $this->user_model->delete() !== false )
         {
             // Custom event triggered on "afterDelete"
             $this->user_model->trigger(UserEvent::EVENT_AFTER_DELETE, $user_event);

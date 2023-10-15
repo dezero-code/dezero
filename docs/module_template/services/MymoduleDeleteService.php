@@ -54,7 +54,7 @@ class MymoduleDeleteService implements ServiceInterface
         $mymodule_event = Dz::makeObject(MymoduleEvent::class, [$this->mymodule_model]);
         $this->mymodule_model->trigger(MymoduleEvent::EVENT_BEFORE_DELETE, $mymodule_event);
 
-        if ( $this->mymodule_model->delete() )
+        if ( $this->mymodule_model->delete() !== false )
         {
             // Custom event triggered on "afterDelete"
             $this->mymodule_model->trigger(MymoduleEvent::EVENT_AFTER_DELETE, $mymodule_event);

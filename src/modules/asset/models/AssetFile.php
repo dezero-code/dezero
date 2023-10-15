@@ -354,6 +354,19 @@ class AssetFile extends BaseAssetFile
     }
 
 
+    /**
+     * Return the size of current filesystem object in the given unit
+     */
+    public function formatSize() : string
+    {
+        if ( $this->loadFile() )
+        {
+            return $this->file->formatSize($this->file_size);
+        }
+
+        return "{$this->file_size} B";
+    }
+
 
 
     /*

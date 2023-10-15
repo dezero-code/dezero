@@ -11,6 +11,8 @@ namespace dezero\modules\entity\models;
 
 use dezero\behaviors\TimestampBehavior;
 use dezero\helpers\ArrayHelper;
+use dezero\modules\asset\models\AssetFile;
+use dezero\modules\asset\models\AssetImage;
 use dezero\modules\entity\models\query\EntityFileQuery;
 use dezero\modules\entity\models\base\EntityFile as BaseEntityFile;
 use dezero\modules\entity\models\Entity;
@@ -112,6 +114,24 @@ class EntityFile extends BaseEntityFile
     /**
      * @return ActiveQueryInterface The relational query object.
      */
+    public function getAssetFile() : ActiveQueryInterface
+    {
+        return $this->hasOne(AssetFile::class, ['file_id' => 'file_id']);
+    }
+
+
+    /**
+     * @return ActiveQueryInterface The relational query object.
+     */
+    public function getAssetImage() : ActiveQueryInterface
+    {
+        return $this->hasOne(AssetImage::class, ['file_id' => 'file_id']);
+    }
+
+
+    /**
+     * @return ActiveQueryInterface The relational query object.
+     */
     public function getCreatedUser() : ActiveQueryInterface
     {
         return $this->hasOne(User::class, ['user_id' => 'created_user_id']);
@@ -121,18 +141,19 @@ class EntityFile extends BaseEntityFile
     /**
      * @return ActiveQueryInterface The relational query object.
      */
-    public function getUpdatedUser() : ActiveQueryInterface
+    public function getEntity() : ActiveQueryInterface
     {
-        return $this->hasOne(User::class, ['user_id' => 'updated_user_id']);
+        return $this->hasOne(Entity::class, ['entity_uuid' => 'entity_uuid']);
     }
+
 
 
     /**
      * @return ActiveQueryInterface The relational query object.
      */
-    public function getEntity() : ActiveQueryInterface
+    public function getUpdatedUser() : ActiveQueryInterface
     {
-        return $this->hasOne(Entity::class, ['entity_uuid' => 'entity_uuid']);
+        return $this->hasOne(User::class, ['user_id' => 'updated_user_id']);
     }
 
 
