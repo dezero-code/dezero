@@ -9,6 +9,7 @@ namespace dezero\modules\category\components;
 
 use dezero\helpers\ArrayHelper;
 use dezero\helpers\Db;
+use dezero\helpers\StringHelper;
 use dezero\modules\category\models\Category;
 use Yii;
 use yii\base\Component;
@@ -42,6 +43,23 @@ class CategoryManager extends Component
                     $vec_output = ArrayHelper::merge($vec_output, $vec_category_grandchildren_models);
                 }
             }
+        }
+
+        return $vec_output;
+    }
+
+
+    /**
+     * Return an array with all the parents for a Category model
+     */
+    public function getAllParents(Category $category_model) : array
+    {
+        $vec_output = [];
+        if ( $category_model->categoryParent )
+        {
+            $vec_output[] = $category_model->categoryParent;
+
+            return ArrayHelper::merge($vec_output, $this->getAllParents($category_model->categoryParent));
         }
 
         return $vec_output;
@@ -108,24 +126,99 @@ class CategoryManager extends Component
     /**
      * Category list (usually used on a SELECT2 dropdown)
      */
-    public function getCategoryList($category_type) : array
+    public function getCategoryList(string $category_type, array $vec_options = []) : array
     {
         $vec_output = [];
 
-        $vec_category_models = Category::find()
+        $category_query = Category::find()
             ->category_type($category_type)
             ->enabled()
             ->orderBy([
                 'depth'     => SORT_ASC,
                 'weight'    => SORT_ASC
-            ])
-            ->all();
+            ]);
+
+        // Filter by depth?
+        if ( isset($vec_options['depth']) )
+        {
+            $category_query->depth($vec_options['depth']);
+        }
+
+        // Filter by category_parent?
+        if ( isset($vec_options['category_parent_id']) )
+        {
+            $category_query->category_parent($vec_options['category_parent_id']);
+        }
+
+        $vec_category_models = $category_query->all();
 
         if ( !empty($vec_category_models) )
         {
             foreach ( $vec_category_models as $category_model )
             {
                 $vec_output[$category_model->category_id] = $category_model->fullTitle();
+
+                // Include all children
+                if ( isset($vec_options['is_include_children']) )
+                {
+                    $vec_category_children_models = $category_model->getAllChildren();
+                    if ( !empty($vec_category_children_models) )
+                    {
+                        foreach ( $vec_category_children_models as $category_children_model )
+                        {
+                            $vec_output[$category_children_model->category_id] = $category_children_model->fullTitle();
+                        }
+                    }
+                }
+            }
+        }
+
+        return $vec_output;
+    }
+
+
+    /**
+     * Return a Category list grouped by parent
+     */
+    public function getCategoryGroupedList(string $category_type, array $vec_options = []) : array
+    {
+        $vec_output = [];
+
+        // Get an array with all the parent categories [ <category_id> => <category_name> ]
+        $vec_parent_category_list = Yii::$app->categoryManager->getCategoryList($category_type, ['depth' => 0]);
+
+        foreach ( $vec_parent_category_list as $parent_category_id => $parent_category_name )
+        {
+            $vec_children_category_list = Yii::$app->categoryManager->getCategoryList($category_type, ['category_parent_id' => $parent_category_id, 'is_include_children' => true]);
+
+            if ( ! isset($vec_options['is_select_parent']) && ! isset($vec_options['is_filter_parent']) )
+            {
+                $vec_output[StringHelper::strtoupper($parent_category_name)] = $vec_children_category_list;
+            }
+
+            // Parent is selectable
+            else
+            {
+                $parent_category_label = $parent_category_name;
+
+                // Add "-> Seleccionar" prefix
+                if ( isset($vec_options['is_select_parent']) )
+                {
+                    $parent_category_label = " ". Yii::t('backend', '-> Seleccionar'). " {$parent_category_name}";
+                }
+
+                // Add "(TODOS)" suffix
+                else if ( isset($vec_options['is_filter_parent']) )
+                {
+                    $parent_category_label = "{$parent_category_name} (". Yii::t('backend', 'TODOS'). ")";
+                }
+
+                $vec_output[StringHelper::strtoupper($parent_category_name)] = ArrayHelper::merge(
+                    [
+                        $parent_category_id => $parent_category_label,
+                    ],
+                    $vec_children_category_list
+                );
             }
         }
 

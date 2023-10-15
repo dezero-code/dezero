@@ -101,6 +101,7 @@ class Html extends \yii\helpers\Html
         return $lines;
     }
 
+
     /**
      * {@inheritdoc}
      */
@@ -142,6 +143,20 @@ class Html extends \yii\helpers\Html
         }
 
         return parent::checkboxList($name, $selection, $items, $options);
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function dropDownList($name, $selection = null, $items = [], $options = [])
+    {
+        if ( !empty($items) && isset($options['data-plugin']) && $options['data-plugin'] === 'select2' )
+        {
+            $items = ArrayHelper::merge(['' => ''], $items);
+        }
+
+        return parent::dropdownList($name, $selection, $items, $options);
     }
 
     /*

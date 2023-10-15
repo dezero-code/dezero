@@ -296,23 +296,16 @@ class Category extends BaseCategory implements ConfigInterface
 
 
     /**
-     * Return all parents
+     * Return all the parents
      */
     public function getAllParents() : array
     {
-        $vec_output = [];
-        if ( $this->categoryParent )
-        {
-            $vec_output[] = $this->categoryParent;
-            return ArrayHelper::merge($vec_output, $this->categoryParent->getAllParents());
-        }
-
-        return $vec_output;
+        return Yii::$app->categoryManager->getAllParents($this);
     }
 
 
     /**
-     * Return all parents
+     * Return all the children
      */
     public function getAllChildren() : array
     {
