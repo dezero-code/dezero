@@ -66,7 +66,7 @@ class GridView extends \yii\grid\GridView
         ];
 
         // Change summary content
-        $this->summary = Yii::t('backend', 'Page {page} of {pageCount}') .'<br>'. Yii::t('yii', 'Showing <b>{begin, number}-{end, number}</b> of <b>{totalCount, number}</b> {totalCount, plural, one{item} other{items}}');
+        $this->summary = Yii::t('backend', 'Page {page} of {pageCount}') .'<br>'. Yii::t('backend', 'Showing <b>{begin, number}-{end, number}</b> of <b>{totalCount, number}</b> {totalCount, plural, one{item} other{items}}');
     }
 
 

@@ -15,6 +15,7 @@ use dezero\modules\category\services\CategoryCreateService;
 use dezero\modules\category\services\CategoryDeleteService;
 use dezero\modules\category\services\CategoryUpdateService;
 use dezero\web\Controller;
+use yii\web\Response;
 use Dz;
 use Yii;
 
@@ -233,6 +234,21 @@ abstract class BaseCategoryController extends Controller
 
         // Return JSON and end application
         return $this->asJson($vec_ajax_output);
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function redirect($url, $statusCode = 302) : Response
+    {
+        // Replace from "_" to "-"
+        if ( $url !== null && is_array($url) && isset($url[0]) )
+        {
+            $url[0] = str_replace("_", "-", $url[0]);
+        }
+
+        return $this->response->redirect($url, $statusCode);
     }
 
 

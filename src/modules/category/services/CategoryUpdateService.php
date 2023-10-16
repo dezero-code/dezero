@@ -59,6 +59,12 @@ class CategoryUpdateService implements ServiceInterface
      */
     private function uploadImage() : void
     {
+        // Image is enabled for this category?
+        if ( $this->category_model->config->isImage() === false )
+        {
+            $this->asset_image_model = null;
+        }
+
         if ( $this->asset_image_model === null )
         {
             return ;
