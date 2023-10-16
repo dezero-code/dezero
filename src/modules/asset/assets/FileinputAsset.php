@@ -18,7 +18,7 @@ class FileinputAsset extends AssetBundle
     ];
 
     public $js = [
-        'krajee-fileinput/dezero.fileinput.js'
+        'krajee-fileinput/dezero.fileInput.js'
     ];
 
 }
