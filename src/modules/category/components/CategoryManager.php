@@ -22,7 +22,7 @@ class CategoryManager extends Component
     /**
      * Return an array if Category models filtered by "category_type"
      */
-    public function getCategories(string $category_type, array $vec_options = []) : array
+    public function getCategoriesByType(string $category_type, array $vec_options = []) : array
     {
         $category_query = Category::find()
             ->category_type($category_type)
@@ -159,7 +159,7 @@ class CategoryManager extends Component
     {
         $vec_output = [];
 
-        $vec_category_models = $this->getCategories($category_type, $vec_options);
+        $vec_category_models = $this->getCategoriesByType($category_type, $vec_options);
 
         if ( !empty($vec_category_models) )
         {
