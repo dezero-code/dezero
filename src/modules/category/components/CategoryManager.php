@@ -20,6 +20,35 @@ use yii\base\Component;
 class CategoryManager extends Component
 {
     /**
+     * Return an array if Category models filtered by "category_type"
+     */
+    public function getCategories(string $category_type, array $vec_options = []) : array
+    {
+        $category_query = Category::find()
+            ->category_type($category_type)
+            ->enabled()
+            ->orderBy([
+                'depth'     => SORT_ASC,
+                'weight'    => SORT_ASC
+            ]);
+
+        // Filter by depth?
+        if ( isset($vec_options['depth']) )
+        {
+            $category_query->depth($vec_options['depth']);
+        }
+
+        // Filter by category_parent?
+        if ( isset($vec_options['category_parent_id']) )
+        {
+            $category_query->category_parent($vec_options['category_parent_id']);
+        }
+
+        return $category_query->all();
+    }
+
+
+    /**
      * Return an array with all the children for a Category model
      */
     public function getAllChildren(int $category_id) : array
@@ -130,27 +159,7 @@ class CategoryManager extends Component
     {
         $vec_output = [];
 
-        $category_query = Category::find()
-            ->category_type($category_type)
-            ->enabled()
-            ->orderBy([
-                'depth'     => SORT_ASC,
-                'weight'    => SORT_ASC
-            ]);
-
-        // Filter by depth?
-        if ( isset($vec_options['depth']) )
-        {
-            $category_query->depth($vec_options['depth']);
-        }
-
-        // Filter by category_parent?
-        if ( isset($vec_options['category_parent_id']) )
-        {
-            $category_query->category_parent($vec_options['category_parent_id']);
-        }
-
-        $vec_category_models = $category_query->all();
+        $vec_category_models = $this->getCategories($category_type, $vec_options);
 
         if ( !empty($vec_category_models) )
         {
