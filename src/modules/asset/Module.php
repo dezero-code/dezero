@@ -11,6 +11,14 @@ use Yii;
 class Module extends \dezero\base\Module
 {
     /**
+     * @var array mapping from controller ID to controller configurations.
+     */
+    public $controllerMap = [
+        'file'  => \dezero\modules\asset\controllers\DownloadController::class,
+    ];
+
+
+    /**
      * Initializes the module.
      *
      * This method is called after the module is created and initialized with property values
