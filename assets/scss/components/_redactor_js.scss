@@ -1,25 +1,6 @@
 //----------------------------------------------------------
 // REDACTOR CUSTOM CSS
 //----------------------------------------------------------
-.redactor-toolbar {
-    background: $color-blue-grey-100;
-
-    li {
-        a:hover {
-            background-color: #263238; // $color-app-pri;
-        }
-
-
-        a.redactor-act {
-            color: #FFF;
-        }
-
-        a:active {
-            color: rgba(163, 175, 183, 0.9);
-        }
-    }
-}
-
 .dd3-content {
     .redactor-toolbar {
         background: $color-blue-grey-100
@@ -28,6 +9,25 @@
 
 .redactor-box {
     margin-bottom: 10px;
+
+    .redactor-toolbar {
+        background: $color-blue-grey-100;
+
+        li {
+            a:hover {
+                background-color: #263238; // $color-app-pri;
+            }
+
+
+            a.redactor-act {
+                color: #FFF;
+            }
+
+            a:active {
+                color: rgba(163, 175, 183, 0.9);
+            }
+        }
+    }
     
     .redactor-toolbar, .redactor-dropdown {
         z-index: 999 !important;
@@ -39,18 +39,18 @@
     textarea {
         background-color: #263238;
     }
-}
 
-.redactor-editor {
-    padding: 8px 10px;
+    .redactor-editor {
+        padding: 8px 10px;
 
-    strong {
-        font-weight: bold;
+        strong {
+            font-weight: bold;
+        }
     }
-}
 
-.redactor-editor {
-    div, p, ul, ol, table, dl, figure, blockquote, pre {
-        margin-bottom: 8px;
+    .redactor-editor {
+        div, p, ul, ol, table, dl, figure, blockquote, pre {
+            margin-bottom: 8px;
+        }
     }
 }
