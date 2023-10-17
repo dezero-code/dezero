@@ -22,11 +22,18 @@
       // PJAX - After AJAX update, trigger beforeGridLoaded and afterGridLoaded custom events
       if ( $.pjax) {
         self.$pjax = self.$grid.parents('[data-pjax-container]').first();
+        // self.$pjax = $('#'+ grid +'-container');
         if ( self.$pjax.length ) {
           self.$pjax
             .off('pjax:send.' + hash)
             .off('pjax:complete.' + hash)
             .on('pjax:send.' + hash, function () {
+              // Avoid problems with multiple PJAX gridviews
+              self.$grid = $('#'+ grid);
+              self.$filters = $('#'+ grid +'-filters');
+              self.$table = $('#'+ grid +'-table');
+              self.$clearButton = $('#'+ grid +'-clear-btn');
+
               self.beforeGridLoaded();
             })
             .on('pjax:complete.' + hash, function () {

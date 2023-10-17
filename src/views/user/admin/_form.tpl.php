@@ -142,7 +142,7 @@
             ?>
           </div>
 
-          <div class="password-row">
+          <div id="password-change-container">
             <div class="form-group row">
               <div class="col-sm-3 form-control-label"></div>
               <div class="col-sm-9">

@@ -17,7 +17,8 @@
         var $this = $(this);
         $('#is-password-changed').val(1);
         $('#user-form').find('.password-row').removeClass('hide');
-        $this.parent().parent().parent().parent().addClass('hide');
+        $('#password-change-container').addClass('hide');
+        // $this.parent().parent().parent().parent().addClass('hide');
       });
     }
   };
