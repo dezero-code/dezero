@@ -205,7 +205,7 @@ class AdminController extends Controller
                 if ( $user_model->user_id != $vec_input['user_id'] )
                 {
                     $vec_ajax_output['error_code'] = 102;
-                    $vec_ajax_output['error_msg'] = 'Denied acces - User #'. $vec_input['user_id'] .' does not exist';
+                    $vec_ajax_output['error_msg'] = "Denied access - User #{$vec_input['user_id']} does not exist";
                 }
                 else
                 {
@@ -243,7 +243,7 @@ class AdminController extends Controller
         }
 
         // If we arrive here (not POST params), render partial view
-        return $this->renderPartial('//entity/status/_slidepanel_status', [
+        return $this->renderPartial('//entity/status/_slidepanel--status', [
             'model'         => $user_model,
             'buttonOptions' => [
                 'id'        => 'user-status-save-btn',

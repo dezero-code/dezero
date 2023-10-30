@@ -120,6 +120,12 @@ class BackendManager extends Component
             // ( Yii::$app->user->isGuest ? 'not-logged-in' : 'logged-in')
         ];
 
+        // Add current module
+        if ( $this->current_module )
+        {
+            $vec_classes[] = $this->current_module .'-module-page';
+        }
+
         // Login & password page (different layout)
         if ( Yii::$app->user->isGuest || ($this->current_module == 'user' && $this->current_controller == 'password') )
         {

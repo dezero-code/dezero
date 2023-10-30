@@ -298,14 +298,16 @@ class StringHelper extends \yii\helpers\StringHelper
     /**
      * Return the first $length characters of a string if it's longer than this
      */
-    public static function max(string $text, int $length, bool $is_use_mbstring = true, bool $is_html = false) : string
+    public static function max(string $text, int $length, bool $is_ellipsis = false, bool $is_use_mbstring = true, bool $is_html = false) : string
     {
         if ( self::strlen($text) <= $length || $length <= 0 )
         {
             return $text;
         }
 
-        return self::substr($text, 0, $length - 1, $is_use_mbstring, $is_html);
+        $suffix = $is_ellipsis ? '...' : '';
+
+        return self::substr($text, 0, $length - 1, $is_use_mbstring, $is_html) . $suffix;
     }
 
 

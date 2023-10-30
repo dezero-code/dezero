@@ -100,6 +100,10 @@ class ActionColumn extends \yii\grid\ActionColumn
                     $options['icon'] = $icon;
                 }
 
+                // Add action class
+                $options['class'] = $options['class'] ?? '';
+                $options['class'] .= " {$name}-action";
+
                 // Special class for delete button
                 // if ( $name === 'delete' )
                 // {
