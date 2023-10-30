@@ -82,6 +82,7 @@ class Image extends SpatieImage
     }
 
 
+
     /*
     |--------------------------------------------------------------------------
     | RESIZE METHODS

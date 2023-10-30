@@ -13,6 +13,7 @@ use dezero\base\File;
 use dezero\base\Image;
 use dezero\helpers\ArrayHelper;
 use dezero\helpers\Json;
+use dezero\helpers\Url;
 use dezero\modules\asset\models\query\AssetFileQuery;
 use dezero\modules\asset\models\AssetFile;
 use user\models\User;
@@ -133,11 +134,100 @@ class AssetImage extends AssetFile
     }
 
 
+    /**
+     * Delete an image file from filesystem
+     */
+    public function deleteFile() : bool
+    {
+        if ( ! $this->loadFile() )
+        {
+            return false;
+        }
+
+        // Delete all preset images
+        $this->deleteAllPresets();
+
+        // Finaly, delete original image
+        return $this->file->delete();
+    }
+
+
     /*
     |--------------------------------------------------------------------------
-    | GENERATE PRESETS
+    | PRESETS
     |--------------------------------------------------------------------------
     */
+
+
+    /**
+     * Return the Image object for a preset given by name
+     */
+    public function getPresetImage(string $preset_name) : ?Image
+    {
+        $preset_file_name = $this->getPresetFileName($preset_name);
+        if ( $preset_file_name === null )
+        {
+            return null;
+        }
+
+        $preset_full_path = $this->getPresetsPath() . $preset_file_name;
+
+        return Image::load($preset_full_path);
+    }
+
+
+    /**
+     * Return image file name for a preset
+     */
+    public function getPresetFileName(string $preset_name) : ?string
+    {
+        $vec_preset_config = $this->getPresetConfig($preset_name);
+        if ( empty($vec_preset_config) || !isset($vec_preset_config['name']) )
+        {
+            return null;
+        }
+
+        return isset($vec_preset_config['prefix']) ? $vec_preset_config['prefix'] . $this->file_name : $this->file_name;
+    }
+
+
+    /**
+     * Return directory where preset images are stored
+     */
+    public function getPresetsPath() : string
+    {
+        $this->loadConfig();
+        $presets_path = $this->file_path;
+        if ( isset($this->vec_config['preset_dir']) )
+        {
+            $presets_path .= $this->vec_config['preset_dir'] . DIRECTORY_SEPARATOR;
+        }
+
+        return $presets_path;
+    }
+
+
+    /**
+     * Return all preset/thumbnails images defined on the configuration file
+     */
+    public function getAllPresets() : array
+    {
+        $this->loadConfig();
+        if ( ! isset($this->vec_config['presets']) || empty($this->vec_config['presets']) )
+        {
+            return [];
+        }
+
+        $vec_images = [];
+        $vec_presets = array_keys($this->vec_config['presets']);
+        foreach ( $vec_presets as $preset_name )
+        {
+            $vec_images[$preset_name] = $this->getPresetImage($preset_name);
+        }
+
+        return $vec_images;
+    }
+
 
     /**
      * Generate preset/thumbnail image given as input parameter
@@ -161,11 +251,7 @@ class AssetImage extends AssetFile
         // Destination path
         if ( $destination_path === null )
         {
-            $destination_path = $this->file_path;
-            if ( isset($this->vec_config['preset_dir']) )
-            {
-                $destination_path .= $this->vec_config['preset_dir'] . DIRECTORY_SEPARATOR;
-            }
+            $destination_path = $this->getPresetsPath();
         }
 
         // Ensure directory exists & generate preset
@@ -179,7 +265,10 @@ class AssetImage extends AssetFile
                 if ( ! empty($vec_preset_config) &&  isset($vec_preset_config['width']) && isset($vec_preset_config['height']) )
                 {
                     $preset_file_name = isset($vec_preset_config['prefix']) ? $vec_preset_config['prefix'] . $this->file_name : $this->file_name;
-                    $this->image->resize($vec_preset_config['width'] ,$vec_preset_config['height'])->save($destination_path . $preset_file_name);
+                    $this->image
+                        ->resizeMax($vec_preset_config['width'] ,$vec_preset_config['height'])
+                        ->optimize()
+                        ->save($destination_path . $preset_file_name);
                 }
             }
         }
@@ -189,7 +278,7 @@ class AssetImage extends AssetFile
 
 
     /**
-     * Generate all preset/thumbnauls images defined on the configuration file
+     * Generate all preset/thumbnails images defined on the configuration file
      */
     public function generateAllPresets(?string $destination_path = null) : bool
     {
@@ -202,5 +291,49 @@ class AssetImage extends AssetFile
         }
 
         return false;
+    }
+
+
+    /**
+     * Delete all preset images objects
+     */
+    public function deleteAllPresets() : void
+    {
+        $vec_preset_images = $this->getAllPresets();
+        if ( !empty($vec_preset_images) )
+        {
+            foreach ( $vec_preset_images as $preset_image )
+            {
+                if ( $preset_image && $preset_image->file )
+                {
+                    $preset_image->file->delete();
+                }
+            }
+        }
+    }
+
+
+    /**
+     * Return URL for an image
+     */
+    public function imageUrl(?string $preset_name = null) : string
+    {
+        // Check URL for a preset?
+        $preset_image = null;
+        if ( $preset_name !== null )
+        {
+            $preset_image = $this->getPresetImage($preset_name);
+        }
+
+        // Return URL for ORIGINAL image file
+        if ( $preset_image === null || ! $preset_image->file )
+        {
+            return parent::url();
+        }
+
+        // Return URL for a PRESET image file
+        $url = str_replace(Yii::getAlias('@webroot'), '', $preset_image->file->filePath() );
+
+        return Url::to($url);
     }
 }
