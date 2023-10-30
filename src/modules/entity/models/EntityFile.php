@@ -10,6 +10,7 @@
 namespace dezero\modules\entity\models;
 
 use dezero\behaviors\TimestampBehavior;
+use dezero\behaviors\WeightBehavior;
 use dezero\helpers\ArrayHelper;
 use dezero\modules\asset\models\AssetFile;
 use dezero\modules\asset\models\AssetImage;
@@ -78,7 +79,13 @@ class EntityFile extends BaseEntityFile
         return ArrayHelper::merge(
             parent::behaviors(),
             [
-                TimestampBehavior::class
+                TimestampBehavior::class,
+
+                // Weight
+                [
+                    'class' => WeightBehavior::class,
+                    'vec_attributes' => ['entity_source_id', 'entity_type', 'relation_type']
+                ]
             ]
         );
     }

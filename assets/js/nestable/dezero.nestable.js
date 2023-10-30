@@ -61,6 +61,11 @@
               }
               $('#'+ $this.data('name') +'-loading-tree').addClass('hide');
               $this.removeClass('hide');
+
+              // Custom event "afterAjaxUpdate"
+              if (settings.afterAjaxUpdate !== undefined) {
+                settings.afterAjaxUpdate($this, data);
+              }
             },
             error: function(request, status, error) {
               alert('ERROR: '+request.responseText);
