@@ -64,6 +64,7 @@ class Category extends BaseCategory implements ConfigInterface
      */
     private $configurator;
 
+
     /**
      * @var int
      */

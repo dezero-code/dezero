@@ -1,6 +1,6 @@
 <?php
 /**
- * CategoryTypeBuilder class file
+ * CategoryConfigurator class file
  *
  * @author Fabián Ruiz <fabian@dezero.es>
  * @link http://www.dezero.es
