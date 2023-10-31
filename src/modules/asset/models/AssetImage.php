@@ -249,7 +249,7 @@ class AssetImage extends AssetFile implements ConfigInterface
     {
         if ( ! $this->loadImage() )
         {
-            return false;
+            return null;
         }
 
         $preset_file_name = Yii::$app->imageManager->getPresetFilename($this->image, $this->getPreset($preset_name));
