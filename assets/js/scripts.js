@@ -274,11 +274,11 @@ function dz_htmlUnescape(value){
               }
             },
             callback: function (confirmed) {
-                if (confirmed) {
-                  !ok || ok();
-                } else {
-                  !cancel || cancel();
-                }
+              if (confirmed) {
+                !ok || ok();
+              } else {
+                !cancel || cancel();
+              }
             }
           }
         );

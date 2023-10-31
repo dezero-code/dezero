@@ -125,7 +125,7 @@
     // ----------------------------------------------------
     deleteAjaxButtons: function() {
       var $actions = this.$table.children('tbody').children('tr').children('td.button-column');
-      $actions.children('a.delete-ajax-action').on('click', $.dezeroGridview.deleteAction);
+      $actions.children('a.delete-ajax-action').off('click').on('click', $.dezeroGridview.deleteAction);
     },
 
 
@@ -135,9 +135,9 @@
       e.preventDefault();
       var $this = $(this);
 
-      bootbox.confirm(
-        `<h3>${$this.data('ajax-confirm')}</h3>`,
-        function(confirmed) {
+      bootbox.confirm({
+        message: `<h3>${$this.data('ajax-confirm')}</h3>`,
+        callback: function (confirmed) {
           if ( confirmed ) {
             $.ajax({
               url: $this.attr('href'),
@@ -187,7 +187,7 @@
             });
           }
         }
-      );
+      });
     },
   };
 
