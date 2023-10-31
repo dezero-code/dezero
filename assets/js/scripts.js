@@ -258,5 +258,35 @@ function dz_htmlUnescape(value){
       }
     );
 
+    if ( typeof(yii) !== 'undefined' ) {
+      // Confirm via Bootbox
+      // --- Delete action (bootbox) ---
+      yii.confirm = function (message, ok, cancel) {
+        bootbox.confirm(
+          {
+            message: `<h3>${message}</h3>`,
+            buttons: {
+              confirm: {
+                label: "Continue"
+              },
+              cancel: {
+                label: "Cancel"
+              }
+            },
+            callback: function (confirmed) {
+                if (confirmed) {
+                  !ok || ok();
+                } else {
+                  !cancel || cancel();
+                }
+            }
+          }
+        );
+        // confirm will always return false on the first call
+        // to cancel click handler
+        return false;
+      };
+    }
+
   });
 })(document, window, jQuery);

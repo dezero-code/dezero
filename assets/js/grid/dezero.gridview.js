@@ -61,6 +61,7 @@
       this.loadSelect2();
       this.clearButton();
       this.$grid.removeClass(this.loadingClass);
+      this.deleteAjaxButtons();
     },
 
 
@@ -85,6 +86,7 @@
         $tooltip_items.tooltip();
       }
     },
+
 
     // Clear Button click event
     // ----------------------------------------------------
@@ -116,8 +118,77 @@
       catch(clear_err) {
           return false;
       }
-    }
+    },
 
+
+    // Checks if there're delete custom buttons via AJAX
+    // ----------------------------------------------------
+    deleteAjaxButtons: function() {
+      var $actions = this.$table.children('tbody').children('tr').children('td.button-column');
+      $actions.children('a.delete-ajax-action').on('click', $.dezeroGridview.deleteAction);
+    },
+
+
+    // Delete action via AJAX
+    // ----------------------------------------------------
+    deleteAction: function(e) {
+      e.preventDefault();
+      var $this = $(this);
+
+      bootbox.confirm(
+        `<h3>${$this.data('ajax-confirm')}</h3>`,
+        function(confirmed) {
+          if ( confirmed ) {
+            $.ajax({
+              url: $this.attr('href'),
+              type: 'post',
+              // dataType: 'json',
+              // data: {  },
+
+              success: function(data) {
+                // SUCCESS --> Reload GridView
+                if ( data.error_code === 0 ) {
+                  $.pnotify({
+                    sticker: false,
+                    text: data.success,
+                    type: 'success'
+                  });
+
+                  $.pjax.reload({
+                    container: "#"+ $this.parent().data('grid') + '-container'
+                  });
+                }
+
+                // ERROR --> Show error messages
+                else {
+                  var out = '';
+                  $.each(data.errors, function(key, error_msg) {
+                    out = out + '<li>'+ error_msg +'</li>';
+                  });
+
+                  // Show success message
+                  $.pnotify({
+                    sticker: false,
+                    text: '<ul>'+ out + '</ul>',
+                    type: 'error'
+                  });
+                }
+              },
+
+              // AJAX ERROR
+              error: function(request, status, error) {
+                $.pnotify({
+                  sticker: false,
+                  text: 'ERROR: '+ request.responseText,
+                  type: 'error'
+                });
+              },
+              cache: false
+            });
+          }
+        }
+      );
+    },
   };
 
   // GRIDVIEW - CLEAR BUTTON

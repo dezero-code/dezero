@@ -58,8 +58,26 @@ class ActionColumn extends \yii\grid\ActionColumn
      */
     public function renderDataCell($model, $key, $index)
     {
-        $this->contentOptions = ArrayHelper::merge(['class' => 'button-column'], $this->contentOptions);
+        $vec_default_options = [
+            'class' => 'button-column',
+            'data-grid' => $this->grid->options['id']
+        ];
+        $this->contentOptions = ArrayHelper::merge($vec_default_options, $this->contentOptions);
         return parent::renderDataCell($model, $key, $index);
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function initDefaultButtons()
+    {
+        parent::initDefaultButtons();
+
+        $this->initDefaultButton('delete-ajax', 'trash', [
+            'data-ajax-confirm' => Yii::t('yii', 'Are you sure you want to delete this item?'),
+            // 'data-method' => 'ajax',
+        ]);
     }
 
 
@@ -81,6 +99,7 @@ class ActionColumn extends \yii\grid\ActionColumn
                         $icon = 'edit';
                     break;
                     case 'delete':
+                    case 'delete-ajax':
                         $title = Yii::t('yii', 'Delete');
                         $icon = 'trash';
                     break;
