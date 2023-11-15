@@ -47,6 +47,7 @@ class GridView extends \yii\grid\GridView
      */
     public function init()
     {
+        Html::addCssClass($this->options, 'grid-view');
         Html::addCssClass($this->options, 'dz-grid-view');
 
         parent::init();
