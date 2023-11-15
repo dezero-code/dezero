@@ -69,9 +69,21 @@
     // ----------------------------------------------------
     loadSelect2: function() {
       this.$filters.find('select').each(function() {
-        // Exclude fitlers with "customSelect2" enabled
+        // Exclude fitlers with "select2-custom" enabled
         if ( ! $(this).parent().hasClass('select2-custom') ) {
-          $(this).select2({allowClear: false});
+
+          // Custom class for SLIDEPANEL
+          if ( $(this).parent().hasClass('select2-slidepanel') ) {
+            $(this).select2({
+              allowClear: false,
+              dropdownCssClass: 'select2-slidepanel'
+            });
+          }
+
+          // Default configuration
+          else {
+            $(this).select2({allowClear: false});
+          }
         }
       });
     },

@@ -75,18 +75,26 @@ class DataColumn extends \yii\grid\DataColumn
             // Custom options for SELECT2 widget
             if ( $this->select2Options === null )
             {
-                 $this->select2Options = [
-                    'is_custom' => false,
-                    'placeholder' => Yii::t('backend', '- All -')
-                ];
+                 $this->select2Options = [];
             }
+            $this->select2Options['is_custom'] = $this->select2Options['is_custom'] ?? false;
+            $this->select2Options['is_slidepanel'] = $this->select2Options['is_slidepanel'] ?? false;
+            $this->select2Options['placeholder'] = $this->select2Options['placeholder'] ?? Yii::t('backend', '- All -');
 
+            // Custom class to allow init SELECT2 via custom Javascript after Gridview update
             if ( $this->select2Options['is_custom'] === true )
             {
                 $vec_filter_options['class'] .= ' select2-custom';
             }
 
-            if ( isset($this->select2Options['placeholder']) )
+            // Custom class for slidepanel
+            if ( $this->select2Options['is_slidepanel'] === true )
+            {
+                $vec_filter_options['class'] .= ' select2-slidepanel';
+            }
+
+            // Custom placeholder
+            if ( $this->select2Options['placeholder'] !== null )
             {
                 $this->filterInputOptions['data-placeholder'] = $this->select2Options['placeholder'];
             }

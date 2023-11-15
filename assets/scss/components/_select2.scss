@@ -38,3 +38,8 @@
 .select2-dropdown.modal-dropdown {
     z-index: 9000;
 }
+
+// Select2 inside a SLIDEPANEL
+.select2-dropdown.select2-slidepanel {
+    z-index: 1400;
+}

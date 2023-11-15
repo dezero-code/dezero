@@ -1,0 +1,130 @@
+//----------------------------------------------------------
+// CSS RULES FOR MOBILE
+//----------------------------------------------------------
+
+// BREAKPOINT: 768px
+// ----------------------------------------
+@include breakpoint("max-width: 768px") {
+// LOGIN
+    .page-login .panel {
+        width: 100%;
+
+        .panel-body {
+            padding: 30px 25px 20px;
+        }
+    }
+
+    // HEADER
+    .page-header {
+        padding: 25px 15px;
+
+        .page-title {
+            font-size: 22px;
+            display: block;
+            width: 100%;
+        }
+
+        .page-header-actions {
+            right: 10px;
+        }
+
+        &.with-mobile-actions {
+            margin-bottom: 50px;
+
+            .page-header-actions {
+                top: 110%;
+            }
+        }
+
+        .btn-dark {
+            display: none;
+        }
+        //     display: block;
+        //     position: relative;
+        //     top: 0;
+        //     right: 0;
+        //     text-align: right;
+        //     width: 100%;
+        //     margin: 0;
+        // }
+    }
+
+    // FORM
+    .form-horizontal {
+        .panel-body {
+            > .row {
+                &,
+                .mb-30 {
+                    margin-bottom: 1.5rem !important;
+                }
+
+                .mb-0 {
+                    margin-bottom: 0 !important;
+                }
+            }
+
+            .form-group {
+                &.row {
+                    margin-bottom: 0 !important;
+                }
+
+                .col-sm-3 {
+                    margin-top: 0;
+                    margin-bottom: 0;
+                }
+
+                .form-control-label {
+                    padding-top: .25rem;
+                    padding-bottom: .25rem;
+                    margin-bottom: 0;
+                }
+            }
+        }
+    }
+
+    .table {
+        .status-type-wrapper {
+            min-width: 105px;
+        }
+    }
+
+    // VIEW - DETAILS
+    .panel-body {
+        h5 {
+            margin-bottom: .25rem;
+        }
+
+        .col-sm-3 {
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+        }
+    }
+
+    // SLIDEPANEL
+    .slidePanel {
+        width: 100%;
+
+        .slidePanel-inner {
+            .form-control-label {
+                text-align: left;
+            }
+
+            .row {
+                display: block;
+            }
+        }
+
+        .status-row {
+            display: block;
+        }
+
+        .form-group .form-control-label {
+            padding-right: 1.0715rem;
+            padding-left: 1.0715rem;
+        }
+    }
+}
