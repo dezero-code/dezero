@@ -1246,8 +1246,20 @@ $(function () {
         $.dzSlidePanel.afterLoad = settings.afterLoad;
       }
 
+      // 07/12/2023 - URL with EXTRA PARAMETERS
+      // @see https://developer.mozilla.org/en-US/docs/Web/API/URL
+      var base_url = $base.attr('href');
+      if ( settings.hasOwnProperty('urlParams') && settings.urlParams !== null ) {
+        base_url = new URL(base_url);
+        $.each(settings.urlParams, function(url_param_key, url_param_value) {
+          base_url.searchParams.append(url_param_key, url_param_value);
+        });
+
+        base_url = base_url.toString();
+      }
+
       $.slidePanel.show({
-        url: $base.attr('href'),
+        url: base_url,
         settings: {
           method: 'GET'
         }
@@ -1296,6 +1308,7 @@ $(function () {
     }
   };
 })(document, window, jQuery);
+
 (function(document, window, $) {
   
   // SlideTable global object
