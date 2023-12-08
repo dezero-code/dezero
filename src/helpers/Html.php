@@ -254,41 +254,44 @@ class Html extends \yii\helpers\Html
 
 
     /**
-     * Generate a menu with an un-ordered list of items.
+     * Generate a menu with an un-ordered list of items
      */
     public static function generateMenuList(array $vec_links, array $options = [], bool $show_active_class = false, string $menu_tag = 'ul') : string
     {
-        // Check visible
-        if ( !empty($vec_links) )
+        if ( empty($vec_links) )
         {
-            foreach ( $vec_links as $num_link => $que_link )
+            return '';
+        }
+
+        // Check visible
+        foreach ( $vec_links as $num_link => $que_link )
+        {
+            if ( isset($que_link['visible']) && eval('return '. $que_link['visible']. ';') === false )
             {
-                if ( isset($que_link['visible']) && eval('return '. $que_link['visible']. ';') === false )
-                {
-                    unset($vec_links['num_link']);
-                }
+                unset($vec_links['num_link']);
             }
         }
 
-        $output = '';
-        if ( !empty($vec_links) )
+        if ( empty($vec_links) )
         {
-            $output = self::listing($menu_tag, $vec_links, $options, true);
+            return '';
+        }
 
-            if ( $show_active_class )
+        $output = self::listing($menu_tag, $vec_links, $options, true);
+
+        if ( $show_active_class )
+        {
+            // Get URL from module, controller and action
+            $url = '';
+            $current_module = Dz::currentModule(true);
+            if ( $current_module !== null )
             {
-                // Get URL from module, controller and action
-                $que_url = '';
-                $current_module = Dz::currentModule(true);
-                if ( $current_module !== null )
-                {
-                    $que_url = $current_module;
-                }
-                $que_url .= '/'. Dz::currentController(true);
-                // $que_url .= Dz::currentAction(true);
-
-                $output = str_replace($que_url .'/"', $que_url .'/" class="active"', $output);
+                $url = $current_module;
             }
+            $url .= '/'. Dz::currentController(true);
+            // $url .= Dz::currentAction(true);
+
+            $output = str_replace($url .'/"', $url .'/" class="active"', $output);
         }
 
         return $output;
@@ -296,7 +299,108 @@ class Html extends \yii\helpers\Html
 
 
     /**
-     * Generate an ordered or un-ordered list.
+     * Generates a Bootstrap dropdown menu widget
+     */
+    public static function dropdownMenu(array $vec_items, array $options = []) : string
+    {
+        if ( empty($vec_items) )
+        {
+            return '';
+
+        }
+
+        $output = '';
+
+        // Dropdown menu item
+        $output = self::beginTag('div', $options );
+        foreach ( $vec_items as $menu_item )
+        {
+            if ( is_array($menu_item) )
+            {
+                // Check access
+                if ( isset($menu_item['visible']) && eval('return '. $menu_item['visible']. ';') === false )
+                {
+                    continue;
+                }
+
+                // HTML Options
+                $item_options = isset($menu_item['options']) ? $menu_item['options'] : [];
+
+                // Icon button
+                if ( isset($menu_item['icon']) )
+                {
+                    if ( ! preg_match("/^wb\-|^fa\-/", $menu_item['icon']) )
+                    {
+                        $menu_item['icon'] = 'wb-'. $menu_item['icon'];
+                    }
+                    $menu_item['label'] = '<i class="icon '. $menu_item['icon'] .'"></i> '. $menu_item['label'];
+                }
+
+                // Class "dz-bootbox-confirm" needed
+                if ( !isset($item_options['class']) )
+                {
+                    $item_options['class'] = 'dropdown-item';
+                }
+                else
+                {
+                    $item_options['class'] .= ' dropdown-item';
+                }
+
+                // Confirm box??
+                if ( isset($menu_item['confirm']) )
+                {
+                    $item_options['data-confirm'] = $menu_item['confirm'];
+                    // $item_options['class'] .= ' dz-bootbox-confirm';
+                }
+
+                // Sub-navigation?
+                if ( isset($menu_item['items']) && !empty($menu_item['items']) )
+                {
+                    if ( empty($menu_item['url']) )
+                    {
+                        $menu_item['url'] = '#';
+                    }
+
+                    $submenu = self::dropdownMenu($menu_item['items'], ['class' => 'dropdown-menu']);
+                    // if ( !empty($submenu) )
+                    // {
+                    //     $output .=  '<li class="dropdown-submenu pull-left">'. self::link($menu_item['label'], $menu_item['url'], $item_options) . $submenu .'</li>';
+                    // }
+                }
+
+                // Single item
+                else
+                {
+                    if ( isset($menu_item['url']) )
+                    {
+                        $output .= self::a($menu_item['label'], $menu_item['url'], $item_options);
+                    }
+                    else
+                    {
+                        $output .= $menu_item['label'];
+                    }
+                }
+            }
+
+            // Separator
+            else if ( $menu_item == '---' )
+            {
+                $output .= '<div class="divider"></div>';
+            }
+        }
+
+        // Check if there's one child '<li>' at least in menu
+        if ( $output == self::beginTag('div', $options ) )
+        {
+            return '';
+        }
+
+        return $output .'</div>';
+    }
+
+
+    /**
+     * Generate an ordered or un-ordered list
      */
     private static function listing(string $type, array $list, array $options = [], bool $is_menu = false) : string
     {
@@ -360,11 +464,11 @@ class Html extends \yii\helpers\Html
 
 
     /**
-     * Render a button for GridView
+     * Render a button for a GridView
      *
      * @see Html::a
      */
-    public static function gridButton($title, $url = null, $options = [])
+    public static function gridButton($title, $url = null, $options = []) : string
     {
         $text = $title;
         if ( isset($options['icon']) )

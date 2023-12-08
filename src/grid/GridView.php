@@ -88,7 +88,7 @@ class GridView extends \yii\grid\GridView
 
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function renderItems()
     {
@@ -97,5 +97,35 @@ class GridView extends \yii\grid\GridView
         return
             '<div class="dz-loader-overlay"><div class="dz-loader loader loader-circle"></div></div>' .
             '<div class="table-responsive">' . parent::renderItems() .'</div>';
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function renderTableRow($model, $key, $index)
+    {
+        $cells = [];
+
+        /* @var $column Column */
+        foreach ( $this->columns as $column )
+        {
+            $cells[] = $column->renderDataCell($model, $key, $index);
+        }
+
+        if ( $this->rowOptions instanceof Closure )
+        {
+            $options = call_user_func($this->rowOptions, $model, $key, $index, $this);
+        }
+        else
+        {
+            $options = $this->rowOptions;
+        }
+        $options['data-key'] = is_array($key) ? json_encode($key) : (string) $key;
+
+        // Add "id" to all the rows
+        $options['id'] = $this->options['id'] .'-row-'. $options['data-key'];
+
+        return Html::tag('tr', implode('', $cells), $options);
     }
 }

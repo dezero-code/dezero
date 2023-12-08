@@ -226,13 +226,22 @@ div.loading-spinner {
         margin: 0 auto;
     }
 
-    p {
+    p,
+    ul li {
         font-size: 15px;
+    }
+
+    ul li {
+        margin-bottom: .5rem;
     }
 }
 
 .modal.bootbox {
     top: 40%;
+
+    &.bootbox-top {
+        top: 1%;
+    }
 }
 
 // BATCH
