@@ -31,7 +31,7 @@ trait StatusTrait
     /**
      * Change status
      */
-    public function changeStatus($new_status, $comments = null, $is_sending_mail = false)
+    public function changeStatus($new_status, $comments = null, $is_sending_mail = false) : bool
     {
         // Save old status
         $old_status = $this->status_type;
@@ -40,32 +40,34 @@ trait StatusTrait
         $this->status_type = $new_status;
 
         // Save only if status has changed
-        if ( $old_status !== $this->status_type )
+        if ( $old_status === $this->status_type )
         {
-            if ( ! $this->save() )
-            {
-                Log::saveModelError($this);
-                return false;
-            }
-
-            // Save status history
-            $this->saveStatusHistory($new_status, $comments);
-
-            // Send email notifications
-            /*
-            if ( $is_sending_mail )
-            {
-                if ( $this->status_type === 'active' )
-                {
-                    $this->sendEmail('community_user_accepted');
-                }
-                else if ( $this->status_type === 'rejected' )
-                {
-                    $this->sendEmail('community_user_rejected');
-                }
-            }
-            */
+            return true;
         }
+
+        if ( ! $this->save() )
+        {
+            Log::saveModelError($this);
+            return false;
+        }
+
+        // Save status history
+        $this->saveStatusHistory($new_status, $comments);
+
+        // Send email notifications
+        /*
+        if ( $is_sending_mail )
+        {
+            if ( $this->status_type === 'active' )
+            {
+                $this->sendEmail('community_user_accepted');
+            }
+            else if ( $this->status_type === 'rejected' )
+            {
+                $this->sendEmail('community_user_rejected');
+            }
+        }
+        */
 
         return true;
     }
@@ -74,30 +76,34 @@ trait StatusTrait
     /**
      * Save new status into status history
      */
-    public function saveStatusHistory($new_status, $comments = null)
+    public function saveStatusHistory($new_status, $comments = null) : bool
     {
         // Get last StatusHistory model
         $last_status_history_model = StatusHistory::find()
             ->where(['entity_uuid' => $this->entity_uuid])
             ->orderBy(['status_history_id' => SORT_DESC])
             ->one();
-        \DzLog::dev($last_status_history_model);
-        if ( $last_status_history_model === null || $last_status_history_model->status_type !== $new_status )
-        {
-            $status_history_model = Dz::makeObject(StatusHistory::class);
-            $status_history_model->setAttributes([
-                'entity_uuid'       => $this->entity_uuid,
-                'entity_source_id'  => $this->entity ? $this->entity->source_id : null,
-                'entity_type'       => $this->getEntityType(),
-                'status_type'       => $new_status,
-                'comments'          => $comments
-            ]);
 
-            if ( ! $status_history_model->save() )
-            {
-                Log::saveModelError($status_history_model);
-                return false;
-            }
+        // Do not repeat history for same status
+        if ( $last_status_history_model !== null && $last_status_history_model->status_type === $new_status )
+        {
+            return true;
+        }
+
+        // Register new status history
+        $status_history_model = Dz::makeObject(StatusHistory::class);
+        $status_history_model->setAttributes([
+            'entity_uuid'       => $this->entity_uuid,
+            'entity_source_id'  => $this->entity ? $this->entity->source_id : null,
+            'entity_type'       => $this->getEntityType(),
+            'status_type'       => $new_status,
+            'comments'          => $comments
+        ]);
+
+        if ( ! $status_history_model->save() )
+        {
+            Log::saveModelError($status_history_model);
+            return false;
         }
 
         return true;
