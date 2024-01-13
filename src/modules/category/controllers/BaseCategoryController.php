@@ -34,7 +34,6 @@ abstract class BaseCategoryController extends Controller
     {
         // Permissions
         $this->requireLogin();
-        $this->requirePermission('category_manage');
 
         $this->enableCsrfValidation = false;
         return parent::beforeAction($action);
@@ -46,6 +45,9 @@ abstract class BaseCategoryController extends Controller
      */
     public function actionIndex()
     {
+        // Permissions
+        $this->requirePermission('category_view');
+
         $category_search_model = Dz::makeObject(CategorySearch::class);
         $category_search_model->category_type = $this->getCategoryType();
 
@@ -66,6 +68,9 @@ abstract class BaseCategoryController extends Controller
      */
     public function actionCreate()
     {
+        // Permissions
+        $this->requirePermission('category_manage');
+
         $category_model = Dz::makeObject(Category::class);
         $category_model->category_type = $this->getCategoryType();
         $asset_image_model = Dz::makeObject(AssetImage::class);
@@ -115,6 +120,9 @@ abstract class BaseCategoryController extends Controller
      */
     public function actionUpdate($category_id)
     {
+        // Permissions
+        $this->requirePermission('category_manage');
+
         // Load Category model
         $category_model = Dz::loadModel(Category::class, $category_id);
 
@@ -171,6 +179,9 @@ abstract class BaseCategoryController extends Controller
      */
     public function actionDelete($category_id)
     {
+        // Permissions
+        $this->requirePermission('category_edit');
+
         // Delete action only allowed by POST requests
         $this->requirePostRequest();
 
@@ -197,6 +208,9 @@ abstract class BaseCategoryController extends Controller
      */
     public function actionWeight($category_id)
     {
+        // Permissions
+        $this->requirePermission('category_manage');
+
         // Update action only allowed by POST requests
         $this->requirePostRequest();
 

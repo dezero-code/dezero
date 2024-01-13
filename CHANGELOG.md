@@ -2,6 +2,13 @@
 
 All notable changes to `Dezero Framework` will be documented in this file
 
+## 0.2.6 - 2024-01-13
+
+- AUTH module - Create default permissions for core modules
+- GridView - Bulk Actions first implementation
+- Layout - Header & sidebar permissions
+- StatusTrait - Refactoring code
+
 ## 0.2.5 - 2023-10-14
 
 - GridView - Custom options for SELECT2

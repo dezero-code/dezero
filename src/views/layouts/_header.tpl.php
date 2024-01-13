@@ -72,13 +72,14 @@
         <li class="nav-item dropdown">
           <a class="navbar-no-avatar profile-nav-link nav-link" data-toggle="dropdown" href="#" aria-expanded="false" data-animation="scale-up" role="button" title="<?= Yii::t('backend', 'My profile'); ?>">
             <i class="icon wb-user-circle" aria-hidden="true"></i>
-            <?php /*<span><?php echo Yii::$app->user->username; ?></span>*/ ?>
-            <span>Admin</span>
+            <span><?=  Yii::$app->user->id > 0 ? Yii::$app->user->model->username : 'User'; ?></span>
           </a>
           <div class="dropdown-menu" role="menu">
-            <a class="dropdown-item" href="<?= Url::to('/user/admin/update', ['id' => Yii::$app->user->id]); ?>" role="menuitem">
-              <i class="icon wb-user" aria-hidden="true"></i> <?= Yii::t('backend', 'My profile'); ?>
-            </a>
+            <?php if ( Yii::$app->user->can('user_manage') ) : ?>
+              <a class="dropdown-item" href="<?= Url::to('/user/admin/update', ['user_id' => Yii::$app->user->id]); ?>" role="menuitem">
+                <i class="icon wb-user" aria-hidden="true"></i> <?= Yii::t('backend', 'My profile'); ?>
+              </a>
+            <?php endif; ?>
             <?php if ( Yii::$app->user->id == 1 ) : ?>
               <a class="dropdown-item" href="<?= Url::to('/user/logout/loginAs'); ?>" role="menuitem">
                 <i class="icon wb-random" aria-hidden="true"></i> <?= Yii::t('backend', 'Log in as...'); ?>
@@ -94,7 +95,9 @@
                 <i class="icon wb-replay" aria-hidden="true"></i> <?= Yii::t('backend', 'DB backups'); ?>
               </a>
             <?php endif; ?>
-            <div class="dropdown-divider" role="presentation"></div>
+            <?php if ( Yii::$app->user->can('user_manage') ) : ?>
+              <div class="dropdown-divider" role="presentation"></div>
+            <?php endif; ?>
             <a class="dropdown-item" href="<?= Url::to('/user/logout'); ?>" role="menuitem">
               <i class="icon wb-power" aria-hidden="true"></i> <?= Yii::t('backend', 'Log out'); ?>
             </a>

@@ -8,6 +8,7 @@
 namespace dezero\traits;
 
 use dezero\helpers\ArrayHelper;
+use Yii;
 
 trait WarningTrait
 {
@@ -47,6 +48,30 @@ trait WarningTrait
         else
         {
             $this->vec_warnings[] = $vec_warnings;
+        }
+    }
+
+
+    /**
+     * Show warning(s)
+     */
+    public function showWarnings() : void
+    {
+        // Show warnings
+        $vec_warnings = $this->getWarnings();
+        if ( !empty($vec_warnings) )
+        {
+            Yii::$app->session->setFlash('warning', $vec_warnings);
+        }
+
+        // Get warnings from Flash Messages
+        if ( method_exists($this, 'getFlashMessages') )
+        {
+            $vec_warnings = $this->getFlashMessages('warning');
+            if ( !empty($vec_warnings) )
+            {
+                Yii::$app->session->setFlash('warning', $vec_warnings);
+            }
         }
     }
 }

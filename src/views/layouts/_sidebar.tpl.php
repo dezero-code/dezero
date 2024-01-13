@@ -20,7 +20,7 @@
           'url'   => '#',
           'icon'  => 'wb-tag',
           'is_active' => ($current_module == 'category'),
-          // 'visible' => Yii::$app->user->can('category_manage'),
+          'visible' => Yii::$app->user->can('category_manage'),
           'items' => [
             [
               'label' => 'Categorías',
@@ -90,7 +90,7 @@
           'url'   => '#',
           'icon'  => 'wb-users',
           'is_active' => ($current_module == 'user'),
-          // 'visible' => Yii::$app->user->can('user_manage'),
+          'visible' => Yii::$app->user->can('user_manage'),
           'items' => [
             [
               'label' => 'Listado usuarios',

@@ -26,7 +26,6 @@ class AdminController extends Controller
     {
         // Permissions
         $this->requireLogin();
-        $this->requirePermission('user_manage');
 
         $this->enableCsrfValidation = false;
         return parent::beforeAction($action);
@@ -38,6 +37,9 @@ class AdminController extends Controller
      */
     public function actionIndex()
     {
+        // Permissions
+        $this->requirePermission('user_manage');
+
         $user_search_model = Dz::makeObject(UserSearch::class);
 
         $data_provider = $user_search_model->search(Yii::$app->request->get());
@@ -54,6 +56,9 @@ class AdminController extends Controller
      */
     public function actionCreate()
     {
+        // Permissions
+        $this->requirePermission('user_manage');
+
         $user_model = Dz::makeObject(User::class);
         $vec_assigned_roles = Yii::$app->request->post('UserRoles', []);
 
@@ -90,6 +95,18 @@ class AdminController extends Controller
      */
     public function actionUpdate($user_id)
     {
+        // Permissions - Update own user
+        if ( $user_id === Yii::$app->user->id )
+        {
+            $this->requirePermission('user_edit');
+        }
+
+        // Permissions - Update all users
+        else
+        {
+            $this->requirePermission('user_manage');
+        }
+
         // Load User model
         $user_model = Dz::loadModel(User::class, $user_id);
 
@@ -160,6 +177,10 @@ class AdminController extends Controller
      */
     public function actionDelete($user_id)
     {
+        // Permissions
+        $this->requirePermission('user_manage');
+
+        // Delete action only allowed by POST requests
         $this->requirePostRequest();
 
         // Load User model
@@ -185,6 +206,9 @@ class AdminController extends Controller
      */
     public function actionStatus($user_id)
     {
+        // Permissions
+        $this->requirePermission('user_manage');
+
         // Load User model
         $user_model = Dz::loadModel(User::class, $user_id);
 
