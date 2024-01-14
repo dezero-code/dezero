@@ -17,4 +17,8 @@ class GridViewAsset extends \yii\web\AssetBundle
     public $js = [
         'grid/dezero.gridview.js',
     ];
+    public $depends = [
+        'yii\grid\GridViewAsset',
+        'yii\widgets\PjaxAsset'
+    ];
 }
