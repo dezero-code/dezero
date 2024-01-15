@@ -27,13 +27,13 @@
 
 // WHERE -> Greater THAN or DIFFERENT condition
     $result = Product::find()
-        ->where('>', 'id', '2')
-        ->andWhere('!=', 'status', 'disabled')
+        ->where(['>', 'id', '2'])
+        ->andWhere(['!=', 'status', 'disabled'])
         ->one();
 
 // WHERE -> LIKE condition
     $result = Product::find()
-        ->where('like', 'name', $_GET['q'] . '%', false)
+        ->where(['like', 'name', $_GET['q'] . '%', false])
         ->all();
 
     ...or...

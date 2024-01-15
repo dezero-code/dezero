@@ -87,6 +87,22 @@ class Controller extends \yii\web\Controller
 
 
     /**
+     * Checks if the current user is an superadmin. If not, throws a 403 error
+     */
+    public function requireSuperadmin() : void
+    {
+        // First of all, ensure user is logged in
+        $this->requireLogin();
+
+        // Check if is superadmin
+        if ( ! Yii::$app->user->isSuperadmin() )
+        {
+            throw new ForbiddenHttpException('You are not allowed to access this page.');
+        }
+    }
+
+
+    /**
      * Checks if the current user belongs to a specific role. If not, throws a 403 error
      */
     public function requireRole(string $role_name, bool $is_skip_superadmin = true) : void
