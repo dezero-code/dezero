@@ -17,6 +17,7 @@
   use dezero\widgets\KrajeeFileInput;
 
   // Controller and action names in lowercase
+  $current_controller = \Dz::currentController(true);
   $current_action = \Dz::currentAction(true);
 
   $form_id = 'category-form'; // $category_model->formName();
@@ -176,7 +177,7 @@
       ?>
       <?php
         // Cancel
-        echo Html::a(Yii::t('backend', 'Cancel'), ['/category/category'], ['class' => 'btn btn-dark']);
+        echo Html::a(Yii::t('backend', 'Cancel'), ['/category/'. $current_controller], ['class' => 'btn btn-dark']);
 
         // Delete, disable and enable buttons
         if ( $current_action !== 'create' )

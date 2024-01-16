@@ -83,6 +83,8 @@ class CategoryCreateService implements ServiceInterface
         // Validate model's attributes
         if ( ! $this->category_model->validate() )
         {
+            $this->addError($this->category_model->getErrors());
+
             return false;
         }
 
