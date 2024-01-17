@@ -104,7 +104,7 @@
     // ----------------------------------------------------
     clearButton: function() {
       var self = this;
-      this.$clearButton.on('click', function(e){
+      self.$clearButton.on('click', function(e){
         e.preventDefault();
         self.$clearButton.tooltip('hide');
         self.clearFilters();
@@ -118,7 +118,7 @@
       var self = this;
 
       try {
-        this.$filters.find(':input').clearFields();             // this will clear all input in the current grid
+        self.$filters.find(':input').clearFields();             // this will clear all input in the current grid
         // this.$filters.find(':input').first().trigger('change'); // to submit the form
 
         // Reload GridView

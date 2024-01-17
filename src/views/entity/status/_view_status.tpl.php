@@ -22,9 +22,9 @@
 <?= Html::beginTag('div', $container_options); ?>
   <?php if ( isset($vec_status_labels[$status_type]) ) : ?>
     <?php if ( isset($vec_status_colors) && isset($vec_status_colors[$status_type]) ) : ?>
-      <span class="<?= $vec_status_colors[$status_type]; ?>"><i class="wb-medium-point <?= $vec_status_colors[$status_type]; ?>" aria-hidden="true"></i> <?= $vec_status_labels[$status_type]; ?></span>
+      <span class="<?= $vec_status_colors[$status_type]; ?> font-size-16"><i class="wb-medium-point <?= $vec_status_colors[$status_type]; ?>" aria-hidden="true"></i> <?= $vec_status_labels[$status_type]; ?></span>
     <?php else : ?>
-      <span><i class="wb-medium-point"></i> <?= $vec_status_labels[$status_type]; ?></span>
+      <span class="font-size-16"><i class="wb-medium-point"></i> <?= $vec_status_labels[$status_type]; ?></span>
     <?php endif; ?>
   <?php else : ?>
     <span><?= $status_type; ?></span>
