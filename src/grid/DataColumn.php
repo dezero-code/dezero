@@ -28,7 +28,7 @@ class DataColumn extends \yii\grid\DataColumn
      * [[\yii\i18n\Formatter]] is used as the [[GridView::$formatter|formatter]] of the GridView.
      * @see \yii\i18n\Formatter::format()
      */
-    public $format = 'html'; // 'text';
+    public $format = 'raw'; // 'html';
 
 
     /**
