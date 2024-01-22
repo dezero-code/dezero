@@ -123,13 +123,21 @@
 
         // Reload GridView
         $.pjax.reload({
-          container: "#"+ self.$grid.attr('id') + '-container',
-          url: self.$clearButton.attr('href')
+          container: '#'+ self.$grid.attr('id') + '-container',
+          url: self.$clearButton.attr('href'),
+          replace: ! self.isSlidepanel()
         });
       }
       catch(clear_err) {
           return false;
       }
+    },
+
+
+    // Check if the GridView is loaded inside a SlidPanel
+    // ----------------------------------------------------
+    isSlidepanel: function() {
+      return $('#'+ this.$grid.attr('id') + '-container').is('[data-slidepanel]');
     },
 
 
