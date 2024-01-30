@@ -247,9 +247,18 @@ class Html extends \yii\helpers\Html
     /**
      * Generates a breadcrumb navigation menu
      */
-    public static function breadcrumbs(array $vec_links)
+    public static function breadcrumbs(array $vec_links, array $options = [])
     {
-        return self::generateMenuList($vec_links, ['class' => 'breadcrumb'], false, 'ol');
+        if ( !isset($options['class']) )
+        {
+            $options['class'] = 'breadcrumb';
+        }
+        else
+        {
+            $options['class'] .= ' breadcrumb';
+        }
+
+        return self::generateMenuList($vec_links, $options, false, 'ol');
     }
 
 
