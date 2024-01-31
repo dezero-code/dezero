@@ -7,6 +7,8 @@ namespace dezero\helpers;
 
 use Dz;
 use dezero\helpers\ArrayHelper;
+use dezero\data\DataObject;
+use dezero\data\StringDataObject;
 use Stringy\Stringy as BaseStringy;
 use voku\helper\UTF8;
 use Yii;
@@ -18,6 +20,20 @@ use yii\helpers\HtmlPurifier;
 class StringHelper extends \yii\helpers\StringHelper
 {
     const UUID_PATTERN = '[A-Za-z0-9]{8}-[A-Za-z0-9]{4}-4[A-Za-z0-9]{3}-[89abAB][A-Za-z0-9]{3}-[A-Za-z0-9]{12}';
+
+
+    /**
+     * Returns the data object of the given string
+     */
+    public static function toObject($value) : ?DataObject
+    {
+        if ( is_string($value) )
+        {
+            return StringDataObject::from($value);
+        }
+
+        return null;
+    }
 
 
     /**
