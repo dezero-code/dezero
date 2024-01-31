@@ -1,12 +1,12 @@
 <?php
 /**
- * Base Array class file
+ * ArrayCollection class file
  *
  * @see https://php-map.org/
  *
  * @author Fabián Ruiz <fabian@dezero.es>
  * @link http://www.dezero.es
- * @copyright Copyright &copy; 2023 Fabián Ruiz
+ * @copyright Copyright &copy; 2024 Fabián Ruiz
  */
 
 namespace dezero\base;
@@ -19,7 +19,7 @@ use Yii;
 /**
  * ArrayCollection is the base class to manage arrays
  */
-class ArrayCollection extends \yii\base\BaseObject
+class ArrayCollection extends \yii\base\BaseObject implements \ArrayAccess, \Countable, \IteratorAggregate
 {
     /**
      * @var array
@@ -37,11 +37,13 @@ class ArrayCollection extends \yii\base\BaseObject
 
 
     /**
-     * Returns the plain array
+     * Returns the elements as a plain array.
+     *
+     * @return array<int|string,mixed> Plain array
      */
-    public function all() : array
+    public function __toArray() : array
     {
-        return $this->vec_items;
+        return $this->vec_items = $this->array($this->vec_items);
     }
 
 
@@ -54,14 +56,18 @@ class ArrayCollection extends \yii\base\BaseObject
     }
 
 
+    /*
+    |--------------------------------------------------------------------------
+    | ACCESS METHODS
+    |--------------------------------------------------------------------------
+    */
+
     /**
-     * Retrieves the value of an array element or object property with the given key or property name.
-     *
-     * @see \dezero\helpers\ArrayHelper::getValue()
+     * Returns the plain array
      */
-    public function get($key, $default_value = null)
+    public function all() : array
     {
-        return ArrayHelper::getValue($this->vec_items, $key, $default_value);
+        return $this->vec_items;
     }
 
 
@@ -89,29 +95,13 @@ class ArrayCollection extends \yii\base\BaseObject
 
 
     /**
-     * Pushes an element onto the end of the collection
-     */
-    public function add($item) : void
-    {
-        if ( is_array($item) )
-        {
-            $this->vec_items = ArrayHelper::merge($this->vec_items, $item);
-        }
-        else
-        {
-            $this->vec_items[] = $item;
-        }
-    }
-
-
-    /**
-     * Writes a value into an associative array at the key path specified
+     * Retrieves the value of an array element or object property with the given key or property name.
      *
-     * @see \dezero\helpers\ArrayHelper::setValue()
+     * @see \dezero\helpers\ArrayHelper::getValue()
      */
-    public function set($path, $value)
+    public function get($key, $default_value = null)
     {
-        return ArrayHelper::setValue($this->vec_items, $path, $value);
+        return ArrayHelper::getValue($this->vec_items, $key, $default_value);
     }
 
 
@@ -123,17 +113,6 @@ class ArrayCollection extends \yii\base\BaseObject
     public function exists(string $key) : bool
     {
         return ArrayHelper::keyExists($key, $this->vec_items);
-    }
-
-
-    /**
-     * Removes items with matching values from the array and returns the removed items
-     *
-     * @see \dezero\helpers\ArrayHelper::remove()
-     */
-    public function remove(string $key) : bool
-    {
-        return ArrayHelper::remove($this->vec_items, $key) === null;
     }
 
 
@@ -192,6 +171,239 @@ class ArrayCollection extends \yii\base\BaseObject
     }
 
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | MANIPULATE METHODS
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Pushes an element onto the end of the collection
+     */
+    public function add($item) : void
+    {
+        if ( is_array($item) )
+        {
+            $this->vec_items = ArrayHelper::merge($this->vec_items, $item);
+        }
+        else
+        {
+            $this->vec_items[] = $item;
+        }
+    }
+
+
+    /**
+     * Alias of add method
+     */
+    public function push($item) : void
+    {
+        $this->add($item);
+    }
+
+
+    /**
+     * Writes a value into an associative array at the key path specified
+     *
+     * @see \dezero\helpers\ArrayHelper::setValue()
+     */
+    public function set($path, $value)
+    {
+        return ArrayHelper::setValue($this->vec_items, $path, $value);
+    }
+
+
+    /**
+     * Removes items with matching values from the array and returns the removed items
+     *
+     * @see \dezero\helpers\ArrayHelper::remove()
+     */
+    public function remove(string $key) : bool
+    {
+        return ArrayHelper::remove($this->vec_items, $key) === null;
+    }
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Countable INTERFACE METHODS
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Counts the total number of elements in the map.
+     */
+    public function count() : int
+    {
+        return count($this->vec_items);
+    }
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | IteratorAggregate INTERFACE METHODS
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Returns an iterator for the elements.
+     *
+     * This method will be used by e.g. foreach() to loop over all entries:
+     *  foreach( ArrayCollection::create(['a', 'b']) as $value )
+     *
+     * @return \ArrayIterator<int|string,mixed> Iterator for map elements
+     */
+    public function getIterator() : \ArrayIterator
+    {
+        return new \ArrayIterator( $this->vec_items );
+    }
+
+
+    /**
+     * Returns the elements as a plain array.
+     *
+     * @return array<int|string,mixed> Plain array
+     */
+    public function toArray() : array
+    {
+        return $this->vec_items = $this->array($this->vec_items);
+    }
+
+
+    /**
+     * Returns a plain array of the given elements.
+     *
+     * @param mixed $elements List of elements or single value
+     * @return array<int|string,mixed> Plain array
+     */
+    protected function array($elements) : array
+    {
+        if ( is_array( $elements) )
+        {
+            return $elements;
+        }
+
+        if ( $elements instanceof \Closure )
+        {
+            return (array) $elements();
+        }
+
+        if ( $elements instanceof \dezero\base\ArrayCollection )
+        {
+            return $elements->toArray();
+        }
+
+        if ( is_iterable( $elements ) )
+        {
+            return iterator_to_array( $elements, true );
+        }
+
+        return $elements !== null ? [$elements] : [];
+    }
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | ArrayAccess INTERFACE METHODS
+    |--------------------------------------------------------------------------
+    */
+
+
+    /**
+     * Determines if an element exists at an offset.
+     *
+     * Examples:
+     *  $vec_items = ArrayCollection::create(['a' => 1, 'b' => 3, 'c' => null]);
+     *  isset($vec_items['b']);
+     *  isset($vec_items['c']);
+     *  isset($vec_items['d']);
+     *
+     * Results:
+     *  The first isset() will return TRUE while the second and third one will return FALSE
+     *
+     * @param int|string $key Key to check for
+     * @return bool TRUE if key exists, FALSE if not
+     */
+    public function offsetExists($key) : bool
+    {
+        return isset($this->vec_items[$key]);
+    }
+
+
+    /**
+     * Returns an element at a given offset.
+     *
+     * Examples:
+     *  $vec_items = ArrayCollection::create(['a' => 1, 'b' => 3]);
+     *  $vec_items['b'];
+     *
+     * Results:
+     *  $vec_items['b'] will return 3
+     *
+     * @param int|string $key Key to return the element for
+     * @return mixed Value associated to the given key
+     */
+    public function offsetGet($key)
+    {
+        return $this->vec_items[$key] ?? null;
+    }
+
+
+    /**
+     * Sets the element at a given offset.
+     *
+     * Examples:
+     *  $vec_items = ArrayCollection::create(['a' => 1]);
+     *  $vec_items['b'] = 2;
+     *  $vec_items[0] = 4;
+     *
+     * Results:
+     *  ['a' => 1, 'b' => 2, 0 => 4]
+     *
+     * @param int|string|null $key Key to set the element for or NULL to append value
+     * @param mixed $value New value set for the key
+     */
+    public function offsetSet($key, $value) : void
+    {
+        if ( $key !== null )
+        {
+            $this->vec_items[$key] = $value;
+        }
+        else
+        {
+            $this->vec_items[] = $value;
+        }
+    }
+
+
+    /**
+     * Unsets the element at a given offset.
+     *
+     * Examples:
+     *  $vec_items = ArrayCollection::create(['a' => 1]);
+     *  unset( $vec_items['a']);
+     *
+     * Results:
+     *  The map will be empty
+     *
+     * @param int|string $key Key for unsetting the item
+     */
+    public function offsetUnset($key) : void
+    {
+        unset($this->vec_items[$key]);
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | UTILS METHODS
+    |--------------------------------------------------------------------------
+    */
+
     /**
      * Removes the passed characters from the left/right of all strings.
      *
@@ -210,4 +422,5 @@ class ArrayCollection extends \yii\base\BaseObject
     {
         return Json::encode($this->vec_items);
     }
+
 }

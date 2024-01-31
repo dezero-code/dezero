@@ -132,7 +132,6 @@ class File extends \yii\base\BaseObject
     |--------------------------------------------------------------------------
     */
 
-
     /**
      * Check if current filesystem object exists
      */
@@ -504,7 +503,6 @@ class File extends \yii\base\BaseObject
     | SETTER METHODS
     |--------------------------------------------------------------------------
     */
-
 
     /**
      * Sets the current filesystem object owner for UNIX systems.
@@ -899,7 +897,6 @@ class File extends \yii\base\BaseObject
     | DIRECTORY METHODS
     |--------------------------------------------------------------------------
     */
-
 
     /**
      * Ensures directory exists and has specific permissions.
