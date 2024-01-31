@@ -1,6 +1,6 @@
 <?php
 /**
- * ArrayCollection class file
+ * ArrayDataObject class file
  *
  * @see https://php-map.org/
  *
@@ -9,30 +9,50 @@
  * @copyright Copyright &copy; 2024 Fabián Ruiz
  */
 
-namespace dezero\base;
+namespace dezero\data;
 
+use dezero\data\DataObject;
 use dezero\helpers\ArrayHelper;
 use dezero\helpers\Json;
 use dezero\helpers\StringHelper;
 use Yii;
 
 /**
- * ArrayCollection is the base class to manage arrays
+ * Data object class for arrays
  */
-class ArrayCollection extends \yii\base\BaseObject implements \ArrayAccess, \Countable, \IteratorAggregate
+class ArrayDataObject extends DataObject implements \ArrayAccess, \Countable, \IteratorAggregate
 {
     /**
      * @var array
      */
-    private $vec_items;
+    private $vec_data;
 
 
     /**
-     * Array constructor
+     * Main constructor
      */
-    public function __construct(array $vec_items)
+    public function __construct($vec_data)
     {
-        $this->vec_items = $vec_items;
+        $this->vec_data = $vec_data;
+        $this->original_data = $vec_data;
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function value()
+    {
+        return $this->vec_data;
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function original()
+    {
+        return $this->original_data;
     }
 
 
@@ -43,16 +63,7 @@ class ArrayCollection extends \yii\base\BaseObject implements \ArrayAccess, \Cou
      */
     public function __toArray() : array
     {
-        return $this->vec_items = $this->array($this->vec_items);
-    }
-
-
-    /**
-     * Create the new ArrayCollection object
-     */
-    public static function create(array $vec_items) : self
-    {
-        return new static($vec_items);
+        return $this->vec_data = $this->array($this->vec_data);
     }
 
 
@@ -67,7 +78,7 @@ class ArrayCollection extends \yii\base\BaseObject implements \ArrayAccess, \Cou
      */
     public function all() : array
     {
-        return $this->vec_items;
+        return $this->vec_data;
     }
 
 
@@ -76,7 +87,7 @@ class ArrayCollection extends \yii\base\BaseObject implements \ArrayAccess, \Cou
      */
     public function at(int $position)
     {
-        $item = array_slice($this->vec_items, $position, 1);
+        $item = array_slice($this->vec_data, $position, 1);
 
         return !empty($item) ? current($item) : null;
     }
@@ -88,7 +99,7 @@ class ArrayCollection extends \yii\base\BaseObject implements \ArrayAccess, \Cou
      */
     public function index($key)
     {
-        $position = array_search($key, array_keys($this->vec_items));
+        $position = array_search($key, array_keys($this->vec_data));
 
         return $position !== false ? $position : null;
     }
@@ -101,7 +112,7 @@ class ArrayCollection extends \yii\base\BaseObject implements \ArrayAccess, \Cou
      */
     public function get($key, $default_value = null)
     {
-        return ArrayHelper::getValue($this->vec_items, $key, $default_value);
+        return ArrayHelper::getValue($this->vec_data, $key, $default_value);
     }
 
 
@@ -112,7 +123,7 @@ class ArrayCollection extends \yii\base\BaseObject implements \ArrayAccess, \Cou
      */
     public function exists(string $key) : bool
     {
-        return ArrayHelper::keyExists($key, $this->vec_items);
+        return ArrayHelper::keyExists($key, $this->vec_data);
     }
 
 
@@ -123,7 +134,7 @@ class ArrayCollection extends \yii\base\BaseObject implements \ArrayAccess, \Cou
      */
     public function column($key_name)
     {
-        return ArrayHelper::getColumn($this->vec_items, $key_name);
+        return ArrayHelper::getColumn($this->vec_data, $key_name);
     }
 
 
@@ -134,7 +145,7 @@ class ArrayCollection extends \yii\base\BaseObject implements \ArrayAccess, \Cou
      */
     public function first()
     {
-        return ArrayHelper::firstValue($this->vec_items);
+        return ArrayHelper::firstValue($this->vec_data);
     }
 
 
@@ -145,7 +156,7 @@ class ArrayCollection extends \yii\base\BaseObject implements \ArrayAccess, \Cou
      */
     public function firstKey()
     {
-        return ArrayHelper::firstKey($this->vec_items);
+        return ArrayHelper::firstKey($this->vec_data);
     }
 
 
@@ -156,7 +167,7 @@ class ArrayCollection extends \yii\base\BaseObject implements \ArrayAccess, \Cou
      */
     public function last()
     {
-        return ArrayHelper::lastValue($this->vec_items);
+        return ArrayHelper::lastValue($this->vec_data);
     }
 
 
@@ -167,7 +178,7 @@ class ArrayCollection extends \yii\base\BaseObject implements \ArrayAccess, \Cou
      */
     public function lastKey()
     {
-        return ArrayHelper::lastKey($this->vec_items);
+        return ArrayHelper::lastKey($this->vec_data);
     }
 
 
@@ -185,11 +196,11 @@ class ArrayCollection extends \yii\base\BaseObject implements \ArrayAccess, \Cou
     {
         if ( is_array($item) )
         {
-            $this->vec_items = ArrayHelper::merge($this->vec_items, $item);
+            $this->vec_data = ArrayHelper::merge($this->vec_data, $item);
         }
         else
         {
-            $this->vec_items[] = $item;
+            $this->vec_data[] = $item;
         }
     }
 
@@ -210,7 +221,7 @@ class ArrayCollection extends \yii\base\BaseObject implements \ArrayAccess, \Cou
      */
     public function set($path, $value)
     {
-        return ArrayHelper::setValue($this->vec_items, $path, $value);
+        return ArrayHelper::setValue($this->vec_data, $path, $value);
     }
 
 
@@ -221,7 +232,7 @@ class ArrayCollection extends \yii\base\BaseObject implements \ArrayAccess, \Cou
      */
     public function remove(string $key) : bool
     {
-        return ArrayHelper::remove($this->vec_items, $key) === null;
+        return ArrayHelper::remove($this->vec_data, $key) === null;
     }
 
 
@@ -237,7 +248,7 @@ class ArrayCollection extends \yii\base\BaseObject implements \ArrayAccess, \Cou
      */
     public function count() : int
     {
-        return count($this->vec_items);
+        return count($this->vec_data);
     }
 
 
@@ -252,13 +263,13 @@ class ArrayCollection extends \yii\base\BaseObject implements \ArrayAccess, \Cou
      * Returns an iterator for the elements.
      *
      * This method will be used by e.g. foreach() to loop over all entries:
-     *  foreach( ArrayCollection::create(['a', 'b']) as $value )
+     *  foreach( ArrayDataObject::create(['a', 'b']) as $value )
      *
      * @return \ArrayIterator<int|string,mixed> Iterator for map elements
      */
     public function getIterator() : \ArrayIterator
     {
-        return new \ArrayIterator( $this->vec_items );
+        return new \ArrayIterator( $this->vec_data );
     }
 
 
@@ -269,7 +280,7 @@ class ArrayCollection extends \yii\base\BaseObject implements \ArrayAccess, \Cou
      */
     public function toArray() : array
     {
-        return $this->vec_items = $this->array($this->vec_items);
+        return $this->vec_data = $this->array($this->vec_data);
     }
 
 
@@ -291,7 +302,7 @@ class ArrayCollection extends \yii\base\BaseObject implements \ArrayAccess, \Cou
             return (array) $elements();
         }
 
-        if ( $elements instanceof \dezero\base\ArrayCollection )
+        if ( $elements instanceof \dezero\base\ArrayDataObject )
         {
             return $elements->toArray();
         }
@@ -317,10 +328,10 @@ class ArrayCollection extends \yii\base\BaseObject implements \ArrayAccess, \Cou
      * Determines if an element exists at an offset.
      *
      * Examples:
-     *  $vec_items = ArrayCollection::create(['a' => 1, 'b' => 3, 'c' => null]);
-     *  isset($vec_items['b']);
-     *  isset($vec_items['c']);
-     *  isset($vec_items['d']);
+     *  $vec_data = ArrayDataObject::create(['a' => 1, 'b' => 3, 'c' => null]);
+     *  isset($vec_data['b']);
+     *  isset($vec_data['c']);
+     *  isset($vec_data['d']);
      *
      * Results:
      *  The first isset() will return TRUE while the second and third one will return FALSE
@@ -330,7 +341,7 @@ class ArrayCollection extends \yii\base\BaseObject implements \ArrayAccess, \Cou
      */
     public function offsetExists($key) : bool
     {
-        return isset($this->vec_items[$key]);
+        return isset($this->vec_data[$key]);
     }
 
 
@@ -338,18 +349,18 @@ class ArrayCollection extends \yii\base\BaseObject implements \ArrayAccess, \Cou
      * Returns an element at a given offset.
      *
      * Examples:
-     *  $vec_items = ArrayCollection::create(['a' => 1, 'b' => 3]);
-     *  $vec_items['b'];
+     *  $vec_data = ArrayDataObject::create(['a' => 1, 'b' => 3]);
+     *  $vec_data['b'];
      *
      * Results:
-     *  $vec_items['b'] will return 3
+     *  $vec_data['b'] will return 3
      *
      * @param int|string $key Key to return the element for
      * @return mixed Value associated to the given key
      */
     public function offsetGet($key)
     {
-        return $this->vec_items[$key] ?? null;
+        return $this->vec_data[$key] ?? null;
     }
 
 
@@ -357,9 +368,9 @@ class ArrayCollection extends \yii\base\BaseObject implements \ArrayAccess, \Cou
      * Sets the element at a given offset.
      *
      * Examples:
-     *  $vec_items = ArrayCollection::create(['a' => 1]);
-     *  $vec_items['b'] = 2;
-     *  $vec_items[0] = 4;
+     *  $vec_data = ArrayDataObject::create(['a' => 1]);
+     *  $vec_data['b'] = 2;
+     *  $vec_data[0] = 4;
      *
      * Results:
      *  ['a' => 1, 'b' => 2, 0 => 4]
@@ -371,11 +382,11 @@ class ArrayCollection extends \yii\base\BaseObject implements \ArrayAccess, \Cou
     {
         if ( $key !== null )
         {
-            $this->vec_items[$key] = $value;
+            $this->vec_data[$key] = $value;
         }
         else
         {
-            $this->vec_items[] = $value;
+            $this->vec_data[] = $value;
         }
     }
 
@@ -384,8 +395,8 @@ class ArrayCollection extends \yii\base\BaseObject implements \ArrayAccess, \Cou
      * Unsets the element at a given offset.
      *
      * Examples:
-     *  $vec_items = ArrayCollection::create(['a' => 1]);
-     *  unset( $vec_items['a']);
+     *  $vec_data = ArrayDataObject::create(['a' => 1]);
+     *  unset( $vec_data['a']);
      *
      * Results:
      *  The map will be empty
@@ -394,7 +405,7 @@ class ArrayCollection extends \yii\base\BaseObject implements \ArrayAccess, \Cou
      */
     public function offsetUnset($key) : void
     {
-        unset($this->vec_items[$key]);
+        unset($this->vec_data[$key]);
     }
 
 
@@ -411,7 +422,7 @@ class ArrayCollection extends \yii\base\BaseObject implements \ArrayAccess, \Cou
      */
     public function trim() : void
     {
-        $this->vec_items = ArrayHelper::trim($this->vec_items);
+        $this->vec_data = ArrayHelper::trim($this->vec_data);
     }
 
 
@@ -420,7 +431,7 @@ class ArrayCollection extends \yii\base\BaseObject implements \ArrayAccess, \Cou
      */
     public function toJson() : ?string
     {
-        return Json::encode($this->vec_items);
+        return Json::encode($this->vec_data);
     }
 
 }

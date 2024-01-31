@@ -9,10 +9,20 @@
 
 namespace dezero\helpers;
 
+use dezero\data\ArrayDataObject;
 use dezero\helpers\StringHelper;
 
 class ArrayHelper extends \yii\helpers\ArrayHelper
 {
+    /**
+     * Returns the data object of the given array
+     */
+    public static function toObject(array $array) : ArrayDataObject
+    {
+        return ArrayDataObject::from($array);
+    }
+
+
     /**
      * Filters empty strings from an array.
      *
