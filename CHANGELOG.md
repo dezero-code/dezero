@@ -2,6 +2,13 @@
 
 All notable changes to `Dezero Framework` will be documented in this file
 
+## 0.2.7 - 2024-01-31
+
+- ArrayCollection - Created a new base class to manage arrays as an object collection
+- GridView - Detect if Gridivew is loaded inside a SlidePanel
+- GridvView - Add "raw" as column default format
+- Controller - New method requireSuperadmin() for \dezero\web\Controller
+
 ## 0.2.6 - 2024-01-13
 
 - AUTH module - Create default permissions for core modules
