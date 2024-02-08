@@ -242,7 +242,7 @@ class Category extends BaseCategory implements ConfigInterface
     public function beforeValidate()
     {
         // Force checking category_parent_id (must be different from current category_id)
-        if ( ! $this->isNewRecord && $this->category_parent_id === $this->category_id )
+        if ( ! $this->getIsNewRecord() && $this->category_parent_id === $this->category_id )
         {
             $this->category_parent_id = null;
         }

@@ -53,7 +53,7 @@ class ActiveRecord extends \yii\db\ActiveRecord
         parent::init();
 
         // Load default values by default
-        if ( $this->isNewRecord && $this->isClearAttributes === false )
+        if ( $this->getIsNewRecord() && $this->isClearAttributes === false )
         {
             $this->loadDefaultValues();
         }
