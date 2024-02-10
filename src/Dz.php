@@ -348,4 +348,25 @@ class Dz extends Yii
     {
         return getenv('SITE_URL');
     }
+
+
+    /**
+     * Make Yii::t() method compatible with Yii1 pluralize style
+     *
+     *  > Yii::t('backend', 'product|products', $num_products)
+     */
+    public static function t($category, $message, $params = [], $language = null)
+    {
+        if ( preg_match("/\|/", $message) && !empty($params) && !is_array($params) )
+        {
+            $vec_message = explode('|', $message);
+            if ( count($vec_message) === 2 )
+            {
+                $message = '{num, plural, =1{'. $vec_message[0] .'} other{'. $vec_message[1] .'}}';
+                $params = ['num' => $params];
+            }
+        }
+
+        return Yii::t($category, $message, $params, $language);
+    }
 }
