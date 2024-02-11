@@ -187,26 +187,6 @@ class Batch extends BaseBatch
     */
 
     /**
-     * Return formatted endpoint
-     */
-    public function getEndpoint(?string $endpoint = null) : string
-    {
-        if ( $endpoint === null )
-        {
-            $endpoint = $this->request_endpoint;
-        }
-
-        if ( preg_match("/\_\_\_/", $endpoint) )
-        {
-            $vec_endpoint = explode("___", $endpoint);
-            return $vec_endpoint[0] .' '. $vec_endpoint[1];
-        }
-
-        return $endpoint;
-    }
-
-
-    /**
      * Return the summary content into an array
      */
     public function getSummary() : array
@@ -221,6 +201,35 @@ class Batch extends BaseBatch
     public function getResults() : array
     {
         return !empty($this->results_json) ? Json::decode($this->results_json) : [];
+    }
+
+
+    /**
+     * Return formatted endpoint
+     */
+    public function getEndpoint(?string $endpoint = null) : string
+    {
+        if ( $endpoint === null )
+        {
+            $vec_summary = $this->getSummary();
+            if ( !empty($vec_summary) && isset($vec_summary['request_endpoint']) )
+            {
+                $endpoint = $vec_summary['request_endpoint'];
+            }
+        }
+
+        if ( $endpoint === null )
+        {
+            return '';
+        }
+
+        if ( preg_match("/\_\_\_/", $endpoint) )
+        {
+            $vec_endpoint = explode("___", $endpoint);
+            return $vec_endpoint[0] .' '. $vec_endpoint[1];
+        }
+
+        return $endpoint;
     }
 
 
