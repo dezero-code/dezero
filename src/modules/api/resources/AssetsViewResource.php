@@ -113,8 +113,8 @@ class AssetsViewResource extends Resource
             'file_mime'     => $this->asset_model->file_mime,
             'file_size'     => $this->asset_model->file_size,
             'file_content'  => $this->asset_model->file->base64_encode(),
-            'created_date'  => RestHelper::date($this->asset_model->created_date),
-            'updated_date'  => RestHelper::date($this->asset_model->updated_date)
+            'created_date'  => RestHelper::formatDate($this->asset_model->created_date),
+            'updated_date'  => RestHelper::formatDate($this->asset_model->updated_date)
         ];
     }
 }

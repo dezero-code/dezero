@@ -41,19 +41,34 @@ class RestHelper
 
 
     /**
-     * Convert a date to REST API format: "Y-m-d H:i:s"
+     * Convert a date from UNIX to REST API format: "Y-m-d H:i:s"
      */
-    public static function date(int $unix_date) : string
+    public static function formatDate(int $unix_date) : string
     {
         return date("Y-m-d H:i:s", $unix_date);
     }
 
 
     /**
+     * Convert a date from REST API format: "Y-m-d H:i:s" to UNIX date
+     */
+    public static function unixDate(string $format_date) : int
+    {
+        $unix_date = DateHelper::toUnix($format_date, 'Y-m-d H:i');
+        if ( $unix_date !== null )
+        {
+            return $unix_date;
+        }
+
+        return DateHelper::toUnix($date, 'Y-m-d H:i:s');
+    }
+
+
+    /**
      * Validate a date
      */
-    public static function validateDate($date) : bool
+    public static function validateDate($format_date) : bool
     {
-        return DateHelper::toUnix($date, 'Y-m-d H:i') !== null || DateHelper::toUnix($date, 'Y-m-d H:i:s') !== null;
+        return DateHelper::toUnix($format_date, 'Y-m-d H:i') !== null || DateHelper::toUnix($format_date, 'Y-m-d H:i:s') !== null;
     }
 }
