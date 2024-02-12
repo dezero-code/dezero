@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Migration class m231009_153235_batch_table
  *

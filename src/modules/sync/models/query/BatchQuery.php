@@ -32,4 +32,13 @@ class BatchQuery extends \dezero\db\ActiveQuery
     {
         return $this->andWhere(['batch_type' => $batch_type]);
     }
+
+
+    /**
+     * Filter the query by "name" attribute value
+     */
+    public function name(string $name) : self
+    {
+        return $this->andWhere(['name' => $name]);
+    }
 }

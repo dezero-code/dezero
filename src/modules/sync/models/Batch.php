@@ -70,14 +70,13 @@ class Batch extends BaseBatch
             // Typed rules
             'requiredFields' => [['batch_type', 'name'], 'required'],
             'integerFields' => [['total_items', 'total_errors', 'total_warnings', 'total_operations', 'last_operation', 'item_starting_num', 'item_ending_num', 'file_id', 'entity_source_id', 'created_date', 'created_user_id', 'updated_date', 'updated_user_id'], 'integer'],
-            'stringFields' => [['results_json'], 'string'],
+            'stringFields' => [['summary_json', 'results_json'], 'string'],
             
             // Max length rules
             'max32' => [['batch_type'], 'string', 'max' => 32],
             'max36' => [['entity_uuid'], 'string', 'max' => 36],
             'max128' => [['name', 'entity_type'], 'string', 'max' => 128],
             'max255' => [['description'], 'string', 'max' => 255],
-            'max512' => [['summary_json'], 'string', 'max' => 512],
             
             // Default NULL
             'defaultNull' => [['description', 'summary_json', 'results_json', 'file_id', 'entity_uuid', 'entity_type', 'entity_source_id'], 'default', 'value' => null],

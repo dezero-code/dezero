@@ -48,14 +48,19 @@ class ActiveRecord extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function init(): void
+    public function init() : void
     {
         parent::init();
 
         // Load default values by default
         if ( $this->getIsNewRecord() && $this->isClearAttributes === false )
         {
-            $this->loadDefaultValues();
+            // 12/02/2024 - Fix an error generating active records templates from Gii
+            $table_name = static::tableName();
+            if ( $table_name !== '{{%active_record}}' )
+            {
+                $this->loadDefaultValues();
+            }
         }
     }
 
