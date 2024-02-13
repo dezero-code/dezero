@@ -19,16 +19,16 @@ class m240212_182822_queue_table extends Migration
         $this->dropTableIfExists('queue', true);
 
         $this->createTable('queue', [
-            'job_id' => $this->primaryKey(),
+            'message_id' => $this->primaryKey(),
             'channel' => $this->string()->notNull()->defaultValue('queue'),
-            'job' => $this->binary()->notNull(),
+            'message' => $this->binary()->notNull(),
             'ttr' => $this->integer()->unsigned()->notNull(),
             'delay' => $this->integer()->unsigned()->notNull()->defaultValue(0),
             'priority' => $this->integer()->unsigned()->notNull()->defaultValue(1024),
 
             // Status information
-            'status_type' => $this->enum('status_type', ['waiting', 'executing', 'completed', 'failed'])->notNull()->defaultValue('waiting'),
-            'executing_date' => $this->date(),
+            'status_type' => $this->enum('status_type', ['waiting', 'reserved', 'completed', 'failed'])->notNull()->defaultValue('waiting'),
+            'reserved_date' => $this->date(),
             'completed_date' => $this->date(),
             'failed_date' => $this->date(),
             'is_failed' => $this->tinyInteger(1)->unsigned()->notNull()->defaultValue(0),
