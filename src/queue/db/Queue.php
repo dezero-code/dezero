@@ -55,7 +55,7 @@ class Queue extends \yii\queue\db\Queue
     /**
      * @var bool ability to delete completed messages from table
      */
-    public $deleteCompleted = true;
+    public $deleteAfterComplete = true;
 
 
     /**
@@ -127,14 +127,15 @@ class Queue extends \yii\queue\db\Queue
         {
             // TODO - Log error
 
-            // Save error in database
+            // Mark the job as failed
             $this->db->createCommand()->update(
                 $this->tableName,
                 [
                     'status_type'   => self::STATUS_TYPE_FAILED,
                     'failed_date'   => time(),
+                    'is_failed'     => 1,
                     'results_json'  => $event->error ? Json::encode($event->error->getMessage()) : null,
-                    'updated_date'  => $vec_message['updated_date'],
+                    'updated_date'  => time(),
                 ],
                 [
                     'message_id'    => $event->id,
@@ -160,7 +161,7 @@ class Queue extends \yii\queue\db\Queue
             return $vec_message['status_type'];
         }
 
-        if ( $this->deleteCompleted )
+        if ( $this->deleteAfterComplete )
         {
             return self::STATUS_TYPE_COMPLETED;
         }
@@ -248,10 +249,10 @@ class Queue extends \yii\queue\db\Queue
                     $this->db->createCommand()->update(
                         $this->tableName,
                         [
-                            'status_type'       => $vec_message['status_type'],
-                            'executing_date'    => $vec_message['executing_date'],
-                            'attempt'           => $vec_message['attempt'],
-                            'updated_date'      => $vec_message['updated_date'],
+                            'status_type'   => $vec_message['status_type'],
+                            'reserved_date' => $vec_message['reserved_date'],
+                            'attempt'       => $vec_message['attempt'],
+                            'updated_date'  => $vec_message['updated_date'],
                         ],
                         [
                             'message_id' => $vec_message['message_id'],
@@ -277,15 +278,15 @@ class Queue extends \yii\queue\db\Queue
     /**
      * Mark a message as completed
      */
-    protected function complete($vec_message)
+    protected function complete($message_id)
     {
         // Delete completed message?
-        if ( $this->deleteCompleted )
+        if ( $this->deleteAfterComplete )
         {
             $this->db->createCommand()->delete(
                 $this->tableName,
                 [
-                    'message_id' => $vec_message['message_id']
+                    'message_id' => $message_id
                 ]
             )->execute();
 
@@ -298,10 +299,11 @@ class Queue extends \yii\queue\db\Queue
             [
                 'status_type'       => self::STATUS_TYPE_COMPLETED,
                 'completed_date'    => time(),
+                'is_failed'         => 0,
                 'updated_date'      => time()
             ],
             [
-                'message_id' => $vec_message['message_id']
+                'message_id' => $message_id
             ]
         )->execute();
     }
@@ -363,5 +365,52 @@ class Queue extends \yii\queue\db\Queue
                 'message_id' => $message_id,
             ]
         )->execute();
+    }
+
+
+    /**
+     * Check if status is WAITING
+     */
+    public function isWaiting($id)
+    {
+        return $this->status($id) === self::STATUS_TYPE_WAITING;
+    }
+
+
+    /**
+     * Check if status is RESERVED
+     */
+    public function isReserved($id)
+    {
+        return $this->status($id) === self::STATUS_TYPE_RESERVED;
+    }
+
+
+    /**
+     * Check if status is COMPELTED
+     */
+    public function isCompleted($id)
+    {
+        return $this->status($id) === self::STATUS_TYPE_COMPLETED;
+    }
+
+    /**
+     * Alias of self::isCompleted()
+     */
+    public function isDone($id)
+    {
+        return self::isCompleted($id);
+    }
+
+
+
+
+
+    /**
+     * Check if status is FAILED
+     */
+    public function isFailed($id)
+    {
+        return $this->status($id) === self::STATUS_TYPE_FAILED;
     }
 }

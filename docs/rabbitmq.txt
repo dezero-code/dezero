@@ -1,0 +1,25 @@
+====================
+-- RABBITMQ GUIDE --
+====================
+
+# INSTALL OSX
+    * https://taruntelang.medium.com/step-by-step-guide-installing-rabbitmq-on-mac-with-homebrew-e651d6c1d2d6
+    * https://dyclassroom.com/howto-mac/how-to-install-rabbitmq-on-mac-using-homebrew
+
+# COMMANDS
+    Start RabbitMQ server manually
+        > rbserver                      // Alias command
+        > rabbitmq-server               // Original command
+
+    Start RabbitMQ as service
+        > rbstart                       // Alias command
+        > brew services start rabbitmq  // Original command
+
+    Stop RabbitMQ service
+        > rbstop                        // Alias command
+        > brew services stop rabbitmq   // Original command
+
+
+# RABBITMQ DASHBOARD
+    > http://localhost:15672/
+    > guest:guest
