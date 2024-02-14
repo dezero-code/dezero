@@ -7,14 +7,16 @@
  * @copyright Copyright &copy; 2024 Fabián Ruiz
  */
 
-namespace dezero\queue\db;
+namespace dezero\queue\drivers\db;
 
 use dezero\db\Query;
 use dezero\helpers\Json;
+use dezero\helpers\QueueHelper;
 use yii\base\Exception;
 use yii\base\InvalidArgumentException;
 use yii\di\Instance;
 use yii\queue\ExecEvent;
+use yii\queue\serializers\JsonSerializer;
 use Yii;
 
 /**
@@ -65,6 +67,12 @@ class Queue extends \yii\queue\db\Queue
 
 
     /**
+     * Json serializer by default
+     */
+    public $serializer = JsonSerializer::class;
+
+
+    /**
      * Listens queue and runs each message.
      *
      * @param bool $repeat whether to continue listening when queue is empty.
@@ -81,7 +89,7 @@ class Queue extends \yii\queue\db\Queue
             {
                 if ( ! $this->executeJob() )
                 {
-                    if ( !$repeat )
+                    if ( ! $repeat )
                     {
                         break;
                     }
@@ -123,25 +131,45 @@ class Queue extends \yii\queue\db\Queue
      */
     public function handleError(ExecEvent $event)
     {
-        if ( parent::handleError($event) )
+        // Append errors in "results_json"
+        $vec_errors = [];
+        if ( $event->error )
         {
-            // TODO - Log error
-
-            // Mark the job as failed
-            $this->db->createCommand()->update(
-                $this->tableName,
-                [
-                    'status_type'   => self::STATUS_TYPE_FAILED,
-                    'failed_date'   => time(),
-                    'is_failed'     => 1,
-                    'results_json'  => $event->error ? Json::encode($event->error->getMessage()) : null,
-                    'updated_date'  => time(),
-                ],
-                [
-                    'message_id'    => $event->id,
-                ])
-                ->execute();
+            $vec_message = QueueHelper::getMessage($event->id);
+            if ( $vec_message !== null && !empty($vec_message) )
+            {
+                if ( ! empty($vec_message['results_json']) )
+                {
+                    $vec_errors = Json::decode($vec_message['results_json']);
+                }
+                $vec_errors[] = $event->error->getMessage();
+            }
         }
+
+        $result = parent::handleError($event);
+
+        // Job has failed but it can retry, save the error in database
+        if ( $event->retry )
+        // if ( ! parent::handleError($event) )
+        {
+            QueueHelper::updateMessage($event->id,  [
+                'results_json'  => !empty($vec_errors) ? Json::encode($vec_errors) : null,
+            ]);
+        }
+
+        // Job cannot retry ---> Mark the job as failed
+        else
+        {
+            QueueHelper::updateMessage($event->id,  [
+                'status_type'   => self::STATUS_TYPE_FAILED,
+                'failed_date'   => time(),
+                'is_failed'     => 1,
+                'results_json'  => !empty($vec_errors) ? Json::encode($vec_errors) : null,
+                'updated_date'  => time(),
+            ]);
+        }
+
+        return $result;
     }
 
 
@@ -150,13 +178,8 @@ class Queue extends \yii\queue\db\Queue
      */
     public function status($message_id)
     {
-        $vec_message = (new Query())
-            ->select(['status_type'])
-            ->from($this->tableName)
-            ->where(['message_id' => $message_id])
-            ->one($this->db);
-
-        if ( $vec_message )
+        $vec_message = QueueHelper::getMessage($message_id);
+        if ( $vec_message !== null && !empty($vec_message) )
         {
             return $vec_message['status_type'];
         }
@@ -175,7 +198,7 @@ class Queue extends \yii\queue\db\Queue
      */
     protected function pushMessage($message, $ttr, $delay, $priority)
     {
-        $this->db->createCommand()->insert($this->tableName, [
+        return QueueHelper::pushMessage([
             'channel'       => $this->channel,
             'message'       => $message,
             'ttr'           => $ttr,
@@ -183,25 +206,16 @@ class Queue extends \yii\queue\db\Queue
             'priority'      => $priority ?: 1024,
             'created_date'  => time(),
             'updated_date'  => time(),
-        ])->execute();
-
-        $tableSchema = $this->db->getTableSchema($this->tableName);
-
-        return $this->db->getLastInsertID($tableSchema->sequenceName);
+        ]);
     }
 
 
     /**
      * {@inheritdoc}
      */
-    public function remove($id)
+    public function remove($message_id)
     {
-        return (bool) $this->db->createCommand()
-            ->delete($this->tableName, [
-                'channel' => $this->channel,
-                'message_id' => $message_id
-            ])
-            ->execute();
+        return QueueHelper::deleteMessage($message_id);
     }
 
     /**
@@ -220,6 +234,7 @@ class Queue extends \yii\queue\db\Queue
 
             try
             {
+                // Moves expired messages into waiting list
                 $this->moveExpired();
 
                 // Reserve one message
@@ -239,25 +254,21 @@ class Queue extends \yii\queue\db\Queue
                     ->limit(1)
                     ->one($this->db);
 
-                if ( is_array($vec_message) )
+                if ( is_array($vec_message) && !empty($vec_message) )
                 {
                     $vec_message['status_type'] = self::STATUS_TYPE_RESERVED;
                     $vec_message['reserved_date'] = time();
                     $vec_message['attempt'] = (int) $vec_message['attempt'] + 1;
                     $vec_message['updated_date'] = time();
 
-                    $this->db->createCommand()->update(
-                        $this->tableName,
-                        [
-                            'status_type'   => $vec_message['status_type'],
-                            'reserved_date' => $vec_message['reserved_date'],
-                            'attempt'       => $vec_message['attempt'],
-                            'updated_date'  => $vec_message['updated_date'],
-                        ],
-                        [
-                            'message_id' => $vec_message['message_id'],
-                        ])
-                        ->execute();
+                    \DzLog::dev("Reserving message {$vec_message['message_id']}");
+
+                    QueueHelper::updateMessage($vec_message['message_id'], [
+                        'status_type'   => $vec_message['status_type'],
+                        'reserved_date' => $vec_message['reserved_date'],
+                        'attempt'       => $vec_message['attempt'],
+                        'updated_date'  => $vec_message['updated_date'],
+                    ]);
 
                     if ( is_resource($vec_message['message']) )
                     {
@@ -280,32 +291,27 @@ class Queue extends \yii\queue\db\Queue
      */
     protected function complete($message_id)
     {
+        // Do not allow remove FAILED message
+        if ( $this->isFailed($message_id) )
+        {
+            return;
+        }
+
         // Delete completed message?
         if ( $this->deleteAfterComplete )
         {
-            $this->db->createCommand()->delete(
-                $this->tableName,
-                [
-                    'message_id' => $message_id
-                ]
-            )->execute();
+            $result = QueueHelper::deleteMessage($message_id, $this->channel);
 
             return;
         }
 
-        // Keep completed message
-        $this->db->createCommand()->update(
-            $this->tableName,
-            [
-                'status_type'       => self::STATUS_TYPE_COMPLETED,
-                'completed_date'    => time(),
-                'is_failed'         => 0,
-                'updated_date'      => time()
-            ],
-            [
-                'message_id' => $message_id
-            ]
-        )->execute();
+        // Keep completed message into database
+        QueueHelper::updateMessage($message_id, [
+            'status_type'       => self::STATUS_TYPE_COMPLETED,
+            'completed_date'    => time(),
+            'is_failed'         => 0,
+            'updated_date'      => time()
+        ]);
     }
 
 
@@ -329,6 +335,8 @@ class Queue extends \yii\queue\db\Queue
         {
             $this->reserveTime = time();
 
+            // \DzLog::dev("channel = '{$this->channel}' AND status_type = '". self::STATUS_TYPE_WAITING ."' AND reserved_date < ({$this->reserveTime} - ttr)");
+
             $this->db->createCommand()->update(
                 $this->tableName,
                 [
@@ -338,7 +346,7 @@ class Queue extends \yii\queue\db\Queue
                     'progress_label'    => null,
                     'updated_date'      => time()
                 ],
-                '[[channel]] = :channel AND [[status_type]] = :status_type AND [[reserved_date]] < :time - [[ttr]]',
+                '[[channel]] = :channel AND [[status_type]] = :status_type AND [[reserved_date]] < (:time - [[ttr]])',
                 [
                     ':channel'      => $this->channel,
                     ':status_type'  => self::STATUS_TYPE_RESERVED,
@@ -401,10 +409,6 @@ class Queue extends \yii\queue\db\Queue
     {
         return self::isCompleted($id);
     }
-
-
-
-
 
     /**
      * Check if status is FAILED
