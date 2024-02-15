@@ -21,7 +21,7 @@ class m240212_182822_queue_table extends Migration
         $this->createTable('queue', [
             'message_id' => $this->primaryKey(),
             'channel' => $this->string()->notNull()->defaultValue('queue'),
-            'message' => $this->binary()->notNull(),
+            'message' => $this->longText()->notNull(),
             'ttr' => $this->integer()->unsigned()->notNull(),
             'delay' => $this->integer()->unsigned()->notNull()->defaultValue(0),
             'priority' => $this->integer()->unsigned()->notNull()->defaultValue(1024),

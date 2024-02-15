@@ -6,6 +6,7 @@
 namespace dezero\helpers;
 
 use dezero\db\Query;
+use dezero\queue\drivers\db\Queue;
 use Dz;
 use yii\base\BaseObject;
 use Yii;
@@ -18,11 +19,26 @@ class QueueHelper extends BaseObject
     /**
      * Return all the messages filtered by status
      */
-    public static function getByStatus(string $status_type) : ?array
+    public static function getByStatus($status_type) : ?array
     {
         return (new Query())
             ->from(self::getTableName())
             ->where(['status_type' => $status_type])
+            ->orderBy(['updated_date' => SORT_DESC])
+            ->all(self::getDb());
+    }
+
+
+    /**
+     * Return total messages grouped by status
+     */
+    public static function totalByStatus() : array
+    {
+        return (new Query())
+            ->select(['COUNT(*) AS total_messages', 'status_type'])
+            ->from(self::getTableName())
+            ->groupBy(['status_type'])
+            ->orderBy(['status_type' => SORT_ASC])
             ->all(self::getDb());
     }
 
@@ -67,6 +83,23 @@ class QueueHelper extends BaseObject
     public static function deleteMessage(int $message_id) : bool
     {
         return (bool) self::getDb()->createCommand()->delete(self::getTableName(), ['message_id' => $message_id])->execute();
+    }
+
+
+    /**
+     * Retries all failed messages
+     */
+    public static function retryAll() : void
+    {
+        $vec_columns = [
+            'status_type'   => Queue::STATUS_TYPE_WAITING,
+            'reserved_date' => null,
+            'failed_date'   => null,
+            'is_failed'     => 0,
+            'attempt'       => null,
+            'results_json'  => null
+        ];
+        self::getDb()->createCommand()->update(self::getTableName(), $vec_columns, ['status_type' => Queue::STATUS_TYPE_FAILED])->execute();
     }
 
 
