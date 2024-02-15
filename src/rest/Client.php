@@ -8,6 +8,7 @@
 namespace dezero\rest;
 
 use dezero\contracts\ConfigInterface;
+use dezero\contracts\EntityInterface;
 use dezero\entity\ActiveRecord;
 use dezero\helpers\Json;
 use dezero\helpers\Log;
@@ -15,6 +16,7 @@ use dezero\modules\api\models\ApiLog;
 use dezero\rest\ClientConfigurator;
 use Dz;
 use yii\base\Component;
+use yii\db\ActiveQueryInterface;
 use yii\httpclient\Client as HttpClient;
 use yii\httpclient\Request;
 use yii\httpclient\Response;
@@ -23,7 +25,7 @@ use Yii;
 /**
  * HTTP Client class for REST API communication
  */
-class Client extends HttpClient implements ConfigInterface
+class Client extends HttpClient implements ConfigInterface, EntityInterface
 {
     /**
      * Client name
@@ -238,6 +240,12 @@ class Client extends HttpClient implements ConfigInterface
     }
 
 
+    /*
+    |--------------------------------------------------------------------------
+    | ENTITY METHODS
+    |--------------------------------------------------------------------------
+    */
+
     /**
      * Link an Entity model with last ApiLog model
      */
@@ -249,5 +257,14 @@ class Client extends HttpClient implements ConfigInterface
         }
 
         return $this->api_log_model->linkEntity($entity_model);
+    }
+
+
+    /**
+     * @return ActiveQueryInterface The relational query object.
+     */
+    public function getEntity() : ActiveQueryInterface
+    {
+        return $this->api_log_model->getEntity();
     }
 }

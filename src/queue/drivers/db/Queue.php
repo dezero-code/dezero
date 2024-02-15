@@ -19,6 +19,7 @@ use yii\queue\ExecEvent;
 use yii\queue\serializers\JsonSerializer;
 use Yii;
 
+
 /**
  * DB drive Queue
  */
@@ -174,27 +175,7 @@ class Queue extends \yii\queue\db\Queue
 
 
     /**
-     * @{inheritdoc}
-     */
-    public function status($message_id)
-    {
-        $vec_message = QueueHelper::getMessage($message_id);
-        if ( $vec_message !== null && !empty($vec_message) )
-        {
-            return $vec_message['status_type'];
-        }
-
-        if ( $this->deleteAfterComplete )
-        {
-            return self::STATUS_TYPE_COMPLETED;
-        }
-
-        throw new InvalidArgumentException("Unknown message ID: $message_id.");
-    }
-
-
-    /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function pushMessage($message, $ttr, $delay, $priority)
     {
@@ -217,6 +198,7 @@ class Queue extends \yii\queue\db\Queue
     {
         return QueueHelper::deleteMessage($message_id);
     }
+
 
     /**
      * Takes one message from waiting list and reserves it for handling.
@@ -261,7 +243,7 @@ class Queue extends \yii\queue\db\Queue
                     $vec_message['attempt'] = (int) $vec_message['attempt'] + 1;
                     $vec_message['updated_date'] = time();
 
-                    \DzLog::dev("Reserving message {$vec_message['message_id']}");
+                    // \DzLog::dev("Reserving message {$vec_message['message_id']}");
 
                     QueueHelper::updateMessage($vec_message['message_id'], [
                         'status_type'   => $vec_message['status_type'],
@@ -357,22 +339,29 @@ class Queue extends \yii\queue\db\Queue
     }
 
 
+    /*
+    |--------------------------------------------------------------------------
+    | STATUS METHODS
+    |--------------------------------------------------------------------------
+    */
+
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function setProgress(int $message_id, int $progress, ?string $label = null): void
+    public function status($message_id)
     {
-        $this->db->createCommand()->update(
-            $this->tableName,
-            [
-                'progress'  => $progress,
-                'progress_label' => $label,
-                'updated_date'  => time(),
-            ],
-            [
-                'message_id' => $message_id,
-            ]
-        )->execute();
+        $vec_message = QueueHelper::getMessage($message_id);
+        if ( $vec_message !== null && !empty($vec_message) )
+        {
+            return $vec_message['status_type'];
+        }
+
+        if ( $this->deleteAfterComplete )
+        {
+            return self::STATUS_TYPE_COMPLETED;
+        }
+
+        throw new InvalidArgumentException("Unknown message ID: $message_id.");
     }
 
 
@@ -410,11 +399,31 @@ class Queue extends \yii\queue\db\Queue
         return self::isCompleted($id);
     }
 
+
     /**
      * Check if status is FAILED
      */
     public function isFailed($id)
     {
         return $this->status($id) === self::STATUS_TYPE_FAILED;
+    }
+
+
+    /**
+     *{ @inheritdoc}
+     */
+    public function setProgress(int $message_id, int $progress, ?string $label = null): void
+    {
+        $this->db->createCommand()->update(
+            $this->tableName,
+            [
+                'progress'  => $progress,
+                'progress_label' => $label,
+                'updated_date'  => time(),
+            ],
+            [
+                'message_id' => $message_id,
+            ]
+        )->execute();
     }
 }

@@ -10,6 +10,7 @@
 namespace dezero\modules\sync\models;
 
 use dezero\behaviors\TimestampBehavior;
+use dezero\contracts\EntityInterface;
 use dezero\entity\ActiveRecord;
 use dezero\helpers\ArrayHelper;
 use dezero\helpers\Json;
@@ -58,7 +59,7 @@ use Yii;
  * @property AssetFile $file
  * @property User $updatedUser
  */
-class Batch extends BaseBatch
+class Batch extends BaseBatch implements EntityInterface
 {
     /**
      * {@inheritdoc}

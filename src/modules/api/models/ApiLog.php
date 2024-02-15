@@ -10,6 +10,7 @@
 namespace dezero\modules\api\models;
 
 use dezero\behaviors\TimestampBehavior;
+use dezero\contracts\EntityInterface;
 use dezero\entity\ActiveRecord;
 use dezero\helpers\ArrayHelper;
 use dezero\helpers\Json;
@@ -47,9 +48,9 @@ use Yii;
  * RELATIONS
  * -------------------------------------------------------------------------
  * @property User $createdUser
- * @property Entity $entityUu
+ * @property Entity $entityUuid
  */
-class ApiLog extends BaseApiLog
+class ApiLog extends BaseApiLog implements EntityInterface
 {
     public const API_TYPE_CLIENT = 'client';
     public const API_TYPE_SERVER = 'server';

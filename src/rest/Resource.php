@@ -8,6 +8,7 @@
 namespace dezero\rest;
 
 use dezero\contracts\ConfigInterface;
+use dezero\contracts\EntityInterface;
 use dezero\entity\ActiveRecord;
 use dezero\helpers\ArrayHelper;
 use dezero\helpers\Json;
@@ -16,12 +17,13 @@ use dezero\modules\api\models\ApiLog;
 use dezero\rest\ResourceConfigurator;
 use dezero\traits\WarningTrait;
 use Dz;
+use yii\db\ActiveQueryInterface;
 use Yii;
 
 /**
  * Controller is the base class dor RESTful API controller classess
  */
-abstract class Resource extends \yii\base\BaseObject implements ConfigInterface
+abstract class Resource extends \yii\base\BaseObject implements ConfigInterface, EntityInterface
 {
     use WarningTrait;
 
@@ -494,6 +496,12 @@ abstract class Resource extends \yii\base\BaseObject implements ConfigInterface
     }
 
 
+    /*
+    |--------------------------------------------------------------------------
+    | ENTITY METHODS
+    |--------------------------------------------------------------------------
+    */
+
     /**
      * Link an Entity model with last ApiLog model
      */
@@ -507,4 +515,12 @@ abstract class Resource extends \yii\base\BaseObject implements ConfigInterface
         return $this->api_log_model->linkEntity($entity_model);
     }
 
+
+    /**
+     * @return ActiveQueryInterface The relational query object.
+     */
+    public function getEntity() : ActiveQueryInterface
+    {
+        return $this->api_log_model->getEntity();
+    }
 }
