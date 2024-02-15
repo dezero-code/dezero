@@ -249,14 +249,14 @@ class Client extends HttpClient implements ConfigInterface, EntityInterface
     /**
      * Link an Entity model with last ApiLog model
      */
-    public function linkEntity(ActiveRecord $entity_model) : bool
+    public function linkEntity(ActiveRecord $entity_model, bool $is_save = true) : bool
     {
         if ( $this->api_log_model === null )
         {
             return false;
         }
 
-        return $this->api_log_model->linkEntity($entity_model);
+        return $this->api_log_model->linkEntity($entity_model, $is_save);
     }
 
 

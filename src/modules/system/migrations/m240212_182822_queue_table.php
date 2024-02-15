@@ -39,11 +39,6 @@ class m240212_182822_queue_table extends Migration
             'attempt' => $this->integer()->unsigned(),
             'results_json' => $this->text(),
 
-            // Entity information
-            'entity_uuid' => $this->char(36),
-            'entity_type' => $this->string(128),
-            'entity_source_id' => $this->integer()->unsigned(),
-
             'created_date' => $this->date()->notNull(),
             'updated_date' => $this->date()->notNull()
         ]);
@@ -51,10 +46,6 @@ class m240212_182822_queue_table extends Migration
         // Create indexes
         $this->createIndex(null, 'queue', ['channel', 'status_type'], false);
         $this->createIndex(null, 'queue', ['channel', 'is_failed'], false);
-        $this->createIndex(null, 'queue', ['entity_type', 'entity_source_id'], false);
-
-        // Create FOREIGN KEYS
-        $this->addForeignKey(null, 'queue', ['entity_uuid'], 'entity_entity', ['entity_uuid'], 'SET NULL', null);
 
         return true;
     }
