@@ -10,7 +10,6 @@
 */
 
   use dezero\helpers\Url;
-  use Dz;
 
   // Current controller
   $current_controller = Dz::currentController(true);

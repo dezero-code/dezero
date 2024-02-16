@@ -13,7 +13,6 @@
   use dezero\helpers\Html;
   use dezero\helpers\Url;
   use dezero\widgets\ActiveForm;
-  use Dz;
 
   // Current controller
   $current_controller = Dz::currentController(true);
