@@ -138,26 +138,41 @@ abstract class ActiveRecord extends \dezero\db\ActiveRecord implements TitleInte
      */
     private function ensureEntityExists() : void
     {
-        if ( ! $this->entity )
+        // Try to get the Entity model from the relation
+        $entity_model = $this->entity;
+        if ( $entity_model )
         {
-            // First of all, get primary key data
-            $source_name = $this->getSourceName();
-            $source_id = $this->getSourceId();
+            return ;
+        }
 
-            // Now, create the Entity model
-            $entity_model = Dz::makeObject(Entity::class);
-            $entity_model->setAttributes([
-                'entity_type'   => $this->getEntityType(),
-                'entity_uuid'   => $this->entity_uuid,
-                'source_id'     => (int)$source_id,
-                'source_name'   => (string)$source_name,
-                'module_name'   => $this->getModuleName()
-            ]);
+        // Try to get the Entity model directly from database
+        $entity_model = Entity::find()
+            ->entity_uuid($this->entity_uuid)
+            ->one();
+        if ( $entity_model )
+        {
+            return ;
+        }
 
-            if ( ! $entity_model->save() )
-            {
-                Log::saveModelError($entity_model);
-            }
+        // In this point, we need to create the Entity model in the database
+
+        // First of all, get primary key data
+        $source_name = $this->getSourceName();
+        $source_id = $this->getSourceId();
+
+        // Now, create the Entity model
+        $entity_model = Dz::makeObject(Entity::class);
+        $entity_model->setAttributes([
+            'entity_type'   => $this->getEntityType(),
+            'entity_uuid'   => $this->entity_uuid,
+            'source_id'     => (int)$source_id,
+            'source_name'   => (string)$source_name,
+            'module_name'   => $this->getModuleName()
+        ]);
+
+        if ( ! $entity_model->save() )
+        {
+            Log::saveModelError($entity_model);
         }
     }
 

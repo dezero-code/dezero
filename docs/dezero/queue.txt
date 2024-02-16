@@ -8,24 +8,60 @@
 
 @see https://craftcms.com/docs/4.x/queue.html
 
----
 
 
------------------------------------
--- INSTALL ON SERVER
------------------------------------
+--------------------------------------------
+-- JOB/MESSAGE QUEUE STATUSES
+--------------------------------------------
+
+WAITING
+    * The message has been added into "queue" table and is waiting to start
+    * If attempts > 1, it means the message has failed and it has been re-tried
+
+RESERVED
+    * The job is being processed from "yii queue/listen" command
+    * It can be executing a max time of "ttr" seconds, where "ttr" is the value of the column "ttr"
+    * "reserved_date" is the datetime when the reserve() action started
+
+COMPLETED
+    * The job has been completed successfully
+    * "completed_date" is the datetime when the job was completed
+    * If property "deleteAfterComplete" = true, it will be removed automatically from the database
+    * If property "deleteAfterComplete" = saved, it will be kept on the table
+
+FAILED
+    * The job has been marked as failed because it fails 3 attempts
+    * "failed_date" is the datime when the job was marked as failed
+    * The administrators have to decided what to do
+    * The command "yii queue/retry-all" put all the messages as "waiting" and the value "attempt" = 0
+    * All the errors will be saved on "results_json" column
+
+
+
+--------------------------------------------
+-- INSTALL GUIDE - LINUX SERVER
+--------------------------------------------
+
 [https://github.com/yiisoft/yii2-queue/blob/master/docs/guide/worker.md]
-
 
 1. INSTALL SUPERVISOR
     > apt-get install supervisor
 
-2. CONFIGURATION FILE
+
+2. ENABLE QUEUE (.env)
+    // Go to .env file and change QUEUE_ENABLED value to "true"
+
+        # QUEUE is enabled ['true', 'false']
+        QUEUE_ENABLED="true"
+
+
+3. CONFIGURATION FILE
     - Create a config file "dezero-queue.ini" in /etc/supervisor/conf.d
     - Assume "php" command path is /usr/bin/php
     - Replace "/var/www/my/project" with your DOCUMENT ROOT
+    - This new command will run "yii queue/listen" all the time as a service
 
-    > nano /etc/supervisor/conf.d/dezero-queue.ini
+    > nano /etc/supervisor/conf.d/dezero_queue.conf
 
         [program:dezero-queue-worker]
         command         = /usr/bin/php /var/www/<my-project>/yii queue/listen --verbose=1 --color=0
@@ -40,10 +76,192 @@
         user            = www-data
         group           = www-data
         redirect_stderr = true
-        stdout_logfile  = /var/www/<my-project>/storage/logs/dezero-queue-worker.log
+        stdout_logfile  = /var/www/<my-project>/storage/logs/dezero_queue_worker.log
+
+    // Tell supervisord there is a new configuration available:
+    > supervisorctl reread
+
+    // Apply new configuration changes and restart affected services:
+    > supervisorctl update
+
+    // Reload the service with the new configuration file
+    > supervisorctl reload
+
+    // View processes working
+    > supervisorctl status all
 
 
-## 1. CREATE THE JOB
+
+--------------------------------------------
+-- QUEUE COMMAND
+--------------------------------------------
+
+> ./yii queue/info (default)  Displays all ACTIVE messages (included FAILED)
+> ./yii queue/retry-all       Re-add a failed message(s) into the queue.
+> ./yii queue/clear           Clears the queue.
+> ./yii queue/remove <id>     Removes a job by id.
+
+> ./yii queue/listen          Listens db-queue and runs new jobs.
+> ./yii queue/run             Runs all jobs from db-queue.
 
 
-## 2. INSTALL
+
+--------------------------------------------
+-- CONFIGURATION
+--------------------------------------------
+
+> /app/config/common/components.php
+
+```
+    ...
+
+    'queue' => [
+        'class' => \dezero\queue\drivers\db\Queue::class,
+        'commandClass' => \dezero\queue\drivers\db\Command::class,
+        'as log' => \dezero\queue\QueueLogBehavior::class,
+        'db' => 'db',                               // DB connection component or its config
+        'tableName' => '{{%queue}}',                // Table name
+        'channel' => 'default',                     // Queue channel key
+        'mutex' => \yii\mutex\MysqlMutex::class,    // Mutex used to sync queries
+        'deleteAfterComplete' => false,             // Delete message after is completed?
+        'attempts' => 3,                            // Max number of attempts until marking as failed
+        'ttr' => 120,                               // Max time in seconds for job execution
+    ],
+
+    ...
+
+```
+
+
+> /app/config/components/logs.php
+
+```
+    ...
+
+    // Logs for QUEUE system
+    [
+        'class' => 'dezero\log\FileTarget',
+        'logFile' => 'queue.log',
+        'categories' => ['queue'],
+    ],
+
+
+    ...
+```
+
+
+
+--------------------------------------------
+-- CREATE A JOB CLASS
+--------------------------------------------
+
+1. Create a subdirectory "/queue" in your module to store the queue job classes
+
+2. Example of the ImportProductJob saved on "/my-module/queue/ImportProductJob.php"
+
+```
+    namespace my-module\queue;
+
+    use Dz;
+    use dezero\helpers\Log;
+    use yii\base\BaseObject;
+    use yii\base\Exception;
+    use yii\queue\JobInterface;
+    use Yii;
+
+    class ImportProductJob extends BaseObject implements JobInterface
+    {
+        /**
+         * @var string
+         */
+        public $sku;
+
+
+        /**
+         * @var string
+         */
+        public $title;
+
+
+        /**
+         * Execute the job from the queue
+         */
+        public function execute($queue)
+        {
+            Log::dev("You can access to {$this->sku} and {$this->title} in this way");
+
+            ...
+
+            // Make the logic of the IMPORT PRODUCT PROCESS
+
+            ...
+
+            // IMPORTANT: Do not need to return anything
+        }
+    }
+
+```
+
+
+--------------------------------------------
+-- PUSH THE JOB INTO THE QUEUE
+--------------------------------------------
+
+Example of pushing a job into the queue from any class of your project
+
+```
+    use my-module\queue\ImportProductJob;
+
+    public function my_method()
+    {
+        ...
+
+        $import_job = Dz::makeObject(ImportProductJob::class, [
+            'sku'   => 'PROD-00006943'
+            'title' => 'My custom title product'
+        ]);
+        $message_id = Yii::$app->queue->push($import_job);
+
+        ...
+    }
+
+```
+
+
+-------------------------------------------------------
+-- EXECUTING THE JOB FROM THE QUEUE (description)
+-------------------------------------------------------
+
+QUEUE IS NOT ENABLED
+--------------------
+
+    1. If QUEUE_ENABLED = "false" (view /.env file), the method "Yii::$app->queue->push($import_job)"
+      of the previous section will execute the job directly in a synchronous way.
+
+    2. No register will be inserted in "queue" table
+
+    3. LOGS - All the error message will be saved on /storage/logs/queue.log
+
+
+QUEUE IS ENABLED
+-----------------
+QUEUE_ENABLED = "true" in /.env file
+
+    1. The method "Yii::$app->queue->push($import_job)" of the previous section
+       will insert the job as a message into "queue" database table
+
+    2. The command "yii queue/listen" is listening as a background service and it'll
+       start automatically the job execution. It will call the execute() method of the job
+
+    3. Message will change the "status" to "reserve" until the job is finished
+
+    4. If the job is finished successfully, "status" = "completed" and all it's over
+
+    5. If the job fails, it will be re-tried (3 attempts max).
+       It means, back to "waiting" and re-start the process
+
+    6. If the job fails 3 attempts, it will be marked as "failed" and
+      administrator(s) will decide what to do
+
+    7. LOGS - All the error message will be saved on /storage/logs/queue.log
+
