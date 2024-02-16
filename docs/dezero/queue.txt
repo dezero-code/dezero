@@ -1,0 +1,49 @@
+====================
+-- DATABASE QUEUE --
+====================
+
+@see https://github.com/yiisoft/yii2-queue
+@see https://www.yiiframework.com/extension/yiisoft/yii2-queue/doc/guide/2.0/en/usage
+@see https://github.com/silverslice/yii2-queue-failed (command and examples)
+
+@see https://craftcms.com/docs/4.x/queue.html
+
+---
+
+
+-----------------------------------
+-- INSTALL ON SERVER
+-----------------------------------
+[https://github.com/yiisoft/yii2-queue/blob/master/docs/guide/worker.md]
+
+
+1. INSTALL SUPERVISOR
+    > apt-get install supervisor
+
+2. CONFIGURATION FILE
+    - Create a config file "dezero-queue.ini" in /etc/supervisor/conf.d
+    - Assume "php" command path is /usr/bin/php
+    - Replace "/var/www/my/project" with your DOCUMENT ROOT
+
+    > nano /etc/supervisor/conf.d/dezero-queue.ini
+
+        [program:dezero-queue-worker]
+        command         = /usr/bin/php /var/www/<my-project>/yii queue/listen --verbose=1 --color=0
+        process_name    = %(program_name)s_%(process_num)02d
+        numprocs        = 2
+        startsecs       = 1
+        startretries    = 10
+        exitcodes       = 2
+        stopwaitsecs    = 300
+        autostart       = true
+        autorestart     = true
+        user            = www-data
+        group           = www-data
+        redirect_stderr = true
+        stdout_logfile  = /var/www/<my-project>/storage/logs/dezero-queue-worker.log
+
+
+## 1. CREATE THE JOB
+
+
+## 2. INSTALL

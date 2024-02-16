@@ -179,7 +179,8 @@ class Queue extends \yii\queue\db\Queue
      */
     protected function pushMessage($message, $ttr, $delay, $priority)
     {
-        return QueueHelper::pushMessage([
+        // Push the message into the queue
+        $message_id = QueueHelper::pushMessage([
             'channel'       => $this->channel,
             'message'       => $message,
             'ttr'           => $ttr,
@@ -188,6 +189,18 @@ class Queue extends \yii\queue\db\Queue
             'created_date'  => time(),
             'updated_date'  => time(),
         ]);
+
+        // Queue is not enabled --> EXECUTE THE JOB DIRECTLY
+        if ( ! QueueHelper::isEnabled() )
+        {
+            $vec_message = QueueHelper::getMessage($message_id);
+            if ( !empty($vec_message) && $this->handleMessage($vec_message['message_id'], $vec_message['message'], $vec_message['ttr'], $vec_message['attempt']) )
+            {
+                $this->complete($vec_message['message_id']);
+            }
+        }
+
+        return $message_id;
     }
 
 

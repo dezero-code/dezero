@@ -17,6 +17,15 @@ use Yii;
 class QueueHelper extends BaseObject
 {
     /**
+     * Check if queue is enabled
+     */
+    public static function isEnabled() : bool
+    {
+        return Dz::env('QUEUE_ENABLED') === "true";
+    }
+
+
+    /**
      * Return all the messages filtered by status
      */
     public static function getByStatus($status_type) : ?array
