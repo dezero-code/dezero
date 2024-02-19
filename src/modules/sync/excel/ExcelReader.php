@@ -8,21 +8,22 @@
  * @see https://github.com/yidas/phpspreadsheet-helper
  */
 
-namespace sync\excel;
+namespace dezero\modules\sync\excel;
 
 use Dz;
 use dezero\helpers\ArrayHelper;
+use dezero\helpers\FileHelper;
 use dezero\helpers\StringHelper;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Worksheet;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Yii;
 use yii\base\Exception;
 use yii\di\Instance;
 
 /**
- * Base class to work with Excel files
+ * Class to read Excel files
  */
-class Excel extends \yii\base\BaseObject
+class ExcelReader extends \yii\base\BaseObject
 {
     /**
      * @var int Current column offset for the actived sheet
@@ -53,27 +54,20 @@ class Excel extends \yii\base\BaseObject
      */
     public function __construct(Spreadsheet $spreadsheet)
     {
-        $this->spreadsheet = Instance::ensure($this->spreadsheet, Spreadsheet::class);
-    }
-
-
-    /**
-     * Named constructor to create an empty new Excel object
-     */
-    public static function create() : self
-    {
-        $spreadsheet = Dz::makeObject(Spreadsheet::class);
-
-        return new static($spreadsheet);
+        $this->spreadsheet = Instance::ensure($spreadsheet, Spreadsheet::class);
     }
 
 
     /**
      * Named constructor to create a new Excel object given a file path
      */
-    public static function fromPath(string $file_path) : self
+    public static function load(string $file_path) : self
     {
-        $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($file_path);
+        // Return the real file path from a Yii alias or normalize it
+        $real_path = FileHelper::realPath($file_path);
+
+        // Load Spreadsheet object
+        $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($real_path);
 
         return new static($spreadsheet);
     }
@@ -89,11 +83,29 @@ class Excel extends \yii\base\BaseObject
 
 
     /**
+     * Return Spreadsheet main object
+     */
+    public function getSpreadsheet() : Spreadsheet
+    {
+        return $this->spreadsheet;
+    }
+
+
+    /**
+     * Return Spreadsheet main object
+     */
+    public function getWorksheet() : ?Worksheet
+    {
+        return $this->worksheet;
+    }
+
+
+    /**
      * Get sheet count
      */
     public function getSheetCount() : int
     {
-        return $this->spreadsheet ? $this->spreadsheet->getSheetCount() : 0;
+        return $this->spreadsheet->getSheetCount();
     }
 
 
@@ -102,7 +114,34 @@ class Excel extends \yii\base\BaseObject
      */
     public function getActiveSheetIndex() : int
     {
-        return $this->spreadsheet ? $this->spreadsheet->getActiveSheetIndex() : '';
+        return $this->spreadsheet->getActiveSheetIndex();
+    }
+
+
+    /**
+     * Return all the sheet names
+     */
+    public function getSheetNames() : array
+    {
+        return $this->spreadsheet->getSheetNames();
+    }
+
+
+    /**
+     * Return all the sheet objects
+     */
+    public function getAllSheets() : array
+    {
+        return $this->spreadsheet->getAllSheets();
+    }
+
+
+    /**
+     * Return the offset of rows for the actived PhpSpreadsheet Sheet
+     */
+    public function getRowOffset() : int
+    {
+        return $this->offset_row;
     }
 
 
@@ -114,6 +153,15 @@ class Excel extends \yii\base\BaseObject
         $this->offset_row = (int)$offset;
 
         return $this;
+    }
+
+
+    /**
+     * Return the offset of columns for the actived PhpSpreadsheet Sheet
+     */
+    public function getColumnOffset() : int
+    {
+        return $this->offset_col;
     }
 
 
@@ -261,17 +309,17 @@ class Excel extends \yii\base\BaseObject
      * @param bool $is_parse_string All values from sheet to be string type
      *
      * @param bool $vec_options [
-     *  row (int) Ended row number
-     *  column (int) Ended column number
-     *  timestamp (bool) Excel datetime to Unixtime
-     *  timestampFormat (string) Format for date() when usgin timestamp
+     *      row (int) Ended row number
+     *      column (int) Ended column number
+     *      timestamp (bool) Excel datetime to Unixtime
+     *      timestampFormat (string) Format for date() when using timestamp
      *  ]
      *
      * @param callable $callback($cellValue, int $columnIndex, int $rowIndex)
      *
      * @return array Data of Spreadsheet
      */
-    public function getRow(bool $is_parse_string = true, array $vec_options = [], callable $callback = null) : array
+    public function getRow(array $vec_options = [], bool $is_parse_string = true, callable $callback = null) : array
     {
         $worksheet = $this->ensureWorksheet();
 
@@ -287,13 +335,13 @@ class Excel extends \yii\base\BaseObject
 
         // Calculate the column range of the worksheet
         $start_column = ( $vec_options['columnOffset'] ) ?: 0;
-        $total_columns = ($vec_options['columns']) ?: $this->alpha2num($worksheet->getHighestColumn());
+        $total_columns = ( $vec_options['columns'] ) ?: $this->alpha2num($worksheet->getHighestColumn());
 
         // Next row
-        $this->$offset_row++;
+        $this->offset_row++;
 
         // Check if exceed highest row by PHPSpreadsheet highest row
-        if ( $this->$offset_row > $worksheet->getHighestRow() )
+        if ( $this->offset_row > $worksheet->getHighestRow() )
         {
             return [];
         }
@@ -334,17 +382,17 @@ class Excel extends \yii\base\BaseObject
      * @param bool $is_parse_string All values from sheet to be string type
      *
      * @param bool $vec_options [
-     *  row (int) Ended row number
-     *  column (int) Ended column number
-     *  timestamp (bool) Excel datetime to Unixtime
-     *  timestampFormat (string) Format for date() when usgin timestamp
+     *      rows (int) Ended row number
+     *      columns (int) Ended column number
+     *      timestamp (bool) Excel datetime to Unixtime
+     *      timestampFormat (string) Format for date() when usgin timestamp
      *  ]
      *
      * @param callable $callback($cellValue, int $columnIndex, int $rowIndex)
      *
      * @return array Data of Spreadsheet
      */
-    public function getRows(bool $is_parse_string = true, array $vec_options = [], callable $callback=null) : array
+    public function getRows(array $vec_options = [], bool $is_parse_string = true, callable $callback=null) : array
     {
         $worksheet = $this->ensureWorksheet();
 
@@ -369,14 +417,14 @@ class Excel extends \yii\base\BaseObject
         $vec_options['columns'] = ($vec_options['columns']) ?: $this->alpha2num($worksheet->getHighestColumn());
 
         // Set row offset
-        $this->$offset_row = $offset_row;
+        $this->offset_row = $offset_row;
 
         // Fetch data from the sheet
         $vec_data = [];
         $vec_row = &$vec_data;
         for ( $i=1; $i <= $total_rows ; $i++ )
         {
-            $row[] = $this->getRow($is_parse_string, $vec_options, $callback);
+            $vec_row[] = $this->getRow($vec_options, $is_parse_string, $callback);
         }
 
         return $vec_data;
