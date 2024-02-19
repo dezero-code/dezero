@@ -2,6 +2,25 @@
 
 All notable changes to `Dezero Framework` will be documented in this file
 
+## 0.3.0 - 2024-02-19
+
+- TEST module - Created new core module for testing purposes.
+- DOCS directory improved with new guides for data objects, files, images, logs, session and roles&permissions
+
+## 0.2.9 - 2024-02-16
+
+- QUEUE finished - New queue system based on Yii2 queue package
+- Created new contract class "EntityInterface" used by ApiLog and Batch models
+- Remove "use Dz;" statement in all .tpl.php files
+
+## 0.2.8 - 2024-02-11
+
+- Batch - Change "summary_json" column from VARCHAR(512) to TEXT()
+- Batch model - Added new method to get endpoint information
+- Url helper - Created new method to extract paramters and fragment from an URL.
+- Dz::t() - Make Yii::t() method compatible with Yii 1 pluralize style
+- Created new contract class "TypeInterface"
+
 ## 0.2.7 - 2024-01-31
 
 - DataObject - Created a new implementation of concept "Data Object"
