@@ -1,0 +1,61 @@
+====================
+-- DATABASE SESSION --
+====================
+
+
+1. CONFIG
+---------
+In /app/config/web/component.php we define this configuration
+
+```
+    ...
+
+    // Sessions stored in database
+    'session' => [
+        'class' => 'dezero\web\DbSession',
+        'db' => 'db',
+        'sessionTable' => 'user_session',
+        'timeout' => 86400 // Just one day
+    ],
+
+    ...
+```
+
+
+2. DbSession CLASS
+------------------
+```
+    $session = Yii::$app->session;
+
+    // Set a variable
+    $session->set('language', 'en-ES');
+
+    // Check if variable "language" has been defined in $_SESSION
+    Log::dev($session->has('language');
+
+    // Return "language" from session
+    $session->get('language');
+```
+
+
+3. DATABASE TABLE
+------------------
+```
+    // Note: According to the php.ini setting of session.hash_function,
+    // you may need to adjust the length of the id column. For example,
+    // if session.hash_function=sha256, you should use a length 64 instead of 40.
+    $this->createTable('user_session', [
+        'id' => $this->char(64)->notNull(),
+        'user_id' => $this->integer()->unsigned(),
+        'expires_date' => $this->date()->notNull(),
+        'data' => $this->binary(),
+        'created_date' => $this->date()->notNull(),
+        'entity_uuid' => $this->uuid()
+    ]);
+
+    // Primary key (alternative method)
+    $this->addPrimaryKey(null, 'user_session', 'id');
+
+    // Create FOREIGN KEYS
+    $this->addForeignKey(null, 'user_session', ['user_id'], 'user_user', ['user_id'], 'SET NULL', null);
+```

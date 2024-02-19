@@ -1,0 +1,281 @@
+==================
+-- DATA OBJECTS --
+==================
+
+Data Objects are the recommeded type to use for USE CASES.
+
+```
+    // Main classes
+    use \dezero\data\DataObject;
+    use \dezero\data\StringDataObject;
+    use \dezero\data\DataObject;
+
+```
+
+
+--------------------------------------------
+-- 1. StringDataObject
+--------------------------------------------
+
+- DataObject for STRINGS
+
+- Connceted directly with \dezero\helper\StringHelper class.
+
+```
+    use dezero\data\StringDataObject;
+
+    ...
+
+    // CREATE METHODS
+    // ------------------------------------
+
+        // Create the new data object with "from" static method
+        $string_object = StringDataObject::from(" hola qué hases?");
+
+        // Alternative way to create a new data object
+        $string_object = StringHelper::toObject(" hola qué hases?");
+
+
+    // VALUES
+    // ------------------------------------
+        // Return string value
+        $string_object->value();
+
+        // Return the original data given as input
+        $string_object->original();
+
+        // Check if string is empty (bool)
+        $string_object->empty();
+
+
+    // STRING HELPER CONNECTION
+    // ------------------------------------
+
+        // Return string value
+        $string_object->value();
+
+        // StringHelper::trim()
+        $string_object->trim();
+        $string_object->value();                // Output: "hola qué hases?"
+
+        // StringHelper::readableName()
+        $string_object->readableName();
+        $string_object->value();                // Output: "hola-que-hases-"
+
+        // StringHelper::strtoupper()
+        $string_object->strtoupper();
+        $string_object->value();                // Output: "HOLA-QUE-HASES-"
+
+        // StringHelper::strtolower()
+        $string_object->strtolower();
+        $string_object->value();                // Output: "hola-que-hases-"
+
+        // StringHelper::ucfirst()
+        $string_object->ucfirst();
+        $string_object->value();                // Output: "Hola-que-hases-"
+
+
+    // MORE UTILITIES: HTML, STRLEN, ENCRYPT
+    // ------------------------------------
+
+        $string_object = StringHelper::toObject("<p>Soy un HTML y un <strong>bold</strong> molón</p>");
+
+        // StringHelper::cleanHtml()
+        $string_object->cleanHtml(['strong']);
+        $string_object->value();                // Output: "Soy un HTML y un <strong>bold</strong> molón"
+
+        // StringHelper::strlen()
+        $string_object->original();             // Output: "<p>Soy un HTML y un <strong>bold</strong> molón</p>"
+        $string_object->strlen();               // Output: "44"
+
+        // StringHelper::encrypt()
+        $string_object->encrypt('sha1');
+        $string_object->value();                // Output: "03ebb321731a47aae1a8370434e71b77100fd381"
+
+```
+
+
+--------------------------------------------
+-- 2. ArrayDataObject
+--------------------------------------------
+
+- DataObject for ARRAYS
+
+```
+    use dezero\data\ArrayDataObject;
+
+    ...
+
+    // CREATE METHODS
+    // ------------------------------------
+
+        // Create the new data object with "from" static method
+        $array_object = ArrayDataObject::from([
+            33 => [
+                'firstname' => 'Enjuto',
+                'lastname'  => 'Mojamuto',
+                'age'       => 40
+            ],
+            66 => [
+                'firstname' => 'Hincli',
+                'lastname'  => 'Mincli',
+                'age'       => 50
+            ],
+        ]);
+
+        // Alternative way to create a new data object
+        $array_object = ArrayHelper::toObject([
+            33 => [
+                'firstname' => 'Enjuto',
+                'lastname'  => 'Mojamuto',
+                'age'       => 40
+            ],
+            66 => [
+                'firstname' => 'Hincli',
+                'lastname'  => 'Mincli',
+                'age'       => 50
+            ],
+        ]);
+
+
+    // VALUES
+    // ------------------------------------
+        // Return the full array value
+        $string_object->value();
+
+        // Return the full array value. Alias of "value()" method
+        $string_object->all();
+
+        // Return the original array given as input
+        $string_object->original();
+
+        // Check if string is empty (bool)
+        $string_object->empty();
+
+
+    // GET / ACCESS METHODS
+    // ------------------------------------
+        // Return item by key "33"
+        $array_object->get(33);                                 // Ouptut: ['firstname' => 'Enjuto', 'Mojamuto' => 'Mincli', 'age' => 40]
+
+        // Return value "firstname" of key 66
+        $array_object->get('66.firstname');                     // Ouptut: "Hincli"
+        $array_object->get([66, 'firstname']);                  // Ouptut: "Hincli"
+
+        // ALTERNARTIVE version accessing as a normal array
+        $array_object[66]['firstname']                          // Ouptut: "Hincli"
+
+        // Return the element in the second position
+        $array_object->at(1);                                   // Ouptut: ['firstname' => 'Hincli', 'lastname' => 'Mincli', 'age' => 50]
+
+        // Returns the numerical index of the given key
+        $array_object->index(66);                               // Output: 1
+
+        // Return an array with all the lastnames
+        $array_object->column('lastname');                      // Output: [33 => 'Mojamuto', 66 => 'Mincli']
+
+        // First
+        $array_object->first();                                 // Ouptut: ['firstname' => 'Enjuto', 'Mojamuto' => 'Mincli', 'age' => 40]
+        $array_object->firstKey();                              // Output: 33
+
+        // Last
+       $array_object->last();                                   // Ouptut: ['firstname' => 'Hincli', 'lastname' => 'Mincli', 'age' => 50]
+       $array_object->lastKey();                                // Output: 66
+
+
+    // COUNT
+    // ------------------------------------
+        // As a normal array
+        count($array_object);                                   // Output: 2
+
+        // ALTERNATIVE version using count() METHODS
+        $array_object->count();                                 // Output: 2
+
+
+    // ADD
+    // ------------------------------------
+        // Add a new item
+        $array_object->add([99 => [
+            'firstname' => 'Bocachoti',
+            'age'       => 30
+        ]]);
+        d($array_object->all());
+
+        // ALTERNATIVE version as a normal array
+        $array_object[99] = [
+            'firstname' => 'Bocachoti',
+            'age'       => 30
+        ];
+
+    // SET
+    // ------------------------------------
+        // Change "firstname" of 66 from "Hincli" to "Jincli"
+        $array_object->set([66, 'firstname'], 'Jincli1');
+        d($array_object->all());
+
+        // Alternative version with dot notation
+        $array_object->set('66.firstname', 'Jincli2');
+        d($array_object->all());
+
+        // ALTERNATIVE version as a normal array
+        $array_object[66] = [
+            'firstname' => 'Jincli3',
+            'age'       => 30
+        ];
+
+
+    // ITERATION AS A NORMAL ARRAY
+    // ------------------------------------
+        $num_iteration = 0;
+        foreach ( $array_object as $key => $item )
+        {
+            $num_iteration++;
+            d("ITERATION #{$num_iteration} - KEY = {$key}");
+            d($item);
+        }
+
+
+    // ACCESSING AS A NORMAL ARRAY
+    // ------------------------------------
+        // Using "isset"
+        isset($array_object[33]);
+        isset($array_object[34]);
+
+        // Accessing directly to a key
+        d($array_object[33]);
+        d($array_object[33]['firstname']);
+
+        // Update existing element
+        $array_object[33] = [
+            'firstname' => 'Enjuto super',
+            'lastname'  => 'Mojamuto super',
+            'age'       => 41
+        ];
+        d($array_object->all());
+        d($array_object->get(33));
+
+        // Adding a new element
+        $array_object[34] = [
+            'firstname' => 'Bounty',
+            'lastname'  => 'Onthebounty'
+        ];
+        d($array_object[34]);
+
+
+    // UTILTIES METHODS
+    // ------------------------------------
+
+        // Convert JSON
+        d($array_object->toJson());                 // Ouptut: "{"33":{"firstname":"Enjuto super","lastname":"Mojamuto super","age":41},"66":{"firstname":"Jincli2","lastname":"Mincli","age":50},"99":{"firstname":"Bocachoti","age":30},"34":{"firstname":"Bounty","lastname":"Onthebounty"}}"
+
+        // Trim all the values
+        $array_object = ArrayDataObject::from([
+            ' valor con espacios.    ',
+            "Nuevo elémento con \n y \t",
+            ' M á s - E s p a c i o s '
+        ]);
+        d($array_object->all());
+        $array_object->trim();
+        d($array_object->all());
+
+```

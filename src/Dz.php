@@ -301,6 +301,7 @@ class Dz extends Yii
             'settings'  => '\dezero\modules\settings\Module',
             'sync'      => '\dezero\modules\sync\Module',
             'system'    => '\dezero\modules\system\Module',
+            'test'      => '\dezero\modules\test\Module',
             'user'      => '\dezero\modules\user\Module',
         ];
     }

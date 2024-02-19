@@ -1,0 +1,90 @@
+==========
+-- LOGS --
+==========
+
+1. CLASSES
+----------
+- DzLog is a main class for working with logs (/src/log/DzLog.php)
+
+- \dezero\helpers\Log is the recommeded class to use with logs
+
+```
+    // Helper LOG class
+    use dezero\helpers\Log;
+```
+
+
+2. CONFIG
+---------
+- All the logs configuration is defined on /app/config/components/log.php
+
+- All the logs are stored on /storage/logs/ directory
+
+```
+    [
+        'class' => 'dezero\log\FileTarget',
+        'logFile' => 'product.log',
+        'categories' => ['product'],
+    ],
+    [
+        'class' => 'dezero\log\FileTarget',
+        'logFile' => 'product.error.log',
+        'categories' => ['product_error'],
+    ],
+    [
+        'class' => 'dezero\log\FileTarget',
+        'logFile' => 'product.dev.log',
+        'categories' => ['product_dev'],
+    ],
+
+```
+
+
+3. CONFIG
+---------
+
+```
+// Saving logs with \DzLog class
+    \DzLog::product("This log message will be saved on /storage/logs/product.log");
+    \DzLog::product_error("This log message will be saved on /storage/logs/product_error.log");
+    \DzLog::product_dev("This log message will be saved on /storage/logs/product_dev.log");
+```
+
+```
+// Saving logs with \dezero\helpers\Log class
+    ...
+
+    use \dezero\helpers\Log;
+
+    ...
+
+    Log::product("This log message will be saved on /storage/logs/product.log");
+    Log::product_error("This log message will be saved on /storage/logs/product_error.log");
+    Log::product_dev("This log message will be saved on /storage/logs/product_dev.log");
+```
+
+```
+// Saving arrays into logs
+    \DzLog::dev(['Dev message', 'Another message']);
+```
+
+
+4. MODELS / ACTIVERECORDS
+-------------------------
+
+```
+// Saving an ActiveRecord into logs
+    $product_model = Dz::makeObject(Product::class);
+
+    // This will save the array returned by "getAttibutes()" method
+    Log::dev($product_model);
+```
+
+
+```
+// Saving model errors into /storage/logs/app.error.log
+    if ( ! $product_model->save() )
+    {
+        Log::saveModelError($product_model);
+    }
+```

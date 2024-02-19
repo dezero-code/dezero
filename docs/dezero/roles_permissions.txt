@@ -1,0 +1,211 @@
+=========================
+-- ROLES & PERMISSIONS --
+=========================
+
+--------------------------------------------
+-- 1. AuthHelper
+--------------------------------------------
+
+```
+    use dezero\helpers\AuthHelper;
+
+    ...
+
+    // CREATE METHODS
+    // ------------------------------------
+        // Create a new role
+        AuthHelper::createRole('test', 'Role for testing purposes');
+
+        // Create a new permission
+        AuthHelper::createPermission('test_manage', 'Test - Full access');
+
+
+    // GETTER METHODS
+    // ------------------------------------
+        // Return all the roles
+        d(AuthHelper::getRoles());
+
+        // Return all the permissions
+        d(AuthHelper::getPermissions());
+
+        // Get permissions by role
+        d(AuthHelper::getPermissionsByRole('test'));
+
+        // Get permissions by yser
+        d(AuthHelper::getPermissionsByUser(1));
+
+
+    // ASSIGN / REVOKE PERMISSIONS TO ROLE
+    // ------------------------------------
+        // Assing permissions
+        AuthHelper::assignPermissionToRole('test', 'test_manage');
+        d(AuthHelper::getPermissionsByRole('test'));
+
+        // Revoke permissions
+        AuthHelper::revokePermissionToRole('test', 'test_manage');
+        d(AuthHelper::getPermissionsByRole('test'));
+
+
+    // ASSIGN / REVOKE ROLES TO USER
+    // ------------------------------------
+        // Assign role
+        AuthHelper::assignRole('test', 1);
+        d(AuthHelper::getRolesByUser(1));
+
+        // Revoke role
+        AuthHelper::revokeRole('test', 1);
+        d(AuthHelper::getRolesByUser(1));
+
+
+    // ASSIGN / REVOKE PERMISSIONS TO USER
+    // ------------------------------------
+        // Assign permissions
+        AuthHelper::assignPermission('test_manage', 1);
+        d(AuthHelper::getPermissionsByUser(1));
+
+        // Revoke permissions
+        AuthHelper::revokePermission('test_manage', 1);
+        d(AuthHelper::getPermissionsByUser(1));
+
+
+    // REMOVE METHODS
+    // ------------------------------------
+        // Remove a permission
+            AuthHelper::removePermission('test_manage');
+            d(AuthHelper::getPermissions());
+
+        // Removes a role
+            AuthHelper::removeRole('test');
+            d(AuthHelper::getRoles());
+
+```
+
+--------------------------------------------
+-- 2. USERS (using AuthTrait)
+--------------------------------------------
+
+// Authtrait is used on \dezero\modules\user\models\User.php
+```
+    namespace dezero\modules\user\models;
+
+    ...
+
+    use dezero\modules\auth\rbac\AuthTrait;
+
+    ...
+
+    use dezero\modules\auth\rbac\AuthTrait;
+
+    class User extends BaseUser implements IdentityInterface
+    {
+        use AuthTrait;
+
+        ...
+    }
+```
+
+// Authtrait is used on \dezero\web\User.php
+```
+    namespace dezero\web;
+
+    ...
+
+    use dezero\modules\auth\rbac\AuthTrait;
+
+    ...
+
+    /**
+     * The User component provides APIs for managing the user authentication status.
+     */
+    class User extends \yii\web\User
+    {
+        use AuthTrait;
+
+        ...
+    }
+```
+
+```
+    // USER MODEL vs Yii::$app->user
+    // ------------------------------------
+        $user_model = Yii::$app->user->getIdentity();
+        d($user_model);
+
+        d($user_model->getId());
+        d(Yii::$app->user->getId());
+
+        d($user_model->isAdmin());
+        d(Yii::$app->user->isAdmin());
+
+
+    // CHECK IF ROLE / PERMISSIONS EXIST
+    // ------------------------------------
+        // Check if role "test" exists
+        $role_item = AuthHelper::getRole('test');
+        if ( $role_item === null )
+        {
+            d(AuthHelper::createRole('test', 'Role for testing purposes'));
+        }
+        $permission_item = AuthHelper::getPermission('test_view');
+        if ( $permission_item === null )
+        {
+            d(AuthHelper::createPermission('test_view', 'View permission for testing purposes'));
+        }
+
+
+    // ROLES & USER - ASSIGN
+    // ------------------------------------
+        d($user_model->assignRole('test'));
+        d(Yii::$app->user->assignRole('test'));
+
+
+    // ROLES & USER - CHECK
+    // ------------------------------------
+        d($user_model->hasRole('test'));
+        d($user_model->getRoles());
+
+        d(Yii::$app->user->hasRole('test'));
+        d(Yii::$app->user->getRoles());
+
+
+    // ROLES & USER - REMOVE
+    // ------------------------------------
+        d($user_model->removeRole('test'));
+        d(Yii::$app->user->removeRole('test'));
+
+
+    // PERMISSIONS & USER - ASSIGN
+    // ------------------------------------
+        d($user_model->assignPermission('test_view'));
+        d(Yii::$app->user->assignPermission('test_view'));
+
+
+    // PERMISSIONS & USER - CHECK
+    // ------------------------------------
+        d($user_model->hasPermission('test_view'));
+        d($user_model->getPermissions());
+
+        d(Yii::$app->user->hasPermission('test_view'));
+        d(Yii::$app->user->can('test_view'));
+        d(Yii::$app->user->getPermissions());
+
+
+    // PERMISSIONS & USER - REMOVE
+    // ------------------------------------
+        d($user_model->removePermission('test_view'));
+        d(Yii::$app->user->removePermission('test_view'));
+
+
+
+    //  DIFFERENCE BETWEEN hasPermission() & can() methods
+    // ------------------------------------
+    d($user_model->hasPermission('user_manage'));       // <-- Permission is given directly?
+    d($user_model->can('user_manage'));                 // <-- Permission is given directly or inherated from Role?
+    d(Yii::$app->user->hasPermission('user_manage'));   // <-- Permission is given directly?
+    d(Yii::$app->user->can('user_manage'));             // <-- Permission is given directly or inherated from Role?
+
+    // can() method also works with roles
+    d($user_model->can('admin'));
+    d(Yii::$app->user->can('admin'));
+
+```
