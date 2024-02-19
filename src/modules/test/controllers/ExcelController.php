@@ -49,7 +49,56 @@ class ExcelController extends Controller
 
         // Get all rows
         d($excel_reader->getRows());
-        d($excel_reader->getSpreadsheet());
+
+        // Get all rows with options
+        d($excel_reader
+            ->enableHeaderRow()
+            ->disableParseStringValues()
+            ->getRows()
+        );
+
+
+        d("----------- TESTS WITH FILE '@www/files/tmp/export_inscriptions.xls' -----------");
+
+        $excel_reader = ExcelReader::load('@www/files/tmp/export_inscriptions.xls');
+
+        // Get all rows
+        d($excel_reader
+            ->enableHeaderRow()
+            ->getRows()
+        );
+
+        // Offset & limit rows
+        d($excel_reader
+            ->enableHeaderRow()
+            ->offset(6)
+            ->limit(10)
+            ->getRows()
+        );
+
+        // Offset & limit columns by INDEX
+        $excel_reader = ExcelReader::load('@www/files/tmp/export_inscriptions.xls');
+        d($excel_reader
+            ->enableHeaderRow()
+            ->offsetColumns(4)
+            ->limitColumns(5)
+            ->getRows()
+        );
+
+        // Offset & limit columns by NAME
+        $excel_reader = ExcelReader::load('@www/files/tmp/export_inscriptions.xls');
+        d($excel_reader
+            ->enableHeaderRow()
+            ->offsetColumns('E')
+            ->limitColumns(5)
+            ->setDateFormat('U')    // Unix format
+            ->getRows()
+        );
+
+
+        d("----------- READ FILE '@www/files/tmp/export_orders.xls' -----------");
+
+        $excel_reader = ExcelReader::load('@www/files/tmp/export_orders.xls');
 
         d("----------- TOTAL SHEETS -----------");
 
@@ -85,7 +134,6 @@ class ExcelController extends Controller
         // Set sheet
         $excel_reader->setSheet(1);
         d($excel_reader->getRows());
-
 
         dd("----------- FINISHED TESTS -----------");
     }

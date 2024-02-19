@@ -28,13 +28,13 @@ class ExcelReader extends \yii\base\BaseObject
     /**
      * @var int Current column offset for the actived sheet
      */
-    private $offset_col;
+    private $current_col;
 
 
     /**
      * @var int Current row offset for the actived sheet
      */
-    private $offset_row;
+    private $current_row;
 
 
     /**
@@ -50,11 +50,44 @@ class ExcelReader extends \yii\base\BaseObject
 
 
     /**
+     * @var arry
+     */
+    private $vec_options;
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | CONSTRUCTOR METHODS
+    |--------------------------------------------------------------------------
+    */
+
+
+    /**
      * Constructor
      */
     public function __construct(Spreadsheet $spreadsheet)
     {
         $this->spreadsheet = Instance::ensure($spreadsheet, Spreadsheet::class);
+
+        $this->init();
+    }
+
+
+    /**
+     * Initializes the object
+     */
+    public function init() : void
+    {
+        // Default options
+        $this->vec_options = [
+            'is_header_row'     => false,
+            'is_parse_string'   => true,
+            'rows_offset'       => null,
+            'rows_limit'        => null,
+            'columns_offset'    => null,
+            'columns_limit'     => null,
+            'date_format'       => 'd/m/Y - H:i:s',     // 'U'
+        ];
     }
 
 
@@ -82,6 +115,12 @@ class ExcelReader extends \yii\base\BaseObject
     }
 
 
+    /*
+    |--------------------------------------------------------------------------
+    | GETTER METHODS
+    |--------------------------------------------------------------------------
+    */
+
     /**
      * Return Spreadsheet main object
      */
@@ -99,6 +138,191 @@ class ExcelReader extends \yii\base\BaseObject
         return $this->worksheet;
     }
 
+
+    /**
+     * Return the current offset of rows for the actived PhpSpreadsheet Sheet
+     */
+    public function getCurrentRow() : int
+    {
+        return $this->current_row;
+    }
+
+
+    /**
+     * Return the current offset of columns for the actived PhpSpreadsheet Sheet
+     */
+    public function getCurrentColumn() : int
+    {
+        return $this->current_col;
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | SETTER METHODS
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Set the offset of rows for the actived PhpSpreadsheet Sheet
+     */
+    public function setCurrentRow(int $offset_row = 0) : self
+    {
+        $this->current_row = (int)$offset_row;
+
+        return $this;
+    }
+
+
+    /**
+     * Set the offset of columns for the actived PhpSpreadsheet Sheet
+     */
+    public function setCurrentColumn(int $offset_col = 0) : self
+    {
+        $this->current_col = (int)$offset_col;
+
+        return $this;
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | OPTIONS METHODS
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Enable first row as header
+     */
+    public function enableHeaderRow() : self
+    {
+        $this->vec_options['is_header_row'] = true;
+
+        return $this;
+    }
+
+
+    /**
+     * Disable first row as header (default)
+     */
+    public function disableHeaderRow() : self
+    {
+        $this->vec_options['is_header_row'] = false;
+
+        return $this;
+    }
+
+
+    /**
+     * Check if first row has been defined as header
+     */
+    public function isHeaderRow() : bool
+    {
+        return $this->vec_options['is_header_row'] ;
+    }
+
+
+    /**
+     * Force all the values to be as string type (default)
+     */
+    public function enableParseStringValues() : self
+    {
+        $this->vec_options['is_parse_string'] = true;
+
+        return $this;
+    }
+
+
+    /**
+     * Don't force all the values to be as string type
+     */
+    public function disableParseStringValues() : self
+    {
+        $this->vec_options['is_parse_string'] = false;
+
+        return $this;
+    }
+
+
+    /**
+     * Check all the values must be parsed to string type
+     */
+    public function isParseStringValues() : bool
+    {
+        return $this->vec_options['is_parse_string'] ;
+    }
+
+
+    /**
+     * Offset rows given as input parameter
+     */
+    public function offset(int $offset) : self
+    {
+        $this->vec_options['rows_offset'] = $offset;
+
+        return $this;
+    }
+
+
+    /**
+     * Limit the rows to be returned
+     */
+    public function limit(int $limit) : self
+    {
+        $this->vec_options['rows_limit'] = $limit;
+
+        return $this;
+    }
+
+
+    /**
+     * Offset columns given as input parameter
+     */
+    public function offsetColumns($offset) : self
+    {
+        if ( is_string($offset) )
+        {
+            $offset = $this->alpha2num($offset);
+            $offset = $offset > 0 ? $offset - 1 : $offset;
+        }
+
+        if ( is_int($offset) )
+        {
+            $this->vec_options['columns_offset'] = $offset;
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * Limit the columns to be returned
+     */
+    public function limitColumns(int $limit) : self
+    {
+        $this->vec_options['columns_limit'] = $limit;
+
+        return $this;
+    }
+
+
+    /**
+     * Defines a format for date and datetime values
+     */
+    public function setDateFormat(string $format) : self
+    {
+        $this->vec_options['date_format'] = $format;
+
+        return $this;
+    }
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | SHEET METHODS
+    |--------------------------------------------------------------------------
+    */
 
     /**
      * Get sheet count
@@ -137,56 +361,63 @@ class ExcelReader extends \yii\base\BaseObject
 
 
     /**
-     * Return the offset of rows for the actived PhpSpreadsheet Sheet
-     */
-    public function getRowOffset() : int
-    {
-        return $this->offset_row;
-    }
-
-
-    /**
-     * Set the offset of rows for the actived PhpSpreadsheet Sheet
-     */
-    public function setRowOffset(int $offset = 0) : self
-    {
-        $this->offset_row = (int)$offset;
-
-        return $this;
-    }
-
-
-    /**
-     * Return the offset of columns for the actived PhpSpreadsheet Sheet
-     */
-    public function getColumnOffset() : int
-    {
-        return $this->offset_col;
-    }
-
-
-     /**
-     * Set the offset of columns for the actived PhpSpreadsheet Sheet
-     */
-    public static function setColumnOffset(int $offset = 0) : self
-    {
-        $this->offset_col = (int)$offset;
-
-        return $this;
-    }
-
-
-    /**
      * Reset cached PhpSpreadsheet sheet object and helper data
      */
     public function resetSheet() : void
     {
         $this->worksheet = null;
-        $this->offset_row = 0;
-        $this->offset_col = 0; // A1 => 1
+        $this->current_row = 0;
+        $this->current_col = 0; // A1 => 1
+    }
 
-        // return new static();
-        // return $this;
+
+    /**
+     * Get PhpSpreadsheet Sheet object
+     *
+     * @param int|string $identity Sheet index or name
+     * @param bool $autoCreate
+     * @return object PhpSpreadsheet Sheet object
+     */
+    public function getSheet($index_or_name = null, bool $is_auto_create = false) : Worksheet
+    {
+        // By default, return the active sheet
+        if ( $index_or_name === null ) {
+
+            return $this->worksheet;
+        }
+
+        if ( !is_numeric($index_or_name) && !is_string($index_or_name) )
+        {
+            return $this->worksheet;
+        }
+
+
+        // Given a sheet index number
+        if ( is_numeric($index_or_name) )
+        {
+            $worksheet = $this->spreadsheet->getSheet($index_or_name);
+
+            // Auto create if not exist
+            if ( ! $worksheet && $is_auto_create )
+            {
+                // Create a new sheet by index
+                $worksheet = $this->setSheet($index_or_name)->getSheet();
+            }
+
+            return $worksheet;
+        }
+
+        // Given a sheet name
+        $worksheet = $this->spreadsheet->getSheetByName($index_or_name);
+
+        // Auto create if not exist
+        if ( ! $worksheet && $is_auto_create )
+        {
+            // Create a new sheet by name
+            $worksheet = $this->setSheet(null, $index_or_name, true)->getSheet();
+        }
+
+        return $worksheet;
     }
 
 
@@ -253,122 +484,59 @@ class ExcelReader extends \yii\base\BaseObject
     }
 
 
-    /**
-     * Get PhpSpreadsheet Sheet object
-     *
-     * @param int|string $identity Sheet index or name
-     * @param bool $autoCreate
-     * @return object PhpSpreadsheet Sheet object
-     */
-    public function getSheet($index_or_name = null, bool $is_auto_create = false) : Worksheet
-    {
-        // By default, return the active sheet
-        if ( $index_or_name === null ) {
-
-            return $this->worksheet;
-        }
-
-        if ( !is_numeric($index_or_name) && !is_string($index_or_name) )
-        {
-            return $this->worksheet;
-        }
-
-
-        // Given a sheet index number
-        if ( is_numeric($index_or_name) )
-        {
-            $worksheet = $this->spreadsheet->getSheet($index_or_name);
-
-            // Auto create if not exist
-            if ( ! $worksheet && $is_auto_create )
-            {
-                // Create a new sheet by index
-                $worksheet = $this->setSheet($index_or_name)->getSheet();
-            }
-
-            return $worksheet;
-        }
-
-        // Given a sheet name
-        $worksheet = $this->spreadsheet->getSheetByName($index_or_name);
-
-        // Auto create if not exist
-        if ( ! $worksheet && $is_auto_create )
-        {
-            // Create a new sheet by name
-            $worksheet = $this->setSheet(null, $index_or_name, true)->getSheet();
-        }
-
-        return $worksheet;
-    }
-
+    /*
+    |--------------------------------------------------------------------------
+    | GET ROWS
+    |--------------------------------------------------------------------------
+    */
 
     /**
-     * Get data of a row from the actived sheet of PhpSpreadsheet
-     *
-     * @param bool $is_parse_string All values from sheet to be string type
-     *
-     * @param bool $vec_options [
-     *      row (int) Ended row number
-     *      column (int) Ended column number
-     *      timestamp (bool) Excel datetime to Unixtime
-     *      timestampFormat (string) Format for date() when using timestamp
-     *  ]
+     * Get data of the next row from the actived sheet of PhpSpreadsheet
      *
      * @param callable $callback($cellValue, int $columnIndex, int $rowIndex)
-     *
-     * @return array Data of Spreadsheet
      */
-    public function getRow(array $vec_options = [], bool $is_parse_string = true, callable $callback = null) : array
+    public function nextRow(callable $callback = null) : array
     {
         $worksheet = $this->ensureWorksheet();
 
-        // Options
-        $vec_default_options = [
-            'columnOffset' => 0,
-            'columns' => null,
-            'timestamp' => true,
-            'timestampFormat' => 'Y-m-d H:i:s', // False would use Unixtime
-        ];
-
-        $vec_options = !empty($vec_options) ? ArrayHelper::merge($vec_default_options, $vec_options) : $vec_default_options;
-
         // Calculate the column range of the worksheet
-        $start_column = ( $vec_options['columnOffset'] ) ?: 0;
-        $total_columns = ( $vec_options['columns'] ) ?: $this->alpha2num($worksheet->getHighestColumn());
+        $start_column = $this->vec_options['columns_offset'] !== null ? $this->vec_options['columns_offset'] : 0;
+        $total_columns = $this->vec_options['columns_limit'] !== null ? ( $this->vec_options['columns_offset'] + $this->vec_options['columns_limit'] ) : $this->alpha2num($worksheet->getHighestColumn());
 
         // Next row
-        $this->offset_row++;
+        $this->current_row++;
 
         // Check if exceed highest row by PHPSpreadsheet highest row
-        if ( $this->offset_row > $worksheet->getHighestRow() )
+        if ( $this->current_row > $worksheet->getHighestRow() )
         {
             return [];
         }
 
         // Fetch data from the sheet
         $vec_data = [];
-        for ( $col = $start_column + 1; $col <= $total_columns; ++$col )
+        for ( $current_col = $start_column + 1; $current_col <= $total_columns; ++$current_col )
         {
-            $cell = $worksheet->getCellByColumnAndRow($col, $this->offset_row);
+            $cell = $worksheet->getCellByColumnAndRow($current_col, $this->current_row);
             $value = $cell->getValue();
 
             // Timestamp option
-            if ( $vec_options['timestamp'] && \PhpOffice\PhpSpreadsheet\Shared\Date::isDateTime($cell) )
+            if ( \PhpOffice\PhpSpreadsheet\Shared\Date::isDateTime($cell) )
             {
                 $value = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($value);
 
                 // Timestamp Format option
-                $value = ($vec_options['timestampFormat']) ? date($vec_options['timestampFormat'], $value) : $value;
+                $value = $this->vec_options['date_format'] !== null ? date($this->vec_options['date_format'], $value) : $value;
             }
 
-            $value = ($is_parse_string) ? (string)$value : $value;
+            // Parse value to string type?
+            $value = $this->isParseStringValues() ? (string)$value : $value;
 
             // Callback function
             if ( $callback )
             {
-                $callback($value, $col, $this->offset_row);
+                $callback($value, $current_col, $this->current_row);
             }
+
             $vec_data[] = $value;
         }
 
@@ -377,60 +545,77 @@ class ExcelReader extends \yii\base\BaseObject
 
 
     /**
-     * Get rows from the actived sheet of PhpSpreadsheet
-     *
-     * @param bool $is_parse_string All values from sheet to be string type
-     *
-     * @param bool $vec_options [
-     *      rows (int) Ended row number
-     *      columns (int) Ended column number
-     *      timestamp (bool) Excel datetime to Unixtime
-     *      timestampFormat (string) Format for date() when usgin timestamp
-     *  ]
+     * Return all the rows from the actived sheet of PhpSpreadsheet
      *
      * @param callable $callback($cellValue, int $columnIndex, int $rowIndex)
-     *
-     * @return array Data of Spreadsheet
      */
-    public function getRows(array $vec_options = [], bool $is_parse_string = true, callable $callback=null) : array
+    public function getRows(callable $callback = null) : array
     {
         $worksheet = $this->ensureWorksheet();
 
-        // Options
-        $vec_default_options = [
-            'rowOffset'         => 0,
-            'rows'              => null,
-            'columns'           => null,
-            'timestamp'         => true,
-            'timestampFormat'   => 'Y-m-d H:i:s', // False would use Unixtime
-        ];
-
-        $vec_options = !empty($vec_options) ? ArrayHelper::merge($vec_default_options, $vec_options) : $vec_default_options;
-
-
         // Get the highest row and column numbers referenced in the worksheet
         $highest_row = $worksheet->getHighestRow();
-        $offset_row = ($vec_options['rowOffset'] && $vec_options['rowOffset'] <= $highest_row) ? $vec_options['rowOffset'] : 0;
-        $total_rows = ($vec_options['rows'] && ($offset_row + $vec_options['rows']) < $highest_row) ? $vec_options['rows'] : $highest_row - $offset_row;
+        $offset_row = ( $this->vec_options['rows_offset'] !== null && $this->vec_options['rows_offset'] <= $highest_row ) ? $this->vec_options['rows_offset'] : 0;
+        $total_rows = ( $this->vec_options['rows_limit'] !== null && ($offset_row + $this->vec_options['rows_limit']) < $highest_row ) ? $this->vec_options['rows_limit'] : $highest_row - $offset_row;
 
-        // Enhance performance for each getRow()
-        $vec_options['columns'] = ($vec_options['columns']) ?: $this->alpha2num($worksheet->getHighestColumn());
+        // Enhance performance for each nextRow()
+        if ( $this->vec_options['columns_limit'] === null )
+        {
+            $this->limitColumns($this->alpha2num($worksheet->getHighestColumn()));
+        }
+
+        // Header row enabled?
+        $vec_header_row = $this->isHeaderRow() ? $this->getFirstRow() : [];
 
         // Set row offset
-        $this->offset_row = $offset_row;
+        $this->current_row = $offset_row;
 
         // Fetch data from the sheet
         $vec_data = [];
-        $vec_row = &$vec_data;
         for ( $i=1; $i <= $total_rows ; $i++ )
         {
-            $vec_row[] = $this->getRow($vec_options, $is_parse_string, $callback);
+            // Enabled header row?
+            if ( $this->isHeaderRow() && $this->current_row === 0 )
+            {
+                // Next row
+                $this->current_row++;
+
+                // Exclude processing the first row
+                continue;
+            }
+
+            $vec_row = $this->nextRow($callback);
+
+            // Header rows as array keys
+            if ( $this->isHeaderRow() && !empty($vec_header_row) )
+            {
+                $vec_row = array_combine($vec_header_row, $vec_row);
+            }
+
+            $vec_data[] = $vec_row;
         }
 
         return $vec_data;
     }
 
 
+    /**
+     * Return the first row
+     */
+    public function getFirstRow() : array
+    {
+        $this->current_row = 0;
+
+        return $this->nextRow();
+    }
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | UTILITIES METHODS
+    |--------------------------------------------------------------------------
+    */
 
     /**
      * Alpha to Number
