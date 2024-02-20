@@ -45,20 +45,38 @@ class ExcelController extends Controller
     {
         d("----------- TESTS WITH FILE '@www/files/tmp/export_orders.xls' -----------");
 
+        // Get all rows with headers
         $excel_reader = ExcelReader::load('@www/files/tmp/export_orders.xls');
-
-        // Get all rows
         d($excel_reader->getRows());
 
-        // Get all rows with options
+        // Get all rows without headers and without parsing to string type
+        $excel_reader = ExcelReader::load('@www/files/tmp/export_orders.xls');
         d($excel_reader
-            ->enableHeaderRow()
+            ->noHeaderRow()
             ->disableParseStringValues()
-            ->getRows()
-        );
+            ->getRows());
+
+        // Get from sheet by index
+        $excel_reader = ExcelReader::load('@www/files/tmp/export_orders.xls');
+        d($excel_reader
+            ->fromSheet(2)
+            ->getRows());
+
+        // Get from sheet by name
+        $excel_reader = ExcelReader::load('@www/files/tmp/export_orders.xls');
+        d($excel_reader
+            ->fromSheetName('Line Items')
+            ->getRows());
+
+        d("----------- TOTAL SHEETS -----------");
+        $excel_reader = ExcelReader::load('@www/files/tmp/export_orders.xls');
+        d($excel_reader->getSheetNames());
+        // d($excel_reader->getAllSheets());
+        d($excel_reader->getSheetCount());
+        d($excel_reader->getActiveSheetIndex());
 
 
-        d("----------- TESTS WITH FILE '@www/files/tmp/export_inscriptions.xls' -----------");
+        dd("----------- TESTS WITH FILE '@www/files/tmp/export_inscriptions.xls' -----------");
 
         $excel_reader = ExcelReader::load('@www/files/tmp/export_inscriptions.xls');
 
@@ -94,19 +112,6 @@ class ExcelController extends Controller
             ->setDateFormat('U')    // Unix format
             ->getRows()
         );
-
-
-        d("----------- READ FILE '@www/files/tmp/export_orders.xls' -----------");
-
-        $excel_reader = ExcelReader::load('@www/files/tmp/export_orders.xls');
-
-        d("----------- TOTAL SHEETS -----------");
-
-        d($excel_reader->getSheetNames());
-        // d($excel_reader->getAllSheets());
-        d($excel_reader->getSheetCount());
-        d($excel_reader->getActiveSheetIndex());
-
 
 
         d("----------- SHEET #0 - ORDERS -----------");

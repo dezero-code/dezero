@@ -6,6 +6,7 @@
  *
  * @see https://github.com/PHPOffice/PhpSpreadsheet/tree/1.29.0
  * @see https://github.com/yidas/phpspreadsheet-helper
+ * @see https://github.com/spatie/simple-excel
  */
 
 namespace dezero\modules\sync\excel;
@@ -50,7 +51,25 @@ class ExcelReader extends \yii\base\BaseObject
 
 
     /**
-     * @var arry
+     * @var int
+     */
+    protected $sheet_number;
+
+
+    /**
+     * @var string
+     */
+    protected $sheet_name;
+
+
+    /**
+     * @var bool
+     */
+    protected $search_sheet_by_name;
+
+
+    /**
+     * @var array
      */
     private $vec_options;
 
@@ -79,14 +98,25 @@ class ExcelReader extends \yii\base\BaseObject
     public function init() : void
     {
         // Default options
+        $this->sheet_number = 1;
+        $this->sheet_name = '';
+        $this->search_sheet_by_name = false;
+
         $this->vec_options = [
-            'is_header_row'     => false,
-            'is_parse_string'   => true,
-            'rows_offset'       => null,
-            'rows_limit'        => null,
-            'columns_offset'    => null,
-            'columns_limit'     => null,
-            'date_format'       => 'd/m/Y - H:i:s',     // 'U'
+            // Headers
+            'is_header_row'         => true,
+            'header_on_row'         => 0,
+            'vec_custom_headers'    => [],
+
+            // Type options
+            'is_parse_string'       => true,
+            'date_format'           => 'd/m/Y - H:i:s',     // 'U'
+
+            // Limit && offset
+            'rows_offset'           => null,
+            'rows_limit'            => null,
+            'columns_offset'        => null,
+            'columns_limit'         => null,
         ];
     }
 
@@ -187,31 +217,9 @@ class ExcelReader extends \yii\base\BaseObject
 
     /*
     |--------------------------------------------------------------------------
-    | OPTIONS METHODS
+    | HEADER ROW OPTIONS METHODS
     |--------------------------------------------------------------------------
     */
-
-    /**
-     * Enable first row as header
-     */
-    public function enableHeaderRow() : self
-    {
-        $this->vec_options['is_header_row'] = true;
-
-        return $this;
-    }
-
-
-    /**
-     * Disable first row as header (default)
-     */
-    public function disableHeaderRow() : self
-    {
-        $this->vec_options['is_header_row'] = false;
-
-        return $this;
-    }
-
 
     /**
      * Check if first row has been defined as header
@@ -221,6 +229,46 @@ class ExcelReader extends \yii\base\BaseObject
         return $this->vec_options['is_header_row'] ;
     }
 
+
+    /**
+     * Set the row number for the header
+     */
+    public function headerOnRow(int $header_row): self
+    {
+        $this->vec_options['header_on_row'] = $header_row;
+
+        return $this;
+    }
+
+
+    /**
+     * Disable header row
+     */
+    public function noHeaderRow(): self
+    {
+        $this->vec_options['is_header_row'] = false;
+
+        return $this;
+
+    }
+
+
+    /**
+     * Custom headers
+     */
+    public function customHeaders(array $vec_headers) : self
+    {
+        $this->vec_options['vec_custom_headers'] = $vec_headers;
+
+        return $this;
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | MORE OPTIONS METHODS
+    |--------------------------------------------------------------------------
+    */
 
     /**
      * Force all the values to be as string type (default)
@@ -372,52 +420,78 @@ class ExcelReader extends \yii\base\BaseObject
 
 
     /**
-     * Get PhpSpreadsheet Sheet object
-     *
-     * @param int|string $identity Sheet index or name
-     * @param bool $autoCreate
-     * @return object PhpSpreadsheet Sheet object
+     * Set the active sheet given the number where '1' is the first sheet
      */
-    public function getSheet($index_or_name = null, bool $is_auto_create = false) : Worksheet
+    public function fromSheet(int $sheet_number) : self
     {
-        // By default, return the active sheet
-        if ( $index_or_name === null ) {
-
-            return $this->worksheet;
+        if ( $sheet_number > 0 )
+        {
+            $this->sheet_number = $sheet_number;
+            $this->search_sheet_by_name = false;
         }
 
-        if ( !is_numeric($index_or_name) && !is_string($index_or_name) )
+        return $this;
+    }
+
+
+    /**
+     * Set the active sheet given the number where '0' is the first sheet
+     */
+    public function fromSheetName(string $sheet_name) : self
+    {
+        $this->sheet_name = $sheet_name;
+        $this->search_sheet_by_name = true;
+
+        return $this;
+    }
+
+
+    /**
+     * Return the active PhpSpreadsheet Sheet object
+     */
+    protected function getSheet() : Worksheet
+    {
+        // First of all, check the cached property
+        if ( $this->worksheet !== null && $this->worksheet instanceof Worksheet )
         {
             return $this->worksheet;
         }
 
+        $this->worksheet = $this->search_sheet_by_name ? $this->getActiveSheetByName() : $this->getActiveSheetByIndex();
 
-        // Given a sheet index number
-        if ( is_numeric($index_or_name) )
+        if ( $this->worksheet !== null )
         {
-            $worksheet = $this->spreadsheet->getSheet($index_or_name);
-
-            // Auto create if not exist
-            if ( ! $worksheet && $is_auto_create )
-            {
-                // Create a new sheet by index
-                $worksheet = $this->setSheet($index_or_name)->getSheet();
-            }
-
-            return $worksheet;
+            return $this->worksheet;
         }
 
-        // Given a sheet name
-        $worksheet = $this->spreadsheet->getSheetByName($index_or_name);
+        // Active sheet does not exists
+        throw new Exception("Invalid or empty sheet");
+    }
 
-        // Auto create if not exist
-        if ( ! $worksheet && $is_auto_create )
+
+    /**
+     * Return the active sheet object by name
+     */
+    protected function getActiveSheetByName(): ?Worksheet
+    {
+        $worksheet = $this->spreadsheet->getSheetByName($this->sheet_name);
+        if ( $worksheet !== null )
         {
-            // Create a new sheet by name
-            $worksheet = $this->setSheet(null, $index_or_name, true)->getSheet();
+            // Mark the current sheet as active
+            return $this->spreadsheet->setActiveSheetIndex($this->spreadsheet->getIndex($worksheet));
         }
 
-        return $worksheet;
+        return null;
+    }
+
+
+    /**
+     * Return the active sheet object by index
+     */
+    protected function getActiveSheetByIndex(): ?Worksheet
+    {
+        return $this->spreadsheet->setActiveSheetIndex($this->sheet_number - 1);
+        // return $this->spreadsheet->getSheet($this->sheet_number - 1);
     }
 
 
@@ -428,6 +502,7 @@ class ExcelReader extends \yii\base\BaseObject
      * @param string $title Sheet title
      * @param bool $is_normalize_title Auto-normalize title rule
      */
+    /*
     public function setSheet($sheet = 0, ?string $title = null, bool $is_normalize_title = false) : self
     {
         $this->resetSheet();
@@ -482,6 +557,7 @@ class ExcelReader extends \yii\base\BaseObject
 
         return $this;
     }
+    */
 
 
     /*
@@ -497,7 +573,7 @@ class ExcelReader extends \yii\base\BaseObject
      */
     public function nextRow(callable $callback = null) : array
     {
-        $worksheet = $this->ensureWorksheet();
+        $worksheet = $this->getSheet();
 
         // Calculate the column range of the worksheet
         $start_column = $this->vec_options['columns_offset'] !== null ? $this->vec_options['columns_offset'] : 0;
@@ -551,7 +627,7 @@ class ExcelReader extends \yii\base\BaseObject
      */
     public function getRows(callable $callback = null) : array
     {
-        $worksheet = $this->ensureWorksheet();
+        $worksheet = $this->getSheet();
 
         // Get the highest row and column numbers referenced in the worksheet
         $highest_row = $worksheet->getHighestRow();
@@ -565,7 +641,7 @@ class ExcelReader extends \yii\base\BaseObject
         }
 
         // Header row enabled?
-        $vec_header_row = $this->isHeaderRow() ? $this->getFirstRow() : [];
+        $vec_header_row = $this->getHeaderRow();
 
         // Set row offset
         $this->current_row = $offset_row;
@@ -600,11 +676,30 @@ class ExcelReader extends \yii\base\BaseObject
 
 
     /**
-     * Return the first row
+     * Generate the header row with the given options
      */
-    public function getFirstRow() : array
+    public function getHeaderRow() : array
     {
-        $this->current_row = 0;
+        if ( ! $this->isHeaderRow() )
+        {
+            return [];
+        }
+
+        if ( !empty($this->vec_options['vec_custom_headers']) )
+        {
+            return $this->vec_options['vec_custom_headers'];
+        }
+
+        return $this->getRow($this->vec_options['header_on_row']);
+    }
+
+
+    /**
+     * Return a row given the row index where '0' is the first
+     */
+    public function getRow(int $row_index) : array
+    {
+        $this->current_row = $row_index;
 
         return $this->nextRow();
     }
@@ -659,27 +754,6 @@ class ExcelReader extends \yii\base\BaseObject
         }
 
         return (string)$r;
-    }
-
-
-
-    /**
-     * Validate and return the selected PhpSpreadsheet Sheet Object
-     */
-    private function ensureWorksheet() : Worksheet
-    {
-        if ( $this->worksheet !== null && $this->worksheet instanceof Worksheet )
-        {
-            return $this->worksheet;
-        }
-
-        if ( $this->spreadsheet instanceof Spreadsheet )
-        {
-            // Set to default sheet if is unset
-            return $this->setSheet()->getSheet();
-        }
-
-        throw new Exception("Invalid or empty PhpSpreadsheet Worksheet");
     }
 
 
