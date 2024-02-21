@@ -1,6 +1,6 @@
 <?php
 /**
- * Auth class helper
+ * Auth helper class
  *
  * @author Fabián Ruiz <fabian@dezero.es>
  * @link http://www.dezero.es
@@ -18,6 +18,8 @@ use Yii;
 
 /**
  * Helper class for working with RBAC items
+ *
+ * This class is the ONLY class to work with AuthManager component
  */
 class AuthHelper
 {

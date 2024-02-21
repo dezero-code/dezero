@@ -7,10 +7,10 @@
 
 namespace dezero\web;
 use dezero\helpers\Json;
+use dezero\modules\auth\helpers\AuthChecker;
 use dezero\validators\AjaxRequestValidator;
 use Dz;
 use yii\web\BadRequestHttpException;
-use yii\web\ForbiddenHttpException;
 use yii\web\Response;
 use Yii;
 
@@ -49,11 +49,7 @@ class Controller extends \yii\web\Controller
      */
     public function requireLogin() : void
     {
-        if ( Yii::$app->user->getIsGuest() )
-        {
-            Yii::$app->user->loginRequired();
-            Yii::$app->end();
-        }
+        AuthChecker::requireLogin();
     }
 
 
@@ -62,11 +58,7 @@ class Controller extends \yii\web\Controller
      */
     public function requireGuest() : void
     {
-        if ( ! Yii::$app->user->getIsGuest() )
-        {
-            Yii::$app->user->guestRequired();
-            Yii::$app->end();
-        }
+        AuthChecker::requireGuest();
     }
 
 
@@ -75,14 +67,7 @@ class Controller extends \yii\web\Controller
      */
     public function requireAdmin() : void
     {
-        // First of all, ensure user is logged in
-        $this->requireLogin();
-
-        // Check if is admin
-        if ( ! Yii::$app->user->isAdmin() )
-        {
-            throw new ForbiddenHttpException('You are not allowed to access this page.');
-        }
+        AuthChecker::requireAdmin();
     }
 
 
@@ -91,14 +76,7 @@ class Controller extends \yii\web\Controller
      */
     public function requireSuperadmin() : void
     {
-        // First of all, ensure user is logged in
-        $this->requireLogin();
-
-        // Check if is superadmin
-        if ( ! Yii::$app->user->isSuperadmin() )
-        {
-            throw new ForbiddenHttpException('You are not allowed to access this page.');
-        }
+        AuthChecker::requireSuperadmin();
     }
 
 
@@ -107,10 +85,7 @@ class Controller extends \yii\web\Controller
      */
     public function requireRole(string $role_name, bool $is_skip_superadmin = true) : void
     {
-        if ( ( ! $is_skip_superadmin || ! Yii::$app->user->isSuperadmin() ) && ! Yii::$app->user->hasRole($role_name) )
-        {
-            throw new ForbiddenHttpException('You are not allowed to access this page.');
-        }
+        AuthChecker::requireRole($role_name, $is_skip_superadmin);
     }
 
 
@@ -119,10 +94,7 @@ class Controller extends \yii\web\Controller
      */
     public function requirePermission(string $permission_name, bool $is_skip_superadmin = true) : void
     {
-        if ( ( ! $is_skip_superadmin || ! Yii::$app->user->isSuperadmin() ) && ! Yii::$app->user->can($permission_name) )
-        {
-            throw new ForbiddenHttpException('You are not allowed to access this page.');
-        }
+        AuthChecker::requirePermission($permission_name, $is_skip_superadmin);
     }
 
 
@@ -155,7 +127,7 @@ class Controller extends \yii\web\Controller
      */
     public function validateAjaxRequest($model) : void
     {
-        Dz::makeObject(AjaxRequestValidator::class, [$model])->validate();
+        $is_valid  = Dz::makeObject(AjaxRequestValidator::class, [$model])->validate();
     }
 
 
@@ -166,6 +138,7 @@ class Controller extends \yii\web\Controller
     {
         $this->response->data = $data;
         $this->response->format = Response::FORMAT_RAW;
+
         return $this->response;
     }
 }
