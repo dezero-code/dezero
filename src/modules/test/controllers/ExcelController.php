@@ -157,9 +157,32 @@ class ExcelController extends Controller
 
         // Create a new Excel
         $excel_writer = ExcelWriter::create()
-            ->addHeader(['FIRST', 'Second', 'ThIrD', 'f o u r t h', 'fIfTh'])
+            ->addHeader(['#', 'FIRST', 'Second', 'ThIrD', 'f o u r t h', 'fIfTh'])
             ->setHeaderHeight(80)
-            ->addRow(['hola', 'esto', 'es', 'una', 'prueba'])
+            ->setHeaderStyle([
+                'bold',
+                'italic',
+                'underline',
+                'wrap',
+                'font-size' => 20,
+                'align' => 'center',
+                'vertical-align' => 'center',
+                'color' => '#FFFFFF',
+                'background' => '#000000',
+            ])
+            ->addRows([
+                ['Fila #1', 'hola', 'esto', 'es', 'una', 'prueba'],
+                ['Fila #2', 'segunda', 'prueba', 'que', 'hacemos', 'ahora'],
+                ['Fila #3', 'hola', 'esto', 'es', 'una', 'prueba'],
+            ])
+            ->setRowStyle([
+                'font-size' => 14,
+                'borders'
+            ], 3)
+            ->setRowStyle([
+                'font-size' => 8,
+                'border-bottom'
+            ], 4)
             ->setWrapText()
             ->setVerticalAlign('center')
             ->download();

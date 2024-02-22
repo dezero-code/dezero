@@ -90,6 +90,20 @@ class ExcelWriter extends \yii\base\BaseObject
     */
 
     /**
+     * Add mutiple rows the active sheet
+     */
+    public function addRows(array $vec_rows) : self
+    {
+        foreach ( $vec_rows as $vec_row )
+        {
+            $this->addRow($vec_row);
+        }
+
+        return $this;
+    }
+
+
+    /**
      * Add a row to the active sheet
      */
     public function addRow(array $vec_row, $vec_style = null) : self
@@ -257,9 +271,20 @@ class ExcelWriter extends \yii\base\BaseObject
         // Get last column in ALPHA
         $last_column = $this->worksheet->getHighestColumn();
 
+        // Parse custom styles and apply them
+        $vec_style = $this->customStyles($vec_style);
         $this->worksheet->getStyle("A{$num_row}:{$last_column}{$num_row}")->applyFromArray($vec_style);
 
         return $this;
+    }
+
+
+    /**
+     * Set the style of the header row
+     */
+    public function setHeaderStyle(array $vec_style) : self
+    {
+        return $this->setRowStyle($vec_style, 1);
     }
 
 
@@ -288,7 +313,7 @@ class ExcelWriter extends \yii\base\BaseObject
         // Center as default
         if ( ! in_array($value, $vec_allowed_values, false) )
         {
-            $value = PhpOffice\PhpSpreadsheet\Style::VERTICAL_CENTER;
+            $value = Alignment::VERTICAL_CENTER;
         }
 
         // Use full dimension as default
@@ -323,6 +348,126 @@ class ExcelWriter extends \yii\base\BaseObject
             ->setWrapText($value);
 
         return $this;
+    }
+
+
+    /**
+     * Parse from custom styles to PhpSpreadhSheet styles
+     *
+     * @see PhpOffice\PhpSpreadsheet\Style\Style::applyFromArray()
+     *
+     * @see https://phpspreadsheet.readthedocs.io/en/latest/topics/recipes/#valid-array-keys-for-style-applyfromarray
+     */
+    private function customStyles(array $vec_style) : array
+    {
+        if ( empty($vec_style) )
+        {
+            return [];
+        }
+
+        // Ensure default style groups exist
+        $vec_style['alignment'] = $vec_style['alignment'] ?? [];
+        $vec_style['borders'] = $vec_style['borders'] ?? [];
+        $vec_style['fill'] = $vec_style['fill'] ?? [];
+        $vec_style['font'] = $vec_style['font'] ?? [];
+
+        foreach ( $vec_style as $style_name => $style_value )
+        {
+            // BOLD - Convert from ['bold'] to ['font' => ['bold' => true]]
+            if ( $style_value === 'bold' )
+            {
+                $vec_style['font']['bold'] = true;
+                unset($vec_style[$style_name]);
+            }
+
+            // ITALIC - Convert from ['italic'] to ['font' => ['italic' => true]]
+            else if ( $style_value === 'italic' )
+            {
+                $vec_style['font']['italic'] = true;
+                unset($vec_style[$style_name]);
+            }
+
+            // UNDERLINE - Convert from ['underline'] to ['font' => ['underline' => 'single']]
+            //
+            // ---> More values int \PhpOffice\PhpSpreadsheet\Style\Font.php
+            //
+            else if ( $style_value === 'underline' )
+            {
+                $vec_style['font']['underline'] = 'single';
+                unset($vec_style[$style_name]);
+            }
+
+            // UNDERLINE - Convert from ['underline' => value] to ['font' => ['underline' => value]]
+            //
+            // ---> More values int \PhpOffice\PhpSpreadsheet\Style\Font.php
+            //
+            else if ( $style_name === 'underline' && !empty($style_value) )
+            {
+                $vec_style['font']['underline'] = $style_value;
+                unset($vec_style[$style_name]);
+            }
+
+            // FONT SIZE - Convert from ['font-size' => 16] to ['font' => ['size' => 16]]
+            else if ( ( $style_name === 'font-size' || $style_name === 'size' ) && !empty($style_value) )
+            {
+                $vec_style['font']['size'] = $style_value;
+                unset($vec_style[$style_name]);
+            }
+
+            // COLOR - Convert from ['color' => '#808080'] to ['font' => ['color' => ['rgb' => '808080']]]
+            else if ( $style_name === 'color' && !empty($style_value) )
+            {
+                $vec_style['font']['color'] = ['rgb' => str_replace('#', '', $style_value)];
+                unset($vec_style[$style_name]);
+            }
+
+            // ALIGNMENT HORIZONTAL - Convert from ['align' => 'center'] to ['alignment' => ['horizontal' => 'center']]
+            else if ( ( $style_name === 'align' || $style_name === 'alignment' || $style_name === 'horizontal' || $style_name === 'text-align' ) && !empty($style_value) )
+            {
+                $vec_style['alignment']['horizontal'] = $style_value;
+                unset($vec_style[$style_name]);
+            }
+
+            // ALIGNMENT VERTICAL - Convert from ['vertical' => 'center'] to ['alignment' => ['vertical' => 'center']]
+            else if ( ( $style_name === 'vertical-align' || $style_name === 'vertical' ) && !empty($style_value) )
+            {
+                $vec_style['alignment']['vertical'] = $style_value;
+                unset($vec_style[$style_name]);
+            }
+
+            // WRAP TEXT - Convert from ['wrap-text'] to ['alignment' => ['wrapText' => true]]
+            else if ( $style_value === 'wrap' || $style_value === 'wrap-text' )
+            {
+                $vec_style['alignment']['wrapText'] = true;
+                unset($vec_style[$style_name]);
+            }
+
+            // BACKGROUND COLOR - Convert from ['fill' => '#808080'] to ['fill' => ['fillType' => 'solid', 'startColor' => ['rgb' => '808080']]]
+            else if ( ( $style_name === 'fill' || $style_name === 'background' ) && !empty($style_value) )
+            {
+                $vec_style['fill']['fillType'] = 'solid';
+                $vec_style['fill']['startColor'] = ['rgb' => str_replace('#', '', $style_value)];
+                unset($vec_style[$style_name]);
+            }
+
+            // BORDERS - Convert from ['border-bottom'] to ['borders' => ['bottom' => 'borderStyle' => 'medium']]
+            //
+            // ---> More values int \PhpOffice\PhpSpreadsheet\Style\Border.php
+            //
+            else if ( $style_value === 'border-top' || $style_value === 'border-bottom' || $style_value === 'border-left' || $style_value === 'border-right' )
+            {
+                $border_position = str_replace('border-', '', $style_value);
+                $vec_style['borders'][$border_position] = ['borderStyle' => 'thin'];
+                unset($vec_style[$style_name]);
+            }
+            else if ( $style_value === 'borders' )
+            {
+                $vec_style['borders']['outline'] = ['borderStyle' => 'thin'];
+                unset($vec_style[$style_name]);
+            }
+        }
+
+        return $vec_style;
     }
 
 
