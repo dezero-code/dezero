@@ -8,6 +8,7 @@
 namespace dezero\modules\test\controllers;
 
 use dezero\modules\sync\excel\ExcelReader;
+use dezero\modules\sync\excel\ExcelWriter;
 use dezero\web\Controller;
 use Yii;
 
@@ -31,8 +32,11 @@ class ExcelController extends Controller
      */
     public function actionIndex()
     {
-        // Testing read an Excel
-        $this->testReader();
+        // Testing read from an Excel
+        // $this->testReader();
+
+        // Testing write to an Excel
+        $this->testWriter();
 
         return $this->render('//test/test/index');
     }
@@ -141,5 +145,23 @@ class ExcelController extends Controller
         d($excel_reader->getRows());
 
         dd("----------- FINISHED TESTS -----------");
+    }
+
+
+    /**
+     * Testing ExcelWriter class
+     */
+    private function testWriter()
+    {
+        // d("----------- TESTS WRITING AN EXCEL -----------");
+
+        // Create a new Excel
+        $excel_writer = ExcelWriter::create()
+            ->addHeader(['FIRST', 'Second', 'ThIrD', 'f o u r t h', 'fIfTh'])
+            ->setHeaderHeight(80)
+            ->addRow(['hola', 'esto', 'es', 'una', 'prueba'])
+            ->setWrapText()
+            ->setVerticalAlign('center')
+            ->download();
     }
 }

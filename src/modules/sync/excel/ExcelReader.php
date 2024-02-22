@@ -15,6 +15,7 @@ use Dz;
 use dezero\helpers\ArrayHelper;
 use dezero\helpers\FileHelper;
 use dezero\helpers\StringHelper;
+use dezero\modules\sync\excel\ExcelHelper;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Yii;
@@ -330,7 +331,7 @@ class ExcelReader extends \yii\base\BaseObject
     {
         if ( is_string($offset) )
         {
-            $offset = $this->alpha2num($offset);
+            $offset = ExcelHelper::alpha2num($offset);
             $offset = $offset > 0 ? $offset - 1 : $offset;
         }
 
@@ -549,7 +550,7 @@ class ExcelReader extends \yii\base\BaseObject
         // Auto-normalize title rule
         if ( $is_normalize_title )
         {
-            $title = $this->normalizeTitle($title);
+            $title = ExcelHelper::normalizeTitle($title);
         }
 
         // Set title
@@ -577,7 +578,7 @@ class ExcelReader extends \yii\base\BaseObject
 
         // Calculate the column range of the worksheet
         $start_column = $this->vec_options['columns_offset'] !== null ? $this->vec_options['columns_offset'] : 0;
-        $total_columns = $this->vec_options['columns_limit'] !== null ? ( $this->vec_options['columns_offset'] + $this->vec_options['columns_limit'] ) : $this->alpha2num($worksheet->getHighestColumn());
+        $total_columns = $this->vec_options['columns_limit'] !== null ? ( $this->vec_options['columns_offset'] + $this->vec_options['columns_limit'] ) : ExcelHelper::alpha2num($worksheet->getHighestColumn());
 
         // Next row
         $this->current_row++;
@@ -637,7 +638,7 @@ class ExcelReader extends \yii\base\BaseObject
         // Enhance performance for each nextRow()
         if ( $this->vec_options['columns_limit'] === null )
         {
-            $this->limitColumns($this->alpha2num($worksheet->getHighestColumn()));
+            $this->limitColumns(ExcelHelper::alpha2num($worksheet->getHighestColumn()));
         }
 
         // Header row enabled?
@@ -702,75 +703,5 @@ class ExcelReader extends \yii\base\BaseObject
         $this->current_row = $row_index;
 
         return $this->nextRow();
-    }
-
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | UTILITIES METHODS
-    |--------------------------------------------------------------------------
-    */
-
-    /**
-     * Alpha to Number
-     *
-     * Optimizing from \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString()
-     *
-     * @example A => 1, AA => 27
-     *
-     * @param int $n Excel column alpha
-     */
-    public function alpha2num(string $a) : int
-    {
-        $r = 0;
-        $l = strlen($a);
-        for ($i = 0; $i < $l; $i++)
-        {
-            $r += pow(26, $i) * (ord($a[$l - $i - 1]) - 0x40);
-        }
-
-        return (int)$r;
-    }
-
-
-    /**
-     * Number to Alpha
-     *
-     * Optimizing from \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex()
-     *
-     * @example 1 => A, 27 => AA
-     *
-     * @param int $n column number
-     */
-    public static function num2alpha(int $n) : string
-    {
-        $n = $n - 1;
-        $r = '';
-        for ($i = 1; $n >= 0 && $i < 10; $i++)
-        {
-            $r = chr(0x41 + ($n % pow(26, $i) / pow(26, $i - 1))) . $r;
-            $n -= pow(26, $i);
-        }
-
-        return (string)$r;
-    }
-
-
-    /**
-     * Normalize title
-     *
-     * @see PhpOffice\PhpSpreadsheet\Worksheet\Worksheet
-     */
-    private function normalizeTitle(string $title) : string
-    {
-        // Invalid characters
-        $vec_invalid_characters = ['*', ':', '/', '\\', '?', '[', ']'];
-
-        // Some of the printable ASCII characters are invalid:  * : / \ ? [ ]
-        $title = str_replace($vec_invalid_characters, '', $title);
-
-        // Maximum 31 characters allowed for sheet title
-        return StringHelper::substr($title, 0, 31);
     }
 }
