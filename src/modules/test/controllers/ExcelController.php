@@ -36,7 +36,8 @@ class ExcelController extends Controller
         // $this->testReader();
 
         // Testing write to an Excel
-        $this->testWriter();
+        $this->testWriterStyles();
+        // $this->testWriterSheets();
 
         return $this->render('//test/test/index');
     }
@@ -149,13 +150,10 @@ class ExcelController extends Controller
 
 
     /**
-     * Testing ExcelWriter class
+     * Testing ExcelWriter class with styles
      */
-    private function testWriter()
+    private function testWriterStyles()
     {
-        // d("----------- TESTS WRITING AN EXCEL -----------");
-
-        // Create a new Excel
         $excel_writer = ExcelWriter::create()
             ->addHeader(['#', 'FIRST', 'Second', 'ThIrD', 'f o u r t h', 'fIfTh'])
             ->setHeaderHeight(80)
@@ -170,11 +168,51 @@ class ExcelController extends Controller
                 'color' => '#FFFFFF',
                 'background' => '#000000',
             ])
+
+            // Override default style
+            ->setDefaultStyle([
+                'font-size' => 14,
+                'align' => 'right'
+            ])
+
+            // ----------- FREEZE METHODS -----------
+            // ->freezeHeader()
+            // ->freezeFirstRow()
+            // ->freezeRows(2)
+            // ->freezeFirstColumn()
+            // ->freezeColumns(2)
+            ->freezeHeaderAndColumns(1)
+            // ->freezeCell('C3')
+
+            // ----------- SIMPLE ROWS -----------
             ->addRows([
                 ['Fila #1', 'hola', 'esto', 'es', 'una', 'prueba'],
                 ['Fila #2', 'segunda', 'prueba', 'que', 'hacemos', 'ahora'],
                 ['Fila #3', 'hola', 'esto', 'es', 'una', 'prueba'],
+                ['Fila #1', 'hola', 'esto', 'es', 'una', 'prueba'],
+                ['Fila #2', 'segunda', 'prueba', 'que', 'hacemos', 'ahora'],
+                ['Fila #3', 'hola', 'esto', 'es', 'una', 'prueba'],
+                ['Fila #1', 'hola', 'esto', 'es', 'una', 'prueba'],
+                ['Fila #2', 'segunda', 'prueba', 'que', 'hacemos', 'ahora'],
+                ['Fila #3', 'hola', 'esto', 'es', 'una', 'prueba'],
+                ['Fila #1', 'hola', 'esto', 'es', 'una', 'prueba'],
+                ['Fila #2', 'segunda', 'prueba', 'que', 'hacemos', 'ahora'],
+                ['Fila #3', 'hola', 'esto', 'es', 'una', 'prueba'],
+                ['Fila #1', 'hola', 'esto', 'es', 'una', 'prueba'],
+                ['Fila #2', 'segunda', 'prueba', 'que', 'hacemos', 'ahora'],
+                ['Fila #3', 'hola', 'esto', 'es', 'una', 'prueba'],
+                ['Fila #1', 'hola', 'esto', 'es', 'una', 'prueba'],
+                ['Fila #2', 'segunda', 'prueba', 'que', 'hacemos', 'ahora'],
+                ['Fila #3', 'hola', 'esto', 'es', 'una', 'prueba'],
+                ['Fila #1', 'hola', 'esto', 'es', 'una', 'prueba'],
+                ['Fila #2', 'segunda', 'prueba', 'que', 'hacemos', 'ahora'],
+                ['Fila #3', 'hola', 'esto', 'es', 'una', 'prueba'],
+                ['Fila #1', 'hola', 'esto', 'es', 'una', 'prueba'],
+                ['Fila #2', 'segunda', 'prueba', 'que', 'hacemos', 'ahora'],
+                ['Fila #3', 'hola', 'esto', 'es', 'una', 'prueba'],
             ])
+
+            // ----------- ROW STYLE -----------
             ->setRowStyle([
                 'font-size' => 14,
                 'borders'
@@ -183,8 +221,128 @@ class ExcelController extends Controller
                 'font-size' => 8,
                 'border-bottom'
             ], 4)
-            ->setWrapText()
-            ->setVerticalAlign('center')
+
+            // ----------- DOCUMENT PROPERTIES -----------
+            ->setCreator('Dezero')
+            ->setTitle('Testing Excel genetation for Dezero Framework')
+
+            // ----------- DEFAULT PROPERTIES -----------
+            // ->setAutoSize()
+            // ->setWrapText()
+            // ->setVerticalAlign('center')
+
+
+            ->download();
+    }
+
+
+    /**
+     * Testing ExcelWriter class with mutiple sheets & formats
+     */
+    private function testWriterSheets()
+    {
+        $excel_writer = ExcelWriter::create()
+
+            // Sheet #1
+            ->addHeader(['Name', 'Lastname'])
+            ->setHeaderHeight(30)
+            ->setActiveSheetTitle('Nombres & apellidos')
+            ->addHeader(['Nombre', 'Apellidos'])
+            ->addRows([
+                ['Enjuto', 'Mojamuto'],
+                ['Hincli', 'Mincli']
+            ])
+
+            // Sheet #2 - FORMATS
+            ->addSheet('[Fechas*')   // This title must be replaced from "[Fechas*" to "Fechas"
+            ->setHeaderHeight(30)
+            ->addHeader(['Nombre', 'Fecha Nacimiento', 'Edad', 'PVP', 'Porcentaje', 'Peso'])
+            ->addRows([
+                [
+                    [
+                        'value' => 'Enjuto',
+                        'style' => ['bold', 'font-size' => 18],
+                        'width' => 20
+                    ],
+                    [
+                        'value' => '10/01/1985',
+                        'format' => 'date',
+                        'width' => 30
+                    ],
+                    [
+                        'value' => 35,
+                        'format' => 'integer'
+                    ],
+                    [
+                        'value' => 28.45,
+                        'format' => 'currency'
+                    ],
+                    [
+                        'value' => 0.8205,
+                        'format' => 'percentage'
+                    ],
+                    [
+                        'value' => 65.6,
+                        'format' => 'number'
+                    ]
+                ],
+
+                [
+                    [
+                        'value' => 'Hincli',
+                        'style' => ['italic', 'font-size' => 16],
+                        'width' => 20
+                    ],
+                    [
+                        'value' => '20/12/2001',
+                        'format' => 'date',
+                        'width' => 30
+                    ],
+                    [
+                        'value' => 35,
+                        'format' => 'integer'
+                    ],
+                    [
+                        'value' => 28.45,
+                        'format' => 'currency'
+                    ],
+                    [
+                        'value' => 0.2205,
+                        'format' => 'percentage'
+                    ],
+                    [
+                        'value' => 65.6,
+                        'format' => 'number'
+                    ]
+                ],
+            ])
+
+            // LAST ROW with Formulas
+            ->addRow([
+                [
+                    'value' => '=COUNT(A1:A2)',
+                    'format' => 'integer'
+                ],
+                '',
+                [
+                    'value' => '=C2+C3',
+                    'format' => 'integer'
+                ],
+                [
+                    'value' => '=SUM(D2:D3)',
+                    'format' => 'currency'
+                ],
+                [
+                    'value' => '=AVERAGE(E2:E3)',
+                    'format' => 'percentage'
+                ],
+                ''
+            ])
+            ->setRowHeight(30)
+            ->setRowStyle(['italic', 'font-size' => 16, 'background' => '#FFFF00'])
+            ->noAutoSize()
+            ->setCreator('Dezero')
+            ->setTitle('Testing Excel genetation for Dezero Framework')
             ->download();
     }
 }

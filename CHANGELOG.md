@@ -2,6 +2,15 @@
 
 All notable changes to `Dezero Framework` will be documented in this file
 
+## 0.3.2 - 2024-02-23
+
+- EXCEL writer - Created new custom class to generate excel files with styles, formats and multiple options
+
+## 0.3.1 - 2024-02-21
+
+- EXCEL reader - Created new custom class to read excel files
+- AuthChecker - New helper class to collect all the authorizaton checker methods used from controllers
+
 ## 0.3.0 - 2024-02-19
 
 - TEST module - Created new core module for testing purposes.
