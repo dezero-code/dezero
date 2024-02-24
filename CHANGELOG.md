@@ -2,23 +2,27 @@
 
 All notable changes to `Dezero Framework` will be documented in this file
 
+## 0.3.3 - 2024-02-24
+
+- Logs - View all the log files directly from backend administration pages
+
 ## 0.3.2 - 2024-02-23
 
-- EXCEL writer - Created new custom class to generate excel files with styles, formats and multiple options
+- Excel writer - Created new custom class to generate excel files with styles, formats and multiple options
 
 ## 0.3.1 - 2024-02-21
 
-- EXCEL reader - Created new custom class to read excel files
+- Excel reader - Created new custom class to read excel files
 - AuthChecker - New helper class to collect all the authorizaton checker methods used from controllers
 
 ## 0.3.0 - 2024-02-19
 
-- TEST module - Created new core module for testing purposes.
-- DOCS directory improved with new guides for data objects, files, images, logs, session and roles&permissions
+- Test module - Created new core module for testing purposes.
+- Docs directory improved with new guides for data objects, files, images, logs, session and roles&permissions
 
 ## 0.2.9 - 2024-02-16
 
-- QUEUE finished - New queue system based on Yii2 queue package
+- Queue finished - New queue system based on Yii2 queue package
 - Created new contract class "EntityInterface" used by ApiLog and Batch models
 - Remove "use Dz;" statement in all .tpl.php files
 
@@ -41,7 +45,7 @@ All notable changes to `Dezero Framework` will be documented in this file
 
 ## 0.2.6 - 2024-01-13
 
-- AUTH module - Create default permissions for core modules
+- Auth module - Create default permissions for core modules
 - GridView - Bulk Actions first implementation
 - Layout - Header & sidebar permissions
 - StatusTrait - Refactoring code

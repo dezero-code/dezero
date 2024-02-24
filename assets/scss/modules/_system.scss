@@ -1,0 +1,18 @@
+//----------------------------------------------------------
+// SYSTEM MODULE
+//----------------------------------------------------------
+
+// Vars, mixins & helpers
+@import "../config/colors";
+@import "../config/variables";
+@import "../config/mixins";
+
+div.log-information-field {
+    word-wrap: break-word;
+    background-color: #F5F5F5;
+    max-height: 500px;
+    overflow: auto;
+    font-family: Courier, monospace, "Courier New";
+    font-size: 15px;
+    padding: .5rem 1rem;
+}

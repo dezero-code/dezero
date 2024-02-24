@@ -1,7 +1,7 @@
 /**
  * Scripts for USER module
  */
- (function(document, window, $) {
+(function(document, window, $) {
 
   // User Form - Global object
   // -------------------------------------------------------------------------------------------

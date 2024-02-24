@@ -5,8 +5,19 @@
 
 namespace dezero\modules\system;
 
+use dezero\modules\system\assets\SystemAsset;
+use Yii;
+
 class Module extends \dezero\base\Module
 {
+    /**
+     * @var array mapping from controller ID to controller configurations.
+     */
+    public $controllerMap = [
+        'log'  => \dezero\modules\system\controllers\LogController::class,
+    ];
+
+
     /**
      * Initializes the module.
      *
@@ -16,6 +27,9 @@ class Module extends \dezero\base\Module
      */
     public function init()
     {
+        // Register Javascript & CSS files for this module
+        SystemAsset::register(Yii::$app->view);
+
         parent::init();
     }
 }

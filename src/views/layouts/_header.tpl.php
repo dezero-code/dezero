@@ -85,13 +85,13 @@
                 <i class="icon wb-random" aria-hidden="true"></i> <?= Yii::t('backend', 'Log in as...'); ?>
               </a>
               <div class="dropdown-divider" role="presentation"></div>
-              <a class="dropdown-item" href="<?= Url::to('/settings/log'); ?>" role="menuitem">
+              <a class="dropdown-item" href="<?= Url::to('/system/log'); ?>" role="menuitem">
                 <i class="icon wb-clipboard" aria-hidden="true"></i> <?= Yii::t('backend', 'File logs'); ?>
               </a>
-              <a class="dropdown-item" href="<?= Url::to('/settings/apiLog'); ?>" role="menuitem">
+              <a class="dropdown-item" href="<?= Url::to('/system/apiLog'); ?>" role="menuitem">
                 <i class="icon wb-cloud" aria-hidden="true"></i> <?= Yii::t('backend', 'API logs'); ?>
               </a>
-              <a class="dropdown-item" href="<?= Url::to('/settings/backup/'); ?>" role="menuitem">
+              <a class="dropdown-item" href="<?= Url::to('/system/backup/'); ?>" role="menuitem">
                 <i class="icon wb-replay" aria-hidden="true"></i> <?= Yii::t('backend', 'DB backups'); ?>
               </a>
             <?php endif; ?>

@@ -32,6 +32,10 @@
 // Helper classes
 @import "helpers/helpers";
 
+// Modules
+@import "modules/category";
+@import "modules/system";
+
 // Remark Overrides - Core & app
 @import "core";
 @import "mobile";

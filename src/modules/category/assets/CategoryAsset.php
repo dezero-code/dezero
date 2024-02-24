@@ -22,5 +22,4 @@ class CategoryAsset extends AssetBundle
     public $js = [
         'modules/category.js'
     ];
-
 }
