@@ -16,6 +16,9 @@ use dezero\web\Controller;
 use Dz;
 use Yii;
 
+/**
+ * Controller class to view log files
+ */
 class LogController extends Controller
 {
     /**
@@ -32,7 +35,7 @@ class LogController extends Controller
 
 
     /**
-     * List action for User models
+     * View all the log files
      */
     public function actionIndex()
     {

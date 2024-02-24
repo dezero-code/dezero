@@ -1,7 +1,7 @@
 <?php
 /*
 |--------------------------------------------------------------------------
-| Admin list page for Logs files model
+| Admin list page for log files
 |--------------------------------------------------------------------------
 |
 | Available variables:
