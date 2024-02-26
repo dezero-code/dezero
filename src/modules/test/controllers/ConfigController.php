@@ -9,7 +9,7 @@ namespace dezero\modules\test\controllers;
 
 use Yii;
 
-class FileController extends Controller
+class ConfigController extends Controller
 {
     /**
      * {@inheritdoc}
