@@ -494,12 +494,12 @@ class ExcelWriter extends \yii\base\BaseObject
     /**
      * Set a row's height
      */
-    public function setRowHeight(int $height, ?int $num_row = null) : self
+    public function setRowHeight(int $height, ?int $row_number = null) : self
     {
         // Get number of the row to apply the style
-        $num_row = $num_row !== null ? $num_row : $this->current_row;
+        $row_number = $row_number !== null ? $row_number : $this->current_row;
 
-        $this->worksheet->getRowDimension($num_row)->setRowHeight($height);
+        $this->worksheet->getRowDimension($row_number)->setRowHeight($height);
 
         return $this;
     }
@@ -517,17 +517,17 @@ class ExcelWriter extends \yii\base\BaseObject
     /**
      * Set style for a full row
      */
-    public function setRowStyle(array $vec_style, ?int $num_row = null) : self
+    public function setRowStyle(array $vec_style, ?int $row_number = null) : self
     {
         // Get number of the row to apply the style
-        $num_row = $num_row !== null ? $num_row : $this->current_row;
+        $row_number = $row_number !== null ? $row_number : $this->current_row;
 
         // Get last column in ALPHA
         $last_column = $this->worksheet->getHighestColumn();
 
         // Parse custom styles and apply them
         $vec_style = $this->customStyles($vec_style);
-        $this->worksheet->getStyle("A{$num_row}:{$last_column}{$num_row}")->applyFromArray($vec_style);
+        $this->worksheet->getStyle("A{$row_number}:{$last_column}{$row_number}")->applyFromArray($vec_style);
 
         return $this;
     }
@@ -804,12 +804,24 @@ class ExcelWriter extends \yii\base\BaseObject
 
 
     /**
+     * Unlock current sheet
+     */
+    public function unlockSheet() : self
+    {
+        $this->worksheet->getProtection()->setSheet(false);
+
+        return $this;
+    }
+
+
+    /**
      * Lock or protect a column
      */
     public function lockColumn(string $column_alpha) : self
     {
         $last_row = $this->worksheet->getHighestRow();
         $column_dimension = "{$column_alpha}1:{$column_alpha}{$last_row}";
+
         $this->lockCell($column_dimension);
 
         return $this;
@@ -823,7 +835,38 @@ class ExcelWriter extends \yii\base\BaseObject
     {
         $last_row = $this->worksheet->getHighestRow();
         $column_dimension = "{$column_alpha}1:{$column_alpha}{$last_row}";
+
         $this->unlockCell($column_dimension);
+
+        return $this;
+    }
+
+
+    /**
+     * Lock or protect a row
+     */
+    public function lockRow(int $row_number) : self
+    {
+        // Get last column in ALPHA
+        $last_column = $this->worksheet->getHighestColumn();
+        $row_dimension = "A{$row_number}:{$last_column}{$row_number}";
+
+        $this->lockCell($row_dimension);
+
+        return $this;
+    }
+
+
+    /**
+     * Unlock or unprotect a row
+     */
+    public function unlockRow(int $row_number) : self
+    {
+        // Get last column in ALPHA
+        $last_column = $this->worksheet->getHighestColumn();
+        $row_dimension = "A{$row_number}:{$last_column}{$row_number}";
+
+        $this->unlockCell($row_dimension);
 
         return $this;
     }
