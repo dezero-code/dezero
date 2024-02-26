@@ -128,4 +128,26 @@ class GridView extends \yii\grid\GridView
 
         return Html::tag('tr', implode('', $cells), $options);
     }
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function renderSummary()
+    {
+        // Add data attributes to <div class="summary">
+        $this->summaryOptions['id'] = "{$this->options['id']}-summary";
+        $this->summaryOptions['data-page'] = 1;
+        $this->summaryOptions['data-count'] = $this->dataProvider->getCount();
+        $this->summaryOptions['data-total'] = $this->summaryOptions['data-count'];
+
+        // Pagination
+        if ( ($pagination = $this->dataProvider->getPagination()) !== false )
+        {
+            $this->summaryOptions['data-total'] = $this->dataProvider->getTotalCount();
+            $this->summaryOptions['data-page'] = $pagination->getPage() + 1;
+        }
+
+        return parent::renderSummary();
+    }
 }

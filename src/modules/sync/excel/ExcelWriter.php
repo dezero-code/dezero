@@ -738,7 +738,7 @@ class ExcelWriter extends \yii\base\BaseObject
     }
 
 
-     /**
+    /**
      * Freeze the first column
      */
     public function freezeFirstColumn() : self
@@ -779,6 +779,73 @@ class ExcelWriter extends \yii\base\BaseObject
     public function freezeCell(string $cell_coordinate) : self
     {
         $this->worksheet->freezePane($cell_coordinate);
+
+        return $this;
+    }
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | LOCK METHODS
+    |--------------------------------------------------------------------------
+    */
+
+
+    /**
+     * Lock current sheet
+     */
+    public function lockSheet() : self
+    {
+        $this->worksheet->getProtection()->setSheet(true);
+
+        return $this;
+    }
+
+
+    /**
+     * Lock or protect a column
+     */
+    public function lockColumn(string $column_alpha) : self
+    {
+        $last_row = $this->worksheet->getHighestRow();
+        $column_dimension = "{$column_alpha}1:{$column_alpha}{$last_row}";
+        $this->lockCell($column_dimension);
+
+        return $this;
+    }
+
+
+    /**
+     * Lock or protect a column
+     */
+    public function unlockColumn(string $column_alpha) : self
+    {
+        $last_row = $this->worksheet->getHighestRow();
+        $column_dimension = "{$column_alpha}1:{$column_alpha}{$last_row}";
+        $this->unlockCell($column_dimension);
+
+        return $this;
+    }
+
+
+    /**
+     * Lock / protect a cell
+     */
+    public function lockCell(string $cell_coordinate) : self
+    {
+        $this->worksheet->getStyle($cell_coordinate)->getProtection()->setLocked(\PhpOffice\PhpSpreadsheet\Style\Protection::PROTECTION_PROTECTED);
+
+        return $this;
+    }
+
+
+    /**
+     * Unlock / unprotect a cell
+     */
+    public function unlockCell(string $cell_coordinate) : self
+    {
+        $this->worksheet->getStyle($cell_coordinate)->getProtection()->setLocked(\PhpOffice\PhpSpreadsheet\Style\Protection::PROTECTION_UNPROTECTED);
 
         return $this;
     }
