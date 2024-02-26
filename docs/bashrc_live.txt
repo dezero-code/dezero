@@ -1,0 +1,26 @@
+
+### ------------------------------------------------------
+### ------------------ PRODUCTION ------------------------
+### ------------------------------------------------------
+
+# EDITOR for CRONTAB
+export EDITOR=nano
+
+# CUSTOM FUNCITONS
+# Run yii or yiic only if it exits
+function dzyii() {
+  if command -v $(pwd)/yii  >/dev/null 2>&1
+    then
+      command $(pwd)/yii "$@"
+    else
+      command $(pwd)/yiic "$@"
+    fi
+}
+
+# DEZERO aliases
+alias cdh='cd /var/www/<my-project>'
+alias cup='composer update'
+alias gpl='git pull origin master'
+alias gst='git status'
+alias ls='ls -lahtr'
+alias mup='dzyii migrate up'
