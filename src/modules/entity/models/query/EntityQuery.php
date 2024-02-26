@@ -19,7 +19,7 @@ class EntityQuery extends \dezero\db\ActiveQuery
     /**
      * Filter the query by "entity_uuid" attribute value
      */
-    public function entity_uuid(int $entity_uuid) : self
+    public function entity_uuid(string $entity_uuid) : self
     {
         return $this->andWhere(['entity_uuid' => $entity_uuid]);
     }
