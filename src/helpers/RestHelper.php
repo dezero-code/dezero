@@ -60,7 +60,7 @@ class RestHelper
             return $unix_date;
         }
 
-        return DateHelper::toUnix($unix_date, 'Y-m-d H:i:s');
+        return DateHelper::toUnix($format_date, 'Y-m-d H:i:s');
     }
 
 
