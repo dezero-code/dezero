@@ -10,7 +10,7 @@ use yii\web\AssetBundle;
 /**
  * Asset bundle for custom Krajee FileInput
  */
-class FileinputAsset extends AssetBundle
+class KrajeeFileinputAsset extends AssetBundle
 {
     public $sourcePath = '@core/assets/js';
 

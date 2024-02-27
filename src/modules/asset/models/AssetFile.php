@@ -297,7 +297,6 @@ class AssetFile extends BaseAssetFile
     }
 
 
-
     /**
      * Check if current file is image
      */
@@ -365,6 +364,15 @@ class AssetFile extends BaseAssetFile
         }
 
         return "{$this->file_size} B";
+    }
+
+
+    /**
+     * Return download URL
+     */
+    public function downloadUrl() : string
+    {
+        return Url::to('/asset/download', ['uuid' => $this->uuid]);
     }
 
 

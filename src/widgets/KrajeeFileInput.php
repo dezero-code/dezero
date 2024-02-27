@@ -11,7 +11,7 @@ use dezero\helpers\ArrayHelper;
 use dezero\helpers\Html;
 use dezero\helpers\Url;
 use dezero\modules\asset\models\AssetFile;
-use dezero\modules\asset\assets\FileinputAsset;
+use dezero\modules\asset\assets\KrajeeFileinputAsset;
 use kartik\file\FileInput;
 use Yii;
 
@@ -84,7 +84,7 @@ class KrajeeFileInput extends FileInput
 
         // Register custom Javascript
         $view = $this->getView();
-        FileinputAsset::register($view);
+        KrajeeFileinputAsset::register($view);
     }
 
 

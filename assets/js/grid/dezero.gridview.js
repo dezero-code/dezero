@@ -276,7 +276,6 @@
 
     },
 
-
     ensureExportIframe: function() {
       var target_id = this.targetIframe();
       var $iframe = $('iframe[name="' + target_id +'"]');
