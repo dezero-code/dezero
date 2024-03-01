@@ -204,6 +204,12 @@ class ExcelWriter extends \yii\base\BaseObject
         // Set style for the full row
         if ( $vec_style !== null && is_array($vec_style) )
         {
+            // Special attribute "height"
+            if ( isset($vec_style['height']) )
+            {
+                $this->setRowHeight($vec_style['height'], $this->current_row);
+            }
+
             return $this->setRowStyle($vec_style);
         }
 
@@ -224,6 +230,17 @@ class ExcelWriter extends \yii\base\BaseObject
         }
 
         return $this->addRow($vec_row, $vec_style);
+    }
+
+
+    /**
+     * No add a header row for the active sheet
+     */
+    public function noHeaderRow() : self
+    {
+        $this->current_row = 0;
+
+        return $this;
     }
 
 
@@ -258,6 +275,12 @@ class ExcelWriter extends \yii\base\BaseObject
         // Format code
         $format_code = isset($vec_cell['format']) ? $this->getFormatCode($vec_cell['format']) : CellFormat::FORMAT_TEXT;
         $this->worksheet->getStyle($current_coordinate)->getNumberFormat()->setFormatCode($format_code);
+
+        // Dropdown?
+        if ( isset($vec_cell['filter']) )
+        {
+            $this->addDropdown($current_coordinate, $vec_cell['filter']);
+        }
     }
 
 
@@ -896,6 +919,106 @@ class ExcelWriter extends \yii\base\BaseObject
 
     /*
     |--------------------------------------------------------------------------
+    | DROPDOWNs
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Add a dropdown list using "data validation"
+     *
+     * @see https://spreadsheet-coding.com/phpspreadsheet/create-xlsx-files-with-drop-down-list-data-validation
+     */
+    public function addDropdown(string $cell_coordinate, $options) : self
+    {
+        // All input parameters are required
+        if ( empty($cell_coordinate) || empty($options) )
+        {
+            return $this;
+        }
+
+        // Formula
+        $formula_options = $options;
+        if ( is_array($options) )
+        {
+            $formula_options = sprintf('"%s"', implode(',',$options));
+        }
+
+        $validation = $this->worksheet->getCell($cell_coordinate)->getDataValidation();
+        $validation
+            ->setType(\PhpOffice\PhpSpreadsheet\Cell\DataValidation::TYPE_LIST)
+            ->setErrorStyle(\PhpOffice\PhpSpreadsheet\Cell\DataValidation::STYLE_INFORMATION)
+            ->setFormula1($formula_options)
+            ->setAllowBlank(false)
+            ->setShowDropDown(true)
+
+            // Error message if data is invalid
+            ->setShowErrorMessage(true)
+            ->setErrorStyle(\PhpOffice\PhpSpreadsheet\Cell\DataValidation::STYLE_STOP)
+            ->setErrorTitle(Yii::t('backend', 'Invalid option'))
+            ->setError(Yii::t('backend', 'Select one value from the drop down list.'));
+
+            /*
+            // Input message
+            ->setShowInputMessage(true)
+            ->setErrorStyle(\PhpOffice\PhpSpreadsheet\Cell\DataValidation::STYLE_STOP)
+            ->setPromptTitle('Note')
+            ->setPrompt('Must select one from the drop down options.');
+            */
+
+        return $this;
+    }
+
+
+    /**
+     * Create a special sheet for dropdown data references
+     */
+    public function addReferenceSheet(array $vec_data, string $sheet_name = '__data__')
+    {
+        // Columns argument is required
+        if ( empty($vec_data) )
+        {
+            return $this;
+        }
+
+        $vec_rows = [];
+        if ( !empty($vec_data) )
+        {
+            foreach ( $vec_data as $num_data => $vec_options )
+            {
+                if ( is_array($vec_options) && !empty($vec_options) )
+                {
+                    $num_option = 0;
+                    foreach ( $vec_options as $option_value )
+                    {
+                        if ( !is_array($option_value) )
+                        {
+                            $vec_rows[$num_option][$num_data] = $option_value;
+                        }
+                        $num_option++;
+                    }
+                }
+            }
+        }
+
+        // If not rows have been created, don't add the new sheet
+        if ( empty($vec_rows) )
+        {
+            return $this;
+        }
+
+        // Create new special sheet "__data__" and add the rows
+        $this
+            ->addSheet($sheet_name)
+            ->noHeaderRow()
+            ->addRows($vec_rows)
+            ->setAutoSize();
+
+        return $this;
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
     | DOCUMENT PROPERTIES METHODS
     |--------------------------------------------------------------------------
     */
@@ -949,6 +1072,9 @@ class ExcelWriter extends \yii\base\BaseObject
         {
             $this->setWrapText();
         }
+
+        // Set the first sheet as active
+        $this->setActiveSheet(1);
     }
 
 

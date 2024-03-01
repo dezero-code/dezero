@@ -36,8 +36,8 @@ class ExcelController extends Controller
         // $this->testReader();
 
         // Testing write to an Excel
-        $this->testWriterStyles();
-        // $this->testWriterSheets();
+        // $this->testWriterStyles();
+        $this->testWriterSheets();
 
         return $this->render('//test/test/index');
     }
@@ -252,6 +252,8 @@ class ExcelController extends Controller
                 ['Enjuto', 'Mojamuto'],
                 ['Hincli', 'Mincli']
             ])
+            ->addDropdown('A2', ['Enjuto', 'Hicli', 'Otro', 'Vamos'])
+            ->addDropdown('A3', '__data__!$A$2:$A$4')
 
             // Sheet #2 - FORMATS
             ->addSheet('[Fechas*')   // This title must be replaced from "[Fechas*" to "Fechas"
@@ -260,9 +262,10 @@ class ExcelController extends Controller
             ->addRows([
                 [
                     [
-                        'value' => 'Enjuto',
-                        'style' => ['bold', 'font-size' => 18],
-                        'width' => 20
+                        'value'     => 'Enjuto',
+                        'style'     => ['bold', 'font-size' => 18],
+                        'width'     => 20,
+                        'filter'    => ['Enjuto', 'Enjuto 2', 'Enjuto 3', 'Otro valor']
                     ],
                     [
                         'value' => '10/01/1985',
@@ -291,7 +294,8 @@ class ExcelController extends Controller
                     [
                         'value' => 'Hincli',
                         'style' => ['italic', 'font-size' => 16],
-                        'width' => 20
+                        'width' => 20,
+                        'filter' => '__data__!$A$2:$A$4'
                     ],
                     [
                         'value' => '20/12/2001',
@@ -340,6 +344,17 @@ class ExcelController extends Controller
             ])
             ->setRowHeight(30)
             ->setRowStyle(['italic', 'font-size' => 16, 'background' => '#FFFF00'])
+
+            // Sheet #3 - DATA
+            ->addSheet('__data__')
+            ->addHeader(['Nombre'])
+            ->addRows([
+                ['Enjuto'],
+                ['Hincli'],
+                ['Mincli'],
+                ['Otro']
+            ])
+
             ->noAutoSize()
             ->setCreator('Dezero')
             ->setTitle('Testing Excel genetation for Dezero Framework')
