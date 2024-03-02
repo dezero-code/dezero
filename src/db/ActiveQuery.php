@@ -9,6 +9,7 @@
 
 namespace dezero\db;
 
+use dezero\errors\QueryAbortedException;
 use Yii;
 
 /**
