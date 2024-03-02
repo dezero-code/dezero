@@ -8,7 +8,7 @@ namespace dezero\web\assets;
 use yii\web\AssetBundle;
 
 /**
- * Main backend application asset bundle
+ * Asset bundle for nestable plugin
  */
 class NestableAsset extends AssetBundle
 {
@@ -21,5 +21,4 @@ class NestableAsset extends AssetBundle
         'nestable/jquery.nestable.js',
         'nestable/dezero.nestable.js'
     ];
-
 }
