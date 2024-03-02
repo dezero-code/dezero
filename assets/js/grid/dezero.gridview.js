@@ -14,7 +14,7 @@
     $clearButton: null,
     $pjax: null,
     $summary: null,
-    $export: null,
+    $exportMenu: null,
 
     init: function(grid, hash) {
       var self = this;
@@ -27,7 +27,7 @@
       self.$table = $('#'+ grid +'-table');
       self.$clearButton = $('#'+ grid +'-clear-btn');
       self.$summary = $('#'+ grid +'-summary');
-      self.$exportButton = $('#'+ grid +'-export-btn');
+      self.$exportMenu = $('#'+ grid +'-export-menu');
 
       // PJAX - After AJAX update, trigger beforeGridLoaded and afterGridLoaded custom events
       if ( $.pjax) {
@@ -55,8 +55,8 @@
       // First GridView loaded
       self.afterGridLoaded();
 
-      // Export button
-      if ( self.$exportButton.length ) {
+      // Export menu button?
+      if ( self.$exportMenu.length ) {
         self.exportGrid();
       }
     },
@@ -231,49 +231,43 @@
     exportGrid: function() {
       var self = this;
 
-      self.$exportButton.off('click').on('click', function(e) {
-        e.preventDefault();
-        var $this = $(this);
+      self.$exportMenu.find('.export-btn').each(function(){
+        $(this).off('click').on('click', function(e) {
+          e.preventDefault();
+          var $this = $(this);
 
-        bootbox.confirm({
-          message: `<h3>EXPORTAR A EXCEL</h3><p class="font-size-18">Se van a exportar <strong class="font-size-18">${self.$summary.data('total')} productos</strong> a Excel.</p><p>Este proceso puede durar varios minutos. <span class="text-danger">Por favor, no refresque la página!</span></p>`,
-          callback: function (confirmed) {
-            if ( confirmed ) {
-              self.ensureExportIframe();
+          bootbox.confirm({
+            message: `<h3>EXPORTAR A EXCEL</h3><p class="font-size-18">Se van a exportar <strong class="font-size-18">${self.$summary.data('total')} productos</strong> a Excel.</p><p>Este proceso puede durar varios minutos. <span class="text-danger">Por favor, no refresque la página!</span></p>`,
+            callback: function (confirmed) {
+              if ( confirmed ) {
+                self.ensureExportIframe();
 
-              var $export = $('<input/>', {'name': 'export', 'value': 1, 'type': 'hidden'}),
-              $csrf = $('<input/>', {
-                'name': window.yii.getCsrfParam() || '_csrf',
-                'value': window.yii.getCsrfToken(),
-                'type': 'hidden'
-              });
+                var $export = $('<input/>', {'name': 'export', 'value': 1, 'type': 'hidden'}),
+                $csrf = $('<input/>', {
+                  'name': window.yii.getCsrfParam() || '_csrf',
+                  'value': window.yii.getCsrfToken(),
+                  'type': 'hidden'
+                });
 
-              console.log( self.$exportButton.attr('href') + window.location.search);
-
-              $('<form/>', {
-                'action': self.$exportButton.attr('href') + window.location.search,
-                'target': self.targetIframe(),
-                'method': 'post',
-                css: {'display': 'none'}
-              })
-              .append($export, $csrf)
-              .appendTo('body')
-              .submit()
-              .remove();
+                $('<form/>', {
+                  'action': $this.attr('href') + window.location.search,
+                  'target': self.targetIframe(),
+                  'method': 'post',
+                  css: {'display': 'none'}
+                })
+                .append($export, $csrf)
+                .appendTo('body')
+                .submit()
+                .remove();
+              }
             }
-          }
+          });
         });
       });
     },
 
     targetIframe: function() {
       return this.id +'-export-iframe';
-    },
-
-    exportUrl: function() {
-      var export_url = this.$exportButton.data('url');
-      var current_url = window.location.href;
-
     },
 
     ensureExportIframe: function() {

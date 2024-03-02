@@ -980,23 +980,28 @@ class ExcelWriter extends \yii\base\BaseObject
             return $this;
         }
 
-        $vec_rows = [];
-        if ( !empty($vec_data) )
+        // Get column with more rows
+        $max_rows = 0;
+        foreach ( $vec_data as $num_column => $vec_columns )
         {
-            foreach ( $vec_data as $num_data => $vec_options )
+            $num_rows = is_array($vec_columns) ? count($vec_columns) : 0;
+            $max_rows = $num_rows > $max_rows ? $num_rows : $max_rows;
+        }
+
+        // If not rows have been created, don't add the new sheet
+        if ( $max_rows === 0 )
+        {
+            return $this;
+        }
+
+        // Init all rows as empty to respect column position
+        foreach ( $vec_data as $num_column => $vec_columns )
+        {
+            $num_row = 0;
+            while ( $num_row <= $max_rows )
             {
-                if ( is_array($vec_options) && !empty($vec_options) )
-                {
-                    $num_option = 0;
-                    foreach ( $vec_options as $option_value )
-                    {
-                        if ( !is_array($option_value) )
-                        {
-                            $vec_rows[$num_option][$num_data] = $option_value;
-                        }
-                        $num_option++;
-                    }
-                }
+                $vec_rows[$num_row][$num_column] = '';
+                $num_row++;
             }
         }
 
@@ -1006,7 +1011,24 @@ class ExcelWriter extends \yii\base\BaseObject
             return $this;
         }
 
-        // Create new special sheet "__data__" and add the rows
+        // Build rows with the given columns in the correct position
+        foreach ( $vec_data as $num_column => $vec_columns )
+        {
+            if ( is_array($vec_columns) && !empty($vec_columns) )
+            {
+                $num_value = 0;
+                foreach ( $vec_columns as $option_value )
+                {
+                    if ( !is_array($option_value) )
+                    {
+                        $vec_rows[$num_value][$num_column] = $option_value;
+                    }
+                    $num_value++;
+                }
+            }
+        }
+
+        // Finally, create new special sheet "__data__" and add the rows
         $this
             ->addSheet($sheet_name)
             ->noHeaderRow()
