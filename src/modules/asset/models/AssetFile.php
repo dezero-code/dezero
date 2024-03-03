@@ -372,7 +372,7 @@ class AssetFile extends BaseAssetFile
      */
     public function downloadUrl() : string
     {
-        return Url::to('/asset/download', ['uuid' => $this->uuid]);
+        return Url::to('/asset/download', ['uuid' => $this->entity_uuid]);
     }
 
 
