@@ -10,6 +10,7 @@ namespace dezero\modules\asset\services;
 use Dz;
 use dezero\base\File;
 use dezero\contracts\ServiceInterface;
+use dezero\db\ActiveRecord as ActiveRecord;
 use dezero\entity\ActiveRecord as EntityActiveRecord;
 use dezero\helpers\Log;
 use dezero\helpers\Transliteration;
@@ -56,7 +57,7 @@ class UploadFileService implements ServiceInterface
     /**
      * Constructor
      */
-    public function __construct(EntityActiveRecord $reference_model, string $file_attribute, AssetFile $asset_file_model, EntityFile $entity_file_model, ?string $destination_path)
+    public function __construct(ActiveRecord $reference_model, string $file_attribute, AssetFile $asset_file_model, ?EntityFile $entity_file_model, ?string $destination_path)
     {
         $this->reference_model = $reference_model;
         $this->file_attribute = $file_attribute;
@@ -71,6 +72,9 @@ class UploadFileService implements ServiceInterface
      */
     public function run() : bool
     {
+        // Init process
+        $this->init();
+
         // New uploaded file?
         if ( ! $this->isUploadFile() )
         {
@@ -106,6 +110,19 @@ class UploadFileService implements ServiceInterface
         }
 
         return true;
+    }
+
+
+    /**
+     * Init process
+     */
+    private function init() : void
+    {
+        // Ensure "destination_path" ends with slash "/"
+        if ( ! preg_match("/\/$/", $this->destination_path) )
+        {
+            $this->destination_path = $this->destination_path ."/";
+        }
     }
 
 
@@ -187,9 +204,14 @@ class UploadFileService implements ServiceInterface
             'file_mime'             => $this->savedFile->mime(),
             'file_size'             => $this->savedFile->size(),
             'asset_type'            => $this->savedFile->isImage() ? AssetFile::ASSET_TYPE_IMAGE : AssetFile::ASSET_TYPE_DOCUMENT,
-            'reference_entity_uuid' => ! $this->reference_model->getIsNewRecord() && $this->reference_model->hasAttribute('entity_uuid') ? $this->reference_model->getAttribute('entity_uuid') : null,
-            'reference_entity_type' => $this->reference_model->getEntityType(),
         ]);
+
+        // Save entity reference
+        if ( $this->reference_model instanceof EntityActiveRecord )
+        {
+            $this->asset_file_model->reference_entity_uuid = ! $this->reference_model->getIsNewRecord() && $this->reference_model->hasAttribute('entity_uuid') ? $this->reference_model->getAttribute('entity_uuid') : null;
+            $this->asset_file_model->reference_entity_type = $this->reference_model->getEntityType();
+        }
 
         // More attributes
         $this->asset_file_model->original_file_name = $this->asset_file_model->file_name;
@@ -216,8 +238,14 @@ class UploadFileService implements ServiceInterface
     /**
      * Save EntityFile model
      */
-    private function saveEntityFile()
+    private function saveEntityFile() : bool
     {
+        // Only save entity information for EntityActiveRecord objects
+        if ( $this->entity_file_model === null || ! $this->reference_model instanceof EntityActiveRecord )
+        {
+            return true;
+        }
+
         $this->entity_file_model->setAttributes([
             'file_id'           => $this->asset_file_model->file_id,
             'entity_uuid'       => ! $this->reference_model->getIsNewRecord() && $this->reference_model->hasAttribute('entity_uuid') ? $this->reference_model->getAttribute('entity_uuid') : 0,

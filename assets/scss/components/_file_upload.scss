@@ -102,3 +102,15 @@
 .kv-hidden {
     display: none;
 }
+
+//----------------------------------------------------------
+// IMPORT EXCEL BUTTON
+//----------------------------------------------------------
+.page-header-actions .import-excel-action {
+    position: relative;
+    display: inline-block;
+
+    .dz-fileinput .fileinput-button-wrapper .btn {
+        margin: 0;
+    }
+}

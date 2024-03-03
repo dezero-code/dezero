@@ -10,7 +10,7 @@
 namespace dezero\modules\asset\models;
 
 use dezero\base\File;
-use dezero\entity\ActiveRecord as EntityActiveRecord;
+use dezero\db\ActiveRecord as ActiveRecord;
 use dezero\helpers\ArrayHelper;
 use dezero\helpers\Url;
 use dezero\modules\asset\models\query\AssetFileQuery;
@@ -386,7 +386,7 @@ class AssetFile extends BaseAssetFile
     /**
      * Upload a file
      */
-    public function uploadFile(EntityActiveRecord $model, string $file_attribute, ?string $destination_path = null, bool $is_multiple = false) : bool
+    public function uploadFile(ActiveRecord $model, string $file_attribute, ?string $destination_path = null, bool $is_multiple = false) : bool
     {
         // EntityFile information
         $entity_file_model = null;
@@ -420,7 +420,7 @@ class AssetFile extends BaseAssetFile
     /**
      * Upload a file into a TEMP directory
      */
-    public function uploadTempFile(EntityActiveRecord $model, string $file_attribute, bool $is_multiple = false) : bool
+    public function uploadTempFile(ActiveRecord $model, string $file_attribute, bool $is_multiple = false) : bool
     {
         // Upload file via UploadFileTempService
         $upload_file_temp_service = Dz::makeObject(UploadFileTempService::class, [$model, $file_attribute, $this]);
