@@ -74,7 +74,7 @@ class Dz extends Yii
             return $model;
         }
 
-        throw new NotFoundHttpException("Object not found: $id");
+        throw new NotFoundHttpException("Model not found: $id");
     }
 
 
