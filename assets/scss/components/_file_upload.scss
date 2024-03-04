@@ -110,7 +110,13 @@
     position: relative;
     display: inline-block;
 
-    .dz-fileinput .fileinput-button-wrapper .btn {
-        margin: 0;
+    .dz-fileinput {
+        .fileinput-button-wrapper .btn {
+            margin: 0;
+        }
+
+        .fileinput-filename {
+            display: none !important;
+        }
     }
 }
