@@ -235,33 +235,66 @@
         $(this).off('click').on('click', function(e) {
           e.preventDefault();
           var $this = $(this);
+          var total_items = self.$summary.data('total');
 
-          bootbox.confirm({
-            message: `<h3>EXPORTAR A EXCEL</h3><p class="font-size-18">Se van a exportar <strong class="font-size-18">${self.$summary.data('total')} productos</strong> a Excel.</p><p>Este proceso puede durar varios minutos. <span class="text-danger">Por favor, no refresque la página!</span></p>`,
-            callback: function (confirmed) {
-              if ( confirmed ) {
-                self.ensureExportIframe();
+          // Title
+          var confirm_title = `<h3>EXPORT TO EXCEL</h3>`;
+          if ( $this.is('[data-title]') ) {
+            confirm_title = $this.attr('data-title');
+          }
 
-                var $export = $('<input/>', {'name': 'export', 'value': 1, 'type': 'hidden'}),
-                $csrf = $('<input/>', {
-                  'name': window.yii.getCsrfParam() || '_csrf',
-                  'value': window.yii.getCsrfToken(),
-                  'type': 'hidden'
-                });
+          // Message
+          var confirm_message = `<p class="font-size-18"><strong class="font-size-18">${total_items} items</strong> will be exported to Excel.</p><p>This action could take up to several minutes. <span class="text-danger">Please, do not refresh the page!</span></p>`;
+          if ( $this.is('[data-message]') ) {
+            confirm_message = $this.attr('data-message').replace('{total}', total_items);
+          }
 
-                $('<form/>', {
-                  'action': $this.attr('href') + window.location.search,
-                  'target': self.targetIframe(),
-                  'method': 'post',
-                  css: {'display': 'none'}
-                })
-                .append($export, $csrf)
-                .appendTo('body')
-                .submit()
-                .remove();
+          // Limit
+          var limit_items = 1000;
+          var limit_message = `<p class="font-size-18">You cannot export more than <strong class="font-size-18">1000 items</strong> to Excel</p><p class="text-danger">Consider applying a filter to reduce the items to export.</p>`;
+          if ( $this.is('[data-limit]') ) {
+            limit_items = parseInt($this.attr('data-limit'));
+          }
+          if ( $this.is('[data-limit-message]') ) {
+            limit_message = $this.attr('data-limit-message');
+          }
+
+          // Max limit exceed?
+          if ( total_items > limit_items ) {
+            bootbox.alert({
+              message: confirm_title + limit_message
+            });
+          }
+
+          // Show confirm message
+          else {
+            bootbox.confirm({
+              message: confirm_title + confirm_message,
+              callback: function (confirmed) {
+                if ( confirmed ) {
+                  self.ensureExportIframe();
+
+                  var $export = $('<input/>', {'name': 'export', 'value': 1, 'type': 'hidden'}),
+                  $csrf = $('<input/>', {
+                    'name': window.yii.getCsrfParam() || '_csrf',
+                    'value': window.yii.getCsrfToken(),
+                    'type': 'hidden'
+                  });
+
+                  $('<form/>', {
+                    'action': $this.attr('href') + window.location.search,
+                    'target': self.targetIframe(),
+                    'method': 'post',
+                    css: {'display': 'none'}
+                  })
+                  .append($export, $csrf)
+                  .appendTo('body')
+                  .submit()
+                  .remove();
+                }
               }
-            }
-          });
+            });
+          }
         });
       });
     },
