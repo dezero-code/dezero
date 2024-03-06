@@ -8,7 +8,7 @@
   $.categoryForm = {
     init: function() {
       // Disable/enable buttons
-      $('a[data-plugin="dz-status-button"]').dzStatusButton();
+      $('a[data-plugin="dz-status-button"]').dezeroStatusButton();
     }
   };
 

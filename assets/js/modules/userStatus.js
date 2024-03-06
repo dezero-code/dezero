@@ -57,7 +57,7 @@
       e.preventDefault();
 
       // Show SLIDE PANEL clicking on an action button from the status table
-      $(this).dzSlidePanel({
+      $(this).dezeroSlidePanel({
         afterLoad: $.userStatus.afterLoad
       });
     },
@@ -69,7 +69,7 @@
       $.userStatus._slidePanel = this;
 
       // Start scroll
-      $.dzSlidePanel.startScroll();
+      $.dezeroSlidePanel.startScroll();
 
       var $user_btn = $('#user-status-save-btn');
       var $user_status = $('#user-status_type');

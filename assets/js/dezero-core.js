@@ -816,7 +816,7 @@ this},r._applyDataApi=function(){var e={};t("[data-match-height], [data-mh]").ea
 (function(document, window, $) {
   
   // SlidePanel global object
-  $.dzSlidePanel = {
+  $.dezeroSlidePanel = {
     $panel: null,
     options: null,
     afterLoad: $.noop,
@@ -840,7 +840,7 @@ this},r._applyDataApi=function(){var e={};t("[data-match-height], [data-mh]").ea
   };
 
   // Load custom SlidePanel widget
-  $.fn.dzSlidePanel = function(options) {
+  $.fn.dezeroSlidePanel = function(options) {
     function init() {
       if ( ! $.isEmptyObject(options) ) {
         $.extend(settings, options);
@@ -849,7 +849,7 @@ this},r._applyDataApi=function(){var e={};t("[data-match-height], [data-mh]").ea
       // 20/05/2021 - MULTIPLE INSTANCES
       // Save "afterLoad" for multiple instances
       if ( settings.hasOwnProperty('afterLoad') ) {
-        $.dzSlidePanel.afterLoad = settings.afterLoad;
+        $.dezeroSlidePanel.afterLoad = settings.afterLoad;
       }
 
       // 07/12/2023 - URL with EXTRA PARAMETERS
@@ -901,10 +901,10 @@ this},r._applyDataApi=function(){var e={};t("[data-match-height], [data-mh]").ea
 
         // 20/05/2021 - MULTIPLE INSTANCES
         // Reload "afterLoad" function. Needed for multiple SlidePanel instances
-        self.options.afterLoad = $.dzSlidePanel.afterLoad;
+        self.options.afterLoad = $.dezeroSlidePanel.afterLoad;
 
-        $.dzSlidePanel.$panel = self.$panel;
-        $.dzSlidePanel.options = self.options;
+        $.dezeroSlidePanel.$panel = self.$panel;
+        $.dezeroSlidePanel.options = self.options;
       },
     };
 
@@ -918,8 +918,10 @@ this},r._applyDataApi=function(){var e={};t("[data-match-height], [data-mh]").ea
 (function(document, window, $) {
   'use strict';
 
-  // Status change button ===========================================================
-  $.fn.dzStatusButton = function() {
+  // -------------------------------------------------------------------------------------------
+  // Status change button
+  // -------------------------------------------------------------------------------------------
+  $.fn.dezeroStatusButton = function() {
     function init() {
       $base.on('click', function(e){
         e.preventDefault();
@@ -942,21 +944,110 @@ this},r._applyDataApi=function(){var e={};t("[data-match-height], [data-mh]").ea
     }
   };
 
-  // Loader global object for Dezero Framework
-  // ----------------------------------------------------
+
+  // -------------------------------------------------------------------------------------------
+  // LOADER global object for Dezero Framework
+  // -------------------------------------------------------------------------------------------
   $.dezeroLoader = {
     dialog: null,
-
-    show: function(loading_message) {
-      this.dialog = bootbox.dialog({
-        message: loading_message
-      });
+    _timeout: null,
+    settings: {
+      title: '<h3>Loading...</h3>',
+      message: '<p>This action could take several seconds. <span class="text-danger">Please, do not refresh the page!</span></p>',
+      closeLabel: 'Close',
+      isCloseButton: false,
+      className: 'dezero-loader-modal',
+      timeout: 30000
     },
 
-    hide: function() {
-      this.dialog.modal('hide');
+    // Show loading modal
+    // ----------------------------------------------------
+    show: function(options) {
+      var self = this;
+
+      if ( ! $.isEmptyObject(options) ) {
+        $.extend(self.settings, options);
+      }
+      // Add loader gif
+      var loader_message = '<div class="dz-loader loader loader-circle"></div><div class="title">' + self.settings.title +'</div><div class="message">'+ self.settings.message +'</div>';
+
+      // Open modal with dialgo
+      self.dialog = bootbox.dialog({
+        message: loader_message,
+        closeButton: self.settings.isCloseButton,
+        className: self.settings.className,
+        buttons: {
+          cancel: {
+            label: self.settings.closeLabel,
+            className: 'btn-primary',
+            callback: function(){
+              $.dezeroLoader.close();
+            }
+          },
+        }
+      });
+
+      // Timeout
+      if ( self.settings.timeout !== null && self.settings.timeout > 0 ) {
+        self._timeout = setTimeout(function(){
+          // $.dezeroLoader.close();
+          $.dezeroLoader.showClose();
+        }, self.settings.timeout);
+      }
+    },
+
+    // Close loading modal
+    // ----------------------------------------------------
+    close: function() {
+      if ( this.dialog !== null ) {
+        this.dialog.modal('hide');
+        if ( this._timeout !== null ) {
+          clearTimeout(this._timeout);
+        }
+      }
+    },
+
+    // Show close button
+    // ----------------------------------------------------
+    showClose: function() {
+      if ( this.dialog !== null ) {
+        this.dialog.find('.modal-footer').removeClass('block').addClass('block');
+      }
+    },
+
+    // Hide close button
+    // ----------------------------------------------------
+    hideClose: function() {
+      if ( this.dialog !== null ) {
+        this.dialog.find('.modal-footer').removeClass('block');
+      }
+    },
+
+    // Set title for loading modal
+    // ----------------------------------------------------
+    setTitle: function(title) {
+      if ( this.dialog !== null ) {
+        this.dialog.find('.title').html(title);
+      }
+    },
+
+    // Set message for loading modal
+    // ----------------------------------------------------
+    setMessage: function(message) {
+      if ( this.dialog !== null ) {
+        this.dialog.find('.message').html(message);
+      }
+    },
+
+    // Override default settings
+    // ----------------------------------------------------
+    setDefaults: function(options) {
+      if ( ! $.isEmptyObject(options) ) {
+        $.extend(this.settings, options);
+      }
     }
   };
+
 
   // Document ready ===========================================================
   var Site = window.Site;

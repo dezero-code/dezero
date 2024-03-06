@@ -91,10 +91,10 @@ module.exports = function(grunt) {
                     '<%= paths.dezero_assets %>/libraries/_remark/global/js/Plugin/bootstrap-touchspin-4.js',
                     // '<%= paths.dezero_assets %>/js/dz.ajaxgrid.js',
                     // '<%= paths.dezero_assets %>/js/dz.gridview.js',
-                    '<%= paths.dezero_assets %>/js/dz.slidePanel.js',
+                    '<%= paths.dezero_assets %>/js/dezero.slidePanel.js',
                     // '<%= paths.dezero_assets %>/js/dz.slideTable.js',
                     // '<%= paths.dezero_assets %>/js/dz.fileStatusTable.js',
-                    '<%= paths.dezero_assets %>/js/scripts.js',
+                    '<%= paths.dezero_assets %>/js/main.js',
                 ],
                 dest: '<%= paths.dezero_js %>/dezero-core.js'
             }

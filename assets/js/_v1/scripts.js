@@ -106,7 +106,7 @@ function dz_htmlUnescape(value){
   };
 
   // Status change button ===========================================================
-  $.fn.dzStatusButton = function() {
+  $.fn.dezeroStatusButton = function() {
     function init() {
       $base.on('click', function(e){
         e.preventDefault();

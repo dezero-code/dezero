@@ -8,7 +8,7 @@
   $.userForm = {
     init: function() {
       // Disable/enable buttons
-      $('a[data-plugin="dz-status-button"]').dzStatusButton();
+      $('a[data-plugin="dz-status-button"]').dezeroStatusButton();
 
       // Change password button on update user form page
       $('#change-password-btn').on('click', function(e){

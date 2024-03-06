@@ -249,7 +249,7 @@ div.loading-spinner {
     .batch-loading {
         position: absolute;
         top: 0;
-        left: 10px;
+        left: 8px;
     }
     .batch-description {
         display: block;
@@ -258,3 +258,36 @@ div.loading-spinner {
         line-height: 1.4em;
     }
 }
+
+// BOOTBOX - LOADER ---> @see $.dezeroLoader.show()
+.dezero-loader-modal {
+    .modal-body {
+        padding-right: 10px;
+    }
+
+    .modal-footer {
+        display: none;
+    }
+
+    .bootbox-body {
+        position: relative;
+        margin-left: 0;
+        padding-left: 65px;
+
+        .dz-loader {
+            position: absolute;
+            top: 0px;
+            left: 5px;
+        }
+    }
+}
+
+
+@media (min-width: 480px) {
+    .dezero-loader-modal {
+        .modal-dialog {
+            max-width: 650px;
+        }
+    }
+}
+

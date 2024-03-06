@@ -1,7 +1,7 @@
 (function(document, window, $) {
   
   // SlidePanel global object
-  $.dzSlidePanel = {
+  $.dezeroSlidePanel = {
     $panel: null,
     options: null,
     afterLoad: $.noop,
@@ -25,7 +25,7 @@
   };
 
   // Load custom SlidePanel widget
-  $.fn.dzSlidePanel = function(options) {
+  $.fn.dezeroSlidePanel = function(options) {
     function init() {
       if ( ! $.isEmptyObject(options) ) {
         $.extend(settings, options);
@@ -34,7 +34,7 @@
       // 20/05/2021 - MULTIPLE INSTANCES
       // Save "afterLoad" for multiple instances
       if ( settings.hasOwnProperty('afterLoad') ) {
-        $.dzSlidePanel.afterLoad = settings.afterLoad;
+        $.dezeroSlidePanel.afterLoad = settings.afterLoad;
       }
 
       // 07/12/2023 - URL with EXTRA PARAMETERS
@@ -86,10 +86,10 @@
 
         // 20/05/2021 - MULTIPLE INSTANCES
         // Reload "afterLoad" function. Needed for multiple SlidePanel instances
-        self.options.afterLoad = $.dzSlidePanel.afterLoad;
+        self.options.afterLoad = $.dezeroSlidePanel.afterLoad;
 
-        $.dzSlidePanel.$panel = self.$panel;
-        $.dzSlidePanel.options = self.options;
+        $.dezeroSlidePanel.$panel = self.$panel;
+        $.dezeroSlidePanel.options = self.options;
       },
     };
 

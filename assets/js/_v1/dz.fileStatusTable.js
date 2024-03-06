@@ -24,7 +24,7 @@
           $(this).tooltip('hide');
 
           // Show SLIDE PANEL clicking on an action button from the file list table
-          $(this).dzSlidePanel({
+          $(this).dezeroSlidePanel({
             afterLoad: $.dzFileStatusTable.afterLoad
           });
         });
@@ -86,7 +86,7 @@
       que_action = $.dzFileStatusTable.action;
 
       // Start scroll
-      $.dzSlidePanel.startScroll();
+      $.dezeroSlidePanel.startScroll();
 
       // Change status
       if ( que_action === 'change_status' )
@@ -184,7 +184,7 @@
                 }
                 else {
                   // Show errors
-                  $.dzSlidePanel.showErrors(data.error_msg);
+                  $.dezeroSlidePanel.showErrors(data.error_msg);
 
                   // Enable button again
                   $this.prop('disabled', false);
@@ -192,7 +192,7 @@
               },
               error: function(xhr, ajaxOptions, thrownError) {
                 // Show errors
-                $.dzSlidePanel.showErrors('ERROR - Unable to change the status');
+                $.dezeroSlidePanel.showErrors('ERROR - Unable to change the status');
 
                 // Enable button again
                 $this.prop('disabled', false);
