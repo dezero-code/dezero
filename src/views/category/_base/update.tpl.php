@@ -51,7 +51,7 @@
       | SUBCATEGORIES? ---> SHOW TREE WIDGET
       |----------------------------------------------------------------------------------------
       */
-      if ( $category_model->getMaxLevels() > 0 ) :
+      if ( $category_model->getMaxLevels() > 1 ) :
     ?>
       <?php
         // First level category

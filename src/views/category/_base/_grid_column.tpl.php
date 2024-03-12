@@ -22,12 +22,12 @@
     */
     case 'name':
   ?>
-    <?= Html::a($model->title(), ['update', 'category_id' => $model->category_id]); ?>
+    <?= Html::a($model->title(), ['update', 'category_id' => $model->category_id], ['data-pjax' => 0]); ?>
     <?php
       // Multiple levels?
       if ( $model->getMaxLevels() > 1 && $model->totalSubcategories > 0 ) :
     ?>
-      <?= Html::a($model->totalSubcategories .' '. $model->config->text('subcategories'), ['update', 'category_id' => $model->category_id], ['class' => 'btn btn-dark btn-outline btn-sm ml-5']); ?>
+      <?= Html::a($model->totalSubcategories .' '. $model->config->text('subcategories'), ['update', 'category_id' => $model->category_id], ['class' => 'btn btn-dark btn-outline btn-sm ml-5', 'data-pjax' => 0]); ?>
     <?php endif; ?>
     <?php
       // Disabled category?
