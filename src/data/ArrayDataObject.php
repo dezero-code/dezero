@@ -57,6 +57,15 @@ class ArrayDataObject extends DataObject implements \ArrayAccess, \Countable, \I
 
 
     /**
+     * {@inheritdoc}
+     */
+    public function empty() : bool
+    {
+        return empty($this->vec_data);
+    }
+
+
+    /**
      * Returns the elements as a plain array.
      *
      * @return array<int|string,mixed> Plain array

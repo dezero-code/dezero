@@ -141,16 +141,16 @@ Data Objects are the recommeded type to use for USE CASES.
     // VALUES
     // ------------------------------------
         // Return the full array value
-        $string_object->value();
+        $array_object->value();
 
         // Return the full array value. Alias of "value()" method
-        $string_object->all();
+        $array_object->all();
 
         // Return the original array given as input
-        $string_object->original();
+        $array_object->original();
 
         // Check if string is empty (bool)
-        $string_object->empty();
+        $array_object->empty();
 
 
     // GET / ACCESS METHODS

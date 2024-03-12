@@ -74,7 +74,8 @@ class Db
      * @return int The number of rows affected by the execution
      * @throws DbException if execution failed
      */
-    public static function update(string $table, array $columns, $condition = '', array $params = [], bool $updateTimestamp = true, ?Connection $db = null) : int {
+    public static function update(string $table, array $columns, $condition = '', array $params = [], bool $updateTimestamp = true, ?Connection $db = null) : int
+    {
         if ( $db === null )
         {
             $db = self::db();
@@ -97,7 +98,8 @@ class Db
      * @return int The number of rows affected by the execution
      * @throws DbException if execution failed
      */
-    public static function delete(string $table, $condition = '', array $params = [], ?Connection $db = null): int {
+    public static function delete(string $table, $condition = '', array $params = [], ?Connection $db = null): int
+    {
         if ( $db === null )
         {
             $db = self::db();
