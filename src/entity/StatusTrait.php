@@ -29,6 +29,16 @@ trait StatusTrait
 
 
     /**
+     * @return ActiveQueryInterface The relational query object.
+     */
+    public function getLastStatusHistory() : ActiveQueryInterface
+    {
+        return $this->hasOne(StatusHistory::class, ['entity_uuid' => 'entity_uuid'])
+            ->orderBy(['status_history_id' => SORT_DESC]);
+    }
+
+
+    /**
      * Change status
      */
     public function changeStatus($new_status, $comments = null, $is_sending_mail = false) : bool
