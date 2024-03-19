@@ -34,7 +34,7 @@ namespace <?= $generator->searchNs ?>;
 use dezero\contracts\SearchInterface;
 use <?= $generator->ns ?>\<?= $modelClassName ?>;
 <?php /*use <?= $generator->queryNs ?>\<?= $queryClassName; ?>;*/ ?>
-use yii\data\ActiveDataProvider;
+use dezero\data\ActiveDataProvider;
 
 /**
  * Search class for <?= $modelFullClassName ?>.
