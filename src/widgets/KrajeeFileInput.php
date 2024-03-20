@@ -33,6 +33,9 @@ class KrajeeFileInput extends FileInput
 
         parent::init();
 
+        // Click on dropzone by default
+        $this->pluginOptions['browseOnZoneClick'] = true;
+
         // Default icons
         $this->pluginOptions['browseIcon'] = '<i class="wb-folder"></i>';
         $this->pluginOptions['cancelIcon'] = '<i class="wb-close"></i>';
