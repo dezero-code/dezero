@@ -71,10 +71,12 @@
 -----------------------------------
 -- STEP 2 - GIT & DEZERO.STARTER
 -----------------------------------
-1. Create a GIT repository on Bitbucket for this project
+1. Create a GIT repository on Github or Bitbucket for this project
 
 2. Clone your empty repository into your project directory
     > cd /Users/my_user/www/my.project
+
+    > git clone git@github.com:dezero/my-project.git
     > git clone git@bitbucket.org:dezero/my-project.git .
 
 3. Go to the DEZERO.STARTER project and copy ALL the files to your project directory, except ".git", ".sass-cache" and ".phpintel" subdirectories
@@ -140,6 +142,8 @@
 10. Clear caches
     > ./yii cc/all
 
+11. Restart apache again
+    > sudo apachectl -k restart
 
 ---------------------------------------------
 -- STEP 4 - ACCESS BACKEND
