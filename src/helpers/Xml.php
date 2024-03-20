@@ -7,20 +7,37 @@
 
 namespace dezero\helpers;
 
+use dezero\base\File;
 use dezero\helpers\Json;
 use dezero\helpers\StringHelper;
+use SimpleXMLElement;
 
 /**
- * Helper for working with XML structure
+ * Helper class for working with XML format
  */
 class Xml
 {
+    /**
+     * Interprets a string of XML into an object (SimpleXMLElement)
+     */
+    static public function load(string $xml): ?SimpleXMLElement
+    {
+        $simple_xml = simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA);
+        if ( $simple_xml === false )
+        {
+            return null;
+        }
+
+        return $simple_xml;
+    }
+
+
     /**
      * Converts a XML string to a PHP array using SimpleXML library
      */
     static public function toArray(string $xml) : array
     {
-        $simple_xml = simplexml_load_string($raw_xml_string, 'SimpleXMLElement', LIBXML_NOCDATA);
+        $simple_xml = self::load($xml);
         if ( empty($simple_xml) )
         {
             return [];
@@ -29,6 +46,21 @@ class Xml
         $vec_data = Json::decode(Json::encode((array)$simple_xml));
 
         return self::cleanArray($vec_data);
+    }
+
+
+    /**
+     * Read a XML file and convert to an array
+     */
+    static public function fromFile(string $file_path) : array
+    {
+        $file = File::load($file_path);
+        if ( ! $file || ! $file->exists() )
+        {
+            return [];
+        }
+
+        return self::toArray($file->read());
     }
 
 
