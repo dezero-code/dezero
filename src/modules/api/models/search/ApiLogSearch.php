@@ -10,8 +10,8 @@
 namespace dezero\modules\api\models\search;
 
 use dezero\contracts\SearchInterface;
+use dezero\data\ActiveDataProvider;
 use dezero\modules\api\models\ApiLog;
-use yii\data\ActiveDataProvider;
 
 /**
  * Search class for \dezero\modules\api\models\ApiLog.

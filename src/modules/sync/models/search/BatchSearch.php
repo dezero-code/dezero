@@ -10,8 +10,8 @@
 namespace dezero\modules\sync\models\search;
 
 use dezero\contracts\SearchInterface;
+use dezero\data\ActiveDataProvider;
 use dezero\modules\sync\models\Batch;
-use yii\data\ActiveDataProvider;
 
 /**
  * Search class for \dezero\modules\sync\models\Batch.

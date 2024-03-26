@@ -10,8 +10,8 @@
 namespace dezero\modules\category\models\search;
 
 use dezero\contracts\SearchInterface;
+use dezero\data\ActiveDataProvider;
 use dezero\modules\category\models\Category;
-use yii\data\ActiveDataProvider;
 
 /**
  * Search class for \dezero\modules\category\models\Category.

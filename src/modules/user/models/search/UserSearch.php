@@ -10,8 +10,8 @@
 namespace dezero\modules\user\models\search;
 
 use dezero\contracts\SearchInterface;
+use dezero\data\ActiveDataProvider;
 use dezero\modules\user\models\User;
-use yii\data\ActiveDataProvider;
 
 /**
  * Search class for \dezero\modules\user\models\User.

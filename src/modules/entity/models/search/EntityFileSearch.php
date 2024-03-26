@@ -10,8 +10,8 @@
 namespace dezero\modules\entity\models\search;
 
 use dezero\contracts\SearchInterface;
+use dezero\data\ActiveDataProvider;
 use dezero\modules\entity\models\EntityFile;
-use yii\data\ActiveDataProvider;
 
 /**
  * Search class for \dezero\modules\entity\models\EntityFile.
