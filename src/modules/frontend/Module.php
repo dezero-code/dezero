@@ -16,6 +16,9 @@ class Module extends \dezero\base\Module
      */
     public function init()
     {
+        // Load FRONTEND theme
+        $this->loadTheme('frontend');
+
         parent::init();
     }
 }

@@ -30,42 +30,42 @@ class Theme extends \yii\base\Theme
     {
         parent::init();
 
-        // Add the backend theme to allow override the views from core
-        $this->addBackendTheme();
+        // Add the Dezero custom theme path to allow override the views from core
+        $this->addDezeroTheme();
     }
 
 
     /**
-     * Add  the backend theme to allow override the views from core in this way:
-     *   1. '@app/themes/backend'
+     * Add the Dezero custom theme path to allow override the views from core in this way:
+     *   1. '@app/themes/backend' or '@app/themes/{theme}
      *   2. "@core/src/views"
      */
-    private function addBackendTheme() : void
+    private function addDezeroTheme() : void
     {
-        // BasePath is "@app/themes/backend"
-        $backend_view_path = $this->getBasePath();
+        // BasePath is "@app/themes/backend" or '@app/themes/{theme}
+        $view_path = $this->getBasePath();
 
         // Add a new rule or "path map"
-        $this->pathMap[$backend_view_path] = [
-            $backend_view_path,     // '@app/themes/backend'
-            "@core/src/views",      // '@core/src/views'
+        $this->pathMap[$view_path] = [
+            $view_path,         // '@app/themes/backend' or '@app/themes/{theme}
+            "@core/src/views",  // '@core/src/views'
         ];
     }
 
 
     /**
      * Add a backend module into the "pathMap" propierty to allow the view to be overrided in this way:
-     *   1. '@app/themes/backend/<module_id>'
+     *   1. '@app/themes/backend/{module_id}' or '@app/themes/{theme}/{module_id}'
      *   2. "@module/views"
      */
-    public function addBackendModule(string $module_id) : void
+    public function addModule(string $module_id) : void
     {
-        // BasePath is "@app/themes/backend"
-        $backend_view_path = $this->getBasePath() . '/' . $module_id;
+        // BasePath is "@app/themes/backend" or '@app/themes/{theme}
+        $view_path = $this->getBasePath() . '/' . $module_id;
 
         // Add a new rule or "path map"
-        $this->pathMap[$backend_view_path] = [
-            $backend_view_path,     // '@app/themes/backend/<module_id>'
+        $this->pathMap[$view_path] = [
+            $view_path,             // '@app/themes/backend/{module_id}' or '@app/themes/{theme}/{module_id}'
             "@{$module_id}/views",  // '@module/views'
         ];
     }

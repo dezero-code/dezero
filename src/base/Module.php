@@ -35,7 +35,33 @@ class Module extends \yii\base\Module
         // Add module into theme to allow their views to be overrided
         if ( Dz::isWeb() )
         {
-            Yii::$app->view->theme->addBackendModule($this->id);
+            Yii::$app->view->theme->addModule($this->id);
         }
+    }
+
+
+    /**
+     * Load and switch to a given theme name
+     */
+    public function loadTheme(string $theme_name) : void
+    {
+        // Change view class
+        Yii::$container->set("dezero\web\View", "{$theme_name}\web\View");
+
+        Yii::$app->view->theme = new \dezero\base\Theme([
+            'name' => $theme_name,
+            'basePath' => "@app/themes/{$theme_name}",
+            'baseUrl' => "@web/themes/{$theme_name}",
+        ]);
+
+        // Change layout path
+        $layout_path = Yii::getAlias('@app') . "/themes/{$theme_name}/layouts";
+        Yii::$app->setLayoutPath($layout_path);
+        $this->setLayoutPath($layout_path);
+
+        // Change view path
+        $view_path = DZ_APP_PATH . DIRECTORY_SEPARATOR . "themes" . DIRECTORY_SEPARATOR . $theme_name;
+        Yii::$app->setViewPath($view_path);
+        $this->setViewPath($view_path);
     }
 }
