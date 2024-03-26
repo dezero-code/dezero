@@ -46,8 +46,8 @@ class Theme extends \yii\base\Theme
         $backend_view_path = $this->getBasePath();
 
         // Add a new rule or "path map"
-        $this->pathMap[$backend_view_path ] = [
-            $backend_view_path,     // '@app/themes/backend>'
+        $this->pathMap[$backend_view_path] = [
+            $backend_view_path,     // '@app/themes/backend'
             "@core/src/views",      // '@core/src/views'
         ];
     }
