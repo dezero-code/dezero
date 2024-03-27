@@ -8,6 +8,7 @@
 namespace dezero\web;
 
 use dezero\helpers\ArrayHelper;
+use dezero\helpers\Html;
 use dezero\helpers\Json;
 use Yii;
 use yii\base\InvalidCallException;
@@ -18,9 +19,16 @@ use yii\base\InvalidCallException;
 class View extends \yii\web\View
 {
     /**
+     * The location of registered JavaScript code block or files.
+     * This means the location is at the end of the body section, but on the top
+     */
+    const POS_END_TOP = 10;
+
+
+    /**
      * Finds the view file based on the given view name.
      *
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function findViewFile($view, $context = null)
     {
@@ -78,6 +86,61 @@ class View extends \yii\web\View
         // }
 
         return $path;
+    }
+
+
+    /**
+     * {@inheritdoc}
+     *
+     * Added new POS_END_TOP position (at the top of the end)
+     *
+     * @since 27/03/2024
+     */
+    protected function renderBodyEndHtml($ajaxMode)
+    {
+        if ( $ajaxMode || ( !isset($this->jsFiles[self::POS_END_TOP]) && !isset($this->js[self::POS_END_TOP]) ) )
+        {
+            return parent::renderBodyEndHtml($ajaxMode);
+        }
+
+
+        $lines = [];
+
+        // New position "POS_END_TOP" (at the top of the end)
+        if ( isset($this->js[self::POS_END_TOP]) && !empty($this->js[self::POS_END_TOP]) )
+        {
+            $lines[] = Html::script(implode("\n", $this->js[self::POS_END_TOP]));
+        }
+
+        if ( isset($this->jsFiles[self::POS_END_TOP]) &&  !empty($this->jsFiles[self::POS_END_TOP]) )
+        {
+            $lines[] = implode("\n", $this->jsFiles[self::POS_END_TOP]);
+        }
+
+        if ( !empty($this->jsFiles[self::POS_END]) )
+        {
+            $lines[] = implode("\n", $this->jsFiles[self::POS_END]);
+        }
+
+        if ( !empty($this->js[self::POS_END]) )
+        {
+            $lines[] = Html::script(implode("\n", $this->js[self::POS_END]));
+        }
+
+        if ( !empty($this->js[self::POS_READY]) )
+        {
+            $js = "jQuery(function ($) {\n" . implode("\n", $this->js[self::POS_READY]) . "\n});";
+            $lines[] = Html::script($js);
+        }
+
+        if ( !empty($this->js[self::POS_LOAD]) )
+        {
+            $js = "jQuery(window).on('load', function () {\n" . implode("\n", $this->js[self::POS_LOAD]) . "\n});";
+            $lines[] = Html::script($js);
+        }
+
+        return empty($lines) ? '' : implode("\n", $lines);
+
     }
 
 
@@ -196,7 +259,7 @@ class View extends \yii\web\View
         {
             $this->registerJs(
                 'window.js_globals = ' . Json::encode($vec_javascript_variables) . ';',
-                self::POS_END,
+                self::POS_END_TOP,
                 'dezero-backend-variables',
             );
         }

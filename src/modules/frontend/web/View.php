@@ -81,7 +81,7 @@ class View extends \dezero\web\View
         {
             $this->registerJs(
                 'window.js_globals = ' . Json::encode($vec_javascript_variables) . ';',
-                self::POS_END,
+                self::POS_END_TOP,
                 'dezero-frontend-variables',
             );
         }
