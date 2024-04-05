@@ -13,6 +13,7 @@ use Stringy\Stringy as BaseStringy;
 use voku\helper\UTF8;
 use Yii;
 use yii\helpers\HtmlPurifier;
+use yii\helpers\Inflector;
 
 /**
  * Helper class for working with strings
@@ -662,6 +663,19 @@ class StringHelper extends \yii\helpers\StringHelper
         return preg_replace_callback('/<(\d+)>/', function ($match) use (&$links) {
             return $links[$match[1] - 1];
         }, $value);
+    }
+
+
+    /**
+     * Generate a slug. It means an input strings concatenated by dashes (`-`)
+     *
+     * @see \yii\behaviors\SluggableBehavior
+     */
+    public static function slug(string $str) : string
+    {
+        $slug_parts = explode(" ", $str);
+
+        return Inflector::slug(implode('-', $slug_parts));
     }
 
 
