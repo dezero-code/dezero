@@ -127,7 +127,7 @@ class BackendManager extends Component
         }
 
         // Add environment into body class attribute
-        $vec_classes[] = 'page-'. Dz::getEnvironment();
+        $vec_classes[] = Dz::getEnvironment() ."-mode";
 
         // Login & password page (different layout)
         if ( Yii::$app->user->isGuest || ($this->current_module == 'user' && $this->current_controller == 'password') )
