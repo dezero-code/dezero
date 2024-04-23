@@ -126,6 +126,9 @@ class BackendManager extends Component
             $vec_classes[] = $this->current_module .'-module-page';
         }
 
+        // Add environment into body class attribute
+        $vec_classes[] = 'page-'. Dz::getEnvironment();
+
         // Login & password page (different layout)
         if ( Yii::$app->user->isGuest || ($this->current_module == 'user' && $this->current_controller == 'password') )
         {
