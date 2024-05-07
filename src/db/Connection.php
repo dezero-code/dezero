@@ -4,15 +4,19 @@
  *
  * @author Fabián Ruiz <fabian@dezero.es>
  * @link http://www.dezero.es
- * @copyright Copyright &copy; 2022 Fabián Ruiz
+ * @copyright Copyright &copy; 2024 Fabián Ruiz
  */
 
 namespace dezero\db;
 
+use dezero\base\File;
 use dezero\db\mysql\QueryBuilder as MysqlQueryBuilder;
 use dezero\db\mysql\Schema as MysqlSchema;
 use dezero\helpers\ArrayHelper;
 use dezero\helpers\StringHelper;
+use dezero\helpers\Transliteration;
+use mikehaertl\shellcommand\Command as ShellCommand;
+use yii\base\Exception;
 use Yii;
 
 /**
@@ -87,9 +91,9 @@ class Connection extends \yii\db\Connection
      * @param string|array $columns
      * @return string
      */
-    public function getPrimaryKeyName($table, $columns)
+    public function getPrimaryKeyName($table, $columns) : string
     {
-        $table = $this->_getTableNameWithoutPrefix($table);
+        $table = $this->getTableNameWithoutPrefix($table);
         if ( is_string($columns) )
         {
             $columns = StringHelper::split($columns);
@@ -107,9 +111,9 @@ class Connection extends \yii\db\Connection
      * @param string|array $columns
      * @return string
      */
-    public function getForeignKeyName($table, $columns)
+    public function getForeignKeyName($table, $columns) : string
     {
-        $table = $this->_getTableNameWithoutPrefix($table);
+        $table = $this->getTableNameWithoutPrefix($table);
         if ( is_string($columns) )
         {
             $columns = StringHelper::split($columns);
@@ -130,9 +134,9 @@ class Connection extends \yii\db\Connection
      * @param bool $foreignKey
      * @return string
      */
-    public function getIndexName($table, $columns, $unique = false, $foreignKey = false)
+    public function getIndexName($table, $columns, $unique = false, $foreignKey = false) : string
     {
-        $table = $this->_getTableNameWithoutPrefix($table);
+        $table = $this->getTableNameWithoutPrefix($table);
         if ( is_string($columns) )
         {
             $columns = StringHelper::split($columns);
@@ -140,26 +144,6 @@ class Connection extends \yii\db\Connection
         $name = $this->tablePrefix . $table . '_' . implode('_', $columns) . ($unique ? '_unq' : '') . ($foreignKey ? '_fk' : '_idx');
 
         return $this->trimObjectName($name);
-    }
-
-
-    /**
-     * Returns the raw database table names that should be ignored by default.
-     *
-     * @return array
-     */
-    public function getIgnoredBackupTables() : array
-    {
-        $vec_tables = [
-            'user_session'
-        ];
-
-        if ( ! empty($this->backupIgnoredTables) )
-        {
-            $vec_tables = ArrayHelper::merge($vec_tables, $this->backupIgnoredTables);
-        }
-
-        return $vec_tables;
     }
 
 
@@ -181,8 +165,131 @@ class Connection extends \yii\db\Connection
     }
 
 
-    // Private Methods
-    // =========================================================================
+    /*
+    |--------------------------------------------------------------------------
+    | BACKUP METHODS
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Returns the full path for a new backup file
+     */
+    public function getBackupFilePath() : string
+    {
+        $filename = implode("_", [
+            Transliteration::file(Yii::$app->name),
+            date('YmdHi'),
+            strtolower(StringHelper::randomString(10))
+        ]);
+
+        return Yii::getAlias("@backups/db") . DIRECTORY_SEPARATOR . "{$filename}.sql";
+    }
+
+
+    /**
+     * Performs a backup operation. It will execute the default database schema specific backup
+     * defined in `getDefaultBackupCommand()`, which uses `mysqldump` for MySQL.
+     *
+     * @return string|null The file path to the database backup or null if the backup failed
+     * @throws Exception if the backupCommand config setting is false
+     * @throws ShellCommandException in case of failure
+     */
+    public function backup(bool $is_zip = false) : ?string
+    {
+        $backup_file_path = $this->getBackupFilePath();
+
+        return $this->backupTo($backup_file_path, $is_zip);
+    }
+
+
+    /**
+     * Performs a backup operation. It will execute the default database schema specific backup
+     * defined in `getDefaultBackupCommand()`, which uses `mysqldump` for MySQL.
+     *
+     * @param string|null The file path the database backup should be saved at or null if the backup failed
+     * @throws Exception if the backupCommand config setting is false
+     * @throws ShellCommandException in case of failure
+     */
+    public function backupTo($file_path, $is_zip = false) : ?string
+    {
+        $schema = $this->getSchema();
+        $backupCommand = $schema->getDefaultBackupCommand();
+
+        if ( $backupCommand === false )
+        {
+            throw new Exception('Database not backed up because the backup command is false.');
+        }
+
+        // Create the shell command
+        $backupCommand = $this->parseCommandTokens($backupCommand, $file_path);
+        $shellCommand = new ShellCommand();
+        $shellCommand->setCommand($backupCommand);
+
+        // If we don't have proc_open, maybe we've got exec
+        if ( ! function_exists('proc_open') && function_exists('exec') )
+        {
+            $shellCommand->useExec = true;
+        }
+
+        // Execute command
+        $is_success = $shellCommand->execute();
+
+        // Delete any temp connection files that might have been created.
+        $is_deleted = $schema->deleteDumpConfigFile();
+
+        if ( ! $is_success )
+        {
+            $execCommand = $shellCommand->getExecCommand();
+            throw new ShellCommandException($execCommand, $shellCommand->getExitCode(), $shellCommand->getStdErr());
+        }
+
+        // No ZIP file is needed, return the file path
+        if ( ! $is_zip )
+        {
+            return $file_path;
+        }
+
+        // Generate backup in a ZIP?
+        $backup_file = File::load($file_path);
+        if ( ! $backup_file || ! $backup_file->exists() )
+        {
+            return null;
+        }
+
+        // ZIP the backup file and remove original
+        $zip_file = $backup_file->zip(true);
+        if ( ! $zip_file )
+        {
+            return null;
+        }
+
+        return $file_path .".zip";
+    }
+
+
+    /**
+     * Returns the raw database table names that should be ignored by default.
+     */
+    public function getIgnoredBackupTables() : array
+    {
+        $vec_tables = [
+            'user_session'
+        ];
+
+        if ( ! empty($this->backupIgnoredTables) )
+        {
+            $vec_tables = ArrayHelper::merge($vec_tables, $this->backupIgnoredTables);
+        }
+
+        return $vec_tables;
+    }
+
+
+   /*
+    |--------------------------------------------------------------------------
+    | PRIVATE METHODS
+    |--------------------------------------------------------------------------
+    */
 
     /**
      * Returns a table name without the table prefix
@@ -190,7 +297,7 @@ class Connection extends \yii\db\Connection
      * @param string $table
      * @return string
      */
-    private function _getTableNameWithoutPrefix($table)
+    private function getTableNameWithoutPrefix($table)
     {
         if ( $this->tablePrefix )
         {
@@ -201,5 +308,27 @@ class Connection extends \yii\db\Connection
         }
 
         return $table;
+    }
+
+
+    /**
+     * Parses a database backup/restore command for config tokens
+     *
+     * @param string $command The command to parse tokens in
+     * @param string $file The path to the backup file
+     */
+    private function parseCommandTokens($command, $file) : string
+    {
+        $vec_config = Yii::$app->config->getDb();
+        $tokens = [
+            '{file}'        => $file,
+            '{port}'        => $vec_config['port'] ?? 3306,
+            '{server}'      => $vec_config['server'] ?? '',
+            '{user}'        => $vec_config['username'],
+            '{password}'    => str_replace('$', '\\$', addslashes($vec_config['password'])),
+            '{database}'    => $vec_config['database'] ?? '',
+        ];
+
+        return str_replace(array_keys($tokens), $tokens, $command);
     }
 }

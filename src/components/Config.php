@@ -19,7 +19,7 @@ class Config extends Component
 {
     /**
      * Find a config file inside @app.config alias path and return the content
-     * 
+     *
      * @return mixed
      */
     public function get(string $config_path, ?string $config_key = null)
@@ -47,7 +47,7 @@ class Config extends Component
         {
             // Get configuration file content
             $vec_config = require($config_file_path);
-            
+
             // Return just the content from a configuration key
             if ( !empty($vec_config) && is_array($vec_config) && $config_key !== null )
             {
@@ -96,7 +96,7 @@ class Config extends Component
                             $vec_config['database'] = $param_value;
                             break;
                         case 'unix_socket':
-                            $vec_config['unixSocket'] = $param_value;
+                            $vec_config['unix_socket'] = $param_value;
                             break;
                         case 'charset':
                             $vec_config['charset'] = $param_value;

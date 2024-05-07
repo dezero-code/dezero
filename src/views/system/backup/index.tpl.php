@@ -45,13 +45,13 @@
               <?php else : ?>
                 <?php foreach ( $vec_files as $backup_file ) : ?>
                   <tr>
-                    <td><?= Html::a($backup_file->basename(), ['/system/backup/download', 'file' => $backup_file->basename()]); ?></td>
+                    <td><?= Html::a($backup_file->basename(), ['/system/backup/download', 'file' => $backup_file->basename()], ['data-method' => 'post']); ?></td>
                     <td class="center"><?= DateHelper::toFormat($backup_file->updatedDate()); ?></td>
                     <td class="center"><?= $backup_file->owner() .':'. $backup_file->group(); ?></td>
                     <td class="center"><?= $backup_file->permissions(); ?></td>
                     <td class="center"><?= $backup_file->formatSize(); ?></td>
                     <td class="center">
-                      <a class="delete btn btn-sm btn-icon btn-pure btn-default dz-bootbox-confirm" title="" data-toggle="tooltip" data-confirm="<?= Yii::t('backend', '¿Seguro que desea borrar este backup?'); ?>" data-method="post" data-redirect="<?= Url::to('/system/backup/index', ['delete' => $backup_file->basename()]); ?>" href="<?= Url::to('/system/backup/delete', ['file' => $backup_file->basename()]); ?>" data-original-title="<?= Yii::t('backend', 'Borrar'); ?>"><i class="wb-trash"></i></a>
+                      <a class="delete btn btn-sm btn-icon btn-pure btn-default dz-bootbox-confirm" title="" data-toggle="tooltip" data-confirm="<?= Yii::t('backend', '¿Seguro que desea borrar este backup?'); ?>" data-method="post" href="<?= Url::to('/system/backup/delete', ['file' => $backup_file->basename()]); ?>" data-original-title="<?= Yii::t('backend', 'Borrar'); ?>" ><i class="wb-trash"></i></a>
                     </td>
                   </tr>
                 <?php endforeach; ?>

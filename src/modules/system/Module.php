@@ -6,6 +6,7 @@
 namespace dezero\modules\system;
 
 use dezero\modules\system\assets\SystemAsset;
+use yii\web\YiiAsset;
 use Yii;
 
 class Module extends \dezero\base\Module
@@ -29,6 +30,7 @@ class Module extends \dezero\base\Module
     {
         // Register Javascript & CSS files for this module
         SystemAsset::register(Yii::$app->view);
+        YiiAsset::register(Yii::$app->view);
 
         parent::init();
     }

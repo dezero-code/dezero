@@ -4,11 +4,12 @@
  *
  * @author Fabián Ruiz <fabian@dezero.es>
  * @link http://www.dezero.es
- * @copyright Copyright &copy; 2022 Fabián Ruiz
+ * @copyright Copyright &copy; 2024 Fabián Ruiz
  */
 
 namespace dezero\db\mysql;
 
+use dezero\base\File;
 use dezero\db\mysql\ColumnSchema;
 use dezero\db\mysql\ColumnSchemaBuilder;
 use dezero\db\mysql\QueryBuilder;
@@ -105,6 +106,12 @@ class Schema extends \yii\db\mysql\Schema
     }
 
 
+    /*
+    |--------------------------------------------------------------------------
+    | BACKUP METHODS
+    |--------------------------------------------------------------------------
+    */
+
     /**
      * Returns the default backup command to execute.
      *
@@ -113,7 +120,7 @@ class Schema extends \yii\db\mysql\Schema
     public function getDefaultBackupCommand() : string
     {
         $default_args =
-            ' --defaults-extra-file="' . $this->_createDumpConfigFile() . '"' .
+            ' --defaults-extra-file="' . $this->createDumpConfigFile() . '"' .
             ' --add-drop-table' .
             ' --comments' .
             ' --create-options' .
@@ -149,38 +156,34 @@ class Schema extends \yii\db\mysql\Schema
             $default_args .
             ' --no-create-info' .
             ' ' . implode(' ', $vec_ignore_table_args) .
-            ' {database}' .
-            ' >> "{file}"';
+            ' {database}';
 
-        return $schema_dump . ' && ' . $data_dump;
+        return "{$schema_dump} && {$data_dump} >> {file}";
     }
 
 
     /**
      * Delete temporary my.cnf file based on the DB config settings.
      */
-    public function deleteDumpConfigFile()
+    public function deleteDumpConfigFile() : bool
     {
-        $file_path = Yii::getAlias('@privateTmp') . DIRECTORY_SEPARATOR . 'my.cnf';
-        $destination_file = Yii::$app->file->set($file_path);
-        if ( $destination_file->getExists() )
+        $config_file_path = Yii::getAlias('@privateTmp') . DIRECTORY_SEPARATOR . 'my.cnf';
+        $config_file = File::load($config_file_path);
+        if ( $config_file && $config_file->exists() )
         {
-            return $destination_file->delete();
+            return $config_file->delete();
         }
 
         return false;
     }
 
 
-    // Private Methods
-    // =========================================================================
-
     /**
      * Creates a temporary my.cnf file based on the DB config settings.
      *
      * @return string The path to the my.cnf file
      */
-    private function _createDumpConfigFile()
+    private function createDumpConfigFile() : string
     {
         // Get database configuration
         $vec_config = Yii::$app->config->getDb();
@@ -190,25 +193,24 @@ class Schema extends \yii\db\mysql\Schema
             'host=' . $vec_config['server'] . PHP_EOL .
             'port=' . $vec_config['port'];
 
-        if ( isset($vec_config['unixSocket']) )
+        if ( isset($vec_config['unix_socket']) )
         {
-            $contents .= PHP_EOL . 'socket=' . $vec_config['unixSocket'];
+            $contents .= PHP_EOL . 'socket=' . $vec_config['unix_socket'];
         }
 
         // Create a TEMP config file
-        // $file_path = Yii::$app->path->get('temp', true) . DIRECTORY_SEPARATOR . 'my.cnf';
-        // $this->tempMyCnfPath = FileHelper::normalizePath(sys_get_temp_dir()) . DIRECTORY_SEPARATOR . StringHelper::randomString(12) . '.cnf';
-        $destination_file = Yii::$app->file->set($file_path);
-        if ( ! $destination_file->getExists() )
+        $config_file_path = Yii::getAlias('@privateTmp') . DIRECTORY_SEPARATOR . 'my.cnf';
+        $config_file = File::load($config_file_path);
+        if ( ! $config_file->exists() )
         {
-            $destination_file->create();
+            $config_file->createEmptyFile();
         }
-        $destination_file->setContents($contents);
+        $config_file->write($contents);
 
         // Avoid a “world-writable config file 'my.cnf' is ignored” warning
-        $destination_file->setPermissions(644);
+        $config_file->setPermissions(644);
         // chmod($filePath, 0644);
 
-        return $file_path;
+        return $config_file_path;
     }
 }

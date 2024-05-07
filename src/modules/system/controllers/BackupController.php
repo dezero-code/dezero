@@ -40,10 +40,12 @@ class BackupController extends Controller
      */
     public function actionIndex()
     {
-        $backups_path = Yii::getAlias('@backups/db');
-        $backups_directory = File::load('@backups/db');
+        // Clear directory where backups are stored temporarily
+        $this->clearTempDirectory();
 
         // Check directory exists
+        $backups_path = Yii::getAlias('@backups/db');
+        $backups_directory = File::load('@backups/db');
         if ( ! $backups_directory->exists() || ! $backups_directory->isDirectory() )
         {
             throw new AssetNotFoundException("The backups directory does not exist: {$backups_path}");
@@ -56,7 +58,7 @@ class BackupController extends Controller
         }
 
         // Get all files from backup directory ordered by most recently updated
-        $vec_files = $this->get_backup_files($backups_directory->read());
+        $vec_files = $this->getBackupFiles($backups_directory->read());
 
         return $this->render('//system/backup/index',[
             'vec_files'     => $vec_files
@@ -73,14 +75,71 @@ class BackupController extends Controller
 
         Yii::$app->session->setFlash('success', Yii::t('backend', 'Database backup generated successfully in <em>{file_path}</em>', ['file_path' => $file_path]));
 
-        return $this->redirect(['index']);
+        return $this->redirect(['/system/backup']);
+    }
+
+
+    /**
+     * Delete a backup file
+     */
+    public function actionDelete(string $file)
+    {
+        // Delete action only allowed by POST requests
+        $this->requirePostRequest();
+
+        // Ensure file exists
+        $backup_file = File::load(Yii::getAlias('@backups/db') . DIRECTORY_SEPARATOR . $file);
+        if ( ! $backup_file || ! $backup_file->exists() )
+        {
+            throw new AssetNotFoundException("The backup file does not exist: {$file}");
+        }
+
+        // Delete file
+        if ( $backup_file->delete() )
+        {
+            Yii::$app->session->setFlash('success', Yii::t('backend', 'Backup deleted successfully'));
+        }
+        else
+        {
+            Yii::$app->session->setFlash('error', Yii::t('backend', 'Backup deleted could not be deleted'));
+        }
+
+        return $this->redirect(['/system/backup']);
+    }
+
+
+    /**
+     * Download a backup file
+     */
+    public function actionDownload(string $file)
+    {
+        // Delete action only allowed by POST requests
+        $this->requirePostRequest();
+
+        // Ensure file exists
+        $backup_file = File::load(Yii::getAlias('@backups/db') . DIRECTORY_SEPARATOR . $file);
+        if ( ! $backup_file || ! $backup_file->exists() )
+        {
+            throw new AssetNotFoundException("The backup file does not exist: {$file}");
+        }
+
+        // Copy SQL file from PRIVATE backup directory to PUBLIC temp directory
+        $backup_temp_directory = File::ensureDirectory('@tmp/backups');
+        $destination_file = $backup_file->copy($backup_temp_directory->realPath() . DIRECTORY_SEPARATOR . $file);
+        if ( ! $destination_file || ! $destination_file->exists() )
+        {
+            throw new AssetNotFoundException("The backup file could not be downloaded: {$file}");
+        }
+
+        // Finally, download the file
+        return $destination_file->download();
     }
 
 
     /**
      * Return backup files ordered by most recently updated
      */
-    private function get_backup_files(array $vec_files) : array
+    private function getBackupFiles(array $vec_files) : array
     {
         if ( empty($vec_files) )
         {
@@ -123,5 +182,17 @@ class BackupController extends Controller
         }
 
         return $vec_backup_files;
+    }
+
+    /**
+     * Clear directory where backups are stored temporarily
+     */
+    private function clearTempDirectory() : void
+    {
+        $temp_directory = File::load(Yii::getAlias('@tmp/backups'));
+        if ( $temp_directory && $temp_directory->exists() )
+        {
+            $temp_directory->clear();
+        }
     }
 }

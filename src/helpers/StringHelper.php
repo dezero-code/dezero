@@ -759,6 +759,7 @@ class StringHelper extends \yii\helpers\StringHelper
         return (string)BaseStringy::create($str)->htmlDecode($flags);
     }
 
+
     /**
      * Convert all applicable characters to HTML entities.
      *
@@ -783,6 +784,7 @@ class StringHelper extends \yii\helpers\StringHelper
         return BaseStringy::create($str)->isAlpha();
     }
 
+
     /**
      * Returns true if the string contains only alphabetic and numeric chars, false otherwise.
      *
@@ -793,6 +795,7 @@ class StringHelper extends \yii\helpers\StringHelper
     {
         return BaseStringy::create($str)->isAlphanumeric();
     }
+
 
     /**
      * Returns true if the string is base64 encoded, false otherwise.
@@ -858,6 +861,7 @@ class StringHelper extends \yii\helpers\StringHelper
     {
         return BaseStringy::create($str)->isJson($onlyArrayOrObjectResultsAreValid);
     }
+
 
     /**
      * Returns true if the string contains only lower case chars, false otherwise.
