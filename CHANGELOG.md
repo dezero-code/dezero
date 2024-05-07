@@ -2,6 +2,51 @@
 
 All notable changes to `Dezero Framework` will be documented in this file
 
+## 0.4.1. - 2024-05-07
+
+- Backup database - New actions to backup MySQL database (ported from DZ Framework)
+
+## 0.4.0. - 2024-04-23
+
+- BackendManager - Add environment custom class in body attribute class
+
+## 0.3.9. - 2024-03-27
+
+- Frontend module - Adding new FrontendManager component and custom frontend View class. They are designed to be extended for a custom frontend module
+- Theme - Created new method to allow load a new theme (for example "frontend") from a module
+- View class - Created new POS_END_TOP position: at the top of the end
+- StringHelper - Created new method slug() to generate an input strings concatenated by dashes
+
+## 0.3.8. - 2024-03-20
+
+- Krajee FileInput widget - Click on dropzone fires browse button
+- Xml new helper to read XML structure (ported from DZ Framework)
+- Xml helper - Created special methods to read XML files and parser to an array
+- Help documentation - Local install guide updated
+
+## 0.3.7. - 2024-03-19
+
+- Status Trait - New method getLastStatusHistory()
+- ActiveDataProvider - Override Yii core class to check if data provider is empty
+
+## 0.3.6. - 2024-03-12
+
+- TimeHelper - New class to manage time (hours) operations
+- Category - Fixed error showing tree sidebar when max levels is 1
+
+## 0.3.5. - 2024-03-06
+
+- UploadFileService - Allow to upload files from \dezero\db\Activerecord objects
+- Jasny FileInput plugin adapted to Yii2
+- Javascript - New class $.dezeroLoader with several methods to manage loading modals
+
+## 0.3.4 - 2024-03-02
+
+- GrdiView - Export to Excel behavior.
+- ExcelWriter - Lock/unlock methods improved
+- ExcelWriter - Added new methods to build cells with dropdowns
+- Export Excel - Added new class $.dezeroExport for exporting data to Excel
+
 ## 0.3.3 - 2024-02-24
 
 - Logs - View all the log files directly from backend administration pages
