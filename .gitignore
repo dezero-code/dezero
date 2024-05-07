@@ -30,8 +30,9 @@ Thumbs.db
 .svn
 .phpintel
 
-# Vim generated files
+# IDE generated files
 *.un~
+.idea
 
 # SASS
 .sass-cache

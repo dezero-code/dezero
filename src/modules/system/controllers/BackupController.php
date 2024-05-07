@@ -65,6 +65,19 @@ class BackupController extends Controller
 
 
     /**
+     * Perform a backup operation
+     */
+    public function actionCreate()
+    {
+        $file_path = Yii::$app->db->backup(true);
+
+        Yii::$app->session->setFlash('success', Yii::t('backend', 'Database backup generated successfully in <em>{file_path}</em>', ['file_path' => $file_path]));
+
+        return $this->redirect(['index']);
+    }
+
+
+    /**
      * Return backup files ordered by most recently updated
      */
     private function get_backup_files(array $vec_files) : array
@@ -111,5 +124,4 @@ class BackupController extends Controller
 
         return $vec_backup_files;
     }
-
 }
