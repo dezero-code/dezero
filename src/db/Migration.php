@@ -188,6 +188,15 @@ class Migration extends \yii\db\Migration
 
 
     /**
+     * Creates a DATE MYSQL column.
+     */
+    public function dateRaw()
+    {
+        return $this->db->getSchema()->createColumnSchemaBuilder(MysqlSchema::TYPE_DATE);
+    }
+
+
+    /**
      * Shortcut for creating an UUID column
      *
      * @return ColumnSchemaBuilder the column instance which can be further customized.
