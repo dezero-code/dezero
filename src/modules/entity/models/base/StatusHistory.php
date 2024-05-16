@@ -4,7 +4,7 @@
  *
  * @author Fabián Ruiz <fabian@dezero.es>
  * @link http://www.dezero.es
- * @copyright Copyright &copy; 2023 Fabián Ruiz
+ * @copyright Copyright &copy; 2024 Fabián Ruiz
  */
 
 namespace dezero\modules\entity\models\base;
@@ -31,6 +31,12 @@ use Yii;
  * @property string $comments
  * @property int $created_date
  * @property int $created_user_id
+ *
+ * -------------------------------------------------------------------------
+ * RELATIONS
+ * -------------------------------------------------------------------------
+ * @property User $createdUser
+ * @property Entity $entity
  */
 abstract class StatusHistory extends \dezero\db\ActiveRecord
 {
@@ -53,18 +59,16 @@ abstract class StatusHistory extends \dezero\db\ActiveRecord
             'requiredFields' => [['entity_type', 'status_type'], 'required'],
             'integerFields' => [['entity_source_id', 'created_date', 'created_user_id'], 'integer'],
             'stringFields' => [['comments'], 'string'],
-            
+
             // Max length rules
             'max32' => [['status_type'], 'string', 'max' => 32],
             'max36' => [['entity_uuid'], 'string', 'max' => 36],
             'max128' => [['entity_type'], 'string', 'max' => 128],
-            
+
             // Default NULL
             'defaultNull' => [['entity_source_id', 'comments'], 'default', 'value' => null],
         ];
     }
-
-
 
 
     /**
@@ -84,3 +88,33 @@ abstract class StatusHistory extends \dezero\db\ActiveRecord
         return $this->entity_type;
     }
 }
+
+/**
+ * These are relations and enum methods generated with Gii.
+ * YOU CAN USE THESE METHODS IN THE PARENT MODEL CLASS
+ *
+
+   /*
+    |--------------------------------------------------------------------------
+    | RELATIONS
+    |--------------------------------------------------------------------------
+    *
+
+    /**
+     * @return ActiveQueryInterface The relational query object.
+     *
+    public function getCreatedUser() : ActiveQueryInterface
+    {
+        return $this->hasOne(User::class, ['user_id' => 'created_user_id']);
+    }
+
+
+    /**
+     * @return ActiveQueryInterface The relational query object.
+     *
+    public function getEntityUu() : ActiveQueryInterface
+    {
+        return $this->hasOne(Entity::class, ['entity_uuid' => 'entity_uuid']);
+    }
+
+*/

@@ -51,12 +51,12 @@ class EntityFile extends BaseEntityFile
             // Typed rules
             'requiredFields' => [['file_id', 'entity_type', 'relation_type'], 'required'],
             'integerFields' => [['file_id', 'entity_source_id', 'weight', 'created_date', 'created_user_id', 'updated_date', 'updated_user_id'], 'integer'],
-            
+
             // Max length rules
             'max32' => [['relation_type'], 'string', 'max' => 32],
             'max36' => [['entity_uuid'], 'string', 'max' => 36],
             'max128' => [['entity_type'], 'string', 'max' => 128],
-            
+
             // Default NULL
             'defaultNull' => [['entity_source_id'], 'default', 'value' => null],
         ];
@@ -97,17 +97,17 @@ class EntityFile extends BaseEntityFile
     public function attributeLabels() : array
     {
         return [
-            'entity_file_id' => Yii::t('entityfile', 'Entity File ID'),
-            'file_id' => Yii::t('entityfile', 'File ID'),
-            'entity_uuid' => Yii::t('entityfile', 'Entity Uuid'),
-            'entity_type' => Yii::t('entityfile', 'Entity Type'),
-            'entity_source_id' => Yii::t('entityfile', 'Entity Source ID'),
-            'relation_type' => Yii::t('entityfile', 'Relation Type'),
-            'weight' => Yii::t('entityfile', 'Weight'),
-            'created_date' => Yii::t('entityfile', 'Created Date'),
-            'created_user_id' => Yii::t('entityfile', 'Created User ID'),
-            'updated_date' => Yii::t('entityfile', 'Updated Date'),
-            'updated_user_id' => Yii::t('entityfile', 'Updated User ID'),
+            'entity_file_id' => Yii::t('backend', 'Entity File ID'),
+            'file_id' => Yii::t('backend', 'File ID'),
+            'entity_uuid' => Yii::t('backend', 'Entity Uuid'),
+            'entity_type' => Yii::t('backend', 'Entity Type'),
+            'entity_source_id' => Yii::t('backend', 'Entity Source ID'),
+            'relation_type' => Yii::t('backend', 'Relation Type'),
+            'weight' => Yii::t('backend', 'Weight'),
+            'created_date' => Yii::t('backend', 'Created Date'),
+            'created_user_id' => Yii::t('backend', 'Created User ID'),
+            'updated_date' => Yii::t('backend', 'Updated Date'),
+            'updated_user_id' => Yii::t('backend', 'Updated User ID'),
         ];
     }
 

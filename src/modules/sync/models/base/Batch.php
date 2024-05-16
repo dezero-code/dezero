@@ -4,7 +4,7 @@
  *
  * @author Fabián Ruiz <fabian@dezero.es>
  * @link http://www.dezero.es
- * @copyright Copyright &copy; 2023 Fabián Ruiz
+ * @copyright Copyright &copy; 2024 Fabián Ruiz
  */
 
 namespace dezero\modules\sync\models\base;
@@ -74,61 +74,17 @@ abstract class Batch extends \dezero\db\ActiveRecord
             'requiredFields' => [['batch_type', 'name'], 'required'],
             'integerFields' => [['total_items', 'total_errors', 'total_warnings', 'total_operations', 'last_operation', 'item_starting_num', 'item_ending_num', 'file_id', 'entity_source_id', 'created_date', 'created_user_id', 'updated_date', 'updated_user_id'], 'integer'],
             'stringFields' => [['summary_json', 'results_json'], 'string'],
-            
+
             // Max length rules
             'max32' => [['batch_type'], 'string', 'max' => 32],
             'max36' => [['entity_uuid'], 'string', 'max' => 36],
             'max128' => [['name', 'entity_type'], 'string', 'max' => 128],
             'max255' => [['description'], 'string', 'max' => 255],
-            
+
             // Default NULL
             'defaultNull' => [['description', 'summary_json', 'results_json', 'file_id', 'entity_uuid', 'entity_type', 'entity_source_id'], 'default', 'value' => null],
         ];
     }
-
-
-   /*
-    |--------------------------------------------------------------------------
-    | RELATIONS
-    |--------------------------------------------------------------------------
-    */
-
-    /**
-     * @return ActiveQueryInterface The relational query object.
-     */
-    public function getCreatedUser() : ActiveQueryInterface
-    {
-        return $this->hasOne(User::class, ['user_id' => 'created_user_id']);
-    }
-
-
-    /**
-     * @return ActiveQueryInterface The relational query object.
-     */
-    public function getEntityUu() : ActiveQueryInterface
-    {
-        return $this->hasOne(Entity::class, ['entity_uuid' => 'entity_uuid']);
-    }
-
-
-    /**
-     * @return ActiveQueryInterface The relational query object.
-     */
-    public function getFile() : ActiveQueryInterface
-    {
-        return $this->hasOne(AssetFile::class, ['file_id' => 'file_id']);
-    }
-
-
-    /**
-     * @return ActiveQueryInterface The relational query object.
-     */
-    public function getUpdatedUser() : ActiveQueryInterface
-    {
-        return $this->hasOne(User::class, ['user_id' => 'updated_user_id']);
-    }
-
-
 
 
     /**
@@ -148,3 +104,51 @@ abstract class Batch extends \dezero\db\ActiveRecord
         return $this->batch_type;
     }
 }
+
+/**
+ * These are relations and enum methods generated with Gii.
+ * YOU CAN USE THESE METHODS IN THE PARENT MODEL CLASS
+ *
+
+   /*
+    |--------------------------------------------------------------------------
+    | RELATIONS
+    |--------------------------------------------------------------------------
+    *
+
+    /**
+     * @return ActiveQueryInterface The relational query object.
+     *
+    public function getCreatedUser() : ActiveQueryInterface
+    {
+        return $this->hasOne(User::class, ['user_id' => 'created_user_id']);
+    }
+
+
+    /**
+     * @return ActiveQueryInterface The relational query object.
+     *
+    public function getEntityUu() : ActiveQueryInterface
+    {
+        return $this->hasOne(Entity::class, ['entity_uuid' => 'entity_uuid']);
+    }
+
+
+    /**
+     * @return ActiveQueryInterface The relational query object.
+     *
+    public function getFile() : ActiveQueryInterface
+    {
+        return $this->hasOne(AssetFile::class, ['file_id' => 'file_id']);
+    }
+
+
+    /**
+     * @return ActiveQueryInterface The relational query object.
+     *
+    public function getUpdatedUser() : ActiveQueryInterface
+    {
+        return $this->hasOne(User::class, ['user_id' => 'updated_user_id']);
+    }
+
+*/

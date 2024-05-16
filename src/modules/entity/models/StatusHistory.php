@@ -47,12 +47,12 @@ class StatusHistory extends BaseStatusHistory
             'requiredFields' => [['entity_type', 'status_type'], 'required'],
             'integerFields' => [['entity_source_id', 'created_date', 'created_user_id'], 'integer'],
             'stringFields' => [['comments'], 'string'],
-            
+
             // Max length rules
             'max32' => [['status_type'], 'string', 'max' => 32],
             'max36' => [['entity_uuid'], 'string', 'max' => 36],
             'max128' => [['entity_type'], 'string', 'max' => 128],
-            
+
             // Default NULL
             'defaultNull' => [['entity_source_id', 'comments'], 'default', 'value' => null],
         ];
@@ -88,14 +88,14 @@ class StatusHistory extends BaseStatusHistory
     public function attributeLabels() : array
     {
         return [
-            'status_history_id' => Yii::t('statushistory', 'Status History ID'),
-            'entity_type' => Yii::t('statushistory', 'Entity Type'),
-            'entity_uuid' => Yii::t('statushistory', 'Entity Uuid'),
-            'entity_source_id' => Yii::t('statushistory', 'Entity Source ID'),
-            'status_type' => Yii::t('statushistory', 'Status Type'),
-            'comments' => Yii::t('statushistory', 'Comments'),
-            'created_date' => Yii::t('statushistory', 'Created Date'),
-            'created_user_id' => Yii::t('statushistory', 'Created User ID'),
+            'status_history_id' => Yii::t('backend', 'Status History ID'),
+            'entity_type' => Yii::t('backend', 'Entity Type'),
+            'entity_uuid' => Yii::t('backend', 'Entity Uuid'),
+            'entity_source_id' => Yii::t('backend', 'Entity Source ID'),
+            'status_type' => Yii::t('backend', 'Status Type'),
+            'comments' => Yii::t('backend', 'Comments'),
+            'created_date' => Yii::t('backend', 'Created Date'),
+            'created_user_id' => Yii::t('backend', 'Created User ID'),
         ];
     }
 

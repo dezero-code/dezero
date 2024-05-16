@@ -4,7 +4,7 @@
  *
  * @author Fabián Ruiz <fabian@dezero.es>
  * @link http://www.dezero.es
- * @copyright Copyright &copy; 2023 Fabián Ruiz
+ * @copyright Copyright &copy; 2024 Fabián Ruiz
  */
 
 namespace dezero\modules\entity\models;
@@ -39,7 +39,7 @@ class Entity extends BaseEntity
             // Typed rules
             'requiredFields' => [['entity_type', 'source_name', 'module_name'], 'required'],
             'integerFields' => [['source_id'], 'integer'],
-            
+
             // Max length rules
             'max32' => [['source_name', 'module_name'], 'string', 'max' => 32],
             'max36' => [['entity_uuid'], 'string', 'max' => 36],
@@ -47,7 +47,7 @@ class Entity extends BaseEntity
 
             // Default NULL
             'defaultNull' => [['source_id', 'source_name'], 'default', 'value' => null],
-            
+
             // UNIQUE rules
             'entityUuidUnique' => [['entity_uuid'], 'unique'],
         ];
@@ -83,11 +83,11 @@ class Entity extends BaseEntity
     public function attributeLabels() : array
     {
         return [
-            'entity_uuid' => Yii::t('entity', 'Entity Uuid'),
-            'entity_type' => Yii::t('entity', 'Entity Type'),
-            'source_id' => Yii::t('entity', 'Source ID'),
-            'source_name' => Yii::t('entity', 'Source Name'),
-            'module_name' => Yii::t('entity', 'Module Name'),
+            'entity_uuid' => Yii::t('backend', 'Entity Uuid'),
+            'entity_type' => Yii::t('backend', 'Entity Type'),
+            'source_id' => Yii::t('backend', 'Source ID'),
+            'source_name' => Yii::t('backend', 'Source Name'),
+            'module_name' => Yii::t('backend', 'Module Name'),
         ];
     }
 

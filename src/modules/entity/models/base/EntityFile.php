@@ -4,7 +4,7 @@
  *
  * @author Fabián Ruiz <fabian@dezero.es>
  * @link http://www.dezero.es
- * @copyright Copyright &copy; 2023 Fabián Ruiz
+ * @copyright Copyright &copy; 2024 Fabián Ruiz
  */
 
 namespace dezero\modules\entity\models\base;
@@ -34,6 +34,14 @@ use Yii;
  * @property int $created_user_id
  * @property int $updated_date
  * @property int $updated_user_id
+ *
+ * -------------------------------------------------------------------------
+ * RELATIONS
+ * -------------------------------------------------------------------------
+ * @property User $createdUser
+ * @property Entity $entityUu
+ * @property AssetFile $file
+ * @property User $updatedUser
  */
 abstract class EntityFile extends \dezero\db\ActiveRecord
 {
@@ -55,18 +63,16 @@ abstract class EntityFile extends \dezero\db\ActiveRecord
             // Typed rules
             'requiredFields' => [['file_id', 'entity_type', 'relation_type'], 'required'],
             'integerFields' => [['file_id', 'entity_source_id', 'weight', 'created_date', 'created_user_id', 'updated_date', 'updated_user_id'], 'integer'],
-            
+
             // Max length rules
             'max32' => [['relation_type'], 'string', 'max' => 32],
             'max36' => [['entity_uuid'], 'string', 'max' => 36],
             'max128' => [['entity_type'], 'string', 'max' => 128],
-            
+
             // Default NULL
             'defaultNull' => [['entity_source_id'], 'default', 'value' => null],
         ];
     }
-
-
 
 
     /**
@@ -86,3 +92,51 @@ abstract class EntityFile extends \dezero\db\ActiveRecord
         return $this->entity_uuid;
     }
 }
+
+/**
+ * These are relations and enum methods generated with Gii.
+ * YOU CAN USE THESE METHODS IN THE PARENT MODEL CLASS
+ *
+
+   /*
+    |--------------------------------------------------------------------------
+    | RELATIONS
+    |--------------------------------------------------------------------------
+    *
+
+    /**
+     * @return ActiveQueryInterface The relational query object.
+     *
+    public function getCreatedUser() : ActiveQueryInterface
+    {
+        return $this->hasOne(User::class, ['user_id' => 'created_user_id']);
+    }
+
+
+    /**
+     * @return ActiveQueryInterface The relational query object.
+     *
+    public function getEntityUu() : ActiveQueryInterface
+    {
+        return $this->hasOne(Entity::class, ['entity_uuid' => 'entity_uuid']);
+    }
+
+
+    /**
+     * @return ActiveQueryInterface The relational query object.
+     *
+    public function getFile() : ActiveQueryInterface
+    {
+        return $this->hasOne(AssetFile::class, ['file_id' => 'file_id']);
+    }
+
+
+    /**
+     * @return ActiveQueryInterface The relational query object.
+     *
+    public function getUpdatedUser() : ActiveQueryInterface
+    {
+        return $this->hasOne(User::class, ['user_id' => 'updated_user_id']);
+    }
+
+*/

@@ -4,13 +4,14 @@
  *
  * @author Fabián Ruiz <fabian@dezero.es>
  * @link http://www.dezero.es
- * @copyright Copyright &copy; 2023 Fabián Ruiz
+ * @copyright Copyright &copy; 2024 Fabián Ruiz
  */
 
 namespace dezero\modules\user\models;
 
 use dezero\helpers\ArrayHelper;
 use dezero\modules\auth\rbac\AuthTrait;
+use dezero\modules\settings\models\Language;
 use dezero\modules\user\models\query\UserQuery;
 use dezero\modules\user\models\base\User as BaseUser;
 use yii\base\NotSupportedException;
@@ -86,9 +87,9 @@ class User extends BaseUser implements IdentityInterface
         /*
         return [
             // Typed rules
-            'requiredFields' => [['username', 'email', 'password', 'auth_token', ], 'required'],
+            'requiredFields' => [['username', 'email', 'password', 'auth_token'], 'required'],
             'integerFields' => [['last_login_date', 'is_verified_email', 'last_verification_date', 'is_force_change_password', 'last_change_password_date', 'is_superadmin', 'disabled_date', 'disabled_user_id', 'created_date', 'created_user_id', 'updated_date', 'updated_user_id'], 'integer'],
-            
+
             // Max length rules
             'max6' => [['language_id'], 'string', 'max' => 6],
             'max16' => [['default_theme'], 'string', 'max' => 16],
@@ -98,7 +99,7 @@ class User extends BaseUser implements IdentityInterface
             'max60' => [['password'], 'string', 'max' => 60],
             'max64' => [['default_role'], 'string', 'max' => 64],
             'max255' => [['username', 'email', 'first_name', 'last_name', 'last_login_ip'], 'string', 'max' => 255],
-            
+
             // ENUM rules
             'statusTypeList' => ['status_type', 'in', 'range' => [
                     self::STATUS_TYPE_ACTIVE,
@@ -108,10 +109,10 @@ class User extends BaseUser implements IdentityInterface
                     self::STATUS_TYPE_DELETED,
                 ]
             ],
-            
+
             // Default NULL
             'defaultNull' => [['first_name', 'last_name', 'last_login_date', 'last_login_ip', 'last_verification_date', 'last_change_password_date', 'default_role', 'default_theme', 'disabled_date', 'disabled_user_id'], 'default', 'value' => null],
-            
+
             // UNIQUE rules
             'usernameUnique' => [['username'], 'unique'],
             'emailUnique' => [['email'], 'unique'],
@@ -201,7 +202,6 @@ class User extends BaseUser implements IdentityInterface
     |--------------------------------------------------------------------------
     */
 
-
     /**
      * @return ActiveQueryInterface The relational query object.
      */
@@ -238,17 +238,7 @@ class User extends BaseUser implements IdentityInterface
     }
 
 
-    /**
-     * @return ActiveQueryInterface The relational query object.
-     */
-    public function getUserSessions() : ActiveQueryInterface
-    {
-        return $this->hasMany(UserSession::class, ['user_id' => 'user_id']);
-    }
-
-
-
-   /*
+    /*
     |--------------------------------------------------------------------------
     | ENUM LABELS
     |--------------------------------------------------------------------------
@@ -284,7 +274,7 @@ class User extends BaseUser implements IdentityInterface
     }
 
 
-   /*
+    /*
     |--------------------------------------------------------------------------
     | IdentifyInterface METHODS
     |--------------------------------------------------------------------------
@@ -357,18 +347,37 @@ class User extends BaseUser implements IdentityInterface
     }
 
 
-
-   /*
+    /*
     |--------------------------------------------------------------------------
     | STATUS TYPE METHODS
     |--------------------------------------------------------------------------
     */
 
+    public function isActive() : bool
+    {
+        return $this->isEnabled();
+    }
+
+    public function isBanned() : bool
+    {
+        return $this->status_type === self::STATUS_TYPE_BANNED;
+    }
+
+    public function isPending() : bool
+    {
+        return $this->status_type === self::STATUS_TYPE_PENDING;
+    }
+
+    public function isDeleted() : bool
+    {
+        return $this->status_type === self::STATUS_TYPE_DELETED;
+    }
+
 
     /**
      * Check if User model is enabled
      */
-    public function isEnabled()
+    public function isEnabled() : bool
     {
         return $this->status_type === self::STATUS_TYPE_ACTIVE && parent::isEnabled();
     }
@@ -392,7 +401,7 @@ class User extends BaseUser implements IdentityInterface
     /**
      * Check if User model is disabled
      */
-    public function isDisabled()
+    public function isDisabled() : bool
     {
         return $this->status_type === self::STATUS_TYPE_DISABLED && parent::isDisabled();
     }
@@ -414,18 +423,9 @@ class User extends BaseUser implements IdentityInterface
 
 
     /**
-     * Check if User model is banned
-     */
-    public function isBanned()
-    {
-        return $this->status_type === self::STATUS_TYPE_BANNED;
-    }
-
-
-    /**
      * Check if User model is forced to change the password
      */
-    public function isForceChangePassword()
+    public function isForceChangePassword() : bool
     {
         return $this->is_force_change_password === 1;
     }
@@ -437,7 +437,6 @@ class User extends BaseUser implements IdentityInterface
     | PASSWORD METHODS
     |--------------------------------------------------------------------------
     */
-
 
     /**
      * Change password

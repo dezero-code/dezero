@@ -4,7 +4,7 @@
  *
  * @author Fabián Ruiz <fabian@dezero.es>
  * @link http://www.dezero.es
- * @copyright Copyright &copy; 2023 Fabián Ruiz
+ * @copyright Copyright &copy; 2024 Fabián Ruiz
  */
 
 namespace dezero\modules\user\models\base;
@@ -63,11 +63,11 @@ use Yii;
  */
 abstract class User extends \dezero\entity\ActiveRecord
 {
-    public const STATUS_TYPE_ACTIVE = 'active';
-    public const STATUS_TYPE_DISABLED = 'disabled';
-    public const STATUS_TYPE_BANNED = 'banned';
-    public const STATUS_TYPE_PENDING = 'pending';
-    public const STATUS_TYPE_DELETED = 'deleted';
+    // public const STATUS_TYPE_ACTIVE = 'active';
+    // public const STATUS_TYPE_DISABLED = 'disabled';
+    // public const STATUS_TYPE_BANNED = 'banned';
+    // public const STATUS_TYPE_PENDING = 'pending';
+    // public const STATUS_TYPE_DELETED = 'deleted';
 
 
     /**
@@ -88,7 +88,7 @@ abstract class User extends \dezero\entity\ActiveRecord
             // Typed rules
             'requiredFields' => [['username', 'email', 'password', 'auth_token', ], 'required'],
             'integerFields' => [['last_login_date', 'is_verified_email', 'last_verification_date', 'is_force_change_password', 'last_change_password_date', 'is_superadmin', 'disabled_date', 'disabled_user_id', 'created_date', 'created_user_id', 'updated_date', 'updated_user_id'], 'integer'],
-            
+
             // Max length rules
             'max6' => [['language_id'], 'string', 'max' => 6],
             'max16' => [['default_theme'], 'string', 'max' => 16],
@@ -98,7 +98,7 @@ abstract class User extends \dezero\entity\ActiveRecord
             'max60' => [['password'], 'string', 'max' => 60],
             'max64' => [['default_role'], 'string', 'max' => 64],
             'max255' => [['username', 'email', 'first_name', 'last_name', 'last_login_ip'], 'string', 'max' => 255],
-            
+
             // ENUM rules
             'statusTypeList' => ['status_type', 'in', 'range' => [
                     self::STATUS_TYPE_ACTIVE,
@@ -108,118 +108,15 @@ abstract class User extends \dezero\entity\ActiveRecord
                     self::STATUS_TYPE_DELETED,
                 ]
             ],
-            
+
             // Default NULL
             'defaultNull' => [['first_name', 'last_name', 'last_login_date', 'last_login_ip', 'last_verification_date', 'last_change_password_date', 'default_role', 'default_theme', 'disabled_date', 'disabled_user_id'], 'default', 'value' => null],
-            
+
             // UNIQUE rules
             'usernameUnique' => [['username'], 'unique'],
             'emailUnique' => [['email'], 'unique'],
         ];
     }
-
-
-   /*
-    |--------------------------------------------------------------------------
-    | RELATIONS
-    |--------------------------------------------------------------------------
-    */
-
-    /**
-     * @return ActiveQueryInterface The relational query object.
-     */
-    public function getCreatedUser() : ActiveQueryInterface
-    {
-        return $this->hasOne(User::class, ['user_id' => 'created_user_id']);
-    }
-
-
-    /**
-     * @return ActiveQueryInterface The relational query object.
-     */
-    public function getDisabledUser() : ActiveQueryInterface
-    {
-        return $this->hasOne(User::class, ['user_id' => 'disabled_user_id']);
-    }
-
-
-    /**
-     * @return ActiveQueryInterface The relational query object.
-     */
-    public function getLanguage() : ActiveQueryInterface
-    {
-        return $this->hasOne(Language::class, ['language_id' => 'language_id']);
-    }
-
-
-    /**
-     * @return ActiveQueryInterface The relational query object.
-     */
-    public function getUpdatedUser() : ActiveQueryInterface
-    {
-        return $this->hasOne(User::class, ['user_id' => 'updated_user_id']);
-    }
-
-
-    /**
-     * @return ActiveQueryInterface The relational query object.
-     */
-    public function getLanguages() : ActiveQueryInterface
-    {
-        return $this->hasMany(Language::class, ['created_user_id' => 'user_id']);
-    }
-
-
-    /**
-     * @return ActiveQueryInterface The relational query object.
-     */
-    public function getUserSessions() : ActiveQueryInterface
-    {
-        return $this->hasMany(UserSession::class, ['user_id' => 'user_id']);
-    }
-
-
-    /**
-     * @return ActiveQueryInterface The relational query object.
-     */
-    public function getUsers() : ActiveQueryInterface
-    {
-        return $this->hasMany(User::class, ['created_user_id' => 'user_id']);
-    }
-
-
-   /*
-    |--------------------------------------------------------------------------
-    | ENUM LABELS
-    |--------------------------------------------------------------------------
-    */
-
-    /**
-     * Get "status_type" labels
-     */
-    public function status_type_labels() : array
-    {
-        return [
-            self::STATUS_TYPE_ACTIVE => Yii::t('user', 'Active'),
-            self::STATUS_TYPE_DISABLED => Yii::t('user', 'Disabled'),
-            self::STATUS_TYPE_BANNED => Yii::t('user', 'Banned'),
-            self::STATUS_TYPE_PENDING => Yii::t('user', 'Pending'),
-            self::STATUS_TYPE_DELETED => Yii::t('user', 'Deleted'),
-        ];
-    }
-
-
-    /**
-     * Get "status_type" specific label
-     */
-    public function status_type_label(?string $status_type = null) : string
-    {
-        $status_type = ( $status_type === null ) ? $this->status_type : $status_type;
-        $vec_labels = $this->status_type_labels();
-
-        return isset($vec_labels[$status_type]) ? $vec_labels[$status_type] : '';
-    }
-
 
 
     /**
@@ -239,3 +136,116 @@ abstract class User extends \dezero\entity\ActiveRecord
         return $this->username;
     }
 }
+
+/**
+ * These are relations and enum methods generated with Gii.
+ * YOU CAN USE THESE METHODS IN THE PARENT MODEL CLASS
+ *
+
+   /*
+    |--------------------------------------------------------------------------
+    | RELATIONS
+    |--------------------------------------------------------------------------
+    *
+
+    /**
+     * @return ActiveQueryInterface The relational query object.
+     *
+    public function getCreatedUser() : ActiveQueryInterface
+    {
+        return $this->hasOne(User::class, ['user_id' => 'created_user_id']);
+    }
+
+
+    /**
+     * @return ActiveQueryInterface The relational query object.
+     *
+    public function getDisabledUser() : ActiveQueryInterface
+    {
+        return $this->hasOne(User::class, ['user_id' => 'disabled_user_id']);
+    }
+
+
+    /**
+     * @return ActiveQueryInterface The relational query object.
+     *
+    public function getLanguage() : ActiveQueryInterface
+    {
+        return $this->hasOne(Language::class, ['language_id' => 'language_id']);
+    }
+
+
+    /**
+     * @return ActiveQueryInterface The relational query object.
+     *
+    public function getUpdatedUser() : ActiveQueryInterface
+    {
+        return $this->hasOne(User::class, ['user_id' => 'updated_user_id']);
+    }
+
+
+   /*
+    |--------------------------------------------------------------------------
+    | ENUM LABELS
+    |--------------------------------------------------------------------------
+    *
+
+    /**
+     * Get "status_type" labels
+     *
+    public function status_type_labels() : array
+    {
+        return [
+            self::STATUS_TYPE_ACTIVE => Yii::t('backend', 'Active'),
+            self::STATUS_TYPE_DISABLED => Yii::t('backend', 'Disabled'),
+            self::STATUS_TYPE_BANNED => Yii::t('backend', 'Banned'),
+            self::STATUS_TYPE_PENDING => Yii::t('backend', 'Pending'),
+            self::STATUS_TYPE_DELETED => Yii::t('backend', 'Deleted'),
+        ];
+    }
+
+
+    /**
+     * Get "status_type" specific label
+     *
+    public function status_type_label(?string $status_type = null) : string
+    {
+        $status_type = ( $status_type === null ) ? $this->status_type : $status_type;
+        $vec_labels = $this->status_type_labels();
+
+        return isset($vec_labels[$status_type]) ? $vec_labels[$status_type] : '';
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | STATUS TYPE METHODS
+    |--------------------------------------------------------------------------
+    *
+
+    public function isActive() : bool
+    {
+        return $this->status_type === self::STATUS_TYPE_ACTIVE;
+    }
+
+    public function isDisabled() : bool
+    {
+        return $this->status_type === self::STATUS_TYPE_DISABLED;
+    }
+
+    public function isBanned() : bool
+    {
+        return $this->status_type === self::STATUS_TYPE_BANNED;
+    }
+
+    public function isPending() : bool
+    {
+        return $this->status_type === self::STATUS_TYPE_PENDING;
+    }
+
+    public function isDeleted() : bool
+    {
+        return $this->status_type === self::STATUS_TYPE_DELETED;
+    }
+
+*/

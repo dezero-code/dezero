@@ -4,7 +4,7 @@
  *
  * @author Fabián Ruiz <fabian@dezero.es>
  * @link http://www.dezero.es
- * @copyright Copyright &copy; 2023 Fabián Ruiz
+ * @copyright Copyright &copy; 2024 Fabián Ruiz
  */
 
 namespace dezero\modules\entity\models\base;
@@ -49,21 +49,19 @@ abstract class Entity extends \dezero\db\ActiveRecord
             // Typed rules
             'requiredFields' => [['entity_type', 'source_name', 'module_name'], 'required'],
             'integerFields' => [['source_id'], 'integer'],
-            
+
             // Max length rules
             'max32' => [['source_name', 'module_name'], 'string', 'max' => 32],
             'max36' => [['entity_uuid'], 'string', 'max' => 36],
             'max128' => [['entity_type'], 'string', 'max' => 128],
-            
+
             // Default NULL
             'defaultNull' => [['source_id'], 'default', 'value' => null],
-            
+
             // UNIQUE rules
             'entityUuidUnique' => [['entity_uuid'], 'unique'],
         ];
     }
-
-
 
 
     /**
