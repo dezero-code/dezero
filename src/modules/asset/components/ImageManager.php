@@ -50,7 +50,7 @@ class ImageManager extends Component
             ->optimize()
             ->save($preset_image_path);
 
-        \DzLog::dev($preset_image_path);
+        // \DzLog::dev($preset_image_path);
 
 
         return Image::load($preset_image_path);
