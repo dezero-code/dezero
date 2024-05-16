@@ -51,12 +51,12 @@ class EntityFile extends BaseEntityFile
             // Typed rules
             'requiredFields' => [['file_id', 'entity_type', 'relation_type'], 'required'],
             'integerFields' => [['file_id', 'entity_source_id', 'weight', 'created_date', 'created_user_id', 'updated_date', 'updated_user_id'], 'integer'],
-
+            
             // Max length rules
             'max32' => [['relation_type'], 'string', 'max' => 32],
             'max36' => [['entity_uuid'], 'string', 'max' => 36],
             'max128' => [['entity_type'], 'string', 'max' => 128],
-
+            
             // Default NULL
             'defaultNull' => [['entity_source_id'], 'default', 'value' => null],
         ];

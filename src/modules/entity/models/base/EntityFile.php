@@ -116,7 +116,7 @@ abstract class EntityFile extends \dezero\db\ActiveRecord
     /**
      * @return ActiveQueryInterface The relational query object.
      *
-    public function getEntityUu() : ActiveQueryInterface
+    public function getEntity() : ActiveQueryInterface
     {
         return $this->hasOne(Entity::class, ['entity_uuid' => 'entity_uuid']);
     }
