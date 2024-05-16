@@ -4,7 +4,7 @@
  *
  * @author Fabián Ruiz <fabian@dezero.es>
  * @link http://www.dezero.es
- * @copyright Copyright &copy; 2023 Fabián Ruiz
+ * @copyright Copyright &copy; 2024 Fabián Ruiz
  */
 
 namespace dezero\modules\category\models\base;
@@ -87,86 +87,6 @@ abstract class Category extends \dezero\entity\ActiveRecord
     }
 
 
-   /*
-    |--------------------------------------------------------------------------
-    | RELATIONS
-    |--------------------------------------------------------------------------
-    */
-
-    /**
-     * @return ActiveQueryInterface The relational query object.
-     */
-    public function getCategoryParent() : ActiveQueryInterface
-    {
-        return $this->hasOne(Category::class, ['category_id' => 'category_parent_id']);
-    }
-
-
-    /**
-     * @return ActiveQueryInterface The relational query object.
-     */
-    public function getCategoryTranslated() : ActiveQueryInterface
-    {
-        return $this->hasOne(Category::class, ['category_id' => 'category_translated_id']);
-    }
-
-
-    /**
-     * @return ActiveQueryInterface The relational query object.
-     */
-    public function getCreatedUser() : ActiveQueryInterface
-    {
-        return $this->hasOne(User::class, ['user_id' => 'created_user_id']);
-    }
-
-
-    /**
-     * @return ActiveQueryInterface The relational query object.
-     */
-    public function getDisabledUser() : ActiveQueryInterface
-    {
-        return $this->hasOne(User::class, ['user_id' => 'disabled_user_id']);
-    }
-
-
-    /**
-     * @return ActiveQueryInterface The relational query object.
-     */
-    public function getImageFile() : ActiveQueryInterface
-    {
-        return $this->hasOne(AssetFile::class, ['file_id' => 'image_file_id']);
-    }
-
-
-    /**
-     * @return ActiveQueryInterface The relational query object.
-     */
-    public function getLanguage() : ActiveQueryInterface
-    {
-        return $this->hasOne(Language::class, ['language_id' => 'language_id']);
-    }
-
-
-    /**
-     * @return ActiveQueryInterface The relational query object.
-     */
-    public function getUpdatedUser() : ActiveQueryInterface
-    {
-        return $this->hasOne(User::class, ['user_id' => 'updated_user_id']);
-    }
-
-
-    /**
-     * @return ActiveQueryInterface The relational query object.
-     */
-    public function getCategories() : ActiveQueryInterface
-    {
-        return $this->hasMany(Category::class, ['category_parent_id' => 'category_id']);
-    }
-
-
-
-
     /**
      * @return CategoryQuery The ActiveQuery class for this model
      */
@@ -184,3 +104,87 @@ abstract class Category extends \dezero\entity\ActiveRecord
         return $this->category_type;
     }
 }
+
+/**
+ * These are relations and enum methods generated with Gii.
+ * YOU CAN USE THESE METHODS IN THE PARENT MODEL CLASS
+ *
+
+   /*
+    |--------------------------------------------------------------------------
+    | RELATIONS
+    |--------------------------------------------------------------------------
+    *
+
+    /**
+     * @return ActiveQueryInterface The relational query object.
+     *
+    public function getCategoryParent() : ActiveQueryInterface
+    {
+        return $this->hasOne(Category::class, ['category_id' => 'category_parent_id']);
+    }
+
+
+    /**
+     * @return ActiveQueryInterface The relational query object.
+     *
+    public function getCategoryTranslated() : ActiveQueryInterface
+    {
+        return $this->hasOne(Category::class, ['category_id' => 'category_translated_id']);
+    }
+
+
+    /**
+     * @return ActiveQueryInterface The relational query object.
+     *
+    public function getCreatedUser() : ActiveQueryInterface
+    {
+        return $this->hasOne(User::class, ['user_id' => 'created_user_id']);
+    }
+
+
+    /**
+     * @return ActiveQueryInterface The relational query object.
+     *
+    public function getDisabledUser() : ActiveQueryInterface
+    {
+        return $this->hasOne(User::class, ['user_id' => 'disabled_user_id']);
+    }
+
+
+    /**
+     * @return ActiveQueryInterface The relational query object.
+     *
+    public function getImageFile() : ActiveQueryInterface
+    {
+        return $this->hasOne(AssetFile::class, ['file_id' => 'image_file_id']);
+    }
+
+
+    /**
+     * @return ActiveQueryInterface The relational query object.
+     *
+    public function getLanguage() : ActiveQueryInterface
+    {
+        return $this->hasOne(Language::class, ['language_id' => 'language_id']);
+    }
+
+
+    /**
+     * @return ActiveQueryInterface The relational query object.
+     *
+    public function getUpdatedUser() : ActiveQueryInterface
+    {
+        return $this->hasOne(User::class, ['user_id' => 'updated_user_id']);
+    }
+
+
+    /**
+     * @return ActiveQueryInterface The relational query object.
+     *
+    public function getCategories() : ActiveQueryInterface
+    {
+        return $this->hasMany(Category::class, ['category_parent_id' => 'category_id']);
+    }
+
+*/

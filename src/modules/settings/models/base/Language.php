@@ -4,7 +4,7 @@
  *
  * @author Fabián Ruiz <fabian@dezero.es>
  * @link http://www.dezero.es
- * @copyright Copyright &copy; 2023 Fabián Ruiz
+ * @copyright Copyright &copy; 2024 Fabián Ruiz
  */
 
 namespace dezero\modules\settings\models\base;
@@ -45,9 +45,6 @@ use Yii;
  * @property User $disabledUser
  * @property User $updatedUser
  * @property Category[] $categories
- * @property PimProductComment[] $pimProductComments
- * @property PimProductSearch[] $pimProductSearches
- * @property PimTranslatedProduct[] $pimTranslatedProducts
  * @property User[] $users
  */
 abstract class Language extends \dezero\entity\ActiveRecord
@@ -70,100 +67,20 @@ abstract class Language extends \dezero\entity\ActiveRecord
             // Typed rules
             'requiredFields' => [['language_id', 'name', 'prefix'], 'required'],
             'integerFields' => [['is_ltr_direction', 'is_default', 'weight', 'disabled_date', 'disabled_user_id', 'created_date', 'created_user_id', 'updated_date', 'updated_user_id'], 'integer'],
-            
+
             // Max length rules
             'max6' => [['language_id'], 'string', 'max' => 6],
             'max16' => [['prefix'], 'string', 'max' => 16],
             'max36' => [['entity_uuid'], 'string', 'max' => 36],
             'max64' => [['name', 'native'], 'string', 'max' => 64],
-            
+
             // Default NULL
             'defaultNull' => [['native', 'disabled_date', 'disabled_user_id'], 'default', 'value' => null],
-            
+
             // UNIQUE rules
             'languageIdUnique' => [['language_id'], 'unique'],
         ];
     }
-
-
-   /*
-    |--------------------------------------------------------------------------
-    | RELATIONS
-    |--------------------------------------------------------------------------
-    */
-
-    /**
-     * @return ActiveQueryInterface The relational query object.
-     */
-    public function getCreatedUser() : ActiveQueryInterface
-    {
-        return $this->hasOne(User::class, ['user_id' => 'created_user_id']);
-    }
-
-
-    /**
-     * @return ActiveQueryInterface The relational query object.
-     */
-    public function getDisabledUser() : ActiveQueryInterface
-    {
-        return $this->hasOne(User::class, ['user_id' => 'disabled_user_id']);
-    }
-
-
-    /**
-     * @return ActiveQueryInterface The relational query object.
-     */
-    public function getUpdatedUser() : ActiveQueryInterface
-    {
-        return $this->hasOne(User::class, ['user_id' => 'updated_user_id']);
-    }
-
-
-    /**
-     * @return ActiveQueryInterface The relational query object.
-     */
-    public function getCategories() : ActiveQueryInterface
-    {
-        return $this->hasMany(Category::class, ['language_id' => 'language_id']);
-    }
-
-
-    /**
-     * @return ActiveQueryInterface The relational query object.
-     */
-    public function getPimProductComments() : ActiveQueryInterface
-    {
-        return $this->hasMany(PimProductComment::class, ['language_id' => 'language_id']);
-    }
-
-
-    /**
-     * @return ActiveQueryInterface The relational query object.
-     */
-    public function getPimProductSearches() : ActiveQueryInterface
-    {
-        return $this->hasMany(PimProductSearch::class, ['language_id' => 'language_id']);
-    }
-
-
-    /**
-     * @return ActiveQueryInterface The relational query object.
-     */
-    public function getPimTranslatedProducts() : ActiveQueryInterface
-    {
-        return $this->hasMany(PimTranslatedProduct::class, ['language_id' => 'language_id']);
-    }
-
-
-    /**
-     * @return ActiveQueryInterface The relational query object.
-     */
-    public function getUsers() : ActiveQueryInterface
-    {
-        return $this->hasMany(User::class, ['language_id' => 'language_id']);
-    }
-
-
 
 
     /**
@@ -183,3 +100,60 @@ abstract class Language extends \dezero\entity\ActiveRecord
         return $this->language_id;
     }
 }
+
+/**
+ * These are relations and enum methods generated with Gii.
+ * YOU CAN USE THESE METHODS IN THE PARENT MODEL CLASS
+ *
+
+   /*
+    |--------------------------------------------------------------------------
+    | RELATIONS
+    |--------------------------------------------------------------------------
+    *
+
+    /**
+     * @return ActiveQueryInterface The relational query object.
+     *
+    public function getCreatedUser() : ActiveQueryInterface
+    {
+        return $this->hasOne(User::class, ['user_id' => 'created_user_id']);
+    }
+
+
+    /**
+     * @return ActiveQueryInterface The relational query object.
+     *
+    public function getDisabledUser() : ActiveQueryInterface
+    {
+        return $this->hasOne(User::class, ['user_id' => 'disabled_user_id']);
+    }
+
+
+    /**
+     * @return ActiveQueryInterface The relational query object.
+     *
+    public function getUpdatedUser() : ActiveQueryInterface
+    {
+        return $this->hasOne(User::class, ['user_id' => 'updated_user_id']);
+    }
+
+
+    /**
+     * @return ActiveQueryInterface The relational query object.
+     *
+    public function getCategories() : ActiveQueryInterface
+    {
+        return $this->hasMany(Category::class, ['language_id' => 'language_id']);
+    }
+
+
+    /**
+     * @return ActiveQueryInterface The relational query object.
+     *
+    public function getUsers() : ActiveQueryInterface
+    {
+        return $this->hasMany(User::class, ['language_id' => 'language_id']);
+    }
+
+*/

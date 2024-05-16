@@ -63,7 +63,7 @@ abstract class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass,
 <?php
     foreach($enum as $column_name => $column_data){
         foreach ($column_data['values'] as $enum_value){
-            echo '    public const ' . $enum_value['const_name'] . ' = \'' . $enum_value['value'] . '\';' . PHP_EOL;
+            echo '    // public const ' . $enum_value['const_name'] . ' = \'' . $enum_value['value'] . '\';' . PHP_EOL;
         }
     }
 ?>
@@ -77,8 +77,8 @@ abstract class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass,
     {
         return '<?= $generator->generateTableName($tableName) ?>';
     }
-<?php if ($generator->db !== 'db'): ?>
 
+<?php if ($generator->db !== 'db'): ?>
 
     /**
      * @return \yii\db\Connection the database connection used by this AR class.
@@ -87,8 +87,8 @@ abstract class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass,
     {
         return Yii::$app->get('<?= $generator->db ?>');
     }
-<?php endif; ?>
 
+<?php endif; ?>
 
     /**
      * {@inheritdoc}
@@ -98,85 +98,11 @@ abstract class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass,
         return [<?= empty($rules) ? '' : ("\n            " . implode(",\n            ", $rules) . ",\n        ") ?>];
     }
 
-<?php if (!empty($relations)): ?>
-
-   /*
-    |--------------------------------------------------------------------------
-    | RELATIONS
-    |--------------------------------------------------------------------------
-    */
-<?php foreach ($relations as $name => $relation): ?>
-<?php if ( isset($relationsOne[$name]) ) : ?>
-
-    /**
-     * @return ActiveQueryInterface The relational query object.
-     */
-    public function get<?= $name ?>() : ActiveQueryInterface
-    {
-        <?= $relation[0] . "\n" ?>
-    }
-
-<?php endif; ?>
-<?php endforeach; ?>
-<?php foreach ($relations as $name => $relation): ?>
-<?php if ( isset($relationsMany[$name]) ) : ?>
-
-    /**
-     * @return ActiveQueryInterface The relational query object.
-     */
-    public function get<?= $name ?>() : ActiveQueryInterface
-    {
-        <?= $relation[0] . "\n" ?>
-    }
-
-<?php endif; ?>
-<?php endforeach; ?>
-<?php endif; ?>
-
-<?php
-    // Custom ENUM "labels" methods
-    foreach ($enum as $column_name => $column_data) :
-?>
-   /*
-    |--------------------------------------------------------------------------
-    | ENUM LABELS
-    |--------------------------------------------------------------------------
-    */
-
-    /**
-     * Get "<?= $column_name?>" labels
-     */
-    public function <?= $column_name; ?>_labels() : array
-    {
-        return [
-<?php
-        foreach($column_data['values'] as $k => $value)
-        {
-            echo "            "."self::" . $value['const_name'] . " => Yii::t('". $generator->messageCategory ."', " . $generator->generateString($value['label']) . "),\n";
-        }
-?>
-        ];
-    }
-
-
-    /**
-     * Get "<?= $column_name?>" specific label
-     */
-    public function <?= $column_name; ?>_label(?string $<?= $column_name; ?> = null) : string
-    {
-        $<?= $column_name; ?> = ( $<?= $column_name; ?> === null ) ? $this-><?= $column_name; ?> : $<?= $column_name; ?>;
-        $vec_labels = $this-><?= $column_name; ?>_labels();
-
-        return isset($vec_labels[$<?= $column_name; ?>]) ? $vec_labels[$<?= $column_name; ?>] : '';
-    }
-
-<?php endforeach; ?>
 <?php if ($queryClassName): ?>
-
 <?php
     $queryClassFullName = ($generator->ns === $generator->queryNs) ? $queryClassName : '\\' . $generator->queryNs . '\\' . $queryClassName;
-    echo "\n";
 ?>
+
     /**
      * @return <?= $queryClassName ?> The ActiveQuery class for this model
      */
@@ -195,3 +121,105 @@ abstract class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass,
         return <?= !empty($modelTitle) ? '$this->'. implode(' ." - ". $this->', $modelTitle) : '""'; ?>;
     }
 }
+
+<?php if (!empty($relations)): ?>
+/**
+ * These are relations and enum methods generated with Gii.
+ * YOU CAN USE THESE METHODS IN THE PARENT MODEL CLASS
+ *
+
+   /*
+    |--------------------------------------------------------------------------
+    | RELATIONS
+    |--------------------------------------------------------------------------
+    *
+<?php foreach ($relations as $name => $relation): ?>
+<?php if ( isset($relationsOne[$name]) ) : ?>
+
+    /**
+     * @return ActiveQueryInterface The relational query object.
+     *
+    public function get<?= $name ?>() : ActiveQueryInterface
+    {
+        <?= $relation[0] . "\n" ?>
+    }
+
+<?php endif; ?>
+<?php endforeach; ?>
+<?php foreach ($relations as $name => $relation): ?>
+<?php if ( isset($relationsMany[$name]) ) : ?>
+
+    /**
+     * @return ActiveQueryInterface The relational query object.
+     *
+    public function get<?= $name ?>() : ActiveQueryInterface
+    {
+        <?= $relation[0] . "\n" ?>
+    }
+
+<?php endif; ?>
+<?php endforeach; ?>
+<?php endif; ?>
+<?php if ( !empty($enum) ) : ?>
+
+   /*
+    |--------------------------------------------------------------------------
+    | ENUM LABELS
+    |--------------------------------------------------------------------------
+    *
+<?php
+    // Custom ENUM "labels" methods
+    foreach ($enum as $column_name => $column_data) :
+?>
+
+    /**
+     * Get "<?= $column_name?>" labels
+     *
+    public function <?= $column_name; ?>_labels() : array
+    {
+        return [
+<?php
+        foreach($column_data['values'] as $k => $value)
+        {
+            echo "            "."self::" . $value['const_name'] . " => Yii::t('". $generator->messageCategory ."', " . $generator->generateString($value['label']) . "),\n";
+        }
+?>
+        ];
+    }
+
+
+    /**
+     * Get "<?= $column_name?>" specific label
+     *
+    public function <?= $column_name; ?>_label(?string $<?= $column_name; ?> = null) : string
+    {
+        $<?= $column_name; ?> = ( $<?= $column_name; ?> === null ) ? $this-><?= $column_name; ?> : $<?= $column_name; ?>;
+        $vec_labels = $this-><?= $column_name; ?>_labels();
+
+        return isset($vec_labels[$<?= $column_name; ?>]) ? $vec_labels[$<?= $column_name; ?>] : '';
+    }
+
+    <?php endforeach; ?>
+<?php
+    // Custom ENUM "labels" methods
+    foreach ($enum as $column_name => $column_data) :
+?>
+
+    /*
+    |--------------------------------------------------------------------------
+    | <?= $column_data['label']; ?> METHODS
+    |--------------------------------------------------------------------------
+    *
+
+<?php
+    foreach($column_data['values'] as $k => $value) :
+?>
+    public function is<?= $value['camel_name']; ?>() : bool
+    {
+        return $this-><?= $column_name; ?> === self::<?= $value['const_name']; ?>;
+    }
+
+<?php endforeach; ?>
+<?php endforeach; ?>
+<?php endif; ?>
+*/

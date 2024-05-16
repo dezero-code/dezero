@@ -63,6 +63,7 @@ class Generator extends \yii\gii\Generator
     public $modelTitle = [];
     public $relationsOne = [];
     public $relationsMany = [];
+    public $relationsNamespaces = [];
 
     // Columns excluded for REQUIRED rule (TimestampBehavior and BlameableBehavior)
     public $excludedColumns = ['created_date', 'created_user_id', 'updated_date', 'updated_user_id', 'entity_uuid'];
@@ -284,6 +285,7 @@ class Generator extends \yii\gii\Generator
                 // Relations
                 'relationsOne' => $this->relationsOne,
                 'relationsMany' => $this->relationsMany,
+                'relationsNamespaces' => $this->relationsNamespaces,
             ];
 
             // Base model class
@@ -735,6 +737,9 @@ class Generator extends \yii\gii\Generator
 
                     // 23/03/2023 - Add special relationOne
                     $this->relationsOne[$relationName] = ["$refClassName::class", $refClassName];
+
+                    // 16/05/2024 - Add namespaces
+                    $this->generateNamespaces($relationName, $refClassName);
 
                     // Add relation for the referenced table
                     $hasMany = $this->isHasManyRelation($table, $fks);
@@ -1237,6 +1242,7 @@ class Generator extends \yii\gii\Generator
             $column_camel_name = str_replace(' ', '', ucwords(implode(' ', explode('_', $column->name))));
             $enum[$column->name]['func_opts_name'] = 'opts'.$column_camel_name;
             $enum[$column->name]['func_get_label_name'] = 'get'.$column_camel_name.'ValueLabel';
+            $enum[$column->name]['label'] = StringHelper::uppercase(Inflector::camel2words($column->name));
             $enum[$column->name]['values'] = [];
 
             $enum_values = explode(',', substr($column->dbType, 4, strlen($column->dbType) - 1));
@@ -1253,8 +1259,9 @@ class Generator extends \yii\gii\Generator
 
                 $enum[$column->name]['values'][] = [
                     'value' => $value,
-                    'const_name' => $const_name,
                     'label' => $label,
+                    'const_name' => $const_name,
+                    'camel_name' => Inflector::id2camel($value, '_'),
                 ];
             }
         }
@@ -1271,7 +1278,7 @@ class Generator extends \yii\gii\Generator
      */
     public function isEnum($column)
     {
-        return substr(strtoupper($column->dbType), 0, 4) == 'ENUM';
+        return substr(strtoupper($column->dbType), 0, 4) === 'ENUM';
     }
 
 
@@ -1401,5 +1408,47 @@ class Generator extends \yii\gii\Generator
         }
 
         return $vec_modules;
+    }
+
+
+    /**
+     * Generate namespaces for relations
+     */
+    private function generateNamespaces($relationName, $refClassName) : void
+    {
+        if ( ! isset($this->relationsNamespaces[$relationName]) )
+        {
+            $this->relationsNamespaces[$relationName] = [];
+        }
+
+        // Models from ASSET module
+        if ( $refClassName === 'AssetFile' || $refClassName === 'AssetImage' )
+        {
+            $this->relationsNamespaces[$relationName][$refClassName] = "dezero\modules\asset\models\\{$refClassName}";
+        }
+
+        // Models from CATEGORY module
+        if ( $refClassName === 'Category' )
+        {
+            $this->relationsNamespaces[$relationName][$refClassName] = "dezero\modules\category\models\\{$refClassName}";
+        }
+
+        // Models from ENTITY module
+        if ( $refClassName === 'Entity' || $refClassName === 'EntityFile' || $refClassName === 'StatusHistory' )
+        {
+            $this->relationsNamespaces[$relationName][$refClassName] = "dezero\modules\\entity\models\\{$refClassName}";
+        }
+
+        // Models from SETTINGS module
+        if ( $refClassName === 'Country' || $refClassName === 'Language' )
+        {
+            $this->relationsNamespaces[$relationName][$refClassName] = "dezero\modules\settings\models\\{$refClassName}";
+        }
+
+        // Models from SYNC module
+        if ( $refClassName === 'Batch' || $refClassName === 'ImportBatch' )
+        {
+            $this->relationsNamespaces[$relationName][$refClassName] = "dezero\modules\sync\models\\{$refClassName}";
+        }
     }
 }

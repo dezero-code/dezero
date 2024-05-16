@@ -4,7 +4,7 @@
  *
  * @author Fabián Ruiz <fabian@dezero.es>
  * @link http://www.dezero.es
- * @copyright Copyright &copy; 2023 Fabián Ruiz
+ * @copyright Copyright &copy; 2024 Fabián Ruiz
  */
 
 namespace dezero\modules\category\models;
@@ -16,6 +16,7 @@ use dezero\modules\asset\models\AssetImage;
 use dezero\modules\category\components\CategoryConfigurator;
 use dezero\modules\category\models\query\CategoryQuery;
 use dezero\modules\category\models\base\Category as BaseCategory;
+use dezero\modules\settings\models\Language;
 use Dz;
 use user\models\User;
 use yii\db\ActiveQueryInterface;
@@ -82,13 +83,13 @@ class Category extends BaseCategory implements ConfigInterface
             'requiredFields' => [['name'], 'required'],
             'integerFields' => [['category_parent_id', 'weight', 'depth', 'image_file_id', 'category_translated_id', 'disabled_date', 'disabled_user_id', 'created_date', 'created_user_id', 'updated_date', 'updated_user_id'], 'integer'],
             'stringFields' => [['description'], 'string'],
-            
+
             // Max length rules
             'max6' => [['language_id'], 'string', 'max' => 6],
             'max36' => [['entity_uuid'], 'string', 'max' => 36],
             'max128' => [['category_type'], 'string', 'max' => 128],
             'max255' => [['name'], 'string', 'max' => 255],
-            
+
             // Default NULL
             'defaultNull' => [['category_parent_id', 'description', 'image_file_id', 'category_translated_id', 'disabled_date', 'disabled_user_id'], 'default', 'value' => null],
         ];

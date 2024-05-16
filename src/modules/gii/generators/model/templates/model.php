@@ -27,6 +27,9 @@ echo "<?php\n";
 namespace <?= $generator->ns ?>;
 
 use dezero\helpers\ArrayHelper;
+<?php foreach ($relations as $name => $relation): ?><?php if ( !empty($relationsNamespaces[$name]) ) : ?><?php foreach ( $relationsNamespaces[$name] as $namespace ) : ?>
+use <?= $namespace; ?>;
+<?php endforeach; ?><?php endif; ?><?php endforeach; ?>
 use <?= $generator->ns ?>\base\<?= $className ?> as Base<?= $className ?>;
 use <?= $generator->queryNs; ?>\<?= $queryClassName; ?>;
 use user\models\User;
@@ -60,12 +63,13 @@ class <?= $className ?> extends Base<?= $className . "\n" ?>
 <?php if ( !empty($enum) ) : ?>
 <?php
     foreach($enum as $column_name => $column_data){
+        echo '    // ' . ucfirst(strtolower($column_data['label'])) . 's' . PHP_EOL;
         foreach ($column_data['values'] as $enum_value){
             echo '    public const ' . $enum_value['const_name'] . ' = \'' . $enum_value['value'] . '\';' . PHP_EOL;
         }
+        echo PHP_EOL;
     }
 ?>
-
 
 <?php endif; ?>
     /**
@@ -147,17 +151,17 @@ class <?= $className ?> extends Base<?= $className . "\n" ?>
 <?php endif; ?>
 <?php endforeach; ?>
 <?php endif; ?>
-
 <?php if ( !empty($enum) ) : ?>
-<?php
-    // Custom ENUM "labels" methods
-    foreach ($enum as $column_name => $column_data) :
-?>
-   /*
+
+    /*
     |--------------------------------------------------------------------------
     | ENUM LABELS
     |--------------------------------------------------------------------------
     */
+<?php
+    // Custom ENUM "labels" methods
+    foreach ($enum as $column_name => $column_data) :
+?>
 
     /**
      * Get "<?= $column_name?>" labels
@@ -186,6 +190,27 @@ class <?= $className ?> extends Base<?= $className . "\n" ?>
         return isset($vec_labels[$<?= $column_name; ?>]) ? $vec_labels[$<?= $column_name; ?>] : '';
     }
 
+    <?php endforeach; ?>
+<?php
+    // Custom ENUM "labels" methods
+    foreach ($enum as $column_name => $column_data) :
+?>
+
+    /*
+    |--------------------------------------------------------------------------
+    | <?= $column_data['label']; ?> METHODS
+    |--------------------------------------------------------------------------
+    */
+
+<?php
+    foreach($column_data['values'] as $k => $value) :
+?>
+    public function is<?= $value['camel_name']; ?>() : bool
+    {
+        return $this-><?= $column_name; ?> === self::<?= $value['const_name']; ?>;
+    }
+
+<?php endforeach; ?>
 <?php endforeach; ?>
 <?php endif; ?>
 

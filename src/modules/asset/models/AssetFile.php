@@ -4,7 +4,7 @@
  *
  * @author Fabián Ruiz <fabian@dezero.es>
  * @link http://www.dezero.es
- * @copyright Copyright &copy; 2023 Fabián Ruiz
+ * @copyright Copyright &copy; 2024 Fabián Ruiz
  */
 
 namespace dezero\modules\asset\models;
@@ -49,6 +49,7 @@ use Yii;
  */
 class AssetFile extends BaseAssetFile
 {
+    // Asset types
     public const ASSET_TYPE_IMAGE = 'image';
     public const ASSET_TYPE_DOCUMENT = 'document';
     public const ASSET_TYPE_VIDEO = 'video';
@@ -84,12 +85,12 @@ class AssetFile extends BaseAssetFile
             'requiredFields' => [['file_name', 'file_path', 'file_mime'], 'required'],
             'integerFields' => [['file_size', 'created_date', 'created_user_id', 'updated_date', 'updated_user_id'], 'integer'],
             'stringFields' => [['description'], 'string'],
-            
+
             // Max length rules
             'max36' => [['reference_entity_uuid', 'entity_uuid'], 'string', 'max' => 36],
             'max128' => [['file_name', 'file_mime', 'original_file_name', 'reference_entity_type'], 'string', 'max' => 128],
             'max255' => [['file_path', 'file_options', 'title'], 'string', 'max' => 255],
-            
+
             // ENUM rules
             'assetTypeList' => ['asset_type', 'in', 'range' => [
                     self::ASSET_TYPE_IMAGE,
@@ -98,7 +99,7 @@ class AssetFile extends BaseAssetFile
                     self::ASSET_TYPE_OTHER,
                 ]
             ],
-            
+
             // Default NULL
             'defaultNull' => [['file_options', 'title', 'description', 'original_file_name', 'reference_entity_uuid', 'reference_entity_type'], 'default', 'value' => null],
         ];
@@ -134,23 +135,23 @@ class AssetFile extends BaseAssetFile
     public function attributeLabels() : array
     {
         return [
-            'file_id' => Yii::t('assetfile', 'File ID'),
-            'file_name' => Yii::t('assetfile', 'File Name'),
-            'file_path' => Yii::t('assetfile', 'File Path'),
-            'file_mime' => Yii::t('assetfile', 'File Mime'),
-            'file_size' => Yii::t('assetfile', 'File Size'),
-            'file_options' => Yii::t('assetfile', 'File Options'),
-            'asset_type' => Yii::t('assetfile', 'Asset Type'),
-            'title' => Yii::t('assetfile', 'Title'),
-            'description' => Yii::t('assetfile', 'Description'),
-            'original_file_name' => Yii::t('assetfile', 'Original File Name'),
-            'reference_entity_uuid' => Yii::t('assetfile', 'Reference Entity Uuid'),
-            'reference_entity_type' => Yii::t('assetfile', 'Reference Entity Type'),
-            'created_date' => Yii::t('assetfile', 'Created Date'),
-            'created_user_id' => Yii::t('assetfile', 'Created User ID'),
-            'updated_date' => Yii::t('assetfile', 'Updated Date'),
-            'updated_user_id' => Yii::t('assetfile', 'Updated User ID'),
-            'entity_uuid' => Yii::t('assetfile', 'Entity Uuid'),
+            'file_id' => Yii::t('backend', 'File ID'),
+            'file_name' => Yii::t('backend', 'File Name'),
+            'file_path' => Yii::t('backend', 'File Path'),
+            'file_mime' => Yii::t('backend', 'File Mime'),
+            'file_size' => Yii::t('backend', 'File Size'),
+            'file_options' => Yii::t('backend', 'File Options'),
+            'asset_type' => Yii::t('backend', 'Asset Type'),
+            'title' => Yii::t('backend', 'Title'),
+            'description' => Yii::t('backend', 'Description'),
+            'original_file_name' => Yii::t('backend', 'Original File Name'),
+            'reference_entity_uuid' => Yii::t('backend', 'Reference Entity Uuid'),
+            'reference_entity_type' => Yii::t('backend', 'Reference Entity Type'),
+            'created_date' => Yii::t('backend', 'Created Date'),
+            'created_user_id' => Yii::t('backend', 'Created User ID'),
+            'updated_date' => Yii::t('backend', 'Updated Date'),
+            'updated_user_id' => Yii::t('backend', 'Updated User ID'),
+            'entity_uuid' => Yii::t('backend', 'Entity Uuid'),
         ];
     }
 
@@ -167,10 +168,10 @@ class AssetFile extends BaseAssetFile
     public function asset_type_labels() : array
     {
         return [
-            self::ASSET_TYPE_IMAGE => Yii::t('assetfile', 'Image'),
-            self::ASSET_TYPE_DOCUMENT => Yii::t('assetfile', 'Document'),
-            self::ASSET_TYPE_VIDEO => Yii::t('assetfile', 'Video'),
-            self::ASSET_TYPE_OTHER => Yii::t('assetfile', 'Other'),
+            self::ASSET_TYPE_IMAGE => Yii::t('backend', 'Image'),
+            self::ASSET_TYPE_DOCUMENT => Yii::t('backend', 'Document'),
+            self::ASSET_TYPE_VIDEO => Yii::t('backend', 'Video'),
+            self::ASSET_TYPE_OTHER => Yii::t('backend', 'Other'),
         ];
     }
 
@@ -184,6 +185,56 @@ class AssetFile extends BaseAssetFile
         $vec_labels = $this->asset_type_labels();
 
         return isset($vec_labels[$asset_type]) ? $vec_labels[$asset_type] : '';
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | ASSET TYPE METHODS
+    |--------------------------------------------------------------------------
+    */
+
+    // public function isImage() : bool
+    // {
+    //     return $this->asset_type === self::ASSET_TYPE_IMAGE;
+    // }
+
+    public function isDocument() : bool
+    {
+        return $this->asset_type === self::ASSET_TYPE_DOCUMENT;
+    }
+
+    public function isVideo() : bool
+    {
+        return $this->asset_type === self::ASSET_TYPE_VIDEO;
+    }
+
+    public function isOther() : bool
+    {
+        return $this->asset_type === self::ASSET_TYPE_OTHER;
+    }
+
+
+    /**
+     * Check if current file is image
+     */
+    public function isImage() : bool
+    {
+        if ( $this->loadFile() )
+        {
+            return $this->file->isImage();
+        }
+
+        return false;
+    }
+
+
+    /**
+     * Check if current file is saved on a TEMP directory
+     */
+    public function isTemp() : bool
+    {
+        return preg_match("/^\@tmp|^\@privateTmp/", $this->file_path);
     }
 
 
@@ -295,30 +346,6 @@ class AssetFile extends BaseAssetFile
     {
         return $this->file_path . $this->file_name;
     }
-
-
-    /**
-     * Check if current file is image
-     */
-    public function isImage() : bool
-    {
-        if ( $this->loadFile() )
-        {
-            return $this->file->isImage();
-        }
-
-        return false;
-    }
-
-
-    /**
-     * Check if current file is saved on a TEMP directory
-     */
-    public function isTemp() : bool
-    {
-        return preg_match("/^\@tmp|^\@privateTmp/", $this->file_path);
-    }
-
 
 
     /**

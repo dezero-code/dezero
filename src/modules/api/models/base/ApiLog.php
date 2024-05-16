@@ -4,7 +4,7 @@
  *
  * @author Fabián Ruiz <fabian@dezero.es>
  * @link http://www.dezero.es
- * @copyright Copyright &copy; 2023 Fabián Ruiz
+ * @copyright Copyright &copy; 2024 Fabián Ruiz
  */
 
 namespace dezero\modules\api\models\base;
@@ -47,12 +47,12 @@ use Yii;
  */
 abstract class ApiLog extends \dezero\db\ActiveRecord
 {
-    public const API_TYPE_CLIENT = 'client';
-    public const API_TYPE_SERVER = 'server';
-    public const REQUEST_TYPE_GET = 'GET';
-    public const REQUEST_TYPE_POST = 'POST';
-    public const REQUEST_TYPE_PUT = 'PUT';
-    public const REQUEST_TYPE_DELETE = 'DELETE';
+    // public const API_TYPE_CLIENT = 'client';
+    // public const API_TYPE_SERVER = 'server';
+    // public const REQUEST_TYPE_GET = 'GET';
+    // public const REQUEST_TYPE_POST = 'POST';
+    // public const REQUEST_TYPE_PUT = 'PUT';
+    // public const REQUEST_TYPE_DELETE = 'DELETE';
 
 
     /**
@@ -74,13 +74,13 @@ abstract class ApiLog extends \dezero\db\ActiveRecord
             'requiredFields' => [['request_url', 'request_endpoint'], 'required'],
             'integerFields' => [['response_http_code', 'entity_source_id', 'created_date', 'created_user_id'], 'integer'],
             'stringFields' => [['request_input_json', 'response_json'], 'string'],
-            
+
             // Max length rules
             'max32' => [['api_name'], 'string', 'max' => 32],
             'max36' => [['entity_uuid'], 'string', 'max' => 36],
             'max128' => [['request_endpoint', 'request_hostname', 'entity_type'], 'string', 'max' => 128],
             'max512' => [['request_url'], 'string', 'max' => 512],
-            
+
             // ENUM rules
             'apiTypeList' => ['api_type', 'in', 'range' => [
                     self::API_TYPE_CLIENT,
@@ -94,97 +94,11 @@ abstract class ApiLog extends \dezero\db\ActiveRecord
                     self::REQUEST_TYPE_DELETE,
                 ]
             ],
-            
+
             // Default NULL
             'defaultNull' => [['request_input_json', 'request_hostname', 'response_json', 'entity_uuid', 'entity_type', 'entity_source_id'], 'default', 'value' => null],
         ];
     }
-
-
-   /*
-    |--------------------------------------------------------------------------
-    | RELATIONS
-    |--------------------------------------------------------------------------
-    */
-
-    /**
-     * @return ActiveQueryInterface The relational query object.
-     */
-    public function getCreatedUser() : ActiveQueryInterface
-    {
-        return $this->hasOne(User::class, ['user_id' => 'created_user_id']);
-    }
-
-
-    /**
-     * @return ActiveQueryInterface The relational query object.
-     */
-    public function getEntityUu() : ActiveQueryInterface
-    {
-        return $this->hasOne(Entity::class, ['entity_uuid' => 'entity_uuid']);
-    }
-
-
-   /*
-    |--------------------------------------------------------------------------
-    | ENUM LABELS
-    |--------------------------------------------------------------------------
-    */
-
-    /**
-     * Get "api_type" labels
-     */
-    public function api_type_labels() : array
-    {
-        return [
-            self::API_TYPE_CLIENT => Yii::t('backend', 'Client'),
-            self::API_TYPE_SERVER => Yii::t('backend', 'Server'),
-        ];
-    }
-
-
-    /**
-     * Get "api_type" specific label
-     */
-    public function api_type_label(?string $api_type = null) : string
-    {
-        $api_type = ( $api_type === null ) ? $this->api_type : $api_type;
-        $vec_labels = $this->api_type_labels();
-
-        return isset($vec_labels[$api_type]) ? $vec_labels[$api_type] : '';
-    }
-
-   /*
-    |--------------------------------------------------------------------------
-    | ENUM LABELS
-    |--------------------------------------------------------------------------
-    */
-
-    /**
-     * Get "request_type" labels
-     */
-    public function request_type_labels() : array
-    {
-        return [
-            self::REQUEST_TYPE_GET => Yii::t('backend', 'Get'),
-            self::REQUEST_TYPE_POST => Yii::t('backend', 'Post'),
-            self::REQUEST_TYPE_PUT => Yii::t('backend', 'Put'),
-            self::REQUEST_TYPE_DELETE => Yii::t('backend', 'Delete'),
-        ];
-    }
-
-
-    /**
-     * Get "request_type" specific label
-     */
-    public function request_type_label(?string $request_type = null) : string
-    {
-        $request_type = ( $request_type === null ) ? $this->request_type : $request_type;
-        $vec_labels = $this->request_type_labels();
-
-        return isset($vec_labels[$request_type]) ? $vec_labels[$request_type] : '';
-    }
-
 
 
     /**
@@ -204,3 +118,133 @@ abstract class ApiLog extends \dezero\db\ActiveRecord
         return $this->api_type;
     }
 }
+
+/**
+ * These are relations and enum methods generated with Gii.
+ * YOU CAN USE THESE METHODS IN THE PARENT MODEL CLASS
+ *
+
+   /*
+    |--------------------------------------------------------------------------
+    | RELATIONS
+    |--------------------------------------------------------------------------
+    *
+
+    /**
+     * @return ActiveQueryInterface The relational query object.
+     *
+    public function getCreatedUser() : ActiveQueryInterface
+    {
+        return $this->hasOne(User::class, ['user_id' => 'created_user_id']);
+    }
+
+
+    /**
+     * @return ActiveQueryInterface The relational query object.
+     *
+    public function getEntityUu() : ActiveQueryInterface
+    {
+        return $this->hasOne(Entity::class, ['entity_uuid' => 'entity_uuid']);
+    }
+
+
+   /*
+    |--------------------------------------------------------------------------
+    | ENUM LABELS
+    |--------------------------------------------------------------------------
+    *
+
+    /**
+     * Get "api_type" labels
+     *
+    public function api_type_labels() : array
+    {
+        return [
+            self::API_TYPE_CLIENT => Yii::t('backend', 'Client'),
+            self::API_TYPE_SERVER => Yii::t('backend', 'Server'),
+        ];
+    }
+
+
+    /**
+     * Get "api_type" specific label
+     *
+    public function api_type_label(?string $api_type = null) : string
+    {
+        $api_type = ( $api_type === null ) ? $this->api_type : $api_type;
+        $vec_labels = $this->api_type_labels();
+
+        return isset($vec_labels[$api_type]) ? $vec_labels[$api_type] : '';
+    }
+
+
+    /**
+     * Get "request_type" labels
+     *
+    public function request_type_labels() : array
+    {
+        return [
+            self::REQUEST_TYPE_GET => Yii::t('backend', 'Get'),
+            self::REQUEST_TYPE_POST => Yii::t('backend', 'Post'),
+            self::REQUEST_TYPE_PUT => Yii::t('backend', 'Put'),
+            self::REQUEST_TYPE_DELETE => Yii::t('backend', 'Delete'),
+        ];
+    }
+
+
+    /**
+     * Get "request_type" specific label
+     *
+    public function request_type_label(?string $request_type = null) : string
+    {
+        $request_type = ( $request_type === null ) ? $this->request_type : $request_type;
+        $vec_labels = $this->request_type_labels();
+
+        return isset($vec_labels[$request_type]) ? $vec_labels[$request_type] : '';
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | API TYPE METHODS
+    |--------------------------------------------------------------------------
+    *
+
+    public function isClient() : bool
+    {
+        return $this->api_type === self::API_TYPE_CLIENT;
+    }
+
+    public function isServer() : bool
+    {
+        return $this->api_type === self::API_TYPE_SERVER;
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | REQUEST TYPE METHODS
+    |--------------------------------------------------------------------------
+    *
+
+    public function isGET() : bool
+    {
+        return $this->request_type === self::REQUEST_TYPE_GET;
+    }
+
+    public function isPOST() : bool
+    {
+        return $this->request_type === self::REQUEST_TYPE_POST;
+    }
+
+    public function isPUT() : bool
+    {
+        return $this->request_type === self::REQUEST_TYPE_PUT;
+    }
+
+    public function isDELETE() : bool
+    {
+        return $this->request_type === self::REQUEST_TYPE_DELETE;
+    }
+
+*/

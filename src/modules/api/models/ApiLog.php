@@ -4,7 +4,7 @@
  *
  * @author Fabián Ruiz <fabian@dezero.es>
  * @link http://www.dezero.es
- * @copyright Copyright &copy; 2023 Fabián Ruiz
+ * @copyright Copyright &copy; 2024 Fabián Ruiz
  */
 
 namespace dezero\modules\api\models;
@@ -52,8 +52,11 @@ use Yii;
  */
 class ApiLog extends BaseApiLog implements EntityInterface
 {
+    // API types
     public const API_TYPE_CLIENT = 'client';
     public const API_TYPE_SERVER = 'server';
+
+    // Request types (HTTP methods)
     public const REQUEST_TYPE_GET = 'GET';
     public const REQUEST_TYPE_POST = 'POST';
     public const REQUEST_TYPE_PUT = 'PUT';
@@ -71,13 +74,13 @@ class ApiLog extends BaseApiLog implements EntityInterface
             'requiredFields' => [['request_url', 'request_endpoint'], 'required'],
             'integerFields' => [['response_http_code', 'entity_source_id', 'created_date', 'created_user_id'], 'integer'],
             'stringFields' => [['request_input_json', 'response_json'], 'string'],
-            
+
             // Max length rules
             'max32' => [['api_name'], 'string', 'max' => 32],
             'max36' => [['entity_uuid'], 'string', 'max' => 36],
             'max128' => [['request_endpoint', 'request_hostname', 'entity_type'], 'string', 'max' => 128],
             'max512' => [['request_url'], 'string', 'max' => 512],
-            
+
             // ENUM rules
             'apiTypeList' => ['api_type', 'in', 'range' => [
                    self::API_TYPE_CLIENT,
@@ -91,7 +94,7 @@ class ApiLog extends BaseApiLog implements EntityInterface
                     self::REQUEST_TYPE_DELETE,
                 ]
             ],
-            
+
             // Default NULL
             'defaultNull' => [['request_input_json', 'request_hostname', 'response_json', 'entity_uuid', 'entity_type', 'entity_source_id'], 'default', 'value' => null],
         ];
@@ -169,33 +172,33 @@ class ApiLog extends BaseApiLog implements EntityInterface
     }
 
 
-   /*
+    /*
     |--------------------------------------------------------------------------
     | ENUM LABELS
     |--------------------------------------------------------------------------
     */
 
     /**
-    * Get "api_type" labels
-    */
+     * Get "api_type" labels
+     */
     public function api_type_labels() : array
     {
-       return [
-           self::API_TYPE_CLIENT => Yii::t('backend', 'Client'),
-           self::API_TYPE_SERVER => Yii::t('backend', 'Server'),
+        return [
+            self::API_TYPE_CLIENT => Yii::t('backend', 'Client'),
+            self::API_TYPE_SERVER => Yii::t('backend', 'Server'),
        ];
     }
 
 
     /**
-    * Get "api_type" specific label
-    */
+     * Get "api_type" specific label
+     */
     public function api_type_label(?string $api_type = null) : string
     {
-       $api_type = ( $api_type === null ) ? $this->api_type : $api_type;
-       $vec_labels = $this->api_type_labels();
+        $api_type = ( $api_type === null ) ? $this->api_type : $api_type;
+        $vec_labels = $this->api_type_labels();
 
-       return isset($vec_labels[$api_type]) ? $vec_labels[$api_type] : '';
+        return isset($vec_labels[$api_type]) ? $vec_labels[$api_type] : '';
     }
 
 
