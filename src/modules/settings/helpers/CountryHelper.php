@@ -19,7 +19,7 @@ use Yii;
 class CountryHelper
 {
     /**
-     * Country code list following ISO 3166-1 alpha-2 format
+     * Return country code list following ISO 3166-1 alpha-2 format
      *
      * @see https://gist.github.com/djaiss/2938259
      */
