@@ -52,10 +52,10 @@ use Yii;
  */
 abstract class AssetFile extends \dezero\entity\ActiveRecord
 {
-    // public const ASSET_TYPE_IMAGE = 'image';
-    // public const ASSET_TYPE_DOCUMENT = 'document';
-    // public const ASSET_TYPE_VIDEO = 'video';
-    // public const ASSET_TYPE_OTHER = 'other';
+    public const ASSET_TYPE_IMAGE = 'image';
+    public const ASSET_TYPE_DOCUMENT = 'document';
+    public const ASSET_TYPE_VIDEO = 'video';
+    public const ASSET_TYPE_OTHER = 'other';
 
 
     /**

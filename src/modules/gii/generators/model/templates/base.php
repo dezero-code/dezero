@@ -63,7 +63,7 @@ abstract class <?= $className ?> extends <?= '\\' . ltrim($generator->baseClass,
 <?php
     foreach($enum as $column_name => $column_data){
         foreach ($column_data['values'] as $enum_value){
-            echo '    // public const ' . $enum_value['const_name'] . ' = \'' . $enum_value['value'] . '\';' . PHP_EOL;
+            echo '    public const ' . $enum_value['const_name'] . ' = \'' . $enum_value['value'] . '\';' . PHP_EOL;
         }
     }
 ?>

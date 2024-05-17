@@ -27,7 +27,7 @@
   // -------------------------------------------------------------------------------------------
   $(document).ready(function() {
     // User form
-    if ( $('#user-form').size() > 0  ) {
+    if ( $('#user-form').length > 0  ) {
       $.userForm.init();
     }
 

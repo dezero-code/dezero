@@ -63,11 +63,11 @@ use Yii;
  */
 abstract class User extends \dezero\entity\ActiveRecord
 {
-    // public const STATUS_TYPE_ACTIVE = 'active';
-    // public const STATUS_TYPE_DISABLED = 'disabled';
-    // public const STATUS_TYPE_BANNED = 'banned';
-    // public const STATUS_TYPE_PENDING = 'pending';
-    // public const STATUS_TYPE_DELETED = 'deleted';
+    public const STATUS_TYPE_ACTIVE = 'active';
+    public const STATUS_TYPE_DISABLED = 'disabled';
+    public const STATUS_TYPE_BANNED = 'banned';
+    public const STATUS_TYPE_PENDING = 'pending';
+    public const STATUS_TYPE_DELETED = 'deleted';
 
 
     /**

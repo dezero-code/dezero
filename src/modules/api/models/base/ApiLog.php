@@ -47,12 +47,12 @@ use Yii;
  */
 abstract class ApiLog extends \dezero\db\ActiveRecord
 {
-    // public const API_TYPE_CLIENT = 'client';
-    // public const API_TYPE_SERVER = 'server';
-    // public const REQUEST_TYPE_GET = 'GET';
-    // public const REQUEST_TYPE_POST = 'POST';
-    // public const REQUEST_TYPE_PUT = 'PUT';
-    // public const REQUEST_TYPE_DELETE = 'DELETE';
+    public const API_TYPE_CLIENT = 'client';
+    public const API_TYPE_SERVER = 'server';
+    public const REQUEST_TYPE_GET = 'GET';
+    public const REQUEST_TYPE_POST = 'POST';
+    public const REQUEST_TYPE_PUT = 'PUT';
+    public const REQUEST_TYPE_DELETE = 'DELETE';
 
 
     /**
