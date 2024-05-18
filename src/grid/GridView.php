@@ -17,6 +17,12 @@ use Yii;
 class GridView extends \yii\grid\GridView
 {
     /**
+     * Check if the asset is loaded to avoid duplicate loading
+     */
+    public $is_asset_loaded = false;
+
+
+    /**
      * @var array the HTML attributes for the grid table element.
      * @see \yii\helpers\Html::renderTagAttributes() for details on how attributes are being rendered.
      */
@@ -76,12 +82,16 @@ class GridView extends \yii\grid\GridView
      */
     public function run()
     {
-        $view = $this->getView();
-        GridViewAsset::register($view);
-
-        $id = $this->options['id'];
-        $hash = hash('crc32', $id.'gridview');
-        $view->registerJs(";$.dezeroGridview.init('$id', '$hash');");
+        // Load assets if it's not loaded yet
+        if ( ! $this->is_asset_loaded )
+        {
+            $view = $this->getView();
+            GridViewAsset::register($view);
+    
+            $id = $this->options['id'];
+            $hash = hash('crc32', $id.'gridview');
+            $view->registerJs(";$.dezeroGridview.init('$id', '$hash');");
+        }
 
         parent::run();
     }
