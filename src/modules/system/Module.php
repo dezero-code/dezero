@@ -15,7 +15,8 @@ class Module extends \dezero\base\Module
      * @var array mapping from controller ID to controller configurations.
      */
     public $controllerMap = [
-        'log'  => \dezero\modules\system\controllers\LogController::class,
+        'backup'    => \dezero\modules\system\controllers\BackupController::class,
+        'log'       => \dezero\modules\system\controllers\LogController::class,
     ];
 
 

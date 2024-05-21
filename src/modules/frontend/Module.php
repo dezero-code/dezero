@@ -8,6 +8,14 @@ namespace dezero\modules\frontend;
 class Module extends \dezero\base\Module
 {
     /**
+     * @var array mapping from controller ID to controller configurations.
+     */
+    public $controllerMap = [
+        'home'     => \dezero\modules\frontend\controllers\HomeController::class,
+    ];
+
+
+    /**
      * Initializes the module.
      *
      * This method is called after the module is created and initialized with property values
