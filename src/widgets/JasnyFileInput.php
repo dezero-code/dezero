@@ -54,6 +54,12 @@ class JasnyFileInput extends InputWidget
 
 
     /**
+     * Fallback image to be displayed
+     */
+    public $fallback_image;
+
+
+    /**
      * Thumbnail to be displayed if [[STYLE_IMAGE]] has been selected.
      * Thumbnail is used to display an image that was previously loaded.
      */
@@ -76,7 +82,6 @@ class JasnyFileInput extends InputWidget
             ];
         }
 
-
         // Title for buttons
         if ( empty($this->vec_labels) )
         {
@@ -88,12 +93,24 @@ class JasnyFileInput extends InputWidget
             ];
         }
 
+        // Fallback image
+        if ( empty($this->fallback_image) )
+        {
+            $this->fallback_image = Yii::$app->request->baseUrl . '/files/images/no-image.gif';
+        }
+
         parent::init();
 
         // Default style
         if ( $this->style === null )
         {
             $this->style = self::STYLE_INPUT;
+        }
+
+        // Options for images
+        if ( $this->style === self::STYLE_IMAGE )
+        {
+            $this->options['accept'] = 'image/*';
         }
     }
 
@@ -103,16 +120,18 @@ class JasnyFileInput extends InputWidget
      */
     public function run()
     {
+        $hidden_field = '';
         if ( $this->hasModel() )
         {
             $field = Html::activeFileInput($this->model, $this->attribute, $this->options);
+            $hidden_field = Html::activeHiddenInput($this->model, $this->attribute);
         }
         else
         {
             $field = Html::fileInput($this->name, $this->value, $this->options);
         }
 
-        echo $this->renderTemplate($field);
+        echo $this->renderTemplate($field, $hidden_field);
 
         $this->registerClientScript();
     }
@@ -121,12 +140,13 @@ class JasnyFileInput extends InputWidget
     /**
      * Renders the template according
      */
-    public function renderTemplate(string $field) : string
+    public function renderTemplate(string $field, string $hidden_field = '') : string
     {
         $view_path = $this->getViewPath();
 
         $vec_params = [
             'field'         => $field,
+            'hidden_field'  => $hidden_field,
             'vec_classes'   => $this->vec_classes,
             'vec_labels'    => $this->vec_labels,
         ];
@@ -146,6 +166,7 @@ class JasnyFileInput extends InputWidget
             $view = $view_path . '/jasny--image.tpl.php';
             $vec_params['thumbnail'] = $this->thumbnail;
             $vec_params['thumbnail_url'] = $this->thumbnail_url;
+            $vec_params['fallback_image'] = $this->fallback_image;
         }
 
         return $this->getView()->renderFile(Yii::getAlias($view), $vec_params);
