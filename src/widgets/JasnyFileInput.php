@@ -53,6 +53,13 @@ class JasnyFileInput extends InputWidget
     public $vec_labels = [];
 
 
+    /**
+     * Thumbnail to be displayed if [[STYLE_IMAGE]] has been selected.
+     * Thumbnail is used to display an image that was previously loaded.
+     */
+    public $thumbnail;
+    public $thumbnail_url;
+
 
     /**
      * Initializes the widget.
@@ -138,6 +145,7 @@ class JasnyFileInput extends InputWidget
         {
             $view = $view_path . '/jasny--image.tpl.php';
             $vec_params['thumbnail'] = $this->thumbnail;
+            $vec_params['thumbnail_url'] = $this->thumbnail_url;
         }
 
         return $this->getView()->renderFile(Yii::getAlias($view), $vec_params);

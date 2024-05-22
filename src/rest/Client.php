@@ -60,7 +60,7 @@ class Client extends HttpClient implements ConfigInterface, EntityInterface
     /**
      * Constructor
      */
-    public function __construct(string $client_name = 'bc', array $vec_config = [])
+    public function __construct(string $client_name = '', array $vec_config = [])
     {
         $this->init();
         parent::__construct($vec_config);

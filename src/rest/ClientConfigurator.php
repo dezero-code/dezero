@@ -21,7 +21,7 @@ class ClientConfigurator extends Configurator implements ConfiguratorInterface
     /**
      * Constructor
      */
-    public function __construct(string $type, array $vec_config = [])
+    public function __construct(?string $type, array $vec_config = [])
     {
         $this->type = $type;
         $this->vec_config = $vec_config;

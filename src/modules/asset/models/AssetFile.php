@@ -12,9 +12,11 @@ namespace dezero\modules\asset\models;
 use dezero\base\File;
 use dezero\db\ActiveRecord as ActiveRecord;
 use dezero\helpers\ArrayHelper;
+use dezero\helpers\Transliteration;
 use dezero\helpers\Url;
 use dezero\modules\asset\models\query\AssetFileQuery;
 use dezero\modules\asset\models\base\AssetFile as BaseAssetFile;
+use dezero\modules\asset\services\FileSaveService;
 use dezero\modules\asset\services\UploadFileService;
 use dezero\modules\asset\services\UploadFileTempService;
 use dezero\modules\entity\models\EntityFile;
@@ -326,6 +328,25 @@ class AssetFile extends BaseAssetFile
     */
 
     /**
+     * Create a AssetFile model given a File object
+     */
+    public static function createFromFile(File $file) : self
+    {
+        $asset_file_model = Dz::makeObject(AssetFile::class);
+        $asset_file_model->setAttributes([
+            'file_name'             => Transliteration::file($file->basename()),
+            'file_path'             => str_replace(Yii::getAlias('@webroot'), '@www', $file->dirname()) .'/',
+            'file_mime'             => $file->mime(),
+            'file_size'             => $file->size(),
+            'asset_type'            => $file->isImage() ? AssetFile::ASSET_TYPE_IMAGE : AssetFile::ASSET_TYPE_DOCUMENT,
+            'original_file_name'    => Transliteration::file($file->basename()),
+        ]);
+
+        return $asset_file_model;
+    }
+
+
+    /**
      * Load File class object
      */
     public function loadFile() : bool
@@ -402,6 +423,41 @@ class AssetFile extends BaseAssetFile
         return Url::to('/asset/download', ['uuid' => $this->entity_uuid]);
     }
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | SAVE METHODS
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Save AssetFile model from a file
+     */
+    public function saveFromFile(File $file, ActiveRecord $model, string $file_attribute) : bool
+    {
+        // Get attributes from given File
+        $this->setAttributes([
+            'file_name'             => Transliteration::file($file->basename()),
+            'file_path'             => str_replace(Yii::getAlias('@webroot'), '@www', $file->dirname()) .'/',
+            'file_mime'             => $file->mime(),
+            'file_size'             => $file->size(),
+            'asset_type'            => $file->isImage() ? AssetFile::ASSET_TYPE_IMAGE : AssetFile::ASSET_TYPE_DOCUMENT,
+            'original_file_name'    => Transliteration::file($file->basename()),
+        ]);
+
+        // EntityFile information
+        $entity_file_model = null;
+        $entity_file_model = $this->getEntityFile()->one();
+        if ( $entity_file_model === null )
+        {
+            $entity_file_model = Dz::makeObject(EntityFile::class);
+        }
+
+        $entity_file_model->relation_type = $file_attribute;
+
+        // Save file via SaveFileService
+        return Dz::makeObject(FileSaveService::class, [$model, $file_attribute, $this, $entity_file_model])->run();
+    }
 
 
     /*

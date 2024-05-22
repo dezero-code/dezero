@@ -29,6 +29,15 @@ class DateHelper
 
 
     /**
+     * Return current date in the given format
+     */
+    public static function now(string $format = 'd/m/Y - H:i') : string
+    {
+        return date($format);
+    }
+
+
+    /**
      * Parses from formatted date to UNIX format
      *
      * Automatically detects these date formats:
