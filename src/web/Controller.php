@@ -115,9 +115,21 @@ class Controller extends \yii\web\Controller
      */
     public function requireAcceptsJson() : void
     {
-        if ( !$this->request->getAcceptsJson() && !$this->request->getIsOptions() )
+        if ( ! $this->request->getAcceptsJson() && ! $this->request->getIsOptions() )
         {
             throw new BadRequestHttpException('Request must accept JSON in response');
+        }
+    }
+
+
+    /**
+     * Throws a 400 error if this isn’t an AJAX request
+     */
+    public function requireAjaxRequest() : void
+    {
+        if ( ! $this->request->getIsAjax() )
+        {
+            throw new BadRequestHttpException('Ajax request required');
         }
     }
 

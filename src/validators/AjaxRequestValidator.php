@@ -20,21 +20,38 @@ class AjaxRequestValidator implements ValidatorInterface
 {
     protected $model;
 
-    public function __construct(Model $model)
+    public function __construct(Model|array $model)
     {
         $this->model = $model;
     }
 
     public function validate() : bool
     {
-        if ( ! Yii::$app->request->isAjax || ! $this->model->load(Yii::$app->request->post()) )
+        if ( ! Yii::$app->request->isAjax )
+        {
+            return false;
+        }
+
+        // Array of models given?
+        if ( is_array($this->model) )
+        {
+            foreach ( $this->model as $model_item )
+            {
+                if ( ! $model_item->load(Yii::$app->request->post()) )
+                {
+                    return false;
+                }
+            }
+        }
+        else if ( ! $model_item->load(Yii::$app->request->post()) )
         {
             return false;
         }
 
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        $result = ActiveForm::validate($this->model);
+        // Validate model. If it's an array of models, validate all of them
+        $result = is_array($this->model) ? ActiveForm::validate(...$this->model) : ActiveForm::validate($this->model);
 
         Yii::$app->response->data = $result;
         Yii::$app->response->send();

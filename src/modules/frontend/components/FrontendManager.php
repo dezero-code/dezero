@@ -179,4 +179,32 @@ class FrontendManager extends Component
 
         return $vec_variables;
     }
+
+    /**
+     * Get body classes
+     */
+    public function bodyClasses() : array
+    {
+        $vec_classes = [
+            // Current action
+            $this->current_action . '-page',
+
+            // Current controller and action
+            $this->current_controller . '-' . $this->current_action . '-page',
+
+            // Logged in?
+            // ( Yii::$app->user->isGuest ? 'not-logged-in' : 'logged-in')
+        ];
+
+        // Add current module
+        if ( $this->current_module )
+        {
+            $vec_classes[] = $this->current_module .'-module-page';
+        }
+
+        // Add environment into body class attribute
+        $vec_classes[] = Dz::getEnvironment() ."-mode";
+
+        return $vec_classes;
+    }
 }

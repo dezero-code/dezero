@@ -20,6 +20,19 @@ class DateHelper
 
 
     /**
+     * Check if a date is valid in the given format
+     */
+    public static function isValid(string $date, string $format = 'd/m/Y') : bool
+    {
+        $date_time = DateTime::createFromFormat($format, $date);
+        return $date_time && $date_time->format($format) === $date;
+
+        // $validator = new \yii\validators\DateValidator(['format' => $format]);
+        // return $validator->validate($date);
+    }
+
+
+    /**
      * Parses from UNIX timestamp format to string "d/m/Y - H:i" date format
      */
     public static function toFormat(int $timestamp, string $format = 'd/m/Y - H:i') : string

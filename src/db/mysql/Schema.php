@@ -27,6 +27,7 @@ class Schema extends \yii\db\mysql\Schema
     public const TYPE_MEDIUMTEXT = 'mediumtext';
     public const TYPE_LONGTEXT = 'longtext';
     public const TYPE_ENUM = 'enum';
+    public const TYPE_DATE_RAW = 'date';
 
 
     /**
@@ -59,8 +60,8 @@ class Schema extends \yii\db\mysql\Schema
         $this->typeMap['longtext'] = self::TYPE_LONGTEXT;
         $this->typeMap['enum'] = self::TYPE_ENUM;
 
-        // Change DATE to INTEGER data
-        $this->typeMap['date'] = self::TYPE_INTEGER;
+        // Change DATE to INTEGER data <--- not needed, problem with validations
+        // $this->typeMap['date'] = self::TYPE_INTEGER;
     }
 
 

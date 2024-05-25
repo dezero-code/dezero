@@ -192,7 +192,7 @@ class Migration extends \yii\db\Migration
      */
     public function dateRaw()
     {
-        return $this->db->getSchema()->createColumnSchemaBuilder(MysqlSchema::TYPE_DATE);
+        return $this->db->getSchema()->createColumnSchemaBuilder(MysqlSchema::TYPE_DATE_RAW);
     }
 
 
