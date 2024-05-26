@@ -43,7 +43,7 @@ class AjaxRequestValidator implements ValidatorInterface
                 }
             }
         }
-        else if ( ! $model_item->load(Yii::$app->request->post()) )
+        else if ( ! $this->model->load(Yii::$app->request->post()) )
         {
             return false;
         }
