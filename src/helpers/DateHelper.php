@@ -33,11 +33,26 @@ class DateHelper
 
 
     /**
-     * Parses from UNIX timestamp format to string "d/m/Y - H:i" date format
+     * Parses from UNIX timestamp format or DATE TIME format (Y-m-d H:i:s)
+     * to string "d/m/Y - H:i" date format
      */
-    public static function toFormat(int $timestamp, string $format = 'd/m/Y - H:i') : string
+    public static function toFormat(integer|string $timestamp, string $format = 'd/m/Y - H:i') : string
     {
-        return date($format, $timestamp);
+        // Parses from UNIX timestamp format to string "d/m/Y - H:i" date format
+        if ( is_numeric($timestamp) )
+        {
+            return date($format, $timestamp);
+        }
+
+        // Check if the date is in the correct format: Y-m-d
+        if ( ! preg_match("/\d{4}-\d{2}-\d{2}/", $timestamp) )
+        {
+            return '';
+        }
+
+        // Parses from DATE TIME format (Y-m-d H:i:s) to string "d/m/Y - H:i" date format
+        $unix_timestamp = self::toUnix($timestamp);
+        return date($format, $unix_timestamp);
     }
 
 
