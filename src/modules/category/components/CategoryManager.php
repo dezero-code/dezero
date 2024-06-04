@@ -153,7 +153,7 @@ class CategoryManager extends Component
 
 
     /**
-     * Category list (usually used on a SELECT2 dropdown)
+     * Category list (usually used on a dropdown)
      */
     public function getCategoryList(string $category_type, array $vec_options = []) : array
     {

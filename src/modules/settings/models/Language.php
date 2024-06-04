@@ -61,16 +61,16 @@ class Language extends BaseLanguage
             // Typed rules
             'requiredFields' => [['language_id', 'name', 'prefix'], 'required'],
             'integerFields' => [['is_ltr_direction', 'is_default', 'weight', 'disabled_date', 'disabled_user_id', 'created_date', 'created_user_id', 'updated_date', 'updated_user_id'], 'integer'],
-            
+
             // Max length rules
             'max6' => [['language_id'], 'string', 'max' => 6],
             'max16' => [['prefix'], 'string', 'max' => 16],
             'max36' => [['entity_uuid'], 'string', 'max' => 36],
             'max64' => [['name', 'native'], 'string', 'max' => 64],
-            
+
             // Default NULL
             'defaultNull' => [['native', 'disabled_date', 'disabled_user_id'], 'default', 'value' => null],
-            
+
             // UNIQUE rules
             'languageIdUnique' => [['language_id'], 'unique'],
         ];
@@ -157,7 +157,6 @@ class Language extends BaseLanguage
     }
 
 
-
     /*
     |--------------------------------------------------------------------------
     | TITLE METHODS
@@ -169,6 +168,6 @@ class Language extends BaseLanguage
      */
     public function title() : string
     {
-        return $this->language_id;
+        return $this->native;
     }
 }

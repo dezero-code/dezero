@@ -22,7 +22,7 @@ class Config extends Component
      *
      * @return mixed
      */
-    public function get(string $config_path, ?string $config_key = null)
+    public function get(string $config_path, ?string $config_key = null, $default_value = null)
     {
         if ( preg_match("/^\@/", $config_path) )
         {
@@ -43,26 +43,26 @@ class Config extends Component
             }
         }
 
-        if ( is_file($config_file_path) )
+        if ( ! is_file($config_file_path) )
         {
-            // Get configuration file content
-            $vec_config = require($config_file_path);
-
-            // Return just the content from a configuration key
-            if ( !empty($vec_config) && is_array($vec_config) && $config_key !== null )
-            {
-                if ( ! array_key_exists($config_key, $vec_config) )
-                {
-                    return null;
-                }
-
-                return $vec_config[$config_key];
-            }
-
-            return $vec_config;
+            return $default_value;
         }
 
-        return null;
+        // Get configuration file content
+        $vec_config = require($config_file_path);
+
+        // Return just the content from a configuration key
+        if ( !empty($vec_config) && is_array($vec_config) && $config_key !== null )
+        {
+            if ( ! array_key_exists($config_key, $vec_config) )
+            {
+                return $default_value;
+            }
+
+            return $vec_config[$config_key];
+        }
+
+        return $vec_config;
     }
 
 

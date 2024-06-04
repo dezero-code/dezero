@@ -9,10 +9,6 @@
 
 namespace dezero\modules\settings\helpers;
 
-use Dz;
-use user\models\User;
-use Yii;
-
 /**
  * Helper class for working with currencies
  */

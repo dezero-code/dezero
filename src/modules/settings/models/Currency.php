@@ -171,6 +171,15 @@ class Currency extends BaseCurrency
     */
 
     /**
+     * Full title with symbol
+     */
+    public function fullTitle() : string
+    {
+        return "{$this->currency_code} ({$this->symbol})";
+    }
+
+
+    /**
      * Title used for this model
      */
     public function title() : string
