@@ -46,7 +46,7 @@ class AuthHelper
     /**
      * Return a role by name
      */
-    public static function getRole(string $name)
+    public static function getRole(string $name) : ?Role
     {
         return Yii::$app->authManager->getRole($name);
     }
@@ -119,7 +119,7 @@ class AuthHelper
     /**
      * Return a permission by name
      */
-    public static function getPermission(string $name)
+    public static function getPermission(string $name) : ?Permission
     {
         return Yii::$app->authManager->getPermission($name);
     }
@@ -196,6 +196,21 @@ class AuthHelper
         }
 
         return Yii::$app->authManager->removeChild($role_item, $permission_item);
+    }
+
+
+    /**
+     * Revoke all permissions to a role
+     */
+    public static function revokeAllPermissionsToRole(string $role_name) : bool
+    {
+        $role_item = self::getRole($role_name);
+        if ( $role_item === null )
+        {
+            return false;
+        }
+
+        return Yii::$app->authManager->removeChildren($role_item);
     }
 
 
