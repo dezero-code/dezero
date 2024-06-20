@@ -16,6 +16,16 @@ use Yii;
 class LogoutController extends Controller
 {
     /**
+     * {@inheritdoc}
+     */
+    public function beforeAction($action)
+    {
+        $this->enableCsrfValidation = false;
+        return parent::beforeAction($action);
+    }
+
+
+    /**
      * Main action for logout
      */
     public function actionIndex()

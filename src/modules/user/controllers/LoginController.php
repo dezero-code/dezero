@@ -21,6 +21,16 @@ use Yii;
 class LoginController extends Controller
 {
     /**
+     * {@inheritdoc}
+     */
+    public function beforeAction($action)
+    {
+        $this->enableCsrfValidation = false;
+        return parent::beforeAction($action);
+    }
+
+
+    /**
      * Main action for login
      */
     public function actionIndex()
@@ -62,8 +72,8 @@ class LoginController extends Controller
                 // Custom event triggered on "after login"
                 $this->trigger(FormEvent::EVENT_AFTER_LOGIN, $form_event);
 
-                $this->redirect($this->module->redirectAfterLogin);
-                // return $this->goBack();
+                // $this->redirect($this->module->redirectAfterLogin);
+                return $this->goBack($this->module->redirectAfterLogin);
             }
 
             // Custom event triggered on "failed login"
