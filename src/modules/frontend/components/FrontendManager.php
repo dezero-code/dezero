@@ -169,6 +169,7 @@ class FrontendManager extends Component
             'action'            => Dz::currentAction(true),
             'language'          => Dz::currentLanguage(),
             'defaultLanguage'   => Dz::defaultLanguage(),
+            'login_url'         => Url::to(['/user/login']),
         ];
 
         // Add the language prefix to base URL

@@ -19,6 +19,12 @@ use Yii;
  */
 class Controller extends \yii\web\Controller
 {
+    public function beforeAction($action)
+    {
+        return parent::beforeAction($action);
+    }
+
+
     /**
      * Return an array decoded from a JSON input data
      */

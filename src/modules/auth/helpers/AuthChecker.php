@@ -11,6 +11,7 @@ namespace dezero\modules\auth\helpers;
 
 use yii\web\ForbiddenHttpException;
 use Yii;
+use yii\web\Response;
 
 /**
  * Helper class for authorization checkings
@@ -22,11 +23,28 @@ class AuthChecker
      */
     public static function requireLogin() : void
     {
-        if ( Yii::$app->user->getIsGuest() )
+        // User is already logged in
+        if ( ! Yii::$app->user->isGuest )
         {
-            Yii::$app->user->loginRequired();
+            return;
+        }
+
+        // AJAX request, send a JSON response
+        if ( Yii::$app->request->isAjax )
+        {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            Yii::$app->response->statusCode = 200;
+            Yii::$app->response->data = [
+                'status'    => 'session_expired',
+                'message'   => Yii::t('backend', 'Your session has expired. Please log in again.')
+            ];
+            Yii::$app->response->send();
             Yii::$app->end();
         }
+
+        // Redirect to login page
+        Yii::$app->user->loginRequired();
+        Yii::$app->end();
     }
 
 
@@ -35,11 +53,13 @@ class AuthChecker
      */
     public static function requireGuest() : void
     {
-        if ( ! Yii::$app->user->getIsGuest() )
+        if ( Yii::$app->user->isGuest )
         {
-            Yii::$app->user->guestRequired();
-            Yii::$app->end();
+            return;
         }
+
+        Yii::$app->user->guestRequired();
+        Yii::$app->end();
     }
 
 
