@@ -163,6 +163,6 @@ class Country extends BaseCountry
      */
     public function title() : string
     {
-        return $this->country_code;
+        return $this->name;
     }
 }
