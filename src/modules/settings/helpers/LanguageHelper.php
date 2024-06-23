@@ -1,6 +1,6 @@
 <?php
 /**
- * Country helper class
+ * Language helper class
  *
  * @author Fabián Ruiz <fabian@dezero.es>
  * @link http://www.dezero.es
