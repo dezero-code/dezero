@@ -46,7 +46,7 @@ class Dz extends Yii
      * Returns the data model based on the primary key given.
      * If the data model is not found, a 404 HTTP exception will be raised.
      * @param string $id the ID of the model to be loaded. If the model has a composite primary key,
-     * the ID must be a string of the primary key values separated by commas.
+     * the ID must be a string of the primary key values separated by commas or an array.
      * The order of the primary key values should follow that returned by the `primaryKey()` method
      * of the model.
      * @return ActiveRecordInterface the model found
@@ -58,10 +58,17 @@ class Dz extends Yii
         $keys = $model_class::primaryKey();
         if ( count($keys) > 1 )
         {
-            $values = explode(',', $id);
-            if ( count($keys) === count($values) )
+            if ( is_array($id) )
             {
-                $model = $model_class::findOne(array_combine($keys, $values));
+                $model = $model_class::findOne($id);
+            }
+            else
+            {
+                $values = explode(',', $id);
+                if ( count($keys) === count($values) )
+                {
+                    $model = $model_class::findOne(array_combine($keys, $values));
+                }
             }
         }
         elseif ( $id !== null )

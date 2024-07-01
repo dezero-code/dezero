@@ -170,6 +170,8 @@ class FrontendManager extends Component
             'language'          => Dz::currentLanguage(),
             'defaultLanguage'   => Dz::defaultLanguage(),
             'login_url'         => Url::to(['/user/login']),
+            'user_id'           => Yii::$app->user->isGuest ? null : Yii::$app->user->id,
+            'full_name'         => Yii::$app->user->isGuest ? '' : Yii::$app->user->identity->fullName(),
         ];
 
         // Add the language prefix to base URL

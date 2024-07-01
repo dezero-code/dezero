@@ -73,4 +73,13 @@ class Item extends BaseObject
      * @var string UUID
      */
     public $entity_uuid;
+
+
+    /**
+     * Title used for this auth item
+     */
+    public function title() : string
+    {
+        return $this->description ?? $this->name;
+    }
 }

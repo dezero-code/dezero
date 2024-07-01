@@ -109,10 +109,6 @@ class UserCreateService implements ServiceInterface
             'default_role'      => ( !empty($this->vec_roles) && isset($this->vec_roles[0]) ) ? $this->vec_roles[0] : null
         ]);
 
-        // Save original password and encrypt it
-        $this->original_password = $this->user_model->password;
-        $this->user_model->password = Yii::$app->security->generatePasswordHash($this->user_model->password);
-
         // Custom event triggered on "beforeCreate"
         $user_event = Dz::makeObject(UserEvent::class, [$this->user_model]);
         $this->user_model->trigger(UserEvent::EVENT_BEFORE_CREATE, $user_event);
@@ -122,6 +118,10 @@ class UserCreateService implements ServiceInterface
         {
             return false;
         }
+
+        // Save original password and encrypt it
+        $this->original_password = $this->user_model->password;
+        $this->user_model->password = Yii::$app->security->generatePasswordHash($this->user_model->password);
 
         // Save the model
         $this->user_model->save(false);
