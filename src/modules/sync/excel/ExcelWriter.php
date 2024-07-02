@@ -1109,7 +1109,7 @@ class ExcelWriter extends \yii\base\BaseObject
     /**
      * Save the Excel file into a destination path
      */
-    public function saveTo(string $file_path, string $format = null ) : File
+    public function saveTo(string $file_path, string $format = null ) : ?File
     {
         // Trigger custom event "beforeSave"
         $this->beforeSave();

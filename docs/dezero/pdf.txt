@@ -1,0 +1,36 @@
+=========
+-- PDF --
+=========
+
+- \dezero\pdf\PdfBuilder is the main class
+
+```
+use dezero\pdf\PdfBuilder;
+
+class TestController extends Controller
+{
+    /**
+     * Testing PDF generation with class \dezero\pdf\PdfBuilder
+     */
+    public function actionPdf()
+    {
+        // Initialize the PDF builder
+        $pdf_builder = PdfBuilder::create();
+
+        // Generate a PDF file from a given HTML and save it to "@www/files/pdf/test.pdf" (default directory)
+        $file_pdf = $pdf_builder
+            ->setHtml('<html><h1>Test</h1></html>')
+            ->saveTo('test.pdf');
+
+        // Generate a PDF file from a given Yii2 view and download it
+        // The PDF file will be saved into the private temporary directory (alias @privateTmp)
+        $file_pdf = $pdf_builder
+            ->renderView('@theme/pdf/test', [       // <-- IMPORTANT, the view file must be an ALIAS
+                'title' => 'Testing title',
+            ])
+            ->download('test.pdf');
+    }
+}
+```
+
+

@@ -86,4 +86,13 @@ abstract class Configurator implements ConfiguratorInterface
     {
         return $this->getConfig($config_key, $config_subkey);
     }
+
+
+    /**
+     * Return the full configuration array
+     */
+    public function getFullConfig() : array
+    {
+        return $this->vec_config;
+    }
 }
