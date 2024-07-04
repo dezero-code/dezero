@@ -101,6 +101,7 @@ BITBUCKET
     > mkdir www/files/images && chmod 775 www/files/images
 
 3. Configuration - Copy LOCAL configuration files
+    > mkdir app/config/local
     > cp vendor/dezero/dezero/install/config/app.local.php app/config/local/app.local.php
     > cp vendor/dezero/dezero/install/config/params.php app/config/local/params.php
 
