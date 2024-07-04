@@ -105,6 +105,15 @@ class Controller extends \yii\web\Controller
 
 
     /**
+     * Check if the user has at least one of the specified permissions to perform an action. If not, throws a 403 error
+     */
+    public function requirePermissions(array $vec_permission_names, bool $is_skip_superadmin = true) : void
+    {
+        AuthChecker::requirePermissions($vec_permission_names, $is_skip_superadmin);
+    }
+
+
+    /**
      * Throws a 400 error if this isn’t a POST request
      */
     public function requirePostRequest() : void

@@ -22,6 +22,12 @@ class User extends \yii\web\User
     use AuthTrait;
 
     /**
+     * @var bool|null whether the current user is a superadmin
+     */
+    private $is_superadmin = null;
+
+    
+    /**
      * @var string|array|null the URL for login when [[loginRequired()]] is called.
      */
     public $loginUrl = ['user/login'];
@@ -41,13 +47,17 @@ class User extends \yii\web\User
      */
     public function isSuperadmin() : bool
     {
-        $user_model = $this->getModel();
-        if ( ! $user_model )
+        // If already checked, return the value
+        if ( $this->is_superadmin !== null )
         {
-            return false;
+            return $this->is_superadmin;
         }
 
-        return $user_model->isSuperadmin();
+        // Check if the user is a superadmin
+        $user_model = $this->getModel();
+        $this->is_superadmin = $user_model ? $user_model->isSuperadmin() : false;
+
+        return $this->is_superadmin;
     }
 
 
@@ -71,5 +81,20 @@ class User extends \yii\web\User
     public function getTempDirectory() : File
     {
         return File::ensureDirectory('@tmp'. DIRECTORY_SEPARATOR . Yii::$app->session->id);
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function can($permissionName, $params = [], $allowCaching = true)
+    {
+        // Superadmin can do everything
+        if ( $this->isSuperadmin() )
+        {
+            return true;
+        }
+
+        return parent::can($permissionName, $params, $allowCaching);
     }
 }

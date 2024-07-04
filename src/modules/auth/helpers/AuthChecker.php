@@ -117,4 +117,26 @@ class AuthChecker
             throw new ForbiddenHttpException('You are not allowed to access this page.');
         }
     }
+
+
+    /**
+     * Check if the user has at least one of the specified permissions to perform an action. If not, throws a 403 error
+     */
+    public static function requirePermissions(array $vec_permission_names, bool $is_skip_superadmin = true) : void
+    {
+        $is_allowed = false;
+        foreach ( $vec_permission_names as $permission_name )
+        {
+            if ( Yii::$app->user->can($permission_name) )
+            {
+                $is_allowed = true;
+                break;
+            }
+        }
+
+        if ( ( ! $is_skip_superadmin || ! Yii::$app->user->isSuperadmin() ) && ! $is_allowed )
+        {
+            throw new ForbiddenHttpException('You are not allowed to access this page.');
+        }
+    }
 }
