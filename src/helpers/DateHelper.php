@@ -36,7 +36,7 @@ class DateHelper
      * Parses from UNIX timestamp format or DATE TIME format (Y-m-d H:i:s)
      * to string "d/m/Y - H:i" date format
      */
-    public static function toFormat(integer|string $timestamp, string $format = 'd/m/Y - H:i') : string
+    public static function toFormat(int|string $timestamp, string $format = 'd/m/Y - H:i') : string
     {
         // Parses from UNIX timestamp format to string "d/m/Y - H:i" date format
         if ( is_numeric($timestamp) )
