@@ -14,9 +14,9 @@ use Yii;
  */
 class DateHelper
 {
-    const DATE_FORMAT = 'php:Y-m-d';
-    const DATETIME_FORMAT = 'php:Y-m-d H:i:s';
-    const TIME_FORMAT = 'php:H:i:s';
+    const DATE_FORMAT = 'Y-m-d';
+    const DATETIME_FORMAT = 'Y-m-d H:i:s';
+    const TIME_FORMAT = 'H:i:s';
 
 
     /**
@@ -50,9 +50,18 @@ class DateHelper
             return '';
         }
 
+        // Check if the input is a string in format "Y-m-d H:i:s" or "Y-m-d"
+        $date_time = DateTime::createFromFormat(self::DATETIME_FORMAT, $timestamp) ?: DateTime::createFromFormat(self::DATE_FORMAT, $timestamp);
+        if ( ! $date_time )
+        {
+            return '';
+        }
+
+        return $date_time->format($format);
+
         // Parses from DATE TIME format (Y-m-d H:i:s) to string "d/m/Y - H:i" date format
-        $unix_timestamp = self::toUnix($timestamp);
-        return date($format, $unix_timestamp);
+        // $unix_timestamp = self::toUnix($timestamp);
+        // return date($format, $unix_timestamp);
     }
 
 
@@ -72,10 +81,51 @@ class DateHelper
      *   - d/m/Y
      *   - d/m/Y H:i
      *   - d/m/Y - H:i (or "d/m/Y-H:i")
+     *   - Y-m-d
+     *   - Y-m-d H:i:s
      */
     public static function toUnix(string $date, ?string $format = null) : ?int
     {
+        $vec_formats = [];
+        if ( $format !== null )
+        {
+            $vec_formats = [$format];
+        }
+
+        // Default format with a backslash separator
+        else if ( strpos($date, '/') !== false )
+        {
+            $vec_formats = [
+                'd/m/Y',
+                'd/m/Y H:i',
+                'd/m/Y - H:i',
+                'd/m/Y-H:i'
+            ];
+        }
+
+        // Default format with a dash separator
+        else if ( strpos($date, '-') !== false )
+        {
+            $vec_formats = [
+                'Y-m-d',
+                'Y-m-d H:i:s'
+            ];
+        }
+
+        // Try to convert using the selected formats
+        foreach ( $vec_formats as $date_format )
+        {
+            $date_time = DateTime::createFromFormat($date_format, $date);
+            if ( $date_time && $date_time->format($date_format) === $date)
+            {
+                return $date_time->getTimestamp();
+            }
+        }
+
+        return null;
+
         // If not format has been defined, try to figure out
+        /*
         if ( $format === null )
         {
             $format = self::DATETIME_FORMAT;
@@ -107,5 +157,6 @@ class DateHelper
         }
 
         return $date_time->getTimestamp();
+        */
     }
 }

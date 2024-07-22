@@ -504,4 +504,23 @@ class Html extends \yii\helpers\Html
 
         return Html::a($text, $url, $options);
     }
+
+
+    /**
+     * Optimize SVG content
+     *
+     * @param string $content The SVG content
+     * @return string The optimized SVG content
+     */
+    public static function optimizeSvg(string $content): string
+    {
+        // Remove whitespace between tags
+        $content = preg_replace('/>\s+</', '><', $content);
+
+        // Remove whitespace at the start and end of the string
+        $content = trim($content);
+
+        // Replace multiple spaces with a single space within text content
+        return preg_replace('/(\S)\s+(\S)/', '$1 $2', $content);
+    }
 }

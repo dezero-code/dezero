@@ -183,7 +183,16 @@ class StringHelper extends \yii\helpers\StringHelper
      */
     public static function trimAll(string $text) : string
     {
-        return preg_replace('~\s*(<([^>]*)>[^<]*</\2>|<[^>]*>)\s*~', '$1', $text);
+        // return preg_replace('~\s*(<([^>]*)>[^<]*</\2>|<[^>]*>)\s*~', '$1', $text);
+
+        // Remove whitespace between HTML tags
+        $text = preg_replace('/>\s+</', '><', $text);
+
+        // Remove whitespace at the start and end of the string
+        $text = trim($text);
+
+        // Replace multiple spaces with a single space
+        return preg_replace('/\s+/', ' ', $text);
     }
 
 
@@ -194,8 +203,17 @@ class StringHelper extends \yii\helpers\StringHelper
      */
     public static function trim(string $text) : string
     {
+        // $text = str_replace("\xc2\xa0", " ", $text);
+        // return trim($text);
+
+        // Replace non-breaking space with regular space
         $text = str_replace("\xc2\xa0", " ", $text);
-        return trim($text);
+
+        // Remove whitespace at the start and end of the string
+        $text = trim($text);
+
+        // Replace multiple spaces with a single space
+        return preg_replace('/\s+/', ' ', $text);
     }
 
 

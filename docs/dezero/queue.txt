@@ -217,8 +217,10 @@ Example of pushing a job into the queue from any class of your project
         ...
 
         $import_job = Dz::makeObject(ImportProductJob::class, [
-            'sku'   => 'PROD-00006943'
-            'title' => 'My custom title product'
+            [
+                'sku'   => 'PROD-00006943'
+                'title' => 'My custom title product'
+            ]
         ]);
         $message_id = Yii::$app->queue->push($import_job);
 
