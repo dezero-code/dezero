@@ -76,8 +76,8 @@ class JasnyFileInput extends InputWidget
         if ( empty($this->vec_classes) )
         {
             $this->vec_classes = [
-                'new'       => 'btn-default btn-outline',
-                'remove'    => 'btn-default btn-outline',
+                'new'       => 'btn btn-light btn-file btn-block',      // 'btn-default btn-outline',
+                'remove'    => 'btn btn-light btn-block',               // 'btn-default btn-outline',
                 'select'    => 'btn-default btn-outline',
             ];
         }

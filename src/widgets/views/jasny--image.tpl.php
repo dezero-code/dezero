@@ -22,14 +22,14 @@
       <img src="<?= $thumbnail_url; ?>" class="fileinput-image">
     <?php endif; ?>
   </div>
-  <div>
-    <span class="btn btn-light btn-file btn-block">
+  <div class="fileinput-actions">
+    <span class="<?= $vec_classes['new']; ?> btn-file">
       <span class="fileinput-new"><?= $vec_labels['select']; ?></span>
       <span class="fileinput-exists"><?= $vec_labels['change']; ?></span>
       <?= $field; ?>
       <?= $hidden_field; ?>
     </span>
-    <a href="#" class="btn btn-light btn-block fileinput-exists" data-dismiss="fileinput">
+    <a href="#" class="<?= $vec_classes['remove']; ?> fileinput-exists" data-dismiss="fileinput">
       <?= $vec_labels['remove']; ?>
     </a>
   </div>

@@ -7,6 +7,7 @@
 
 namespace dezero\modules\test\controllers;
 
+use dezero\web\Controller;
 use Yii;
 
 class ConfigController extends Controller
