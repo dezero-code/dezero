@@ -219,6 +219,15 @@ class ExcelWriter extends \yii\base\BaseObject
 
 
     /**
+     * Add an empty row to the active sheet
+     */
+    public function addEmptyRow() : self
+    {
+        return $this->addRow(['']);
+    }
+
+
+    /**
      * Add the header row to the active sheet
      */
     public function addHeader(array $vec_row, $vec_style = null) : self
