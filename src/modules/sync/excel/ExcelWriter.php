@@ -7,6 +7,7 @@
  * @see https://github.com/PHPOffice/PhpSpreadsheet/tree/1.29.0
  * @see https://github.com/yidas/phpspreadsheet-helper
  * @see https://github.com/spatie/simple-excel
+ * @see https://phpspreadsheet.readthedocs.io/en/latest/topics/recipes
  */
 
 namespace dezero\modules\sync\excel;
@@ -284,6 +285,17 @@ class ExcelWriter extends \yii\base\BaseObject
     }
 
 
+    /**
+     * Merge cells
+     */
+    public function mergeCells(string $cell_coordinate) : self
+    {
+        $this->worksheet->mergeCells($cell_coordinate);
+
+        return $this;
+    }
+
+
     /*
     |--------------------------------------------------------------------------
     | SHEET METHODS
@@ -421,7 +433,7 @@ class ExcelWriter extends \yii\base\BaseObject
 
 
     /**
-     * Set vertical align for all thecells or by giving a range
+     * Set vertical align for all the cells or by giving a range
      */
     public function setVerticalAlign(?string $value = null, $range = null) : self
     {

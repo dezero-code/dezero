@@ -290,7 +290,7 @@ class Category extends BaseCategory implements ConfigInterface
     {
         if ( $this->total_subcategories === null )
         {
-            $this->total_subcategories = (int) $this->getSubCategories()->count();
+            $this->total_subcategories = $this->getCategories()->count();
         }
 
         return $this->total_subcategories;

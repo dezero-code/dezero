@@ -15,8 +15,8 @@
     > cd /opt/homebrew/etc/httpd/extra (macOS Monterey)
 
    Edit the Apache configuration file (http.conf) and add the following lines at the end:
-    > subl /opt/homebrew/etc/httpd/extra/httpd-vhosts.conf
     > subl /usr/local/etc/httpd/httpd.conf
+    > subl /opt/homebrew/etc/httpd/extra/httpd-vhosts.conf
 
     <VirtualHost *:80>
         ServerName my.project
@@ -79,7 +79,7 @@
     > git clone git@github.com:dezero/my-project.git
     > git clone git@bitbucket.org:dezero/my-project.git .
 
-3. Go to the DEZERO.STARTER project and copy ALL the files to your project directory, except ".git", ".sass-cache" and ".phpintel" subdirectories
+3. Go to the DEZERO.STARTER project and copy ALL the files to your project directory, except ".git", ".idea", ".sass-cache" and ".phpintel" subdirectories
 
 4. Open composer.json file and put the "name", "description" and "homepage" attributes for this project
 

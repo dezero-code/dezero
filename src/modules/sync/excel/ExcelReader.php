@@ -7,6 +7,7 @@
  * @see https://github.com/PHPOffice/PhpSpreadsheet/tree/1.29.0
  * @see https://github.com/yidas/phpspreadsheet-helper
  * @see https://github.com/spatie/simple-excel
+ * @see https://phpspreadsheet.readthedocs.io/en/latest/topics/recipes
  */
 
 namespace dezero\modules\sync\excel;
