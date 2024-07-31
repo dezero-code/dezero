@@ -12,12 +12,12 @@
 
 namespace dezero\modules\sync\excel;
 
-use Dz;
 use dezero\base\File;
 use dezero\helpers\ArrayHelper;
 use dezero\helpers\FileHelper;
 use dezero\helpers\StringHelper;
 use dezero\modules\sync\excel\ExcelHelper;
+use Dz;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat as CellFormat;
@@ -290,6 +290,13 @@ class ExcelWriter extends \yii\base\BaseObject
         if ( isset($vec_cell['filter']) )
         {
             $this->addDropdown($current_coordinate, $vec_cell['filter']);
+        }
+
+        // Merge cells with more columns?
+        if ( isset($vec_cell['merge_columns']) )
+        {
+            $merged_column_coordinate = ExcelHelper::num2alpha($this->current_col + $vec_cell['merge_columns']) . $this->current_row;
+            $this->mergeCells($current_coordinate . ':' . $merged_column_coordinate);
         }
     }
 
