@@ -12,6 +12,7 @@ namespace dezero\modules\asset\models;
 use dezero\base\File;
 use dezero\db\ActiveRecord as ActiveRecord;
 use dezero\helpers\ArrayHelper;
+use dezero\helpers\Log;
 use dezero\helpers\Transliteration;
 use dezero\helpers\Url;
 use dezero\modules\asset\models\query\AssetFileQuery;
@@ -487,6 +488,12 @@ class AssetFile extends BaseAssetFile
         $upload_file_service = Dz::makeObject(UploadFileService::class, [$model, $file_attribute, $this, $entity_file_model, $destination_path]);
         if ( ! $upload_file_service->run() )
         {
+            // Register errors on log
+            if ( $upload_file_service->hasErrors() )
+            {
+                Log::files($upload_file_service->getErrors());
+            }
+
             // Upload file has been deleted?
             if ( $upload_file_service->last_action === 'delete' )
             {
