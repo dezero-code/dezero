@@ -97,3 +97,32 @@
     d($optimized_jpg->formatSize());
 
  ```
+
+--------------------------------------------
+-- 5. PRESET IMAGES
+--------------------------------------------
+- The preset images are defined on /app/config/components/images.php
+
+- You can defined a preset like this:
+```
+    ...
+    'presets' => [
+        'medium' => [
+            'name'          => 'MEDIUM image size - 512x288 (prefix "A_")',
+            'prefix'        => 'A_',
+            'width'         => 512,
+            'height'        => 288,
+            'resize_method' => 'crop',      // You can use 'max' (default), 'contain', 'fill', 'fill-max', 'stretch', 'crop'
+            'is_optimize'   => false,
+            'is_upscale'    => false
+        ],
+    ],
+    ...
+```
+
+- Finally, you can generate a preset image via AssetImage::generatePreset() method. For example:
+```
+    $asset_image_model = AssetImage::findOne(1);
+    $asset_image_model->generatePreset('medium');
+```
+This preset image will be saved on a subdirectory "_" and the file will be saved with the prefix "A_" and the size 512x288.

@@ -91,6 +91,7 @@ class ImageConfigurator extends Configurator implements ConfiguratorInterface
                     'prefix'        => 'B_',
                     'width'         => 700,
                     'height'        => 700,
+                    'is_optimize'   => false,
                     'is_upscale'    => false
                 ],
                 'medium'=> [
@@ -98,6 +99,7 @@ class ImageConfigurator extends Configurator implements ConfiguratorInterface
                     'prefix'        => 'S_',
                     'width'         => 300,
                     'height'        => 300,
+                    'is_optimize'   => false,
                     'is_upscale'    => false
                 ],
                 'small' => [
@@ -105,6 +107,7 @@ class ImageConfigurator extends Configurator implements ConfiguratorInterface
                     'prefix'        => 'T_',
                     'width'         => 140,
                     'height'        => 140,
+                    'is_optimize'   => false,
                     'is_upscale'    => false
                 ],
             ]

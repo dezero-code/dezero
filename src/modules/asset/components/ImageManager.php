@@ -12,6 +12,7 @@ use dezero\base\Image;
 use dezero\helpers\ArrayHelper;
 use dezero\helpers\StringHelper;
 use dezero\modules\asset\models\AssetImage;
+use Spatie\Image\Manipulations;
 use Yii;
 use yii\base\Component;
 
@@ -44,11 +45,20 @@ class ImageManager extends Component
         }
 
         // Generate preset image
-        $preset_image_path = $destination_path . $this->getPresetFilename($image, $vec_config);
-        $image
-            ->resizeMax($vec_config['width'] ,$vec_config['height'])
-            ->optimize()
-            ->save($preset_image_path);
+        $preset_image_path = $destination_path . DIRECTORY_SEPARATOR . $this->getPresetFilename($image, $vec_config);
+
+        // Resize method?
+        $resize_method = $vec_config['resize_method'] ?? Manipulations::FIT_MAX;
+        $image = $image->resize($vec_config['width'], $vec_config['height'], $resize_method);
+
+        // Optimize enabled?
+        if ( isset($vec_config['is_optimize']) && $vec_config['is_optimize'] )
+        {
+            $image = $image->optimize();
+        }
+
+        // Finally, save the preset image
+        $image->save($preset_image_path);
 
         // \DzLog::dev($preset_image_path);
 

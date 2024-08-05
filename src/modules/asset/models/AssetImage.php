@@ -110,6 +110,15 @@ class AssetImage extends AssetFile implements ConfigInterface
 
 
     /**
+     * Alias of getPresetsDirectory() method
+     */
+    public function presetsDirectory() : string
+    {
+        return $this->getPresetsDirectory();
+    }
+
+
+    /**
      * Return the configuration for the presets
      */
     public function getPresets() : array
@@ -304,7 +313,7 @@ class AssetImage extends AssetFile implements ConfigInterface
     /**
      * Return URL for an image
      */
-    public function imageUrl(?string $preset_name = null) : string
+    public function imageUrl(?string $preset_name = null, bool $is_generate_preset = true) : string
     {
         // Check URL for a preset?
         $preset_image = null;
@@ -313,8 +322,15 @@ class AssetImage extends AssetFile implements ConfigInterface
             $preset_image = $this->getPresetImage($preset_name);
         }
 
+        // Generate preset image if not exists?
+        if ( $preset_name !== null && $is_generate_preset && ( $preset_image === null || ! $preset_image->file || ! $preset_image->file->exists() ) )
+        {
+            $this->generatePreset($preset_name);
+            $preset_image = $this->getPresetImage($preset_name);
+        }
+
         // Return URL for ORIGINAL image file
-        if ( $preset_image === null || ! $preset_image->file )
+        if ( $preset_image === null || ! $preset_image->file || ! $preset_image->file->exists() )
         {
             return parent::url();
         }
