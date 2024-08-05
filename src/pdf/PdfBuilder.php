@@ -308,4 +308,27 @@ class PdfBuilder extends \yii\base\BaseObject implements ConfigInterface
         Yii::$app->end();
     }
 
+
+    /**
+     * Display the generated PDF file
+     */
+    public function display(string $file_name = null, ?string $html = null) : void
+    {
+        // Save to the private TEMP directory
+        $file_path = Yii::getAlias('@privateTmp');
+        $pdf_file = $this->saveTo($file_name, $file_path, $html);
+
+        if ( $pdf_file === null )
+        {
+            throw new Exception("PDF could not be generated");
+        }
+
+        // Finally, download the file (send to the browser)
+        if ( $pdf_file->display() === null )
+        {
+            throw new Exception("PDF could not be downloaded");
+        }
+
+        Yii::$app->end();
+    }
 }

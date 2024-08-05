@@ -434,7 +434,7 @@ class File extends \yii\base\BaseObject
      *
      * @see dezero\helpers\FileHelper::isEmptyDirectory()
      */
-    public function isEmpty() : bool
+    public function isEmpty() : ?bool
     {
         if ( ! $this->exists() || ! $this->isReadable() )
         {
@@ -768,6 +768,26 @@ class File extends \yii\base\BaseObject
         $file_name = $file_name === null ? $this->basename() : $file_name;
 
         return Yii::$app->response->sendFile($this->real_path, $file_name);
+    }
+
+
+    /**
+     * Display the current file (download with content disposition inline)
+     */
+    public function display($file_name = null)
+    {
+        if ( $this->isDirectory() || ! $this->exists() || ! $this->isReadable() )
+        {
+            return null;
+        }
+
+        $file_name = $file_name === null ? $this->basename() : $file_name;
+
+        $response = Yii::$app->response;
+        $response->format = \yii\web\Response::FORMAT_RAW;
+        $response->headers->add('Content-Type', $this->mime());
+        $response->headers->add('Content-Disposition', 'inline; filename="'.$file_name.'"');
+        return $response->sendFile($this->real_path);
     }
 
 

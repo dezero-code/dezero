@@ -159,4 +159,20 @@ class DateHelper
         return $date_time->getTimestamp();
         */
     }
+
+
+    /**
+     * Return the month name given a month number
+     */
+    public static function getMonthName(int $month, bool $short = false) : string
+    {
+        $date = DateTime::createFromFormat('!m', $month);
+        if ( $date_time === false )
+        {
+            return '';
+        }
+
+        $month_name = Yii::t('backend', $date->format('F'));
+        return $short ? substr($month_name, 0, 3) : $month_name;
+    }
 }
