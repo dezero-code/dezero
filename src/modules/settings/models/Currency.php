@@ -9,6 +9,7 @@
 
 namespace dezero\modules\settings\models;
 
+use dezero\behaviors\WeightBehavior;
 use dezero\helpers\ArrayHelper;
 use dezero\modules\settings\models\base\Currency as BaseCurrency;
 use dezero\modules\settings\models\query\CurrencyQuery;
@@ -89,17 +90,19 @@ class Currency extends BaseCurrency
 
     /**
      * {@inheritdoc}
-     *
+     */
     public function behaviors()
     {
         return ArrayHelper::merge(
             parent::behaviors(),
             [
-                // custom behaviors
+                [
+                    // Weight
+                    'class' => WeightBehavior::class,
+                ]
             ]
         );
     }
-    */
 
 
     /**

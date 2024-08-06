@@ -1,6 +1,6 @@
 <?php
 /**
- * Module for settings and language
+ * Module for settings: languages, currencies, countries
  */
 
 namespace dezero\modules\settings;

@@ -9,6 +9,7 @@
 
 namespace dezero\modules\settings\models;
 
+use dezero\behaviors\WeightBehavior;
 use dezero\helpers\ArrayHelper;
 use dezero\modules\settings\models\base\Language as BaseLanguage;
 use dezero\modules\settings\models\query\LanguageQuery;
@@ -87,17 +88,19 @@ class Language extends BaseLanguage
 
     /**
      * {@inheritdoc}
-     *
+     */
     public function behaviors()
     {
         return ArrayHelper::merge(
             parent::behaviors(),
             [
-                // custom behaviors
+                [
+                    // Weight
+                    'class' => WeightBehavior::class,
+                ]
             ]
         );
     }
-    */
 
 
     /**
