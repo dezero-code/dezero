@@ -28,12 +28,12 @@ class StringHelper extends \yii\helpers\StringHelper
      */
     public static function toObject($value) : ?DataObject
     {
-        if ( is_string($value) )
+        if ( ! is_string($value) )
         {
-            return StringDataObject::from($value);
+            return null;
         }
 
-        return null;
+        return StringDataObject::from($value);
     }
 
 
@@ -71,6 +71,7 @@ class StringHelper extends \yii\helpers\StringHelper
             'Ç' => 'c'
         ]);
         $text = self::strtolower($text);
+
         return preg_replace('@[^a-z0-9_]+@', '-', $text);
     }
 
@@ -82,18 +83,14 @@ class StringHelper extends \yii\helpers\StringHelper
     {
         if ( $is_use_mbstring )
         {
-            $text = mb_strtoupper($text);
-        }
-        else
-        {
-            // Use C-locale for ASCII-only uppercase.
-            $text = strtoupper($text);
-
-            // Case flip Latin-1 accented letters
-            $text = preg_replace_callback('/\\xC3[\\xA0-\\xB6\\xB8-\\xBE]/', '\dezero\helpers\StringHelper::unicodeCaseflip', $text);
+            return mb_strtoupper($text);
         }
 
-        return $text;
+        // Use C-locale for ASCII-only uppercase.
+        $text = strtoupper($text);
+
+        // Case flip Latin-1 accented letters
+        return preg_replace_callback('/\\xC3[\\xA0-\\xB6\\xB8-\\xBE]/', '\dezero\helpers\StringHelper::unicodeCaseflip', $text);
     }
 
 
@@ -104,17 +101,14 @@ class StringHelper extends \yii\helpers\StringHelper
     {
         if ( $is_use_mbstring )
         {
-            $text = mb_strtolower($text);
+            return mb_strtolower($text);
         }
-        else
-        {
-            // Use C-locale for ASCII-only lowercase.
-            $text = strtolower($text);
 
-            // Case flip Latin-1 accented letters.
-            $text = preg_replace_callback('/\\xC3[\\x80-\\x96\\x98-\\x9E]/', '\dezero\helpers\StringHelper::unicodeCaseflip', $text);
-        }
-        return $text;
+        // Use C-locale for ASCII-only lowercase.
+        $text = strtolower($text);
+
+        // Case flip Latin-1 accented letters.
+        return preg_replace_callback('/\\xC3[\\x80-\\x96\\x98-\\x9E]/', '\dezero\helpers\StringHelper::unicodeCaseflip', $text);
     }
 
 
@@ -610,6 +604,7 @@ class StringHelper extends \yii\helpers\StringHelper
     public static function validateEmail(string $email) : bool
     {
         $validator = new \yii\validators\EmailValidator();
+
         return $validator->validate($email, $error);
     }
 
@@ -728,6 +723,7 @@ class StringHelper extends \yii\helpers\StringHelper
     public static function pascalCase(string $str): string
     {
         $words = self::toWords($str, true, true);
+
         return implode('', array_map([
             static::class,
             'upperCaseFirst',

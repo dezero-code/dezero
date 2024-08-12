@@ -4,12 +4,13 @@
  *
  * @author Fabián Ruiz <fabian@dezero.es>
  * @link http://www.dezero.es
- * @copyright Copyright &copy; 2022 Fabián Ruiz
+ * @copyright Copyright &copy; 2024 Fabián Ruiz
  */
 
 namespace dezero\helpers;
 
 use dezero\helpers\Log;
+use dezero\helpers\StringHelper;
 use Throwable;
 use UnexpectedValueException;
 use Yii;
@@ -199,5 +200,14 @@ class FileHelper extends \yii\helpers\FileHelper
         closedir($handle);
 
         return $empty;
+    }
+
+
+    /**
+     * Return the extension of a file name
+     */
+    public static function getExtension(string $filename) : string
+    {
+        return StringHelper::strtolower(pathinfo($filename, PATHINFO_EXTENSION));
     }
 }
