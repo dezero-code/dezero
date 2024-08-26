@@ -13,6 +13,7 @@ use dezero\contracts\TitleInterface;
 use dezero\helpers\ArrayHelper;
 use dezero\helpers\Log;
 use dezero\helpers\StringHelper;
+use dezero\modules\entity\helpers\EntityHelper;
 use dezero\modules\entity\models\Entity;
 use dezero\modules\entity\models\StatusHistory;
 use Dz;
@@ -134,57 +135,22 @@ abstract class ActiveRecord extends \dezero\db\ActiveRecord implements TitleInte
 
 
     /**
-     * Makes sure that the Entity model exists
-     */
-    private function ensureEntityExists() : void
-    {
-        // Try to get the Entity model from the relation
-        $entity_model = $this->entity;
-        if ( $entity_model )
-        {
-            return ;
-        }
-
-        // Try to get the Entity model directly from database
-        $entity_model = Entity::find()
-            ->entity_uuid($this->entity_uuid)
-            ->one();
-        if ( $entity_model )
-        {
-            return ;
-        }
-
-        // In this point, we need to create the Entity model in the database
-
-        // First of all, get primary key data
-        $source_name = $this->getSourceName();
-        $source_id = $this->getSourceId();
-
-        // Now, create the Entity model
-        $entity_model = Dz::makeObject(Entity::class);
-        $entity_model->setAttributes([
-            'entity_type'   => $this->getEntityType(),
-            'entity_uuid'   => $this->entity_uuid,
-            'source_id'     => (int)$source_id,
-            'source_name'   => (string)$source_name,
-            'module_name'   => $this->getModuleName()
-        ]);
-
-        if ( ! $entity_model->save() )
-        {
-            Log::saveModelError($entity_model);
-        }
-    }
-
-
-    /**
      * Return module name from current model
      */
-    private function getModuleName() : string
+    public function getModuleName() : string
     {
         $class_name = self::className();
         $class_name = str_replace('dezero\\modules\\', '', $class_name);
         $class_name = str_replace('\\models\\'. StringHelper::basename(get_class($this)), '', $class_name);
         return $class_name;
+    }
+
+
+    /**
+     * Makes sure that the Entity model exists
+     */
+    private function ensureEntityExists() : void
+    {
+        EntityHelper::createEntity($this);
     }
 }

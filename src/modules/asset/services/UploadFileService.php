@@ -7,6 +7,7 @@
 
 namespace dezero\modules\asset\services;
 
+use dezero\modules\entity\models\Entity;
 use Dz;
 use dezero\base\File;
 use dezero\contracts\ServiceInterface;
@@ -15,6 +16,7 @@ use dezero\entity\ActiveRecord as EntityActiveRecord;
 use dezero\helpers\Log;
 use dezero\helpers\Transliteration;
 use dezero\modules\asset\models\AssetFile;
+use dezero\modules\entity\helpers\EntityHelper;
 use dezero\modules\entity\models\EntityFile;
 use dezero\traits\ErrorTrait;
 use yii\web\UploadedFile;
@@ -246,6 +248,10 @@ class UploadFileService implements ServiceInterface
             return true;
         }
 
+        // Ensure Entity model exists
+        $this->ensureEntityExists();
+
+        // Save attributes
         $this->entity_file_model->setAttributes([
             'file_id'           => $this->asset_file_model->file_id,
             'entity_uuid'       => ! $this->reference_model->getIsNewRecord() && $this->reference_model->hasAttribute('entity_uuid') ? $this->reference_model->getAttribute('entity_uuid') : 0,
@@ -263,5 +269,14 @@ class UploadFileService implements ServiceInterface
         $this->entity_file_model->save(false);
 
         return true;
+    }
+
+
+    /**
+     * Makes sure that the Entity model exists
+     */
+    private function ensureEntityExists() : void
+    {
+        EntityHelper::createEntity($this->reference_model);
     }
 }
