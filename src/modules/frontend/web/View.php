@@ -31,7 +31,8 @@ class View extends \dezero\web\View
         {
             foreach ( $vec_css_files as $css_file )
             {
-                $this->registerCssFile($assets_url . $css_file);
+                $timestamp = Yii::$app->frontendManager->getAssetTimestamp($css_file);
+                $this->registerCssFile($assets_url . $css_file . $timestamp);
             }
         }
     }
@@ -53,11 +54,13 @@ class View extends \dezero\web\View
             {
                 if ( is_array($javacript_file) )
                 {
-                    $this->registerJsFile($assets_url . $javacript_file[0], ['position' => $javacript_file[1]]);
+                    $timestamp = Yii::$app->frontendManager->getAssetTimestamp($javacript_file[0]);
+                    $this->registerJsFile($assets_url . $javacript_file[0] . $timestamp, ['position' => $javacript_file[1]]);
                 }
                 else
                 {
-                    $this->registerJsFile($assets_url . $javacript_file, ['position' => self::POS_END]);
+                    $timestamp = Yii::$app->frontendManager->getAssetTimestamp($javacript_file);
+                    $this->registerJsFile($assets_url . $javacript_file . $timestamp, ['position' => self::POS_END]);
                 }
             }
         }

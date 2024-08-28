@@ -48,4 +48,30 @@ class Request extends \yii\web\Request
 
         return null;
     }
+
+
+    /**
+     * Get URL segments as an array
+     */
+    public function getSegments() : array
+    {
+        $pathInfo = $this->getPathInfo();
+
+        return $pathInfo ? explode('/', trim($pathInfo, '/')) : [];
+    }
+
+
+    /**
+     * Get a specific segment by its index
+     *
+     * @param int $index The index of the segment to retrieve (0-based)
+     * @param mixed $default The default value to return if the segment doesn't exist
+     * @return mixed The segment value or the default value if not found
+     */
+    public function getSegment(int $index, $default = null)
+    {
+        $segments = $this->getSegments();
+
+        return $segments[$index] ?? $default;
+    }
 }

@@ -162,7 +162,8 @@ class View extends \yii\web\View
         {
             foreach ( $vec_css_files as $css_file )
             {
-                $this->registerCssFile($core_assets_url . $css_file);
+                $timestamp = Yii::$app->backendManager->getCoreAssetTimestamp($css_file);
+                $this->registerCssFile($core_assets_url . $css_file . $timestamp);
             }
         }
 
@@ -180,7 +181,8 @@ class View extends \yii\web\View
         {
             foreach ( $vec_css_files as $css_file )
             {
-                $this->registerCssFile($app_assets_url . $css_file);
+                $timestamp = Yii::$app->backendManager->getAssetTimestamp($css_file);
+                $this->registerCssFile($app_assets_url . $css_file . $timestamp);
             }
         }
     }
@@ -206,11 +208,13 @@ class View extends \yii\web\View
             {
                 if ( is_array($javacript_file) )
                 {
-                    $this->registerJsFile($core_assets_url . $javacript_file[0], ['position' => $javacript_file[1]]);
+                    $timestamp = Yii::$app->backendManager->getCoreAssetTimestamp($javacript_file[0]);
+                    $this->registerJsFile($core_assets_url . $javacript_file[0] . $timestamp, ['position' => $javacript_file[1]]);
                 }
                 else
                 {
-                    $this->registerJsFile($core_assets_url . $javacript_file);
+                    $timestamp = Yii::$app->backendManager->getCoreAssetTimestamp($javacript_file);
+                    $this->registerJsFile($core_assets_url . $javacript_file . $timestamp);
                 }
             }
         }
@@ -231,11 +235,13 @@ class View extends \yii\web\View
             {
                 if ( is_array($javacript_file) )
                 {
-                    $this->registerJsFile($app_assets_url . $javacript_file[0], ['position' => $javacript_file[1]]);
+                    $timestamp = Yii::$app->backendManager->getAssetTimestamp($javacript_file[0]);
+                    $this->registerJsFile($app_assets_url . $javacript_file[0]. $timestamp, ['position' => $javacript_file[1]]);
                 }
                 else
                 {
-                    $this->registerJsFile($app_assets_url . $javacript_file);
+                    $timestamp = Yii::$app->backendManager->getAssetTimestamp($javacript_file);
+                    $this->registerJsFile($app_assets_url . $javacript_file. $timestamp);
                 }
             }
         }

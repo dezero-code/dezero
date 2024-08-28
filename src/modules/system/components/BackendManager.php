@@ -7,6 +7,7 @@
 
 namespace dezero\modules\system\components;
 
+use dezero\base\File;
 use dezero\helpers\Url;
 use dezero\web\View;
 use Dz;
@@ -392,5 +393,52 @@ class BackendManager extends Component
         }
 
         return $vec_variables;
+    }
+
+
+    /**
+     * Return the timestamp of an asset file for the URL (cache busting)
+     *
+     * This method is used on View::registerCssBackend() and View::registerJsBackend()
+     */
+    public function getAssetTimestamp(string $asset_file_name, bool $is_core = false) : string
+    {
+        // Check if AssetManager::appendTimestamp is enabled
+        if ( ! Yii::$app->assetManager->appendTimestamp )
+        {
+            return '';
+        }
+
+        // Get the asset file path (app or core)
+        $asset_file_path = $this->app_source_path . $asset_file_name;
+        if ( $is_core )
+        {
+            $asset_file_path = $this->core_source_path . $asset_file_name;
+        }
+
+        $asset_file = File::load($asset_file_path);
+        if ( ! $asset_file )
+        {
+            return '';
+        }
+
+        $timestamp = $asset_file->updatedDate();
+        if ( $timestamp === null )
+        {
+            return '';
+        }
+
+        return '?v=' . $timestamp;
+    }
+
+
+    /**
+     * Return the timestamp of a CORE asset file for the URL (cache busting)
+     *
+     * This method is used on View::registerCssBackend() and View::registerJsBackend()
+     */
+    public function getCoreAssetTimestamp(string $asset_file_name) : string
+    {
+        return $this->getAssetTimestamp($asset_file_name, true);
     }
 }

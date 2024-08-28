@@ -7,6 +7,7 @@
 
 namespace dezero\modules\frontend\components;
 
+use dezero\base\File;
 use dezero\helpers\Url;
 use dezero\modules\web\View;
 use Dz;
@@ -209,5 +210,34 @@ class FrontendManager extends Component
         $vec_classes[] = Dz::getEnvironment() ."-mode";
 
         return $vec_classes;
+    }
+
+
+    /**
+     * Return the timestamp of an asset file for the URL (cache busting)
+     *
+     * This method is used on View::registerCssFrontend() and View::registerJsFrontend()
+     */
+    public function getAssetTimestamp(string $asset_file_name) : string
+    {
+        // Check if AssetManager::appendTimestamp is enabled
+        if ( ! Yii::$app->assetManager->appendTimestamp )
+        {
+            return '';
+        }
+
+        $asset_file = File::load($this->source_path . $asset_file_name);
+        if ( ! $asset_file )
+        {
+            return '';
+        }
+
+        $timestamp = $asset_file->updatedDate();
+        if ( $timestamp === null )
+        {
+            return '';
+        }
+
+        return '?v=' . $timestamp;
     }
 }
