@@ -175,4 +175,23 @@ class DateHelper
         $month_name = Yii::t('backend', $date->format('F'));
         return $short ? substr($month_name, 0, 3) : $month_name;
     }
+
+
+    /**
+     * Calculate the duration in minutes between two hours
+     */
+    public static function calculateDurationInMinutes(string $start_hhmm, string $end_hhmm) : int
+    {
+        $start_time = DateTime::createFromFormat('H:i', $start_hhmm);
+        $end_time = DateTime::createFromFormat('H:i', $end_hhmm);
+
+        // Check if the times are valid
+        if ( $start_time === false || $end_time === false )
+        {
+            return 0;
+        }
+
+        $diff = $start_time->diff($end_time);
+        return $diff->h * 60 + $diff->i;
+    }
 }

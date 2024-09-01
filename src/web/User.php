@@ -26,7 +26,7 @@ class User extends \yii\web\User
      */
     private $is_superadmin = null;
 
-    
+
     /**
      * @var string|array|null the URL for login when [[loginRequired()]] is called.
      */
@@ -36,7 +36,7 @@ class User extends \yii\web\User
     /**
      * Alias of getIdentity() method
      */
-    public function getModel() : IdentityInterface
+    public function getModel() : ?IdentityInterface
     {
         return $this->getIdentity();
     }
