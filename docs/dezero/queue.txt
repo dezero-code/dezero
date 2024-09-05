@@ -90,6 +90,10 @@ FAILED
     // View processes working
     > supervisorctl status all
 
+4. RESTART SUPERVISOR
+    > supervisorctl reread
+    > supervisorctl update
+    > supervisorctl reload
 
 
 --------------------------------------------
