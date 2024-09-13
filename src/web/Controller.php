@@ -32,7 +32,7 @@ class Controller extends \yii\web\Controller
      */
     public function behaviors()
     {
-        return ArrayHelper::merge(
+        return ArrayHelper::merge( 
             parent::behaviors(),
             [
                 'language' => [
