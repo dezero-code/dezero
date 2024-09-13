@@ -6,6 +6,7 @@
  */
 
 namespace dezero\web;
+use dezero\helpers\ArrayHelper;
 use dezero\helpers\Json;
 use dezero\modules\auth\helpers\AuthChecker;
 use dezero\modules\settings\components\LanguageFilter;
@@ -31,11 +32,14 @@ class Controller extends \yii\web\Controller
      */
     public function behaviors()
     {
-        return [
-            'language' => [
-                'class' => LanguageFilter::class,
-            ],
-        ];
+        return ArrayHelper::merge(
+            parent::behaviors(),
+            [
+                'language' => [
+                    'class' => LanguageFilter::class,
+                ],
+            ]
+        );
     }
 
 
