@@ -56,9 +56,19 @@ class FormEvent extends Event
     public static function afterLogin(FormEvent $event)
     {
         $login_form = $event->form;
-        $login_form->getUser()->updateAttributes([
+        $user_model = $login_form->getUser();
+        if ( $user_model === null )
+        {
+            return;
+        }
+
+        // Update user's last login date and IP
+        $user_model->updateAttributes([
             'last_login_date'   => time(),
             'last_login_ip'     => Yii::$app->request->getUserIP(),
         ]);
+
+        // Change default language for the user
+        Yii::$app->language = $user_model->language_id;
     }
 }

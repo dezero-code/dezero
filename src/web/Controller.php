@@ -8,6 +8,7 @@
 namespace dezero\web;
 use dezero\helpers\Json;
 use dezero\modules\auth\helpers\AuthChecker;
+use dezero\modules\settings\components\LanguageFilter;
 use dezero\validators\AjaxRequestValidator;
 use Dz;
 use yii\web\BadRequestHttpException;
@@ -22,6 +23,19 @@ class Controller extends \yii\web\Controller
     public function beforeAction($action)
     {
         return parent::beforeAction($action);
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function behaviors()
+    {
+        return [
+            'language' => [
+                'class' => LanguageFilter::class,
+            ],
+        ];
     }
 
 

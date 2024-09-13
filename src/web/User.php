@@ -62,6 +62,29 @@ class User extends \yii\web\User
 
 
     /**
+     * Returns the language of the user
+     */
+    public function getUserLanguage() : string
+    {
+        $default_language = getenv('SITE_LANGUAGE');
+
+        // Return the default language for guests
+        if ( $this->isGuest )
+        {
+            return $default_language;
+        }
+
+        $user_model = $this->getModel();
+        if ( $user_model === null )
+        {
+            return $default_language;
+        }
+
+        return $user_model->language_id;
+    }
+
+
+    /**
      * Redirects the user browser away from a guest page.
      */
     public function guestRequired(?array $default_url = null) : Response
