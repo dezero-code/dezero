@@ -21,6 +21,15 @@ trait FlashMessageTrait
     /**
      * @return array
      */
+    public function getAllMessages() : array
+    {
+        return $this->vec_messages;
+    }
+
+
+    /**
+     * @return array
+     */
     public function getFlashMessages($type = 'success') : array
     {
         return isset($this->vec_messages[$type]) ? $this->vec_messages[$type] : [];
