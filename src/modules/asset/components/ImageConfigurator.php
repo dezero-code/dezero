@@ -13,6 +13,7 @@ use dezero\base\Configurator;
 use dezero\contracts\ConfiguratorInterface;
 use Yii;
 
+
 /**
  * Base class to handle configuration options for AssetImage models
  */

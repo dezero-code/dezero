@@ -10,6 +10,7 @@ namespace dezero\modules\asset\services;
 use dezero\modules\entity\models\Entity;
 use Dz;
 use dezero\base\File;
+use dezero\base\Image;
 use dezero\contracts\ServiceInterface;
 use dezero\db\ActiveRecord as ActiveRecord;
 use dezero\entity\ActiveRecord as EntityActiveRecord;
@@ -227,6 +228,13 @@ class UploadFileService implements ServiceInterface
         // Remove replaced file?
         if ( $old_file !== null )
         {
+            // Delete all preset images
+            if ( $old_file->isImage() )
+            {
+                $old_image = Image::load($old_file->filePath());
+                Yii::$app->imageManager->deleteAllPresets($old_image);
+            }
+
             $old_file->delete();
         }
 
