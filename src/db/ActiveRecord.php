@@ -74,4 +74,14 @@ class ActiveRecord extends \yii\db\ActiveRecord
     {
         return $this->updateAttributes($vec_attributes);
     }
+
+
+    /**
+     * {@inheritdoc}
+     * @return static|null ActiveRecord instance matching the condition, or `null` if nothing matches.
+     */
+    public static function findOneNoCache($condition)
+    {
+        return parent::findByCondition($condition)->cache(false)->one();
+    }
 }
