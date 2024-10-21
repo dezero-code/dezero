@@ -64,6 +64,7 @@
     // Custom event before GridView is loaded
     // ----------------------------------------------------
     beforeGridLoaded: function() {
+      this.destroyTooltip();
       $("html, body").animate({scrollTop: 0}, 100);
       this.$grid.addClass(this.loadingClass);
     },
@@ -111,6 +112,16 @@
       if ( $tooltip_items.length ) {
         $tooltip_items.tooltip('hide');
         $tooltip_items.tooltip();
+      }
+    },
+
+
+    // Destroy all tooltips
+    // ----------------------------------------------------
+    destroyTooltip: function() {
+      var $tooltip_items = this.$table.find('[data-toggle="tooltip"]');
+      if ( $tooltip_items.length ) {
+        $tooltip_items.tooltip('dispose');
       }
     },
 
