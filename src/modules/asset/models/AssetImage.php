@@ -168,7 +168,7 @@ class AssetImage extends AssetFile implements ConfigInterface
             $this->image = Image::load($this->getRelativePath());
         }
 
-        return $this->image && $this->image->file && $this->image->file->exists();
+        return $this->image && $this->image->file && $this->image->file->exists() && $this->image->file->isImage();
     }
 
 
