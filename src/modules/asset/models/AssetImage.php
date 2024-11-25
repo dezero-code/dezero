@@ -202,18 +202,25 @@ class AssetImage extends AssetFile implements ConfigInterface
      */
     public function generatePreset(string $preset_name, ?string $destination_path = null) : bool
     {
-        if ( ! $this->loadImage() )
+        try
+        {
+            if ( ! $this->loadImage() )
+            {
+                return false;
+            }
+
+            // Destination path
+            if ( $destination_path === null )
+            {
+                $destination_path = $this->getPresetsDirectory() . DIRECTORY_SEPARATOR;
+            }
+
+            return Yii::$app->imageManager->generatePreset($this->image, $destination_path, $this->getPreset($preset_name)) !== null;
+        }
+        catch (\Exception $e)
         {
             return false;
         }
-
-        // Destination path
-        if ( $destination_path === null )
-        {
-            $destination_path = $this->getPresetsDirectory() . DIRECTORY_SEPARATOR;
-        }
-
-        return Yii::$app->imageManager->generatePreset($this->image, $destination_path, $this->getPreset($preset_name)) !== null;
     }
 
 
@@ -315,29 +322,38 @@ class AssetImage extends AssetFile implements ConfigInterface
      */
     public function imageUrl(?string $preset_name = null, bool $is_generate_preset = true) : string
     {
-        // Check URL for a preset?
-        $preset_image = null;
-        if ( $preset_name !== null )
+        try
         {
-            $preset_image = $this->getPresetImage($preset_name);
+            // Check URL for a preset?
+            $preset_image = null;
+            if ( $preset_name !== null )
+            {
+                $preset_image = $this->getPresetImage($preset_name);
+            }
+
+            // Generate preset image if not exists?
+            if ( $preset_name !== null && $is_generate_preset && ( $preset_image === null || ! $preset_image->file || ! $preset_image->file->exists() ) )
+            {
+                $this->generatePreset($preset_name);
+                $preset_image = $this->getPresetImage($preset_name);
+            }
+
+            // Return URL for ORIGINAL image file
+            if ( $preset_image === null || ! $preset_image->file || ! $preset_image->file->exists() )
+            {
+                return parent::url();
+            }
+
+            // Return URL for a PRESET image file
+            $url = str_replace(Yii::getAlias('@webroot'), '', $preset_image->file->filePath() );
+
+            return Url::to($url);
         }
 
-        // Generate preset image if not exists?
-        if ( $preset_name !== null && $is_generate_preset && ( $preset_image === null || ! $preset_image->file || ! $preset_image->file->exists() ) )
-        {
-            $this->generatePreset($preset_name);
-            $preset_image = $this->getPresetImage($preset_name);
-        }
-
-        // Return URL for ORIGINAL image file
-        if ( $preset_image === null || ! $preset_image->file || ! $preset_image->file->exists() )
+        // If any error, return URL for original image
+        catch (\Exception $e)
         {
             return parent::url();
         }
-
-        // Return URL for a PRESET image file
-        $url = str_replace(Yii::getAlias('@webroot'), '', $preset_image->file->filePath() );
-
-        return Url::to($url);
     }
 }

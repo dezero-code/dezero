@@ -138,7 +138,6 @@ class ImageManager extends Component
 
         // \DzLog::dev($preset_image_path);
 
-
         return Image::load($preset_image_path);
     }
 
