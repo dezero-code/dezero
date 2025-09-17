@@ -38,6 +38,19 @@ class Mailer extends SymfonyMailer
 
 
     /**
+     * @var bool Whether test mode is enabled
+     * When true, all emails will be redirected to testEmail
+     */
+    public $testMode = false;
+
+
+    /**
+     * @var string Email address to send all emails to when in test mode
+     */
+    public $testEmail;
+
+
+    /**
      * @inheritdoc
      */
     public function init()
@@ -55,6 +68,57 @@ class Mailer extends SymfonyMailer
 
         // Add logging and file storage handling
         $this->on(self::EVENT_AFTER_SEND, [$this, 'handleAfterSend']);
+
+        // Add before send event handler for test mode
+        $this->on(self::EVENT_BEFORE_SEND, [$this, 'handleBeforeSend']);
+    }
+
+
+    /**
+     * Handle before send event to redirect emails in test mode
+     *
+     * @param \yii\symfonymailer\events\BeforeSendEvent $event
+     */
+    public function handleBeforeSend($event)
+    {
+        if ( $this->testMode && !empty($this->testEmail) )
+        {
+            $message = $event->message;
+
+            // Store original recipients for logging
+            $originalTo = $message->getTo();
+            $originalCc = $message->getCc();
+            $originalBcc = $message->getBcc();
+
+            // Add original recipients to the email subject for clarity
+            $subject = $message->getSubject();
+            $recipientInfo = [];
+
+            if ( !empty($originalTo) )
+            {
+                $recipientInfo[] = 'TO: ' . implode(', ', array_keys($originalTo));
+            }
+
+            if ( !empty($originalCc) )
+            {
+                $recipientInfo[] = 'CC: ' . implode(', ', array_keys($originalCc));
+            }
+
+            if ( !empty($originalBcc) )
+            {
+                $recipientInfo[] = 'BCC: ' . implode(', ', array_keys($originalBcc));
+            }
+
+            if ( !empty($recipientInfo) )
+            {
+                $message->setSubject($subject . ' [' . implode(' | ', $recipientInfo) . ']');
+            }
+
+            // Redirect to test email
+            $message->setTo($this->testEmail);
+            $message->setCc([]);
+            $message->setBcc([]);
+        }
     }
 
 
