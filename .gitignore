@@ -58,3 +58,8 @@ Thumbs.db
 *.flv
 *.mov
 *.wmv
+
+# CC
+.claude/
+.claude/*.local.json
+.claudeignore

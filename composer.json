@@ -58,4 +58,4 @@
     "coder": "php-cs-fixer fix -vvv --dry-run --show-progress=dots",
     "coder-fix": "php-cs-fixer fix -vvv --show-progress=dots"
   }
-},
+}
